@@ -87,3 +87,25 @@ python3 work/research/measure.py
 | `audio.lufs` เพี้ยน | loudnorm รอบเดียว | ต้อง two-pass (`docs/RECIPE.md`) |
 | `scenes.images-exist` ล้ม | ภาพยังไม่ fetch หรือ path ผิด | รัน `fetch_images.py` แล้วตรวจ `scenes.json` |
 | `packaging.*` ล้ม | ยังไม่ใส่ `meta.json` | เติม `source`/`attribution`/`tags` |
+| `video.matches-audio` ล้ม | ป้อนภาพนิ่งเข้า concat demuxer ตรง ๆ — มันตัดท้ายทิ้ง ~14 วิ | แก้แล้วใน `make_video.py` (encode การ์ดเป็นคลิปแล้วค่อย concat) |
+
+---
+
+## ตัด Short (ท่อดึงคนใหม่) — `make_short.py`
+
+long-form คือสินค้า, Short คือท่อที่พาคนแปลกหน้ามาหา มัน (กลยุทธ์ §5.3)
+
+```bash
+# ดูช่วงบรรทัดก่อน (วินาทีที่บรรทัดเริ่ม)
+python3 - <<'PY'
+import json; L=json.load(open("episodes/ep02_manthana_phatha/timing.json"))["lines"]
+for i,l in enumerate(L[:12]): print(i, round(l["start"],1), l["text"])
+PY
+# ตัด 15-45 วิ (เครื่องมือบังคับ 10-59 วิ), 1080x1920 tv, เผาแคปชัน
+python3 work/research/make_short.py episodes/ep02_manthana_phatha \
+    --lines 4:9 --out site/media/ep02_short_hook.mp4 \
+    --hook "เรื่องของดอกกุหลาบที่กลายเป็นหญิงสาว"
+```
+
+ผลลัพธ์: `1080x1920`, `yuv420p`, `color_range=tv`, มี `faststart`
+(เช็กด้วย `ffprobe` ทุกครั้ง — ขนาดถูกไม่แปลว่า range ถูก)
