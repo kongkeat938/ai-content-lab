@@ -6,12 +6,15 @@
   `@tatagenxgeny` (6 subs), ch2 `@Farmmer-n9t` (1 sub), ch4. It is NOT the yt938
   channel set. All three `YT_CH*_REFRESH_TOKEN` env secrets work here with the
   full `youtube` scope.
-- **⚠️ ch4's token controls a DIFFERENT channel than `channels.json` says.** The
-  token maps to `kongkeat pratumma` (`UC7gCIu4G_7QCEJ8hJ-34zoQ`, 6 subs), not
-  `@aerisanime` (`UCR2AQNtI2o_rxQIEkQeTk9Q`, 10.5k subs, 263 videos). Verify a
-  channel's identity with `channels?mine=true` before producing work for it.
-  `@aerisanime` itself is an **anime-edit channel** (150 Shorts, Anya×Damian
-  edits, median 3,091) — the opposite of "Thai literature as a series".
+- **⚠️ ch4 was mislabelled — now resolved (2026-10-30, owner-confirmed).** ch4 IS
+  `kongkeat pratumma` (`@kongkeatpratumma`, `UC7gCIu4G_7QCEJ8hJ-34zoQ`, 6 subs,
+  8 videos) — the channel `YT_CH4_REFRESH_TOKEN` controls. It is a **Thai
+  storytelling channel** (Thai literature + short stories + life-lesson Shorts;
+  its 2 Shorts got 882 and 378 views), i.e. the same pipeline as ch2, not a new
+  one. `channels.json` now has slug `ch4-story` for it. **`@aerisanime` is a
+  DIFFERENT, unrelated channel** (anime edits, 10.5k subs, 263 clips) that no
+  token here controls — it is no longer AX's ch4. Verify a channel's identity with
+  `channels?mine=true` before producing work for it.
 - **`commentThreads` is 403 "insufficient authentication scopes"** even with the
   full `youtube` scope — comments are not readable from these tokens.
 - Deliverables: `work/research/COMPETITOR-STRATEGY.md` (measured competitor

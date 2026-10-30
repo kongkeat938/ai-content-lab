@@ -173,15 +173,18 @@ Run `python3 ax_channels.py show` for the current table, or
 | ch1 | `@tatagenxgeny` | ช่องปรัชญา | ~11 นาที |
 | ch2 | `@Farmmer-n9t` | ช่องธรรมะก่อนนอน (rail ต้นแบบ) | 10–12 นาที |
 | ch3 | `@aerismusicth` | ~~ช่องสร้างศิลปินเพลง~~ **ยกเลิก 2026-10-30** | 3–4 นาที |
-| ch4 | `@aerisanime` | ช่องละคร · การ์ตูนอะนิเมะ | 10–25 นาที |
+| ch4 | `@kongkeatpratumma` | ช่องเรื่องเล่า (วรรณคดีไทยเป็นซีรีส์) | 10–25 นาที |
 
 Three things follow for the work in this repository:
 
 * **ch1 and ch2 use this pipeline as it is** — same narration-and-posters machine,
   different voice and script. ch2 (dharma) is the reference; change it first.
-* **ch4 is a new pipeline**, not a variation. Serialised animation needs generation
-  and character-continuity work this pipeline does not do. Do not start it until
-  ch1/ch2 run unattended.
+* **ch4 is the same pipeline, not a new one.** `YT_CH4_REFRESH_TOKEN` controls
+  `@kongkeatpratumma` — a Thai storytelling channel (Thai literature + short
+  stories + life-lesson Shorts). It runs on this narration-and-posters machine
+  with a different voice and script. **Do not confuse it with `@aerisanime`** — a
+  separate anime-edit channel (10.5k subs, 263 clips) that no token here controls
+  and whose subject is unrelated to this project.
 * **ch3 was cancelled on 2026-10-30** — the owner handed the AERIS Music channel to
   another AI, so it is not AX's work. AX runs three channels: ch1, ch2, ch4.
 * **One token per channel.** `publish_youtube.py` refuses to upload when the token
