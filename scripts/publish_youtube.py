@@ -109,6 +109,31 @@ def post(url: str, payload: dict) -> dict:
         return json.loads(fh.read().decode("utf-8"))
 
 
+def record_receipt(base: str, record: dict) -> str:
+    """Record a published URL, returning the timestamp.
+
+    POSTs to the running server when one is reachable. The default base is a
+    file:// path, which has no HTTP endpoint — writing the POST there raised
+    URLError *after* a successful upload, so a delivered video looked failed.
+    Fall back to appending the receipts file directly.
+    """
+    if base.startswith("file://"):
+        import datetime
+        path = os.path.join(os.path.dirname(_SITE), "receipts", "receipts.jsonl")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        record = {
+            "received_at": datetime.datetime.now(datetime.timezone.utc)
+            .strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "remote": "local",
+            **record,
+        }
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+        return record["received_at"]
+    res = post(f"{base}/api/receipts", record)
+    return res["recorded"]["received_at"]
+
+
 def resolve(base: str, key: str) -> dict:
     """Find one episode. index.json records served URLs, so under file:// the
     episode document is read from the matching path on disk instead."""
@@ -257,12 +282,16 @@ def main() -> int:
     print("It is private until you change it in YouTube Studio.")
 
     if args.report:
-        res = post(f"{args.base}/api/receipts", {
-            "episode": ep["id"], "slug": ep["slug"], "platform": "youtube",
-            "url": url, "title": ep["title"], "duration": ep["duration_hms"],
-            "privacy": args.privacy, "video_id": vid,
-        })
-        print(f"reported to the channel at {res['recorded']['received_at']}")
+        try:
+            when = record_receipt(args.base, {
+                "episode": ep["id"], "slug": ep["slug"], "platform": "youtube",
+                "url": url, "title": ep["title"], "duration": ep["duration_hms"],
+                "privacy": args.privacy, "video_id": vid,
+            })
+            print(f"reported to the channel at {when}")
+        except Exception as exc:
+            print(f"upload OK, but the receipt was not recorded: {exc}",
+                  file=sys.stderr)
     return 0
 
 
