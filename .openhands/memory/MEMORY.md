@@ -28,6 +28,16 @@
   definition of done, prints measured values, exits 1 on a hard failure; verified
   it catches injected defects (digits, LUFS, peak, missing image/source/attr).
   `measure.py` prints our median views vs the §6 targets.
+- **The concat demuxer truncates a still-image slideshow** (found by rebuilding
+  ep02, commit `3d21d59`). `make_video.py` used to feed the poster JPEGs to
+  `-f concat` with `duration` lines → output 648.9 s vs 662.8 s audio (~14 s
+  lost), so the closing line at 658.5 s never played. **Fix: encode each card to
+  a clip of its own length, then `-c copy` concat.** Guard: gate check
+  `video.matches-audio` (≤1 s apart). `-color_range tv` alone reports `unknown`
+  — you also need `-colorspace/-color_primaries/-color_trc bt709`.
+- **`work/research/make_short.py`** cuts a vertical 10–59 s Short from a finished
+  episode on narration-line boundaries (blur-pad to 1080x1920, burned Thai
+  caption) — the funnel the strategy calls for.
 
 ## A local record of a remote fact goes stale — verify before skipping (2026-10-29)
 - **`ops/yt_publish.py` skipped any episode in `_audit/uploaded.json`.** That file
