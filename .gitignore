@@ -14,3 +14,6 @@ receipts/
 yt_token.json
 *_token.json
 receipts/
+
+# research scratch
+work/research/__pycache__/
