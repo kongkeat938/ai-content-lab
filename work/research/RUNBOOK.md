@@ -109,3 +109,24 @@ python3 work/research/make_short.py episodes/ep02_manthana_phatha \
 
 ผลลัพธ์: `1080x1920`, `yuv420p`, `color_range=tv`, มี `faststart`
 (เช็กด้วย `ffprobe` ทุกครั้ง — ขนาดถูกไม่แปลว่า range ถูก)
+
+## อัป Short ขึ้นช่อง — `scripts/publish_short.py`
+
+`#Shorts` ในชื่อคือสิ่งที่บอก YouTube ว่าเป็น Short และ **ลิงก์ long-form ถูกดึง
+จาก `receipts/receipts.jsonl` อัตโนมัติ** (เพราะฉะนั้นอัป long-form ให้เสร็จก่อน
+Short จะได้มีปลายทางให้คนกด) ใช้ channel guard เดียวกับ `publish_youtube.py` —
+token ผิดช่องจะถูกปฏิเสธก่อนอัป
+
+```bash
+# ดูสิ่งที่จะโพสต์ก่อน (ไม่ต้องมี token)
+python3 scripts/publish_short.py ep02_manthana_phatha \
+    --file site/media/ep02_short_hook.mp4 --channel ch4-story --privacy public --dry-run
+
+# อัปจริง — public สำหรับ Short (มันคือท่อดึงคน, ต้องเห็นได้)
+python3 scripts/publish_short.py ep02_manthana_phatha \
+    --file site/media/ep02_short_hook.mp4 --channel ch4-story --privacy public \
+    --base http://127.0.0.1:12000
+```
+
+`--base` คือ URL ของเซิร์ฟเวอร์ที่รันอยู่ ถ้าไม่ใส่ receipt จะถูกเขียนลงไฟล์ตรง ๆ
+(ไม่ error) — เผื่อไว้ให้รันแบบไม่มีเซิร์ฟเวอร์ได้
