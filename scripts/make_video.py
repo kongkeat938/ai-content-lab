@@ -76,24 +76,34 @@ def build(ep_dir: str, out: str, music: str = None) -> dict:
 
         # Concatenate with per-card durations so each card is on screen exactly
         # until the next scene begins.
-        listfile = os.path.join(tmp, "list.txt")
-        with open(listfile, "w", encoding="utf-8") as f:
-            for i, card in enumerate(cards):
-                end = starts[i + 1] if i + 1 < len(cards) else total
-                seg = max(0.2, end - starts[i])
-                f.write(f"file '{card}'\n")
-                f.write(f"duration {seg:.3f}\n")
-            f.write(f"file '{cards[-1]}'\n")  # concat demuxer needs a final entry
+        # Encode each card to a clip of its own exact length, then concatenate the
+        # clips. Feeding still images straight to the concat demuxer silently
+        # drops ~14 s on a 13-card episode (the final duration is not honoured),
+        # which cuts the closing narration — the closing line sat at 658 s of a
+        # 663 s track and the video ended at 649 s. One clip per card is exact.
+        clip_paths = []
+        for i, card in enumerate(cards):
+            end = starts[i + 1] if i + 1 < len(cards) else total
+            seg = max(0.2, end - starts[i])
+            clip = os.path.join(tmp, f"clip{i:02d}.mp4")
+            # JPEG sources decode as full-range yuvj420p; convert explicitly or
+            # playback looks washed out on most players.
+            run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-i", card,
+                 "-t", f"{seg:.3f}", "-r", str(FPS),
+                 "-vf", "scale=in_range=full:out_range=tv,format=yuv420p",
+                 "-color_range", "tv", "-colorspace", "bt709",
+                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                 "-pix_fmt", "yuv420p", clip])
+            clip_paths.append(clip)
+
+        cliplist = os.path.join(tmp, "clips.txt")
+        with open(cliplist, "w", encoding="utf-8") as f:
+            for c in clip_paths:
+                f.write(f"file '{c}'\n")
 
         silent = os.path.join(tmp, "silent.mp4")
-        # JPEG sources decode as full-range yuvj420p; convert explicitly or the
-        # video plays back with washed-out / crushed levels on most players.
         run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
-             "-i", listfile, "-fps_mode", "cfr", "-r", str(FPS),
-             "-vf", "scale=in_range=full:out_range=tv,format=yuv420p",
-             "-color_range", "tv", "-colorspace", "bt709",
-             "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-             "-pix_fmt", "yuv420p", "-t", f"{total:.3f}", silent])
+             "-i", cliplist, "-c", "copy", "-movflags", "+faststart", silent])
 
         if music:
             m = duration(music)

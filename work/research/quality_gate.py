@@ -105,6 +105,22 @@ def probe_video(path: str) -> dict | None:
         return None
 
 
+def probe_duration(path: str) -> float | None:
+    try:
+        out = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "csv=p=0", path],
+            capture_output=True, text=True, timeout=30)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    if out.returncode != 0:
+        return None
+    try:
+        return float(out.stdout.strip())
+    except ValueError:
+        return None
+
+
 def check(ep_dir: str, profile: dict, strict_length: bool) -> Gate:
     g = Gate()
     info = load(os.path.join(ep_dir, "audio_info.json"), {}) or {}
@@ -192,6 +208,16 @@ def check(ep_dir: str, profile: dict, strict_length: bool) -> Gate:
             g.fail("video.color-range", v.get("color_range") == "tv",
                    f"color_range={v.get('color_range')}")
             g.info("video.size", f"{v.get('width')}x{v.get('height')}")
+        vdur = probe_duration(video)
+        if vdur is None:
+            g.warn("video.duration", False, "could not read video duration")
+        elif dur:
+            # The concat demuxer silently truncates an image slideshow, so the
+            # video ends before the narration does and the closing line is cut.
+            # Fail if the two disagree by more than one second.
+            g.fail("video.matches-audio", abs(vdur - dur) <= 1.0,
+                   f"video {vdur:.1f}s vs audio {dur:.1f}s "
+                   f"(gap {vdur - dur:+.1f}s)")
     else:
         g.warn("video.present", False, "video.mp4 not built in this checkout")
     return g

@@ -22,8 +22,8 @@
   "media": {
     "video": {
       "url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ep02/ep02.mp4",
-      "local_url": "https://zcfjbytjdlcldhbg.prod-runtime.all-hands.dev/media/ep02.mp4",
-      "bytes": 34353452,
+      "local_url": "https://ipzpydbtqltzmdzs.prod-runtime.all-hands.dev/media/ep02.mp4",
+      "bytes": 34540453,
       "mime": "video/mp4",
       "width": 1920,
       "height": 1080,
@@ -32,7 +32,7 @@
     },
     "audio": {
       "url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ep02/ep02.mp3",
-      "local_url": "https://zcfjbytjdlcldhbg.prod-runtime.all-hands.dev/media/ep02.mp3",
+      "local_url": "https://ipzpydbtqltzmdzs.prod-runtime.all-hands.dev/media/ep02.mp3",
       "bytes": 10605548,
       "mime": "audio/mpeg",
       "lufs": "-14.4",
@@ -43,7 +43,7 @@
     },
     "poster": {
       "url": "https://raw.githubusercontent.com/kongkeat938/ai-content-lab/main/site/media/ep02_poster.jpg",
-      "local_url": "https://zcfjbytjdlcldhbg.prod-runtime.all-hands.dev/media/ep02_poster.jpg",
+      "local_url": "https://ipzpydbtqltzmdzs.prod-runtime.all-hands.dev/media/ep02_poster.jpg",
       "mime": "image/jpeg"
     }
   },
@@ -313,7 +313,11 @@
         "ธรรมะก่อนนอน",
         "เรื่องเล่าไทย",
         "เสียงบรรยายไทย",
-        "บทละครคำฉันท์"
+        "บทละครคำฉันท์",
+        "ปล่อยวาง",
+        "ข้อคิดชีวิต",
+        "นิทานสอนใจ",
+        "ฟังก่อนนอน"
       ],
       "category_id": "27",
       "language": "th",
@@ -338,9 +342,13 @@
       "ธรรมะก่อนนอน",
       "เรื่องเล่าไทย",
       "เสียงบรรยายไทย",
-      "บทละครคำฉันท์"
+      "บทละครคำฉันท์",
+      "ปล่อยวาง",
+      "ข้อคิดชีวิต",
+      "นิทานสอนใจ",
+      "ฟังก่อนนอน"
     ]
   },
-  "self": "https://zcfjbytjdlcldhbg.prod-runtime.all-hands.dev/api/episodes/ep02_manthana_phatha.json",
-  "webpage": "https://zcfjbytjdlcldhbg.prod-runtime.all-hands.dev/"
+  "self": "https://ipzpydbtqltzmdzs.prod-runtime.all-hands.dev/api/episodes/ep02_manthana_phatha.json",
+  "webpage": "https://ipzpydbtqltzmdzs.prod-runtime.all-hands.dev/"
 }
