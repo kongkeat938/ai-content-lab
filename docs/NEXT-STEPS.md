@@ -267,13 +267,15 @@ Paste this, with the two repos already cloned:
 |---|---|
 | ch1 | `@tatagenxgeny` — ตาต้า GenX Shop — ช่องปรัชญา — ~11 min — 14 videos |
 | ch2 | `@Farmmer-n9t` — Farmmer — ช่องธรรมะก่อนนอน — 10–12 min — 10 videos |
-| ch3 | `@aerismusicth` — AERIS Music — ช่องสร้างศิลปินเพลง — 3–4 min — 1 video |
+| ch3 | `@aerismusicth` — AERIS Music — **ยกเลิก 2026-10-30** (มอบให้ AI อื่น) |
 | ch4 | `@aerisanime` — Aeris Anime — ช่องละคร·การ์ตูนอะนิเมะ — 10–25 min — 3 videos |
 
 * An earlier spec had ch3/ch4 swapped. The live channels contradict it: **ch3 is
   the music label**. The correction is recorded under `_superseded`.
-* ch1 and ch2 use the existing pipeline as-is; **ch2 is the reference**. ch3 and
-  ch4 are new pipelines and should wait.
+* **ch3 was cancelled on 2026-10-30** — the owner handed the AERIS Music channel to
+  another AI. AX works on ch1, ch2 and ch4 only.
+* ch1 and ch2 use the existing pipeline as-is; **ch2 is the reference**. ch4 is a
+  new pipeline and should wait.
 * ch4 yields only **4–10 episodes a year** at its AiPASS quota (10 clips/month at
   ~50 s ≈ 8 minutes of footage, against 12–30 clips per episode).
 * GitHub is not a bottleneck (12 of 5,000 requests/hour; 4.0 MB of 1 GB). Repo
