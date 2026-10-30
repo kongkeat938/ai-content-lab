@@ -35,15 +35,26 @@
       "status": "CANCELLED 2026-10-30 — owner handed this channel to another AI; AX no longer builds, QCs, uploads or cuts Shorts for it"
     },
     {
+      "slug": "ch4-story",
+      "name": "kongkeat pratumma",
+      "handle": "@kongkeatpratumma",
+      "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+      "angle": "ช่องเรื่องเล่า — วรรณคดีไทยเป็นซีรีส์ + เรื่องสั้นสอนใจ",
+      "videos_seen": 8,
+      "account": "openhands-1",
+      "token_path": "~/.config/content-lab/yt_token_ch4-story.json",
+      "status": "live — the channel YT_CH4_REFRESH_TOKEN controls (confirmed 2026-10-30)"
+    },
+    {
       "slug": "aeris-anime",
       "name": "Aeris Anime",
       "handle": "@aerisanime",
       "channel_id": "UCR2AQNtI2o_rxQIEkQeTk9Q",
       "angle": "ช่องละคร · การ์ตูนอะนิเมะ — ซีรี่ส์ที่คนติดตามตอนต่อตอน",
-      "videos_seen": 3,
+      "videos_seen": 263,
       "account": null,
       "token_path": "~/.config/content-lab/yt_token_aeris-anime.json",
-      "status": "live, not authorised in this sandbox"
+      "status": "NOT AX's channel — no token controls it; it is an anime-edit channel, unrelated to this project"
     }
   ]
 }
