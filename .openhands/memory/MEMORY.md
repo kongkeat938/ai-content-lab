@@ -60,5 +60,15 @@ says "ห้ามสลับบัญชี เด็ดขาด"). **No acco
   billing (needs K) / retry Pollinations off-peak. Planning brief for ChatGPT:
   `docs/PLAN-BRIEF-for-chatgpt.md`.
 
+## 🔊 Free tools that WORK (measured 2026-10-31, `ax-workspace/docs/FREE-TOOLS-MEASURED.md`)
+- **gTTS** (Google Translate TTS, free, no key) → **female Thai voice**, 5/5; it renders the
+  exact line edge-tts fails on. `short_maker` now falls back to gTTS for a female voice
+  instead of flipping to the MALE voice — **this unblocks 42 of 60 ch1 entries** (ch1's
+  female-voiced ones). Guard: `ops/test_voice_fallback.py`; workflow installs `gTTS`.
+- **Gemini text `gemini-3.5-flash-lite`** works on the free key (200, 3/3) and writes usable
+  Thai copy → the free source for scripts/planning. (`gemini-3.8-flash` = 503, do not use.)
+- **Wikimedia Commons API** → real images + licence (for ch4 story videos). Openverse times
+  out from the pod. Piper Thai is unusable (`tltk`→scikit-learn build fails on py3.13).
+
 ## Authority (2026-10-31)
 **ak** holds K's grant to administer and decide ("อนุมัติให้บริหารงาน และตัดสินใจแทน k ได้เลย"). ak acts alone on reversible/internal work; still asks K before publishing, enabling automations, deleting history, or renaming. Charter + log: `ax-workspace/.openhands/memory/DECISIONS.md`.
