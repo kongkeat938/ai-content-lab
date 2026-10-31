@@ -25,3 +25,6 @@ in `topics/*.md` and the daily logs.
 - **ak does not upload** — K reviews the first work of each channel.
 - **Do NOT invent stories** — build from K's own material in `C:\ax-work\library\<channel>\`.
 - A uniform failure = a broken measurement; a scattered one = a real defect.
+
+## Authority (2026-10-31)
+**ak** holds K's grant to administer and decide ("อนุมัติให้บริหารงาน และตัดสินใจแทน k ได้เลย"). ak acts alone on reversible/internal work; still asks K before publishing, enabling automations, deleting history, or renaming. Charter + log: `ax-workspace/.openhands/memory/DECISIONS.md`.
