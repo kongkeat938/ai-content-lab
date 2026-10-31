@@ -173,7 +173,7 @@ Run `python3 ax_channels.py show` for the current table, or
 | ch1 | `@tatagenxgeny` | ช่องปรัชญา | ~11 นาที |
 | ch2 | `@Farmmer-n9t` | ช่องธรรมะก่อนนอน (rail ต้นแบบ) | 10–12 นาที |
 | ch3 | `@aerismusicth` | ~~ช่องสร้างศิลปินเพลง~~ **ยกเลิก 2026-10-30** | 3–4 นาที |
-| ch4 | `@aerisanime` | ช่องละคร · การ์ตูนอะนิเมะ | 10–25 นาที |
+| ch4 | `@kongkeatpratumma` | ช่องละคร · การ์ตูนอะนิเมะ | 10–25 นาที |
 
 Three things follow for the work in this repository:
 
