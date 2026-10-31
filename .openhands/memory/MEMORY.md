@@ -43,5 +43,22 @@ in `topics/*.md` and the daily logs.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## 🖼️ Image/music quota — measured 2026-10-31 (NOT an account-count problem)
+K ordered: "ถ้า Gemini/Flow ลิมิตเต็ม ให้สมัครเมล์ใหม่สร้างบัญชีเลย". Measured first — the
+limit is **service-wide**, so new accounts would not help and would risk banning the real
+channels (Google forbids multi-account evasion; repo rule in `PROMPT-for-chatgpt-remote.md`
+says "ห้ามสลับบัญชี เด็ดขาด"). **No accounts created.**
+- Gemini API `$GEMINI_API_KEY`: key is valid (200) but **every image model → 429
+  `limit: 0`** on free tier (`gemini-2.5-flash-image`, `gemini-3.1-flash-image`, …) → a new
+  GCP project also gets 0.
+- Pollinations: `model=flux` → **200 (real 97 KB JPEG)** but retries → **402 "The Classic API
+  is at its limit right now"** = service-wide cap, not per-IP.
+- **The only working image/music path = drive the already-signed-in PC1 browser**
+  (`ops/gemini_batch.py`, `ops/flowmusic_batch.py`; PC1 `localhost:60000` → 200; proven by the
+  ch2 image batch on 2026-10-27). Shorts do NOT need images — `short_maker.py` draws its own.
+- Recorded as a K decision (`docs/NEEDS-K.md` #6) with 3 safe options: PC1 session / paid
+  billing (needs K) / retry Pollinations off-peak. Planning brief for ChatGPT:
+  `docs/PLAN-BRIEF-for-chatgpt.md`.
+
 ## Authority (2026-10-31)
 **ak** holds K's grant to administer and decide ("อนุมัติให้บริหารงาน และตัดสินใจแทน k ได้เลย"). ak acts alone on reversible/internal work; still asks K before publishing, enabling automations, deleting history, or renaming. Charter + log: `ax-workspace/.openhands/memory/DECISIONS.md`.
