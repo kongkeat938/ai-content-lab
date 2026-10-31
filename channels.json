@@ -39,11 +39,11 @@
       "name": "kongkeat pratumma",
       "handle": "@kongkeatpratumma",
       "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
-      "angle": "ช่องละคร · การ์ตูนอะนิเมะ — ซีรี่ส์ที่คนติดตามตอนต่อตอน",
+      "angle": "เรื่องเล่าการ์ตูน — ซีรี่ส์การ์ตูน/ละครที่ติดตามตอนต่อตอน",
       "videos_seen": 8,
       "account": "kongkeat.p3@gmail.com",
       "token_path": "~/.config/content-lab/yt_token_kongkeat-story.json",
-      "status": "live — 8 videos (long-form Thai story/drama + Shorts); display name still the account holder's name, a series brand name needs K's approval"
+      "status": "live — 8 videos (long-form Thai story/drama + Shorts). Series brand decided 2026-10-31: เรื่องเล่าการ์ตูน. The channel NAME is still 'kongkeat pratumma' because the YouTube Data API cannot rename a personal channel — K must do it in YouTube Studio."
     }
   ]
 }
