@@ -31,7 +31,7 @@ prints this table. Do not edit the table here — edit that file and run
 | ch1 | `@tatagenxgeny` | ช่องปรัชญา | พูดปรัชญาที่คนฟังจนจบ | ~11 นาที | — | openhands-1 |
 | ch2 | `@Farmmer-n9t` | ช่องธรรมะก่อนนอน | หลับก่อนจบ กลับมาทุกคืน | 10–12 นาที | — (rail ต้นแบบ) | openhands-1 |
 | ch3 | `@aerismusicth` | ~~ช่องสร้างศิลปินเพลง~~ **ยกเลิก 2026-10-30** | — | 3–4 นาที | AiPASS เพลง 10/เดือน | handed to another AI |
-| ch4 | `@aerisanime` | ช่องละคร · การ์ตูนอะนิเมะ | ซีรี่ส์ที่ติดตามตอนต่อตอน | 10–25 นาที | AiPASS วิดีโอ 10/เดือน ≈ 50 วิ | to assign |
+| ch4 | `@kongkeatpratumma` | ช่องละคร · การ์ตูนอะนิเมะ — เรื่องเล่าการ์ตูน | ซีรี่ส์ที่ติดตามตอนต่อตอน | 10–25 นาที | AiPASS วิดีโอ 10/เดือน ≈ 50 วิ | kongkeat.p3 |
 
 **ch1 and ch2 use this pipeline as it is.** ch2 (dharma) is the reference — make
 changes there first. **ch4 is a new pipeline** and should not start until ch1/ch2
@@ -47,6 +47,11 @@ channel to another AI, so it is not AX's work.
 
 An earlier spec (2026-10-23) had ch3 and ch4 the other way round. The live
 channels contradict it: ch3 is the music label. Do not "restore" the old order.
+**A later 2026-10-24 spec wrongly set ch4 = `@aerisanime`** (`UCR2AQNtI2o_rxQIEkQeTk9Q`)
+— that is a *different* channel (263 English anime edits, 10.5k subs, no AX token).
+The real ch4 is `@kongkeatpratumma` (`UC7gCIu4G_7QCEJ8hJ-34zoQ`), the channel
+`YT_CH4_REFRESH_TOKEN` controls. Source of truth: `ops/ax_channels.json`. Corrected
+by ak 2026-10-31.
 
 ## Episode backlog
 

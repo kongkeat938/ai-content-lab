@@ -268,7 +268,7 @@ Paste this, with the two repos already cloned:
 | ch1 | `@tatagenxgeny` — ตาต้า GenX Shop — ช่องปรัชญา — ~11 min — 14 videos |
 | ch2 | `@Farmmer-n9t` — Farmmer — ช่องธรรมะก่อนนอน — 10–12 min — 10 videos |
 | ch3 | `@aerismusicth` — AERIS Music — **ยกเลิก 2026-10-30** (มอบให้ AI อื่น) |
-| ch4 | `@aerisanime` — Aeris Anime — ช่องละคร·การ์ตูนอะนิเมะ — 10–25 min — 3 videos |
+| ch4 | `@kongkeatpratumma` — เรื่องเล่าการ์ตูน — ช่องละคร·การ์ตูนอะนิเมะ — 10–25 min — 8 videos |
 
 * An earlier spec had ch3/ch4 swapped. The live channels contradict it: **ch3 is
   the music label**. The correction is recorded under `_superseded`.
