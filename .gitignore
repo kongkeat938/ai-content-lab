@@ -14,3 +14,7 @@ receipts/
 yt_token.json
 *_token.json
 receipts/
+
+# long-form night builds are regenerable from content/ + scripts/
+work/
+content/*/build/
