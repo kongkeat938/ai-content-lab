@@ -226,3 +226,26 @@ run that no longer started at frame 0 and the gate reported a false
 mid-narration gap. **Raised to 0.004.** Always re-run
 `ops/test_verify_clip.py` after touching the verifier -- it still rejects a real
 caption gap at the new threshold.
+
+## Long-form night rail built + measured (2026-11-02, branch `feat/night-compilation-rail`)
+The niche's winning format is **82-240 min sleep files** left playing all night, but the
+channels only had a 10-12 min rail. Built the long-form one; free tools only (edge-tts,
+synthesised bed, ffmpeg). Scripts: `scripts/make_bed.py`, `make_compilation.py`,
+`make_night_video.py`, `verify_night.py`, `test_night.py`; doc `docs/NIGHT-COMPILATION.md`.
+Measured on a 6-piece test set: **94.1 min, -14.5 LUFS, TP -3.1 dBFS, 1920x1080 tv,
+bed 20.5 dB under the voice**. 94 min of audio = ~12 min of synthesis (the cost is the
+script, not the render).
+- **`-stream_loop -1` + `-shortest` does not bound the output.** The endless video input
+  never ends, so `-shortest` never fires: output ran **322 s against a 257 s track** while
+  every gate still passed. An explicit `-t <audio dur>` is what bounds it. `verify_night.py`
+  now compares the two stream durations; `test_night.py` reproduces the defect. Same family
+  as the other "a gate that cannot see the defect" traps.
+- **A bed level is a ratio, not a number.** Free tracks differ by ~9 dB, so a fixed
+  multiplier buries the voice on one build and vanishes on the next. `mix()` measures the
+  real level of voice and bed (the verifier's own `ebur128`) and re-levels to 16 dB under.
+- **A synthesised loop must be whole-cycle.** Every LFO runs an integer number of cycles
+  across the clip, so sample 0 meets sample N; seam 0.00219 < the waveform's own max step
+  0.00246. `ffmpeg`'s `tremolo` cannot do this -- its rate floors at 0.1 Hz.
+- **A "good" fixture must look like the artifact.** First `test_night.py` used a pure tone;
+  it had no quiet window, so the bed-headroom gate was meaningless and the "good file" case
+  failed for the wrong reason. The fixture is now speech bursts + real silence, mastered.
