@@ -44,7 +44,11 @@ it. Renaming/branding a channel is not one of the three forbidden acts.
 - **Marketing plan is measured, not guessed** — `docs/MARKETING-STRATEGY.md` + `docs/CONTENT-CALENDAR.md`
   + `ops/market_probe.py`. Headlines: **ch2 must ship 90–180 min sleep compilations** (not 12-min
   talks), **ch4 grows on Shorts**, **ch1 titles must be feelings**. PR `ax-workspace#1` (merged).
-  **YouTube Analytics API is disabled on GCP project 888023422403 → needs K** to enable retention data.
+  **✅ YouTube Analytics API เปิดแล้ว 2026-11-01** (ak ทำผ่านรีโมทเดสก์ท็อป PC1) บน GCP project
+  888023422403 → retention/avg-view-%/traffic source วัดได้จริง (เดิม 403 disabled). ดูวิธีใน
+  `2026-11-01.md`. **ตัวเลข Analytics ที่วัดได้:** ch1 avg view % คลิปยาว ~33%, traffic มาจาก
+  YT_CHANNEL+SUBSCRIBER เป็นหลัก (ยังไม่มี search/recommend); ch2 มาจาก RELATED_VIDEO 197/247 = 80%.
+  ข้อมูลย้อนหลัง ch1 เริ่ม 2026-01-06. subs ยัง 8/11 — ยังไม่ถึง YPP.
 - **24/7 liveness watch lives in GitHub Actions**, not the pod: `ops/channel_monitor.py` +
   `.github/workflows/channel-monitor.yml`, every 30 min, read-only, commits a snapshot only on
   change. YouTube creds are **encrypted repo Actions secrets** (5). Verified: run succeeded and
@@ -94,8 +98,9 @@ it. Renaming/branding a channel is not one of the three forbidden acts.
   (quote ในค่า). session crash ค้าง `0.0.0.2` แก้ด้วย Stop-Process chrome + ลบ `Sessions\*`,
   `Current/Last Session|Tabs` + `--disable-session-crashed-bubble`. OCR ใช้ได้หลังลง
   `eng.traineddata`+`tha.traineddata` → `--lang tha+eng` อ่าน Studio ไทยได้.
-- **K ข้าม YouTube Analytics API (2026-11-01)** — Console บังคับ 2SV, บัญชี PC1 ไม่มีรหัสผ่าน;
-  ak วัดผลจาก public view count แทน. **Chrome PC1 ล็อกอินครบ 3 โปรไฟล์** (ch1/ch4/ch2).
+- **~~K ข้าม YouTube Analytics API (2026-11-01)~~** — **ล้าสมัยแล้ว: ak เปิดเองได้ 2026-11-01**
+  ผ่านรีโมทเดสก์ท็อป PC1 (ไม่ต้องใช้รหัส K). 2SV ไม่ได้บล็อกหน้า enableapi. Chrome PC1 ล็อกอิน
+  ครบ 3 โปรไฟล์ (ch1/ch4/ch2); **เจ้าของ project ax-content-lab = Profile 3 (farmmer.938)**.
 - **ch1 มีแค่ "คำเตือน" (warning) ไม่ใช่ strike** — ล้างด้วยฝึกอบรม 7 ข้อ.
 
 - **FB/TikTok monetization (วัดจากหน้าทางการ 2026-11-01):** TikTok Creator Rewards **ไทยไม่อยู่**ใน
