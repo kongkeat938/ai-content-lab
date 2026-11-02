@@ -192,3 +192,23 @@ Openverse music 20/min, 200/day; YouTube upload 1,600 of 10,000 units/day ->
 Gemini API 429s on free-tier input tokens; Gemini web locked to Flash-Lite.
 **Measure the artifact, not the request** -- a 1440x2560 request that returns
 0.59 MP is invisible until you open the file.
+
+## Channel audit 2026-11-02 (measured, `scripts/audit_channels.py`)
+Live: ch1 genx 37 vids / ch2 dharma 13 / ch4 kongkeat-story 14 (subs 10/11/6).
+Three real defects found, all from one class -- **a default that was silently wrong**:
+- **Shared token file made every channel answer as ch1.** `yt_auth.load_credentials`
+  reused the file on disk and never checked the channel; all channels share one
+  path. Fixed: check the file's channel first, pick the matching env token.
+  Only `publish_youtube.py` was safe (it calls `assert_channel`).
+- **13 live videos carried another channel's metadata.** `ax_make_episode.step_meta`
+  called `episode_meta.build()` with no channel -> ch2 default -> ch1/ch4 shipped
+  ch2's intro/headings/tags. ch1 `uKJCdBRZtBg` and ch4 `n0k_tUNXFtw` confirmed.
+  Fix on branch `fix/per-channel-meta` (ax-workspace), guard `ops/test_channel_meta.py`.
+- **No funnel from any video.** 33/40 Shorts link no video; 64/64 long-form link
+  neither sibling nor playlist. `scripts/promote_channels.py` added an idempotent
+  sibling+home block; applied live, verified tags 0 / category 0 changed, 61/64 now
+  carry it. 3 skipped (description already at YouTube's 5000-char limit -- hard cap).
+Open: wrong playlists on ch1/ch2 (e.g. `Lanternwild — Songs`, empty), ch2 duplicate
+title, 8 ch1 videos with no description. Detail: `docs/CHANNEL-AUDIT-2026-11-02.md`.
+Lesson: **a per-channel pipeline must never default the channel** -- make it required
+and raise, or every other channel gets the default's copy with no error.
