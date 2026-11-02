@@ -1,0 +1,85 @@
+{
+  "account_label": "AI1",
+  "measured_at": "2026-11-02T03:45Z",
+  "measurement_source": "YouTube Data API (views/subs/videos, live) + YouTube Analytics API (retention, through 2026-10-30 only)",
+  "channels": [
+    {
+      "channel_name": "ตาต้า GenX — ปรัชญาชีวิต",
+      "channel_url": "https://youtube.com/@tatagenxgeny",
+      "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+      "niche": "ปรัชญาชีวิต / ให้กำลังใจ (philosophy & life-lesson)",
+      "language": "th",
+      "subscribers": 8,
+      "total_videos": 34,
+      "uploads_per_week": 10,
+      "avg_views_last_10": 180,
+      "top_videos": [
+        {"title": "#1minute english today ep2", "views": 1404, "url": "https://youtu.be/07zfyXOmvZw"},
+        {"title": "#1minute english today ep8", "views": 1372, "url": "https://youtu.be/_Kqz7jpIzLQ"},
+        {"title": "ก้าวเล็ก ๆ ที่ไม่มีใครเห็น #Shorts", "views": 915, "url": "https://youtu.be/WA8g6zCiMmo"}
+      ],
+      "format": "mixed",
+      "monetized": false,
+      "monthly_revenue_thb": 0,
+      "retention_measured": {
+        "window": "2026-10-03..2026-10-30",
+        "average_view_percentage": 17.94,
+        "average_view_duration_sec": 81,
+        "subscribers_gained": 1,
+        "subscribers_lost": 1,
+        "best_video": {"title": "คนที่เก่งจริง ไม่ต้องพิสูจน์ — ปรัชญาชีวิต (11:27)", "avg_view_pct": 29.0, "avg_view_sec": 199},
+        "traffic_sources": {"YT_CHANNEL": 31, "SUBSCRIBER": 20, "YT_SEARCH": 5, "EXT_URL": 1}
+      },
+      "biggest_problem": "วิวไม่มาจากคนใหม่: 51/57 วิว (89%) มาจากหน้า channel เอง + subscriber, search แค่ 5. คลิปยาว 11 นาทีทำ retention ดีที่สุด (29%, 199 วิ) แต่ไม่มีคนเข้า — ปัญหาคือ packaging ไม่ใช่ตัวคลิป. วิวสูงสุด 2 คลิปเป็น #1minute english อายุ 524 วัน คนละแนว = ไม่ใช่สัญญาณ. Shorts เฉลี่ย 331 วิว vs คลิปยาว 46 วิว",
+      "needs_help_with": "packaging (หัวข้อ + thumbnail) ให้คลิปยาวปรัชญาที่ retention ดีอยู่แล้วมีคนกดเข้า และเส้นทางไปถึง YPP"
+    },
+    {
+      "channel_name": "Farmmer — ธรรมะก่อนนอน",
+      "channel_url": "https://youtube.com/@farmmer-n9t",
+      "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
+      "niche": "ธรรมะก่อนนอน / สมาธิช่วยการนอน (Buddhist teaching, sleep-aid)",
+      "language": "th",
+      "subscribers": 11,
+      "total_videos": 12,
+      "uploads_per_week": 7,
+      "avg_views_last_10": 392,
+      "top_videos": [
+        {"title": "นอนไม่หลับ? ลองทำท่านี้ 10 วินาที #Shorts", "views": 1288, "url": "https://youtu.be/oIsloIKa0J4"},
+        {"title": "เปิดทิ้งไว้ทั้งคืน หลับลึกถึงเช้า #Shorts", "views": 1235, "url": "https://youtu.be/oyrWvxdnImY"},
+        {"title": "ก่อนนอนคืนนี้ ลองปล่อยวางสักเรื่อง #Shorts", "views": 1080, "url": "https://youtu.be/wIpNM1gqPYc"}
+      ],
+      "format": "mixed",
+      "monetized": false,
+      "monthly_revenue_thb": 0,
+      "retention_measured": {
+        "window": "2026-10-03..2026-10-30",
+        "average_view_percentage": 8.37,
+        "average_view_duration_sec": 22,
+        "subscribers_gained": 2,
+        "subscribers_lost": 1,
+        "traffic_sources": {"RELATED_VIDEO": 197, "YT_CHANNEL": 32, "SUBSCRIBER": 7, "YT_SEARCH": 2}
+      },
+      "biggest_problem": "Shorts ทำงาน (3 คลิปเกิน 1,000 วิว) แต่ retention ต่ำ: ดูเฉลี่ย 22 วิ / 8.4% และ 197/247 วิว (80%) มาจาก RELATED_VIDEO = คนดูวนในช่องตัวเอง ไม่ได้ดึงคนใหม่. แปลงยอดดูเป็น subscriber ไม่ได้: ~3,900 วิว → 11 subs. คลิปยาว 6 คลิปเฉลี่ย 1 วิว",
+      "needs_help_with": "ทำ compilation คลิปยาว 60–180 นาที (แบบบทสวด/เสียงฝน) เพื่อกวาด watch time และออกแบบ CTA ให้ Shorts เก็บ subscriber"
+    }
+  ],
+  "other_platforms": {"facebook": "UNKNOWN", "tiktok": "UNKNOWN"},
+  "shopee": {"shop_url": "UNKNOWN", "category": "UNKNOWN"},
+  "assets": [
+    "คลิปเผยแพร่แล้ว 46 คลิปบน 2 ช่องของ AI1 (ch1 34 + ch2 12)",
+    "คลังคอนเทนต์ Shorts ไทย 193 ชิ้น (ops/content_bank.json) ≈ 37 วัน @ 5/วัน",
+    "ไปป์ไลน์เรนเดอร์ฟรี: edge-tts + ffmpeg (Shorts 1080x1920 + คลิปยาว 1920x1080)",
+    "OAuth token แยกต่อช่อง + GitHub Actions อัปโหลดอัตโนมัติ (โพสต์เอง 9 คลิป, 5,904 วิว = 59% ของวิวทั้งหมด)",
+    "YouTube Analytics API เปิดใช้งานแล้ว (2026-11-01) บน GCP project 888023422403 — วัด retention/avg-view-% ได้จริง (ข้อมูลล่าช้า ~2 วัน)"
+  ],
+  "goal_thb_per_month": "UNKNOWN",
+  "blockers": [
+    "ยังไม่ถึงเกณฑ์ YPP (1,000 subs + 4,000 ชม./12 เดือน หรือ 10M Shorts views/90 วัน) → รายได้ 0 บาท (25/1,000 = 2.5%)",
+    "วิวส่วนใหญ่มาจากในช่องเอง (ch1 89% channel+subscriber; ch2 80% related-video) → ไม่มีช่องทางดึงคนใหม่",
+    "คลิปยาวเกือบไม่มีคนดู (เฉลี่ย 35.7 วิว) แม้ retention บางคลิปจะดี → เป็นปัญหาที่ packaging",
+    "YouTube Analytics API ล่าช้า ~2 วัน → retention ของ Shorts ที่ลง 31 ต.ค.–1 พ.ย. ยังวัดไม่ได้ (915/1,235/871 วิว)",
+    "GitHub Actions cron ไม่ยิงตามกำหนดบน private repo ใหม่ → ต้อง dispatch ในเซสชัน",
+    "ไม่มีบัญชี Facebook/TikTok/Shopee จริง (ak สร้างบัญชีแทน K ไม่ได้ ต้องใช้ชื่อจริง+เบอร์)",
+    "ไม่มีเป้าหมายรายได้เป็นบาทที่บันทึกไว้ที่ไหนเลย → goal_thb_per_month = UNKNOWN"
+  ]
+}
