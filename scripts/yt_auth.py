@@ -124,10 +124,40 @@ def save_token(creds, channel: dict | None = None) -> str:
         # account can hand back a token for a different channel.
         doc["channel_id"] = channel.get("id")
         doc["channel_title"] = channel.get("snippet", {}).get("title")
+    else:
+        # A refresh rewrites the file; carry the channel stamp over, or the file
+        # stops being able to prove which channel it belongs to.
+        prev = _read_token_doc(TOKEN_PATH)
+        for key in ("channel_id", "channel_title"):
+            if prev.get(key):
+                doc[key] = prev[key]
     fd = os.open(TOKEN_PATH, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         json.dump(doc, fh, indent=2)
     return TOKEN_PATH
+
+
+def _read_token_doc(path: str) -> dict:
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def token_file_channel(path: str, client: tuple[str, str] | None = None) -> str | None:
+    """The channel a token file belongs to, or None when it cannot be read.
+
+    Uses the recorded stamp when present, otherwise asks Google which channel the
+    stored refresh token authorises. Returning None means "unknown", never "wrong",
+    so a file that cannot be checked is not rejected on a guess.
+    """
+    doc = _read_token_doc(path)
+    if doc.get("channel_id"):
+        return doc["channel_id"]
+    if client and doc.get("refresh_token"):
+        return _channel_id_for_refresh(doc["refresh_token"], client)
+    return None
 
 
 def channel_of(creds) -> dict | None:
@@ -303,15 +333,56 @@ def _require_google():
                  "  (google-api-python-client, google-auth-oauthlib)")
 
 
+def _match_env_token(expected_channel: str, client: tuple[str, str] | None) -> str | None:
+    """A token file in the env holding a refresh token for `expected_channel`.
+
+    The session may hold several channel tokens at once, so a shared token file
+    cannot simply be reused: whichever channel materialised it first would answer
+    for every later call. This writes the *matching* refresh token to the path.
+    """
+    candidates = env_token_candidates(slug_from_env())
+    if not candidates or not client:
+        return None
+    for refresh_token, source in candidates:
+        if _channel_id_for_refresh(refresh_token, client) != expected_channel:
+            continue
+        cid, secret = client
+        doc = {
+            "token": None, "refresh_token": refresh_token,
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "client_id": cid, "client_secret": secret, "scopes": None,
+            "channel_id": expected_channel,
+        }
+        os.makedirs(os.path.dirname(TOKEN_PATH), exist_ok=True)
+        fd = os.open(TOKEN_PATH, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump(doc, fh, indent=2)
+        print(f"using refresh token from {source} for channel {expected_channel}")
+        return TOKEN_PATH
+    return None
+
+
 def load_credentials(expected_channel: str | None = None):
     _require_google()
     from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
 
+    client = client_from_env()
+    if expected_channel and os.path.exists(TOKEN_PATH):
+        # A token file exists, but it may belong to a *different* channel: several
+        # channels share one path, and the first caller wins. Check before using
+        # it, or every channel after the first silently answers as the first.
+        have = token_file_channel(TOKEN_PATH, client)
+        if have != expected_channel:
+            print(f"token file is for {have or 'an unknown channel'}, "
+                  f"not {expected_channel}; re-materialising")
+            os.remove(TOKEN_PATH)
     if not os.path.exists(TOKEN_PATH):
         # No file, but the session may already hold a grant. Use it instead of
         # stopping to ask a human for a browser they do not need.
-        materialise_env_token(slug_from_env(), expected_channel)
+        if not (expected_channel
+                and _match_env_token(expected_channel, client)):
+            materialise_env_token(slug_from_env(), expected_channel)
     if not os.path.exists(TOKEN_PATH):
         sys.exit(f"No saved token at {TOKEN_PATH}. Run scripts/yt_auth.py first, "
                  f"or set YT_REFRESH_TOKEN + YT_CLIENT_ID + YT_CLIENT_SECRET.")
