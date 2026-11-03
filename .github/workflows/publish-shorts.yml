@@ -29,14 +29,15 @@ on:
 permissions:
   contents: write   # commit the manifest back with the new video ids
 
-concurrency:
-  group: publish-shorts-${{ matrix.channel }}
-  cancel-in-progress: false
-
 jobs:
   shorts:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    # matrix is not available to a workflow-level concurrency group, so the lock
+    # lives here, one per channel.
+    concurrency:
+      group: publish-shorts-${{ matrix.channel }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:

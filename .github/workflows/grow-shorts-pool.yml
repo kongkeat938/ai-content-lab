@@ -17,13 +17,21 @@ permissions:
   contents: write
 
 concurrency:
-  group: grow-shorts-pool
+  group: grow-shorts-pool-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   grow:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: dharma
+            scripts: content/ch2_shorts/scripts.json
+          - channel: genx
+            scripts: content/ch1_shorts/scripts.json
     steps:
       - uses: actions/checkout@v4
 
@@ -34,16 +42,17 @@ jobs:
       - name: Ask Gemini for new scripts
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python3 scripts/gen_short_scripts.py --count "${{ github.event.inputs.count || '6' }}"
+        run: python3 scripts/gen_short_scripts.py --channel "${{ matrix.channel }}" --count "${{ github.event.inputs.count || '6' }}"
 
       - name: Commit the new scripts
         run: |
-          if git diff --quiet content/ch2_shorts/scripts.json; then
+          if git diff --quiet "${{ matrix.scripts }}"; then
             echo "no new scripts"
             exit 0
           fi
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/ch2_shorts/scripts.json
-          git commit -m "content(ch2): grow the Shorts pool"
+          git add "${{ matrix.scripts }}"
+          git commit -m "content(${{ matrix.channel }}): grow the Shorts pool"
+          git pull --rebase --autostash origin main
           git push
