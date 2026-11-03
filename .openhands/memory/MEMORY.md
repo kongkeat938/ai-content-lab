@@ -47,6 +47,27 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
 - **This repo (story-video) is a different project from `ax-workspace`/yt938.** Canonical
   registry: `ops/ax_channels.json` in ax-workspace; `channels.json` here is generated.
 
+## 📉 Where the effort is wasted — measured 2026-11-03 (answers K's "is the load too heavy?")
+| ch | subs | vids | views | median last-10 | <50 views | posts/7d |
+|---|---|---|---|---|---|---|
+| ch1 genx | 12 | 38 | 3,494 | 18 | 6/10 | 10 |
+| ch2 dharma/farmmer | 13 | 24 | 4,218 | **86** | 3/10 | 20 |
+| ch3 aeris (cancelled) | 7 | 34 | 2,510 | **0** | **10/10** | 30 |
+| ch4 story | 7 | 17 | 2,748 | **103** | 3/10 | 13 |
+- **Channel count is not the quality problem** — ch4 (newest) has the best median. The waste is
+  **ch3** (median 0, 40% of output, now cancelled) and **long-form everywhere**: ch1 10–13 min → 1
+  view, ch2 90 min → 1 view, while every channel's top video is a **20–60 s Short**.
+- Rule of thumb: **do not build long-form until a Short on that topic proves an audience.**
+
+## ✉️ Reading the inbox — no app password needed (2026-11-03)
+- Chrome on PC1 has **4 profiles signed into all 4 accounts** (`Local State` info_cache:
+  Default=kongkeat.938 · Profile 1=aerismusic8 · Profile 2=kongkeat.p3 · Profile 3=farmmer.938).
+- Launch a profile at `https://mail.google.com/mail/feed/atom` → the unread list is plain XML;
+  Ctrl+A/Ctrl+C copies it. Automate with `C:\ax-work\_ax\readbox.ps1 -Profile "Profile 3" -Label ch2`.
+  The window title is the **URL** (`...feed/atom`), not "Gmail - Inbox for …" — match on `feed/atom`.
+- **Chrome cookies cannot be decrypted** (v20 App-Bound Encryption) — do not retry that path.
+- `scripts/mail_watch.py` writes mail detail to `~/mail_watch_private.json`, never the public repo.
+
 ## Standing rules
 - **AUDIO FIRST**; never claim to have watched/heard — measured numbers only.
 - **ak does not upload** — K reviews the first work of each channel.
