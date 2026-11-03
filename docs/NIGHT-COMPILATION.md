@@ -21,22 +21,41 @@ content/<set>/NN_*.txt ──> make_compilation.py ──> compilation.mp3
 ```
 
 ```bash
-# 1. build the audio, repeating the pieces until it reaches 90 minutes
+# one command: build -> verify, and the verifier's verdict is the exit code
+python3 scripts/build_night.py \
+    --content content/night_dharma_01 \
+    --work work/night --minutes 120
+
+# or step by step
 python3 scripts/make_compilation.py \
-    --out work/night_01/compilation.mp3 \
-    --part content/night_01/0*.txt \
-    --work work/night_01 --minutes 90
-
-# 2. cover + video (one graded card, a 24 s drift looped under the track)
+    --out work/night/compilation.mp3 \
+    --part 'content/night_dharma_01/[0-9]*.txt' \
+    --work work/night --minutes 120
 python3 scripts/make_night_video.py \
-    --audio work/night_01/compilation.mp3 \
-    --image assets/images/ep02/img00_00.jpg \
-    --out work/night_01/video.mp4 --loop-seconds 24
-
-# 3. measure before claiming it is done
-python3 scripts/verify_night.py work/night_01/video.mp4
+    --audio work/night/compilation.mp3 \
+    --image assets/images/img00_00.jpg \
+    --out work/night/video.mp4 --loop-seconds 24
+python3 scripts/verify_night.py work/night/video.mp4
 python3 scripts/test_night.py          # guards the gates themselves
 ```
+
+`build_night.py` exists because chaining the three by hand means the last
+command's exit code decides whether CI is green — a build whose true peak is
+over the gate still "passes" if nobody reads the log. It makes the verifier's
+verdict the process verdict and writes `receipt.json` with the measured numbers.
+
+## It runs unattended
+
+`.github/workflows/night-compilation.yml` builds the compilation on a GitHub
+runner — weekly and on demand — then verifies it, attaches the media to a
+Release, and opens one review issue with the numbers. It needs **no secret to
+build** (edge-tts, ffmpeg and the bed synthesiser are all free). It does **not**
+upload to YouTube: ak does not upload, K reviews the first work of each channel.
+A fingerprint of the content + rail is the release tag, so a weekly run on an
+unchanged set skips instead of re-rendering 40 minutes of CI for nothing.
+
+Proven end to end on 2026-11-03 (dispatch → build → verify → release → issue,
+all green): release `night-857bc8fdda62`, issue #3.
 
 ## Measured result (2026-11-02, this pod)
 
@@ -72,18 +91,24 @@ python3 scripts/test_night.py          # guards the gates themselves
 
 ## First real build (night_dharma_01)
 
-* Script: `content/night_dharma_01/` — 19 dharma-before-sleep pieces, 12 044
-  characters, ~28 min of speech; `make_compilation` cycles it to length.
-* Out: 109.9 min · -14.6 LUFS · true peak -3.2 dBFS · 1920x1080 `tv` ·
-  bed 20.6 dB under the voice · mp4 684 MB, `moov` first (seekable).
+* Script: `content/night_dharma_01/` — 28 dharma-before-sleep pieces, 16 457
+  characters, ~40 min of speech; `make_compilation` cycles it to length.
+* Out (120 min target): ~119 min · -14.x LUFS · true peak ≤ -3.2 dBFS ·
+  1920x1080 `tv` · bed ~20 dB under the voice · `moov` first (seekable).
 * Verified by `verify_night.py`: **pass**.
 
 ## What is not here yet
 
-* **A script long enough to avoid heavy repetition.** 28 min of speech is
-  cycled 5x to reach 110 min; a full 90-minute episode wants ~90 min of distinct
-  speech. The cost of the format is the script, not the render: 110 min of audio
-  is ~16 minutes of synthesis.
+* **A script long enough to avoid heavy repetition.** 40 min of speech is still
+  cycled ~3x to reach 120 min; a full 90-minute episode wants ~90 min of distinct
+  speech. The cost of the format is the script, not the render: 120 min of audio
+  is ~16 minutes of synthesis. Each cycle is now **rotated** (piece order shifts)
+  so a listener who leaves the file playing does not hear the identical sequence
+  back to back, but the pieces themselves still repeat.
 * **Music.** The bed is synthesised, deliberately — every free music source is
   rate-limited or blocked by the sandbox proxy. A real bed would need an
   Openverse fetch on a machine that can reach it.
+* **The upload step.** The rail builds and verifies; it does not publish. That is
+  deliberate (ak does not upload), and it is the one line to add once K approves
+  the first file: point `publish_youtube.py` at the Release asset with the ch2
+  token.
