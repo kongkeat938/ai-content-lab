@@ -21,9 +21,11 @@ on:
         description: "true to only list what would be set"
         default: "false"
   schedule:
-    # The API's daily quota resets at midnight Pacific (08:00 UTC). Retry a few
-    # times after that so a single missed reset does not cost a whole day.
-    - cron: "7 8,9,10,11 * * *"
+    # The API's daily quota resets at midnight Pacific (08:00 UTC). GitHub's
+    # scheduler is unreliable in this repo (no schedule event has ever fired),
+    # so run often: a tick that lands while quota is spent just reports
+    # "deferred", and the first tick after the reset installs everything.
+    - cron: "*/20 * * * *"
   push:
     paths:
       - "content/ch2_thumbnails.json"
