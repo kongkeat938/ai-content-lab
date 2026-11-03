@@ -130,6 +130,15 @@ def main() -> int:
     if not scripts:
         sys.exit(f"no scripts at {SCRIPTS}")
 
+    # If a previous run already hit the channel's daily upload ceiling, do not
+    # build anything -- the upload cannot succeed until the reset, and a build
+    # here costs minutes for nothing.
+    lim = load(LIMIT_FILE, {})
+    if lim.get("reset_at"):
+        if datetime.fromisoformat(lim["reset_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
+            print(f"channel upload limit recorded; resets {lim['reset_at']} -- nothing to do")
+            return 0
+
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
     if args.per_run:
         todo = todo[:args.per_run]
