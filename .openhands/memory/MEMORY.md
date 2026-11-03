@@ -43,25 +43,28 @@ in `topics/*.md` and the daily logs.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## 🌐 No-browser path — YouTube Data API from CI (2026-11-03)
+- **Studio UI blocked by phone verification + pod recycles kill the browser login → do
+  NOT ask K to log in. Use the Data API.** Creds are repo secrets; a GitHub Actions job
+  runs it unattended. Detail: `topics/04-no-browser-api-path.md`.
+- Rail: `scripts/set_thumbnails.py` + `content/ch2_thumbnails.json` +
+  `.github/workflows/set-thumbnails.yml` (08:07/09:07/10:07/11:07 UTC). Quota =
+  deferral, not failure; resets 08:00 UTC. Proven live (auth + call reach YouTube).
+- Do NOT trust old video-id lists — `9bytRcx7SaY` (404 everywhere) and `Mv0jl7KhxIE`
+  are not live. Pod IP gets throttled by YouTube after a few fetches.
+
 ## 🖼️ Image/music quota — measured 2026-10-31 (NOT an account-count problem)
 K ordered: "ถ้า Gemini/Flow ลิมิตเต็ม ให้สมัครเมล์ใหม่สร้างบัญชีเลย". Measured first — the
-limit is **service-wide**, so new accounts would not help and would risk banning the real
+limit is **service-wide**, so new accounts would not help and risk banning the real
 channels (Google forbids multi-account evasion; repo rule in `PROMPT-for-chatgpt-remote.md`
 says "ห้ามสลับบัญชี เด็ดขาด"). **No accounts created.**
-- Gemini API `$GEMINI_API_KEY`: key is valid (200) but **every image model → 429
-  `limit: 0`** on free tier (`gemini-2.5-flash-image`, `gemini-3.1-flash-image`, …) → a new
-  GCP project also gets 0.
-- Pollinations: `model=flux` → **200 (real 97 KB JPEG)** but retries → **402 "The Classic API
-  is at its limit right now"** = service-wide cap, not per-IP.
-- **The only working image/music path = drive the already-signed-in PC1 browser**
-  (`ops/gemini_batch.py`, `ops/flowmusic_batch.py`; PC1 `localhost:60000` → 200; proven by the
-  ch2 image batch on 2026-10-27). Shorts do NOT need images — `short_maker.py` draws its own.
-  **A pod-local alternative now exists:** `scripts/start_novnc.sh` (2026-11-02) starts a
-  chromium desktop on the pod reachable at the work-2 URL, with CDP on 9222 so ak can drive
-  it. Not wired into any channel yet.
-- Recorded as a K decision (`docs/NEEDS-K.md` #6) with 3 safe options: PC1 session / paid
-  billing (needs K) / retry Pollinations off-peak. Planning brief for ChatGPT:
-  `docs/PLAN-BRIEF-for-chatgpt.md`.
+- Gemini API `$GEMINI_API_KEY`: valid (200) but **every image model → 429 `limit: 0`** on
+  free tier → a new GCP project also gets 0. Pollinations `model=flux` → 200 but retries →
+  **402 service-wide cap**. **Only working image/music path = drive the signed-in PC1
+  browser** (`ops/gemini_batch.py`, `ops/flowmusic_batch.py`). Shorts do NOT need images.
+  Pod-local alt: `scripts/start_novnc.sh` (chromium + CDP on 9222).
+- K decision recorded (`docs/NEEDS-K.md` #6) with 3 safe options: PC1 session / paid
+  billing (needs K) / retry Pollinations off-peak. Brief: `docs/PLAN-BRIEF-for-chatgpt.md`.
 
 ## 🔊 Free tools that WORK (measured 2026-10-31, `ax-workspace/docs/FREE-TOOLS-MEASURED.md`)
 - **gTTS** (Google Translate TTS, free, no key) → **female Thai voice**, 5/5; it renders the
