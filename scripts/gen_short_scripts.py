@@ -38,6 +38,13 @@ CHANNELS = {
             "ผัดวันประกันพรุ่งแล้วนอนไม่สบายใจ", "ร่างกายเกร็งเพราะความเครียดสะสม",
             "อยากหลับแต่สมองไม่ยอมหยุด", "กลัวตื่นมาสาย", "ไม่กล้าปล่อยวางเรื่องที่คุมไม่ได้",
             "คิดมากเรื่องสุขภาพ", "รู้สึกผิดกับคนในครอบครัว", "ทนเก็บความน้อยใจไว้คนเดียว",
+            "ตื่นมาแล้วยังเหนื่อย", "ใจสั่นตอนตีสาม", "คิดถึงคนที่จากไป", "รู้สึกผิดที่ได้พักผ่อน",
+            "ทำงานหนักจนหลับไม่สนิท", "เปรียบเทียบชีวิตกับคนอื่นตอนดึก", "กลัวแก่ตัว",
+            "ความโกรธที่เก็บไว้ทั้งวัน", "กังวลแบบไม่มีเหตุผล", "รู้สึกตัวคนเดียวในโลก",
+            "ฝันร้ายซ้ำ ๆ", "นอนดึกเพราะมือถือ", "ความเครียดสะสมในร่างกาย",
+            "อยากหนีไปเริ่มใหม่", "กลัวตัดสินใจผิด", "รู้สึกว่าตัวเองไม่พอ",
+            "ต้องการการยอมรับจากคนอื่น", "คิดถึงบ้านและพ่อแม่", "เหงาในคืนวันหยุด",
+            "กลัวว่าพรุ่งนี้จะแย่กว่าเดิม", "ไม่กล้าบอกใครว่าไม่ไหว",
         ],
         "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "Farmmer — ธรรมะก่อนนอน"
 กลุ่มเป้าหมาย: คนไทยที่นอนไม่หลับ เครียด คิดมากตอนกลางคืน
@@ -46,11 +53,13 @@ CHANNELS = {
 (ห้ามซ้ำกับที่เขียนไปแล้ว: {done})
 
 แต่ละคลิปเป็น JSON object:
-{{"hook":"ประโยคเปิด 1 บรรทัด เป็นคำถามจี้ใจคนนอนไม่หลับ (ไม่เกิน 12 คำ)","lines":["...","...","...","...","...","...","...","...","..."],"cta":"ประโยคปิดชวนติดตาม 1 บรรทัด"}}
+{{"hook":"ประโยคเปิด 1 บรรทัด (ไม่เกิน 12 คำ)","lines":["...","...","...","...","...","...","...","...","..."],"cta":"ประโยคปิดชวนติดตาม 1 บรรทัด"}}
 
 กติกา:
 - lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
-- hook ต้องเป็นคำถามหรือประโยคที่คนนอนไม่หลับอ่านแล้วรู้สึกว่า "นี่คือฉัน"
+- hook ต้องมี "สิ่งที่ทำได้คืนนี้" เป็นรูปธรรม เช่น ชวนทำท่านี้ เปิดคลิปทิ้งไว้ ลองหายใจแบบหนึ่ง
+  ห้ามเป็นแค่การทวนปัญหาว่านอนไม่หลับ (ข้อมูลจริง: ฮุกที่บอกให้ลงมือทำได้ 1000+ วิว
+  ฮุกที่แค่ทวนปัญหาได้ไม่ถึง 300)
 - เนื้อหาธรรมะใช้ได้จริง มี "หนึ่งสิ่งที่ทำได้จริง" แล้วทิ้งปมให้ไปดูคลิปยาว
 - ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
 - ไม่มี emoji ไม่มี markdown
@@ -67,6 +76,15 @@ CHANNELS = {
             "ความหมายของการมีชีวิตอยู่", "การยอมรับความไม่สมบูรณ์แบบ",
             "การไม่ต้องอธิบายตัวเองให้ทุกคนเข้าใจ", "ความกลัวที่ซ่อนอยู่หลังความโกรธ",
             "บทเรียนจากความล้มเหลว", "การอยู่กับปัจจุบัน",
+            "การยอมรับว่าตัวเองก็เหนื่อย", "ความสัมพันธ์ที่ต้องปล่อยไป",
+            "การไม่เปรียบเทียบตัวเองกับคนอื่น", "ความสำเร็จที่ไม่ได้ทำให้มีความสุข",
+            "การดูแลตัวเองก่อนดูแลคนอื่น", "การขอโทษตัวเอง",
+            "ความกล้าที่จะปฏิเสธ", "การอยู่คนเดียวอย่างมีความสุข",
+            "การยอมรับความแก่มากขึ้น", "ความหมายของการให้อภัยคนที่ทำร้ายเรา",
+            "การไม่ต้องพิสูจน์ตัวเอง", "ความสงบที่หาได้ในใจ",
+            "การปล่อยความโกรธ", "การยอมรับสิ่งที่เปลี่ยนแปลงไม่ได้",
+            "การเห็นคุณค่าในสิ่งเล็ก ๆ", "ความกล้าที่จะเริ่มใหม่",
+            "การไม่จมอยู่กับอดีต", "ความสุขที่ไม่ต้องรอใคร",
         ],
         "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "ตาต้า GenX — ปรัชญาชีวิต"
 กลุ่มเป้าหมาย: คนไทยวัยผู้ใหญ่ (Gen X) ที่เหนื่อยกับชีวิต คิดมาก กำลังหาความหมาย
@@ -116,6 +134,35 @@ def valid(s: dict) -> bool:
     return not re.search(r"[0-9๐-๙]", joined)
 
 
+def _overlaps(angle: str, text: str, floor: int = 3) -> bool:
+    """True if a run of `floor`+ characters from the angle already appears in text.
+
+    Thai is written without spaces, so a word list is the wrong tool; a shared
+    3-character run is enough to call two subjects the same.
+    """
+    a = re.sub(r"\s+", "", angle)
+    t = re.sub(r"\s+", "", text)
+    return any(a[i:i + floor] in t for i in range(len(a) - floor + 1))
+
+
+def ask_angles(key: str, channel: str, seen: str, want: int) -> list[str]:
+    """Ask Gemini for new one-line subjects when the curated list is used up.
+
+    Without this the pool starves the moment every curated angle is taken: the
+    dharma list was fully used by 2026-11-03 and the generator would have had
+    nothing to write about.
+    """
+    who = {"dharma": "คนไทยที่นอนไม่หลับ เครียด คิดมากตอนกลางคืน",
+           "genx": "คนไทยวัยผู้ใหญ่ (Gen X) ที่เหนื่อยกับชีวิตและกำลังหาความหมาย"}[channel]
+    prompt = (f"กลุ่มเป้าหมาย: {who}\n"
+              f"เสนอหัวข้อ Shorts ใหม่ {want} หัวข้อ ที่ยังไม่ซ้ำกับหัวข้อที่ใช้แล้ว\n"
+              f"หัวข้อที่ใช้แล้ว (ห้ามซ้ำ): {seen[-2000:]}\n"
+              "แต่ละหัวข้อเป็นวลีสั้น 4-10 คำ เกี่ยวกับชีวิต ความคิด ความรู้สึก\n"
+              "ตอบเป็น JSON array ของสตริงเท่านั้น")
+    out = ask(key, prompt)
+    return [x for x in out if isinstance(x, str) and x.strip()]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
@@ -134,9 +181,19 @@ def main() -> int:
         with open(scripts_path, encoding="utf-8") as fh:
             existing = json.load(fh)
     done = [s["hook"] for s in existing]
+    # An angle was compared to a hook, which never matches, so the same subjects
+    # came back every call (measured 2026-11-03: five of the dharma hooks were the
+    # work-tomorrow angle). Thai has no word spaces, so compare character bigrams.
+    seen = " ".join(done)
+    angles = [a for a in cfg["angles"] if not _overlaps(a, seen)]
+    if not angles:
+        # Every curated subject is used; ask for more rather than repeat them.
+        angles = ask_angles(key, args.channel, seen, max(args.count, 8))
+        print(f"  curated angles exhausted; Gemini proposed {len(angles)} new ones")
+    if not angles:
+        sys.exit("no fresh angles available and Gemini returned none")
 
-    angles = [a for a in cfg["angles"] if a not in done][:max(args.count, 4)]
-    fresh = ask(key, cfg["prompt"].format(count=args.count, angles=", ".join(angles) or "เรื่องใหม่",
+    fresh = ask(key, cfg["prompt"].format(count=args.count, angles=", ".join(angles[:args.count + 4]),
                                           done="; ".join(done[-12:]) or "ไม่มี"))
     fresh = [s for s in fresh if valid(s)]
 
