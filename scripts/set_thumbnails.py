@@ -127,7 +127,7 @@ def main() -> int:
             print(f"  {vid}: {'custom' if url else 'auto frame (no maxres)'} {url[:70]}")
         return 0
 
-    ok = failed = 0
+    ok = failed = deferred = 0
     for vid, rel in items.items():
         path = rel if os.path.isabs(rel) else os.path.join(ROOT, rel)
         if not os.path.exists(path):
@@ -135,12 +135,19 @@ def main() -> int:
         if args.dry_run:
             print(f"  {vid}: would set {rel} ({os.path.getsize(path)//1024} KB)"); continue
         good, msg = set_thumbnail(vid, path, token)
-        print(f"  {vid}: {'OK' if good else 'FAIL'} ({msg})")
-        ok += good; failed += not good
+        if good:
+            print(f"  {vid}: OK")
+        elif "quotaExceeded" in msg:
+            # The daily quota resets at midnight Pacific; the schedule retries.
+            print(f"  {vid}: deferred (quota resets 08:00 UTC)"); deferred += 1
+        else:
+            print(f"  {vid}: FAIL ({msg})"); failed += 1
+        ok += good
 
     if args.dry_run:
         return 0
-    print(f"done: {ok} set, {failed} failed")
+    print(f"done: {ok} set, {deferred} deferred, {failed} failed")
+    # A quota deferral is not a defect -- the next scheduled run finishes it.
     return 1 if failed else 0
 
 
