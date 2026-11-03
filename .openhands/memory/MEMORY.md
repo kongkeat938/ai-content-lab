@@ -22,6 +22,11 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
   the ledger **inside** the script the moment an id returns, or a failed run re-uploads.
 - **ch2 daily upload ceiling is real:** `uploadLimitExceeded` after ~7-8 uploads/day.
 - Gemini text = `gemini-3.5-flash-lite` only (2.5/2.0-flash → 404). Plan: `docs/REVENUE-PLAN.md`.
+- **GitHub `schedule` NEVER fires here** (`event=schedule` total 0) → automation = **watchdog**
+  (self-chaining) → **foreman** (dispatches what is due, idempotent) → rails; `health.py` →
+  `docs/HEALTH.md`. Kill switch `content/STOP`. Docs: `docs/MONITORING.md`.
+- **ch2 daily upload cap ~7-8/day** (`uploadLimitExceeded`); recorded in `content/upload_limit.json`.
+  `thumbnails.set` 429s after ~3 in a burst → use `--skip-existing`.
 
 ## 🗂️ TOPIC FILES
 - `topics/00-pipeline-and-channel-facts.md` — the 3 channels, registry, yt938-1, view data, image ceilings.
