@@ -73,6 +73,23 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
 - **ak does not upload** — K reviews the first work of each channel.
 - **Do NOT invent stories** — build from K's own material in `C:\ax-work\library\<channel>\`.
 - A uniform failure = a broken measurement; a scattered one = a real defect.
+- **The leak on every channel is the missing next step, not the content.** Shorts are *shown*;
+  long-form must *win a click*. ch2 sent 9/14 Shorts onward, ch1 2/16, ch4 3/11. Fix doors and
+  hooks before making more clips. Plan + numbers: `docs/CHANNEL-OVERHAUL.md`.
+
+## Channel overhaul (2026-11-03, pushed `ed345b5`)
+- Trailer set on all 3 channels + playlists built (`scripts/channel_overhaul.py`, idempotent,
+  `--dry-run`). 27 dead-end Shorts given a playlist+home link (`scripts/short_doors.py`).
+- One metric to optimise: **Viewed vs Swiped Away** (target ≥60% ch1 / ≥65% ch2 / ≥70% ch4).
+  Like-rate is the only *voluntary* signal (ch4 1.99% = best content of the three).
+- Advisors agree: do NOT scale output on a losing hook; no quote-only Shorts; no unpaid open
+  loops; do NOT delete the old evidence clips; hashtags are not a strategy.
+- **Data API throws transient 409 SERVICE_UNAVAILABLE** under bursts — back off and retry.
+- **`scripts/pc1_mcp.py`** drives PC1 over raw MCP when the `pc1-winremote_*` tools vanish
+  (endpoint in `PC1_MCP_URL`, kept out of the public repo). **chatgpt.com is Cloudflare-blocked
+  from the pod**; ChatGPT works only via PC1's signed-in Chrome. Gemini API works from the pod.
+- **Push:** use `KONGKEAT_GH_TOKEN`; the `ghu_` URL in `origin` is expired and prompts.
+
 
 ## yt938-1 status — measured live 2026-10-31 14:45Z
 - **ch1** ตาต้า GenX Shop 33 vids / 6 subs · **ch2** Farmmer 10 vids / 7 subs · **ch4**
