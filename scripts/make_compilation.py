@@ -87,6 +87,10 @@ def sequence_to_length(parts: list, target_seconds: float) -> tuple:
     defect -- but a whole cycle must not butt straight onto itself. The gap
     between cycles is the same silence file, sized separately.
 
+    Each cycle is rotated by its index, so a listener who leaves the file playing
+    does not hear the identical sequence back to back; the pieces and the total
+    length are unchanged, only their order shifts.
+
     Returns (file list, cycles).
     """
     if not parts or target_seconds <= 0:
@@ -95,7 +99,12 @@ def sequence_to_length(parts: list, target_seconds: float) -> tuple:
     if one <= 0:
         return list(parts), 1
     cycles = max(1, int(target_seconds // one) + (1 if target_seconds % one else 0))
-    return list(parts) * cycles, cycles
+    n = len(parts)
+    seq = []
+    for c in range(cycles):
+        r = c % n
+        seq.extend(parts[r:] + parts[:r])
+    return seq, cycles
 
 
 def bed_for(seconds: float, work: str) -> str:

@@ -94,6 +94,26 @@ def main() -> int:
         check("cycles chosen to reach 45s", cycles == 3, f"cycles={cycles}")
         check("list long enough", len(seq) == cycles * 3)
 
+        print("consecutive cycles are rotated, not identical")
+        # Four real 6 s files = 24 s per cycle; ask for 72 s so it needs 3 cycles.
+        four = []
+        for i in range(4):
+            p = os.path.join(tmp, f"p{i}.mp3")
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
+                            "-i", "sine=frequency=220:duration=6", p], check=True)
+            four.append(p)
+        seq2, cyc2 = make_compilation.sequence_to_length(four, 72.0)
+        cycles_of = [seq2[i * 4:(i + 1) * 4] for i in range(cyc2)]
+        check("three cycles for 72 s", cyc2 == 3, f"cycles={cyc2}")
+        check("each cycle is the same multiset", all(sorted(c) == sorted(four)
+                                                     for c in cycles_of),
+              f"{cycles_of}")
+        check("no cycle repeats the previous order",
+              all(cycles_of[i] != cycles_of[i - 1] for i in range(1, len(cycles_of))),
+              f"{cycles_of}")
+        check("no piece is followed by itself across a cycle seam",
+              all(seq2[i] != seq2[i + 1] for i in range(len(seq2) - 1)), "adjacent repeat")
+
         print("a correctly mastered build passes the verifier")
         voice = os.path.join(tmp, "voice.wav")
         make_voice(voice)
