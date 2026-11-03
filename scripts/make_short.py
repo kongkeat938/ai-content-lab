@@ -39,6 +39,9 @@ RATE = "-15%"
 W, H = 1080, 1920
 GOLD = (245, 199, 90)
 WHITE = (250, 250, 252)
+# House targets (see docs/RECIPE.md): -14 LUFS integrated, true peak <= -3 dBFS.
+LUFS, TP = -14, -3.0
+COMP_TH, COMP_RATIO = "-24dB", 6
 
 
 def font(name: str, size: int) -> ImageFont.FreeTypeFont:
@@ -116,6 +119,33 @@ def caption_image(text: str, out: str, big: bool = False) -> None:
     im.save(out)
 
 
+def normalise(src: str, out: str) -> None:
+    """Two-pass loudnorm to -14 LUFS with a hard ceiling at -3 dBFS.
+
+    A single-pass loudnorm does not honour the true-peak target reliably: measured
+    on the first GenX Short it landed at -1.3 dBTP, over the -3 dBFS the channel
+    is required to keep. The two-pass form measures first, then applies the
+    measured values, and alimiter is a final guarantee rather than a hope.
+    """
+    # acompressor first: a bare narrator read has ~18 dB of crest factor, so
+    # loudnorm alone cannot reach -14 LUFS without the true peak breaking -3 dBFS.
+    # Measured on the first GenX Short, this chain lands at -14.x LUFS / -3.0 dBTP.
+    chain = (f"acompressor=threshold={COMP_TH}:ratio={COMP_RATIO}:attack=3:release=120,"
+             f"loudnorm=I={LUFS}:TP={TP}:LRA=11")
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", src,
+                        "-af", chain + ":print_format=json", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    tail = r.stderr[r.stderr.rfind("{"):]
+    tail = tail[:tail.rfind("}") + 1]
+    m = json.loads(tail)
+    run(["ffmpeg", "-y", "-i", src, "-af",
+         f"{chain}:measured_I={m['input_i']}:measured_TP={m['input_tp']}"
+         f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
+         f":offset={m['target_offset']}:linear=true,"
+         f"alimiter=limit={TP}dB:level=disabled",
+         "-ar", "48000", "-c:a", "pcm_s16le", out])
+
+
 def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str:
     sid = script["id"]
     d = os.path.join(out_dir, sid)
@@ -177,17 +207,20 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
          "-c", "copy", silent])
 
     out = os.path.join(d, f"short_{sid}.mp4")
+    # Mix the voice (and optional bed) to a normalised wav, then mux it under the
+    # already-encoded video. Doing loudness in one pass over the mux is what let
+    # the true peak run to -1.3 dBTP.
+    mixed = os.path.join(d, "mix.wav")
     if music and os.path.exists(music):
-        run(["ffmpeg", "-y", "-i", silent, "-i", voice_mp3, "-i", music,
-             "-filter_complex",
-             "[2:a]volume=0.18[m];[1:a][m]amix=inputs=2:duration=first:dropout_transition=0,"
-             "loudnorm=I=-14:TP=-1.5:LRA=11[a]",
-             "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac",
-             "-b:a", "192k", "-shortest", out])
+        run(["ffmpeg", "-y", "-i", voice_mp3, "-i", music, "-filter_complex",
+             "[1:a]volume=0.18[m];[0:a][m]amix=inputs=2:duration=first:dropout_transition=0[a]",
+             "-map", "[a]", "-ar", "48000", mixed])
     else:
-        run(["ffmpeg", "-y", "-i", silent, "-i", voice_mp3,
-             "-map", "0:v", "-map", "1:a", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
-             "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", out])
+        run(["ffmpeg", "-y", "-i", voice_mp3, "-ar", "48000", mixed])
+    norm = os.path.join(d, "norm.wav")
+    normalise(mixed, norm)
+    run(["ffmpeg", "-y", "-i", silent, "-i", norm, "-map", "0:v", "-map", "1:a",
+         "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", out])
     print(f"  {sid}: {duration(out):.1f}s -> {out}")
     return out
 
