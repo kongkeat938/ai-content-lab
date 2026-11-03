@@ -111,7 +111,7 @@ def main() -> int:
         card = os.path.join(tmp, "card.jpg")
         make_card(card)
         good = os.path.join(tmp, "good.mp4")
-        make_night_video.build(mastered, card, good, "", 3.0, cover=card)
+        info = make_night_video.build(mastered, card, good, "", 3.0, cover=card)
         rc, out = run_verify(good)
         check("verifier accepts a good file", rc == 0, f"exit={rc}\n{out}")
 
@@ -125,6 +125,29 @@ def main() -> int:
         rc, out = run_verify(bad)
         check("verifier rejects the length mismatch",
               rc == 1 and "length differ" in out, f"exit={rc}")
+
+        print("an AAC pass that overshoots the mp3 is corrected")
+        # The mp3 is mastered to TP<=-3.0, but the AAC encode the video needs
+        # overshoots it. The rail must measure the finished file, so the build
+        # reports the peak it actually shipped.
+        check("build records the finished true peak at or under the gate",
+              info["true_peak_dbfs"] <= -3.0,
+              f"peak={info['true_peak_dbfs']}")
+
+        # ...and the correction loop can only work if the measurement responds
+        # to a gain change. Two AAC encodes of the same hot source, 2 dB apart.
+        src = os.path.join(tmp, "hot.wav")
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
+                        "-i", "sine=frequency=440:duration=4,volume=0.95", src],
+                       check=True)
+        a, b = os.path.join(tmp, "hot_a.m4a"), os.path.join(tmp, "hot_b.m4a")
+        for dst, g in ((a, 0.0), (b, -2.0)):
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", src,
+                            "-af", f"volume={g}dB", "-c:a", "aac", "-b:a", "192k",
+                            dst], check=True)
+        pa, pb = make_night_video.true_peak(a), make_night_video.true_peak(b)
+        check("a 2 dB gain cut lowers the measured true peak",
+              pb < pa - 1.5, f"{pa:.2f} -> {pb:.2f} dBFS")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 

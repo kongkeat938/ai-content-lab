@@ -63,13 +63,27 @@ python3 scripts/test_night.py          # guards the gates themselves
    number of cycles across the clip, so sample 0 meets sample N and the seam is
    smaller than the waveform's own step-to-step change (measured 0.00219 vs
    0.00246). `ffmpeg`'s `tremolo` cannot do this — its rate floors at 0.1 Hz.
+4. **The mp3's true peak is not the video's.** The track is mastered to
+   `TP<=-3.0`, but the AAC pass the video needs overshoots it (measured -2.9,
+   verified -3.2 in the shipped file). `make_night_video.build()` now measures
+   the finished mp4 and re-encodes the audio lower until the gate holds, and
+   records `true_peak_dbfs` in the `.info.json`. A rail that measures the
+   intermediate and not the artifact ships a file that fails its own gate.
+
+## First real build (night_dharma_01)
+
+* Script: `content/night_dharma_01/` — 19 dharma-before-sleep pieces, 12 044
+  characters, ~28 min of speech; `make_compilation` cycles it to length.
+* Out: 109.9 min · -14.6 LUFS · true peak -3.2 dBFS · 1920x1080 `tv` ·
+  bed 20.6 dB under the voice · mp4 684 MB, `moov` first (seekable).
+* Verified by `verify_night.py`: **pass**.
 
 ## What is not here yet
 
-* **A real 90-minute script.** The rail is proven, but the pieces in
-  `content/night_01/` are six short breathing/relaxation scripts written as a
-  test set, not the dharma talk the channel needs. The cost of the format is the
-  script, not the render: 94 min of audio is ~12 minutes of synthesis.
+* **A script long enough to avoid heavy repetition.** 28 min of speech is
+  cycled 5x to reach 110 min; a full 90-minute episode wants ~90 min of distinct
+  speech. The cost of the format is the script, not the render: 110 min of audio
+  is ~16 minutes of synthesis.
 * **Music.** The bed is synthesised, deliberately — every free music source is
   rate-limited or blocked by the sandbox proxy. A real bed would need an
   Openverse fetch on a machine that can reach it.

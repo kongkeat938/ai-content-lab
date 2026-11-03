@@ -56,6 +56,9 @@ says "ห้ามสลับบัญชี เด็ดขาด"). **No acco
 - **The only working image/music path = drive the already-signed-in PC1 browser**
   (`ops/gemini_batch.py`, `ops/flowmusic_batch.py`; PC1 `localhost:60000` → 200; proven by the
   ch2 image batch on 2026-10-27). Shorts do NOT need images — `short_maker.py` draws its own.
+  **A pod-local alternative now exists:** `scripts/start_novnc.sh` (2026-11-02) starts a
+  chromium desktop on the pod reachable at the work-2 URL, with CDP on 9222 so ak can drive
+  it. Not wired into any channel yet.
 - Recorded as a K decision (`docs/NEEDS-K.md` #6) with 3 safe options: PC1 session / paid
   billing (needs K) / retry Pollinations off-peak. Planning brief for ChatGPT:
   `docs/PLAN-BRIEF-for-chatgpt.md`.
