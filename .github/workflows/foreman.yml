@@ -1,0 +1,57 @@
+name: foreman
+
+# The driver. GitHub's own scheduler never fired for this repo (measured
+# 2026-11-03: `event=schedule` total 0), so nothing here relies on `schedule`
+# alone -- the foreman runs on every push, and is meant to be started from
+# outside as well (see docs/MONITORING.md). It reads the ledgers and dispatches
+# only what is due; running it twice in a row dispatches nothing the second time.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "content/**"
+      - "scripts/foreman.py"
+
+permissions:
+  actions: write   # dispatch other workflows
+  contents: write  # the health report
+
+concurrency:
+  group: foreman
+  cancel-in-progress: false
+
+jobs:
+  foreman:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Dispatch what is due
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/foreman.py
+
+      - name: Health report (never fails the run)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/health.py --write || true
+
+      - name: Commit the health report
+        if: always()
+        run: |
+          if git diff --quiet docs/HEALTH.md 2>/dev/null; then
+            echo "no health change"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add docs/HEALTH.md
+          git commit -m "chore(health): refresh the report"
+          git push
