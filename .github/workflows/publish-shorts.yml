@@ -1,0 +1,73 @@
+name: publish-shorts
+
+# Builds vertical Shorts (edge-tts + ffmpeg, both free) and uploads them, one or
+# two per run so the channel gets a steady drip instead of one dump. Every Short
+# links the 120-minute long video, which is where the watch hours come from.
+#
+# Safe to run often: scripts/publish_shorts.py never re-uploads an entry that
+# already has a video_id, and records the id before anything else can fail.
+on:
+  workflow_dispatch:
+    inputs:
+      per_run:
+        description: "how many to publish this run (blank = all due)"
+        default: "1"
+      dry_run:
+        description: "true to only list what would be posted"
+        default: "false"
+  schedule:
+    - cron: "30 1,13 * * *"   # twice a day (08:30 / 20:30 Thai) -- a steady drip
+  push:
+    paths:
+      - "content/ch2_shorts/scripts.json"
+      - "content/ch2_shorts.json"
+      - "scripts/publish_shorts.py"
+      - "scripts/make_short.py"
+
+permissions:
+  contents: write   # commit the manifest back with the new video ids
+
+concurrency:
+  group: publish-shorts
+  cancel-in-progress: false
+
+jobs:
+  shorts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ffmpeg + Thai fonts + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-tlwg-garuda fonts-tlwg-kinnari fonts-tlwg-norasi
+          pip install --quiet -r requirements.txt
+
+      - name: Publish
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ -n "${{ github.event.inputs.per_run }}" ]; then ARGS="$ARGS --per-run ${{ github.event.inputs.per_run }}"; fi
+          python3 scripts/publish_shorts.py $ARGS
+
+      - name: Record the new video ids
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          if git diff --quiet content/ch2_shorts.json; then
+            echo "no change to the manifest"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/ch2_shorts.json
+          git commit -m "publish(ch2): record new Short ids"
+          git push
