@@ -1,0 +1,33 @@
+{
+  "_comment": "Videos ready to publish to ch2 Farmmer (@farmmer-n9t), oldest first. Read by scripts/publish_batch.py. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post.",
+  "channel_slug": "dharma",
+  "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "videos": [
+    {
+      "key": "night_120",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01_120/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01_120/compilation.mp3",
+      "thumbnail": "assets/branding/farmmer/thumbs/night_120.jpg",
+      "duration_sec": 7246.8,
+      "title": "ธรรมะก่อนนอน 120 นาที ปล่อยวางความเครียด หลับลึกถึงเช้า จิตสงบผ่อนคลาย",
+      "description": "ฟังเสียงบรรยายธรรมะก่อนนอน 120 นาที ช่วยกล่อมจิตใจให้สงบ ปล่อยวางเรื่องกังวลและความเครียดสะสมทั้งวัน เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน\n\nเปิดทิ้งไว้ได้ทั้งคืน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ\n\nบทที่ผ่านมา: ปล่อยวาง · ให้อภัยตัวเอง · ขอบคุณวันนี้ · ปล่อยทุกอย่างลง · ความเหงา · ความเสียใจ · ความรักตัวเอง\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก",
+      "tags": ["ธรรมะก่อนนอน", "ฟังธรรมะก่อนนอน", "เสียงธรรมะนอนหลับ", "ธรรมะผ่อนคลาย", "แก้โรคนอนไม่หลับ", "ลดความเครียด", "คิดมากตอนกลางคืน", "ปล่อยวาง", "ธรรมะ 120 นาที", "เสียงบรรยายธรรมะ", "สมาธิก่อนนอน", "ธรรมะเงียบสงบ", "Farmmer ธรรมะก่อนนอน"],
+      "category_id": "22",
+      "privacy": "public"
+    },
+    {
+      "key": "night_110",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01/compilation.mp3",
+      "thumbnail": "assets/branding/farmmer/thumbs/night_110.jpg",
+      "duration_sec": 6595.4,
+      "title": "ธรรมะก่อนนอน 110 นาที หลับสบายทั้งคืน ปล่อยใจให้เบาสบาย",
+      "description": "เสียงบรรยายธรรมะก่อนนอน 110 นาที กล่อมใจให้สงบก่อนหลับ เหมาะกับคนที่นอนไม่หลับ คิดมาก หรือเครียดสะสม\n\nเปิดทิ้งไว้ทั้งคืน ไม่ต้องตั้งใจฟัง แค่ปล่อยใจไปกับเสียงและลมหายใจ\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้ใจได้พัก",
+      "tags": ["ธรรมะก่อนนอน", "ฟังธรรมะก่อนนอน", "เสียงธรรมะนอนหลับ", "ธรรมะผ่อนคลาย", "นอนไม่หลับ", "หลับสบาย", "ปล่อยวาง", "ธรรมะ 110 นาที", "สมาธิก่อนนอน", "Farmmer ธรรมะก่อนนอน"],
+      "category_id": "22",
+      "privacy": "public"
+    }
+  ]
+}

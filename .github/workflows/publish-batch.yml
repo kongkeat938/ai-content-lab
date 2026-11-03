@@ -1,0 +1,77 @@
+name: publish-batch
+
+# Uploads finished, verified videos to the channel with the YouTube Data API --
+# no browser, no human. The pod's browser login dies on every recycle and Studio
+# is gated behind phone verification, but a refresh token in a repo secret has
+# neither problem, and videos.insert has its own daily quota (100/day) separate
+# from the read endpoints.
+#
+# It is safe to run often: scripts/publish_batch.py never re-uploads an entry
+# that already has a video_id, and it records the id before anything else can
+# fail. A tick with nothing to do costs a few seconds.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Space-separated keys (blank = every ready entry)"
+        default: ""
+      privacy:
+        description: "private | unlisted | public (blank = each entry's own)"
+        default: ""
+      dry_run:
+        description: "true to only list what would be posted"
+        default: "false"
+  schedule:
+    - cron: "17 */3 * * *"   # every 3 hours; a no-op tick is cheap
+  push:
+    paths:
+      - "content/ch2_publish.json"
+      - "scripts/publish_batch.py"
+
+permissions:
+  contents: write   # commit the manifest back with the new video ids
+
+concurrency:
+  group: publish-batch
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        run: pip install --quiet -r requirements.txt
+
+      - name: Publish
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ -n "${{ github.event.inputs.privacy }}" ]; then ARGS="$ARGS --privacy ${{ github.event.inputs.privacy }}"; fi
+          for k in ${{ github.event.inputs.only }}; do ARGS="$ARGS --only $k"; done
+          python3 scripts/publish_batch.py $ARGS
+
+      - name: Record the new video ids
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet content/ch2_publish.json; then
+            echo "no change to the manifest"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/ch2_publish.json
+          git commit -m "publish(ch2): record new live video ids"
+          git push
