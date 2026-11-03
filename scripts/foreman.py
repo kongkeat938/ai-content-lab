@@ -112,20 +112,34 @@ def main() -> int:
     if due_long:
         plan.append(("publish-batch", {}))
 
-    # 3. Shorts: drip a couple per dispatch, but only if there is anything left
-    #    and the channel is not already out of upload slots for the day.
-    man = load("content/ch2_shorts.json", {"shorts": {}})
-    pool = load("content/ch2_shorts/scripts.json", [])
-    waiting = [s for s in pool if s["id"] not in man["shorts"]]
-    limit = load("content/upload_limit.json", {})
-    capped = bool(limit.get("reset_at")) and parse(limit["reset_at"]) > now()
-    if waiting and not capped:
+    # 3. Shorts: drip a couple per dispatch, but only for a channel that still
+    #    has material and has not exhausted its daily upload slots. The workflow
+    #    is a matrix over the channels, so one dispatch covers both; a capped
+    #    channel's job short-circuits on its own limit note.
+    channels = [
+        ("dharma", "content/ch2_shorts.json", "content/ch2_shorts/scripts.json",
+         "UCM3QO5L_pmj34n1JVlbhh-w"),
+        ("genx", "content/ch1_shorts.json", "content/ch1_shorts/scripts.json",
+         "UCI6EfsgM1HNjrYarvigxyrQ"),
+    ]
+    limits = load("content/upload_limit.json", {})
+    if not isinstance(limits, dict):
+        limits = {}
+    limits = limits.get("channels", limits)   # tolerate the pre-2026-11-03 flat shape
+    waiting: dict[str, int] = {}
+    for slug, man_rel, pool_rel, cid in channels:
+        man = load(man_rel, {"shorts": {}})
+        pool = load(pool_rel, [])
+        waiting[slug] = len([s for s in pool if s["id"] not in man["shorts"]])
+        rec = limits.get(cid, {}) if isinstance(limits, dict) else {}
+        capped = bool(rec.get("reset_at")) and parse(rec["reset_at"]) > now()
+        if capped:
+            print(f"  {slug}: upload slots exhausted until {rec['reset_at']}")
+    if any(n for n in waiting.values()):
         plan.append(("publish-shorts", {"per_run": "2"}))
-    elif capped:
-        print(f"  upload slots exhausted until {limit['reset_at']} -- skipping uploads")
 
-    # 4. Refill the pool before it empties: ask Gemini when fewer than 8 remain.
-    if len(waiting) < 8:
+    # 4. Refill a pool before it empties: ask Gemini when fewer than 8 remain.
+    if any(n < 8 for n in waiting.values()):
         g_age = last_success_min("grow-shorts-pool", ids)
         if g_age is None or g_age > 20 * 60:
             plan.append(("grow-shorts-pool", {"count": "8"}))
