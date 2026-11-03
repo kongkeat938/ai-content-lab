@@ -13,6 +13,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -24,6 +25,9 @@ import make_poster  # noqa: E402
 
 W, H = 1920, 1080
 FPS = 25
+TP_CEILING = -3.0   # the project's true-peak gate (see verify_night)
+TP_MARGIN = 0.1     # leave this much room so the next lossy pass cannot cross it
+TP_TRIES = 3
 
 
 def run(cmd: list) -> None:
@@ -35,6 +39,22 @@ def duration(path: str) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "csv=p=0", path], capture_output=True, text=True, check=True)
     return float(r.stdout.strip())
+
+
+def true_peak(path: str) -> float:
+    """Measure the true peak of a file's audio, in dBFS.
+
+    Read from the *finished* file, not the intermediate: AAC overshoots the
+    mp3 it was encoded from, so the mp3's own measurement does not describe
+    what ships.
+    """
+    out = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-nostats", "-i", path,
+         "-map", "0:a:0", "-af", "ebur128=peak=true", "-f", "null", "-"],
+        capture_output=True, text=True).stderr
+    tail = out.split("Summary:")[-1]
+    m = re.search(r"Peak:\s*(-?\d+\.\d+)\s*dBFS", tail)
+    return float(m.group(1)) if m else float("nan")
 
 
 def build(audio: str, image: str, out: str, title: str, loop_seconds: float,
@@ -65,15 +85,35 @@ def build(audio: str, image: str, out: str, title: str, loop_seconds: float,
         # stops on a stream that *ends* -- so the output ran to 322 s against a
         # 257 s track. An explicit -t is what actually bounds it.
         adur = duration(audio)
-        run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1",
-             "-i", loop, "-i", audio,
-             "-map", "0:v", "-map", "1:a", "-t", f"{adur:.3f}", "-shortest",
-             "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
-             "-movflags", "+faststart", out])
+
+        def encode(dst: str, gain_db: float = 0.0) -> None:
+            af = f"volume={gain_db:.2f}dB" if gain_db else "anull"
+            run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1",
+                 "-i", loop, "-i", audio,
+                 "-map", "0:v", "-map", "1:a", "-t", f"{adur:.3f}", "-shortest",
+                 "-af", af,
+                 "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                 "-movflags", "+faststart", dst])
+
+        # The mp3 was mastered to TP<=-3.0, but the AAC pass that the video
+        # needs overshoots it (measured -2.9). Measure the finished file and
+        # re-encode lower until the gate holds, rather than trusting the mp3.
+        ceiling = TP_CEILING - TP_MARGIN
+        gain = 0.0
+        for attempt in range(TP_TRIES):
+            encode(out, gain)
+            peak = true_peak(out)
+            if not (peak > ceiling):
+                break
+            gain += (ceiling - peak)
+            print(f"  true peak {peak:.2f} > {ceiling:.2f} dBFS; "
+                  f"re-encoding at {gain:+.2f} dB", file=sys.stderr)
+
         info = {"out": out, "duration_sec": round(duration(out), 2),
                 "video": f"{W}x{H}", "fps": FPS,
                 "loop_seconds": loop_seconds,
-                "audio_duration_sec": round(adur, 2)}
+                "audio_duration_sec": round(adur, 2),
+                "true_peak_dbfs": peak, "audio_gain_db": round(gain, 2)}
         json.dump(info, open(out + ".info.json", "w", encoding="utf-8"),
                   ensure_ascii=False, indent=2)
         return info
