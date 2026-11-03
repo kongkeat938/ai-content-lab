@@ -82,6 +82,10 @@ def main() -> int:
             return 0
         print(f"tick {i+1}/{args.cycles} at {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}")
         dispatch("foreman")
+        if i == 0:
+            # Once per chain link: check the accounts for anything that could hurt
+            # the business (a rejected video, a claim, a payment problem).
+            dispatch("account-watch")
         if args.once or args.no_chain or i == args.cycles - 1:
             break
         time.sleep(args.interval)
