@@ -19,7 +19,9 @@ on:
     - cron: "30 1,13 * * *"   # twice a day (08:30 / 20:30 Thai) -- a steady drip
   push:
     paths:
+      - "content/ch1_shorts/scripts.json"
       - "content/ch2_shorts/scripts.json"
+      - "content/ch1_shorts.json"
       - "content/ch2_shorts.json"
       - "scripts/publish_shorts.py"
       - "scripts/make_short.py"
@@ -28,13 +30,21 @@ permissions:
   contents: write   # commit the manifest back with the new video ids
 
 concurrency:
-  group: publish-shorts
+  group: publish-shorts-${{ matrix.channel }}
   cancel-in-progress: false
 
 jobs:
   shorts:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: dharma
+            manifest: content/ch2_shorts.json
+          - channel: genx
+            manifest: content/ch1_shorts.json
     steps:
       - uses: actions/checkout@v4
 
@@ -52,9 +62,10 @@ jobs:
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
         run: |
-          ARGS=""
+          ARGS="--channel ${{ matrix.channel }}"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           if [ -n "${{ github.event.inputs.per_run }}" ]; then ARGS="$ARGS --per-run ${{ github.event.inputs.per_run }}"; fi
           python3 scripts/publish_shorts.py $ARGS
@@ -62,12 +73,13 @@ jobs:
       - name: Record the new video ids
         if: always()
         run: |
-          if git diff --quiet content/ch2_shorts.json; then
+          if git diff --quiet "${{ matrix.manifest }}"; then
             echo "no change to the manifest"
             exit 0
           fi
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/ch2_shorts.json
-          git commit -m "publish(ch2): record new Short ids"
+          git add "${{ matrix.manifest }}"
+          git commit -m "publish(${{ matrix.channel }}): record new Short ids"
+          git pull --rebase --autostash origin main
           git push
