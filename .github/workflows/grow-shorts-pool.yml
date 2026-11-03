@@ -1,0 +1,49 @@
+name: grow-shorts-pool
+
+# Keeps the Shorts pool from running dry: asks Gemini (free) for new scripts and
+# commits them, so the publishing rail always has something fresh to ship. The
+# channel's daily upload ceiling still caps how many go out per day, so a deep
+# pool is the right shape -- publish drains it, this refills it.
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "how many new scripts to ask for"
+        default: "6"
+  schedule:
+    - cron: "0 22 * * *"   # 05:00 Thai, ready before the day's publishes
+
+permissions:
+  contents: write
+
+concurrency:
+  group: grow-shorts-pool
+  cancel-in-progress: false
+
+jobs:
+  grow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ask Gemini for new scripts
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python3 scripts/gen_short_scripts.py --count "${{ github.event.inputs.count || '6' }}"
+
+      - name: Commit the new scripts
+        run: |
+          if git diff --quiet content/ch2_shorts/scripts.json; then
+            echo "no new scripts"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/ch2_shorts/scripts.json
+          git commit -m "content(ch2): grow the Shorts pool"
+          git push
