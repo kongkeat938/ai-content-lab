@@ -184,12 +184,13 @@ def main() -> int:
         except HttpError as exc:
             text = str(exc)
             print(f"  UPLOAD FAILED: {text}", file=sys.stderr)
-            rc = 1
             if "uploadLimitExceeded" in text:
-                # The channel has hit its daily upload ceiling. Retrying the rest
-                # cannot succeed today, and continuing only burns quota.
+                # The channel has hit its daily upload ceiling. This is an expected
+                # end to the day, not a fault: stop, and do not mark the run failed,
+                # or every day would look broken and the real failures hide.
                 print("  daily upload limit reached; stopping this run", file=sys.stderr)
                 break
+            rc = 1
             continue
         vid = response["id"]
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
