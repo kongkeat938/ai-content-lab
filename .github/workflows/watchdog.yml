@@ -1,0 +1,52 @@
+name: watchdog
+
+# A self-chaining timer. GitHub's scheduler never fired for this repo (measured
+# 2026-11-03: `event=schedule` total 0), so a job that only `schedule` starts may
+# never start. This job instead starts itself again before it ends, which does
+# not depend on the scheduler at all. Each tick it dispatches the foreman, which
+# dispatches only the rails that are actually due.
+#
+# The repo is public, so Actions minutes are free. One `concurrency` group keeps
+# two chains from coexisting. To stop the chain: create content/STOP.
+#
+# It is still started by hand once (or by any push), and then runs itself.
+on:
+  workflow_dispatch:
+    inputs:
+      cycles:
+        description: "foreman ticks per chain link"
+        default: "2"
+      interval:
+        description: "seconds between ticks"
+        default: "7200"
+      chain:
+        description: "true to re-dispatch the chain (false = single test run)"
+        default: "true"
+
+permissions:
+  actions: write
+
+concurrency:
+  group: watchdog        # never two chains at once
+  cancel-in-progress: false
+
+jobs:
+  chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350   # under the 360-minute ceiling; each link is short
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Drive the foreman, then re-chain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXTRA=""
+          if [ "${{ github.event.inputs.chain }}" = "false" ]; then EXTRA="--no-chain"; fi
+          python3 scripts/watchdog.py \
+            --cycles "${{ github.event.inputs.cycles || '2' }}" \
+            --interval "${{ github.event.inputs.interval || '7200' }}" $EXTRA
