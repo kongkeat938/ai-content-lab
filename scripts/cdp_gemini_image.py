@@ -67,17 +67,26 @@ class Tab:
 
 
 def gemini_tab():
-    for t in pages():
-        if "gemini.google.com" in t["url"]:
+    """Prefer the default-account tab (URL has /app with no /u/N/ prefix)."""
+    tabs = [t for t in pages() if "gemini.google.com" in t["url"]]
+    if not tabs:
+        raise SystemExit("no gemini tab; run scripts/start_novnc.sh first")
+    for t in tabs:
+        if "/u/" not in t["url"]:
             return t
-    raise SystemExit("no gemini tab; run scripts/start_novnc.sh first")
+    return tabs[0]
 
 
-def wait_for_image(tab, timeout=180):
+def image_count(tab):
+    return tab.ev(f"document.querySelectorAll('{IMG_SELECTOR}').length") or 0
+
+
+def wait_for_new_image(tab, before, timeout=180):
+    """Wait until a NEW generated image appears (old ones do not count)."""
     deadline = time.time() + timeout
     while time.time() < deadline:
         time.sleep(4)
-        if tab.ev(f"document.querySelectorAll('{IMG_SELECTOR}').length"):
+        if image_count(tab) > before:
             return True
     return False
 
@@ -93,6 +102,8 @@ def main():
     tab.cmd("Browser.setDownloadBehavior",
             {"behavior": "allow", "downloadPath": DOWNLOAD_DIR})
 
+    before_imgs = image_count(tab)
+
     editor = "rich-textarea .ql-editor, div[contenteditable='true']"
     tab.ev(f'document.querySelector("{editor}").focus()')
     tab.cmd("Input.insertText", {"text": prompt})
@@ -103,12 +114,13 @@ def main():
                 {"type": kind, "key": "Enter", "code": "Enter",
                  "windowsVirtualKeyCode": 13, "nativeVirtualKeyCode": 13})
 
-    if not wait_for_image(tab):
-        raise SystemExit("timed out waiting for the image")
+    if not wait_for_new_image(tab, before_imgs):
+        raise SystemExit("timed out waiting for a new image")
 
     before = set(os.listdir(DOWNLOAD_DIR))
     clicked = tab.ev("""(()=>{
-      const b=document.querySelector('%s');
+      const bs=document.querySelectorAll('%s');
+      const b=bs[bs.length-1];   // the newest response's button
       if(!b) return 'no button';
       b.click(); return 'clicked';
     })()""" % DOWNLOAD_BUTTON)
