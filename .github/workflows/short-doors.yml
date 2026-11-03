@@ -1,0 +1,38 @@
+name: short doors
+
+# A Short earns views from the feed and then has to hand the viewer a next step.
+# Measured 2026-11-03: ch1 sent 2 of 16 Shorts onward and ch4 3 of 11, so the
+# best-liked clips dead-ended. scripts/short_doors.py closed those 27 gaps; this
+# job keeps them closed for clips published by other paths (ch1/ch4 uploads do
+# not go through publish_shorts.py, which already carries the long link).
+#
+# NOTE: the schedule is a convenience, not a guarantee -- the repo's scheduled
+# workflows have historically fired rarely. Use "Run workflow" to be sure.
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"      # Mondays, 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  doors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install google-api-python-client google-auth-oauthlib
+      - name: give every Short a door
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: |
+          python3 scripts/short_doors.py
+          python3 scripts/short_doors.py --apply
