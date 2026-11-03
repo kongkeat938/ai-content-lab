@@ -25,8 +25,12 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
 - **GitHub `schedule` NEVER fires here** (`event=schedule` total 0) → automation = **watchdog**
   (self-chaining) → **foreman** (dispatches what is due, idempotent) → rails; `health.py` →
   `docs/HEALTH.md`. Kill switch `content/STOP`. Docs: `docs/MONITORING.md`.
-- **ch2 daily upload cap ~7-8/day** (`uploadLimitExceeded`); recorded in `content/upload_limit.json`.
-  `thumbnails.set` 429s after ~3 in a burst → use `--skip-existing`.
+- **Niche truth (measured 2026-11-03, ch2 dharma):** long-form winners = **บทสวดมนต์ก่อนนอน /
+  ปล่อยวาง, 20 min–3 h** (21.4M, 21.0M, 12.4M views). Shorts winners = **53 s–1:33** with a
+  **question** hook ("เหนื่อยใจอยู่ใช่ไหม"). Our Shorts were 19 s → changed to 8-9 lines + rate
+  -15% = **46 s**. `scripts/consult.py` = ask Gemini with real numbers (K's order: ask an AI,
+  never K).
+- **ch2 upload ceiling ~7-8/day**; `thumbnails.set` 429s after ~3 → use `--skip-existing`.
 
 ## 🗂️ TOPIC FILES
 - `topics/00-pipeline-and-channel-facts.md` — the 3 channels, registry, yt938-1, view data, image ceilings.
