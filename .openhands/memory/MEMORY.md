@@ -90,6 +90,26 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
   from the pod**; ChatGPT works only via PC1's signed-in Chrome. Gemini API works from the pod.
 - **Push:** use `KONGKEAT_GH_TOKEN`; the `ghu_` URL in `origin` is expired and prompts.
 
+## Shorts rail — now ch1 + ch2 (2026-11-03)
+- `publish_shorts.py` / `gen_short_scripts.py` take `--channel dharma|genx`; the
+  `CHANNELS` dict holds scripts/manifest/token/work/tags/tail per channel.
+  `foreman.py` loops both; `publish-shorts.yml` and `grow-shorts-pool.yml` are
+  matrices. **`matrix` cannot be used in a workflow-level `concurrency:` group** —
+  put the lock on the job.
+- **ffmpeg concat resolves relative list paths against the list file's directory.**
+  `make_short.py` wrote relative segment paths → doubled → exit 254 on every local
+  build. Always write **absolute** paths into the concat list.
+- **Audio rule:** a narrator read has ~18 dB crest factor, so single-pass loudnorm
+  cannot hold both -14 LUFS and the ≤ -3 dBFS ceiling (it landed at -1.3 dBTP).
+  Use `acompressor(-24dB,6:1)` → **two-pass** loudnorm (`measured_*`,`linear=true`)
+  → `alimiter=limit=-3dB`. Measured **-15.0 LUFS / -2.9 dBTP**. -14.0 is not
+  reachable on this material; the ceiling wins.
+- `content/upload_limit.json` = `{"channels": {<id>: {reset_at}}}` — per channel.
+- **Live GenX Shorts (6):** `hcOnVnmzEkc` `NdP1u1yCyCw` `n-BBc8exzXo` `yLVKpRNdD14`
+  `Bn_4CHdb2vI` `gQCQkCDZFZc`, all public, each with a playlist + channel door.
+- **ch1 can upload; ch2 was capped until 2026-11-04T08:00Z.** ch1 uploads and the
+  ch2 long rail are the working channels for volume today.
+
 
 ## yt938-1 status — measured live 2026-10-31 14:45Z
 - **ch1** ตาต้า GenX Shop 33 vids / 6 subs · **ch2** Farmmer 10 vids / 7 subs · **ch4**
