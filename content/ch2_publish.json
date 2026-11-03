@@ -5,7 +5,7 @@
   "videos": [
     {
       "key": "night_120",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01_120/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01_120/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_120.jpg",
@@ -28,7 +28,9 @@
         "Farmmer ธรรมะก่อนนอน"
       ],
       "category_id": "22",
-      "privacy": "public"
+      "privacy": "public",
+      "video_id": "F4qFHoVpEyI",
+      "url": "https://youtu.be/F4qFHoVpEyI"
     },
     {
       "key": "night_110",
