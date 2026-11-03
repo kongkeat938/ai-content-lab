@@ -112,12 +112,17 @@ def main() -> int:
     if due_long:
         plan.append(("publish-batch", {}))
 
-    # 3. Shorts: drip a couple per dispatch, but only if there is anything left.
+    # 3. Shorts: drip a couple per dispatch, but only if there is anything left
+    #    and the channel is not already out of upload slots for the day.
     man = load("content/ch2_shorts.json", {"shorts": {}})
     pool = load("content/ch2_shorts/scripts.json", [])
     waiting = [s for s in pool if s["id"] not in man["shorts"]]
-    if waiting:
+    limit = load("content/upload_limit.json", {})
+    capped = bool(limit.get("reset_at")) and parse(limit["reset_at"]) > now()
+    if waiting and not capped:
         plan.append(("publish-shorts", {"per_run": "2"}))
+    elif capped:
+        print(f"  upload slots exhausted until {limit['reset_at']} -- skipping uploads")
 
     # 4. Refill the pool before it empties: ask Gemini when fewer than 8 remain.
     if len(waiting) < 8:
@@ -131,6 +136,13 @@ def main() -> int:
     n_age = last_success_min("night-compilation", ids)
     if n_age is None or n_age > 6 * 24 * 60:
         plan.append(("night-compilation", {}))
+
+    # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
+    #    any push runs the foreman, so a broken chain repairs itself on the next
+    #    commit instead of staying dead until someone notices.
+    w_age = last_success_min("watchdog", ids)
+    if w_age is None or w_age > 3 * 60:
+        plan.append(("watchdog", {"cycles": "2", "interval": "7200", "chain": "true"}))
 
     # Drop anything already running, so a slow job is not double-started.
     plan = [(n, i) for n, i in plan if not busy(n, ids)]

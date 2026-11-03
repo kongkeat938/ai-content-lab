@@ -27,6 +27,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -67,6 +68,30 @@ def save(man, path: str) -> None:
         json.dump(man, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     os.replace(tmp, path)
+
+
+LIMIT_FILE = os.path.join(ROOT, "content", "upload_limit.json")
+
+
+def note_upload_limit() -> None:
+    """Remember that the channel is out of upload slots until the daily reset.
+
+    The ceiling is per channel per day and resets at midnight Pacific (08:00 UTC).
+    Without this note the foreman re-dispatches the rail every tick, and every
+    tick burns a run to learn the same thing. The note is what makes the foreman
+    skip a rail that cannot possibly succeed yet.
+    """
+    now = datetime.now(timezone.utc)
+    reset = now.replace(hour=8, minute=0, second=0, microsecond=0)
+    if reset <= now:
+        reset = reset + timedelta(days=1)
+    payload = {"channel_id": CHANNEL_ID, "hit_at": now.isoformat(timespec="seconds"),
+               "reset_at": reset.isoformat(timespec="seconds")}
+    with open(LIMIT_FILE, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+    print(f"  recorded upload limit; resets {payload['reset_at']}")
+    commit(LIMIT_FILE, "publish(ch2): record the daily upload limit")
 
 
 def commit(path: str, message: str) -> None:
@@ -189,6 +214,7 @@ def main() -> int:
                 # end to the day, not a fault: stop, and do not mark the run failed,
                 # or every day would look broken and the real failures hide.
                 print("  daily upload limit reached; stopping this run", file=sys.stderr)
+                note_upload_limit()
                 break
             rc = 1
             continue
