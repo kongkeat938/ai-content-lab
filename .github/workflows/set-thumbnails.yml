@@ -1,0 +1,59 @@
+name: set-thumbnails
+
+# Installs the channel's custom thumbnails with the YouTube Data API.
+#
+# Why this job exists: Studio's thumbnail button is gated behind phone
+# verification for a new channel, and the pod's browser login dies whenever the
+# sandbox is recycled. A refresh token in a repo secret has neither problem, and
+# `thumbnails.set` is on its own daily quota, so this keeps working unattended.
+#
+# The API's daily quota resets at midnight Pacific (08:00 UTC). The schedule
+# below runs just after that, so a quota-exhausted day is retried the next
+# morning without anyone touching it. `thumbnails.set` is idempotent, so a
+# re-run of an already-set thumbnail costs nothing but a call.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Space-separated video ids (blank = every manifest entry)"
+        default: ""
+      dry_run:
+        description: "true to only list what would be set"
+        default: "false"
+  schedule:
+    - cron: "37 8 * * *"   # 08:37 UTC, after the Pacific-midnight quota reset
+  push:
+    paths:
+      - "content/ch2_thumbnails.json"
+      - "assets/branding/farmmer/thumbs/**"
+      - "scripts/set_thumbnails.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: set-thumbnails
+  cancel-in-progress: false
+
+jobs:
+  set:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install thumbnails
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+        run: |
+          ONLY="${{ github.event.inputs.only }}"
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="--dry-run"; fi
+          for v in $ONLY; do ARGS="$ARGS --only $v"; done
+          python3 scripts/set_thumbnails.py $ARGS
