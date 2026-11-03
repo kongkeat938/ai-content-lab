@@ -104,21 +104,24 @@ def note_upload_limit(channel_id: str) -> None:
     """Remember that the channel is out of upload slots until the daily reset.
 
     The ceiling is per channel per day and resets at midnight Pacific (08:00 UTC).
-    Without this note the foreman re-dispatches the rail every tick, and every
-    tick burns a run to learn the same thing. The note is what makes the foreman
-    skip a rail that cannot possibly succeed yet.
+    Keyed by channel: one channel hitting its ceiling must not make the other
+    look blocked. Without this note the foreman re-dispatches the rail every tick,
+    and every tick burns a run to learn the same thing.
     """
     now = datetime.now(timezone.utc)
     reset = now.replace(hour=8, minute=0, second=0, microsecond=0)
     if reset <= now:
         reset = reset + timedelta(days=1)
-    payload = {"channel_id": channel_id, "hit_at": now.isoformat(timespec="seconds"),
-               "reset_at": reset.isoformat(timespec="seconds")}
+    limits = load(LIMIT_FILE, {})
+    if not isinstance(limits, dict) or "channels" not in limits:
+        limits = {"channels": {}}
+    limits["channels"][channel_id] = {"hit_at": now.isoformat(timespec="seconds"),
+                                      "reset_at": reset.isoformat(timespec="seconds")}
     with open(LIMIT_FILE, "w", encoding="utf-8") as fh:
-        json.dump(payload, fh, ensure_ascii=False, indent=2)
+        json.dump(limits, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
-    print(f"  recorded upload limit; resets {payload['reset_at']}")
-    commit(LIMIT_FILE, f"publish({channel_id}): record the daily upload limit")
+    print(f"  recorded upload limit; resets {limits['channels'][channel_id]['reset_at']}")
+    commit(LIMIT_FILE, f"publish: record the daily upload limit for {channel_id}")
 
 
 def commit(path: str, message: str) -> None:
@@ -165,9 +168,10 @@ def main() -> int:
     # build anything -- the upload cannot succeed until the reset, and a build
     # here costs minutes for nothing.
     lim = load(LIMIT_FILE, {})
-    if (lim.get("channel_id") == spec["channel_id"] and lim.get("reset_at")
-            and datetime.fromisoformat(lim["reset_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc)):
-        print(f"channel upload limit recorded; resets {lim['reset_at']} -- nothing to do")
+    rec = (lim.get("channels", {}) if isinstance(lim, dict) else {}).get(spec["channel_id"], {})
+    if (rec.get("reset_at")
+            and datetime.fromisoformat(rec["reset_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc)):
+        print(f"channel upload limit recorded; resets {rec['reset_at']} -- nothing to do")
         return 0
 
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
