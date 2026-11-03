@@ -139,6 +139,12 @@ def commit(path: str, message: str) -> None:
         subprocess.run(["git", "-c", "user.name=openhands",
                         "-c", "user.email=openhands@all-hands.dev",
                         "commit", "-q", "-m", message], cwd=ROOT, check=True)
+        # Two channel jobs run at once and both commit; without the rebase the
+        # second push is rejected and its id is lost (seen 2026-11-03).
+        subprocess.run(["git", "-c", "user.name=openhands",
+                        "-c", "user.email=openhands@all-hands.dev",
+                        "pull", "--rebase", "--autostash", "origin", "main"],
+                       cwd=ROOT, check=True, capture_output=True, timeout=120)
         subprocess.run(["git", "push"], cwd=ROOT, check=True,
                        capture_output=True, timeout=120)
         print("  manifest committed")

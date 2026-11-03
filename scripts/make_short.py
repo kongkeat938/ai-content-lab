@@ -53,7 +53,23 @@ def run(cmd: list) -> None:
 
 
 async def speak(text: str, out: str) -> None:
-    await edge_tts.Communicate(text, VOICE, rate=RATE).save(out)
+    """Synthesise the line, retrying a dropped connection.
+
+    edge-tts occasionally returns NoAudioReceived on a line that works on the
+    next try (observed in CI on 2026-11-03, which failed a whole build). It is a
+    transient socket fault, not bad input, so retry rather than lose the clip.
+    """
+    last = None
+    for attempt in range(4):
+        try:
+            await edge_tts.Communicate(text, VOICE, rate=RATE).save(out)
+            if os.path.exists(out) and os.path.getsize(out) > 0:
+                return
+            last = "empty file"
+        except Exception as exc:            # noqa: BLE001 -- the point is to swallow any TTS fault
+            last = exc
+        await asyncio.sleep(2 * (attempt + 1))
+    raise RuntimeError(f"TTS failed after 4 tries: {last}")
 
 
 def duration(path: str) -> float:
