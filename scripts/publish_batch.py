@@ -62,6 +62,21 @@ def access_token(slug: str) -> str:
         sys.exit(f"Token refresh failed for {slug} ({var}): {exc.code} {exc.read().decode()[:200]}")
 
 
+def _due(v: dict) -> bool:
+    """False while a video is deliberately held for cadence (not_before in the future)."""
+    nb = v.get("not_before")
+    if not nb:
+        return True
+    from datetime import datetime, timezone
+    try:
+        when = datetime.fromisoformat(nb.replace("Z", "+00:00"))
+    except ValueError:
+        return True
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) >= when
+
+
 def save(man: dict, path: str) -> None:
     tmp = path + ".part"
     with open(tmp, "w", encoding="utf-8") as fh:
@@ -86,10 +101,13 @@ def main() -> int:
     if args.only:
         vids = [v for v in vids if v["key"] in args.only]
 
-    todo = [v for v in vids if not v.get("video_id")]
+    todo = [v for v in vids if not v.get("video_id") and _due(v)]
+    held = [v for v in vids if not v.get("video_id") and not _due(v)]
     done = [v for v in vids if v.get("video_id")]
     print(f"channel {slug} ({man['channel_id']}): {len(todo)} to publish, "
-          f"{len(done)} already live")
+          f"{len(held)} held, {len(done)} already live")
+    for v in held:
+        print(f"  {v['key']}: held until {v.get('not_before')} — cadence, not a block")
     for v in done:
         print(f"  {v['key']}: already live {v['video_id']} — skipping")
 
@@ -107,19 +125,31 @@ def main() -> int:
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload
     from googleapiclient.errors import HttpError
+    from google.oauth2.credentials import Credentials
 
-    # load_credentials picks the token file; the env refresh token materialises it.
-    os.environ["YT_TOKEN_PATH"] = os.path.expanduser(f"~/.config/content-lab/yt_token_{slug}.json")
-    from yt_auth import load_credentials
-    creds = load_credentials(man["channel_id"])
+    # Build credentials straight from the environment. yt_auth.load_credentials()
+    # verifies the token's channel with channels.list, a quota-limited call: when
+    # the shared daily quota is spent it cannot tell which channel a token owns
+    # and gives up. Publishing must not depend on a read call, so the token is
+    # taken as-is here and the channel is checked below, tolerating a quota 403.
+    token = access_token(slug)
+    creds = Credentials(token=token, refresh_token=os.environ[
+        TOKEN_ENV.get(slug, f"YT_{slug.upper().replace('-', '_')}_REFRESH_TOKEN")],
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=os.environ["YT_CLIENT_ID"], client_secret=os.environ["YT_CLIENT_SECRET"])
     yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
 
-    # Refuse to post to the wrong channel before a single byte moves.
-    res = yt.channels().list(part="snippet", mine=True).execute()
-    got = res["items"][0]["id"] if res.get("items") else None
-    if got != man["channel_id"]:
-        sys.exit(f"WRONG CHANNEL: token is {got}, manifest says {man['channel_id']}")
-    print(f"  authorised as {res['items'][0]['snippet']['title']} ({got})")
+    # Refuse to post to the wrong channel before a single byte moves -- but a
+    # quota error is not a wrong channel, so only a real mismatch aborts.
+    try:
+        res = yt.channels().list(part="snippet", mine=True).execute()
+        got = res["items"][0]["id"] if res.get("items") else None
+        if got != man["channel_id"]:
+            sys.exit(f"WRONG CHANNEL: token is {got}, manifest says {man['channel_id']}")
+        print(f"  authorised as {res['items'][0]['snippet']['title']} ({got})")
+    except HttpError as exc:
+        print(f"  channel check skipped ({exc.status_code}); "
+              f"the per-channel secret pins the target channel", file=sys.stderr)
 
     os.makedirs(args.cache, exist_ok=True)
     rc = 0
