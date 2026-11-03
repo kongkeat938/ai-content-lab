@@ -1,4 +1,4 @@
-# Channel health — 2026-11-03T11:38:13+00:00
+# Channel health — 2026-11-03T13:38:28+00:00
 
 - long videos live: **1** ['night_120']
 - long videos held for cadence: ['night_110']
@@ -6,10 +6,12 @@
 - thumbnails queued: 7
 
 ## rails
-- foreman: last None 0 min ago; last success 1.6 h ago
-- grow-shorts-pool: last success 284 min ago; last success 4.7 h ago
-- publish-batch: last success 285 min ago; last success 4.8 h ago
-- publish-shorts: last success 95 min ago; last success 1.6 h ago
-- set-thumbnails: last success 124 min ago; last success 2.1 h ago
+- foreman: last None 0 min ago; last success 2.0 h ago
+- grow-shorts-pool: last success 404 min ago; last success 6.7 h ago
+- publish-batch: last success 406 min ago; last success 6.8 h ago
+- publish-shorts: last success 215 min ago; last success 3.6 h ago
+- set-thumbnails: last None 0 min ago; last success 4.1 h ago
 
-## all rails fresh
+## STALE
+- set-thumbnails: last success 4.1 h ago (expected <= 3.0 h)
+- publish-batch: last success 6.8 h ago (expected <= 6.7 h)
