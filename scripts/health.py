@@ -86,9 +86,16 @@ def main() -> int:
 
     runs = last_runs()
     pub = load("content/ch2_publish.json", {"videos": []})
-    shorts_man = load("content/ch2_shorts.json", {"shorts": {}})
-    pool = load("content/ch2_shorts/scripts.json", [])
     thumbs = load("content/ch2_thumbnails.json", {"thumbnails": {}})
+    limits = load("content/upload_limit.json", {}).get("channels", {})
+
+    # Shorts now run on more than one channel; report each, not just ch2.
+    SHORTS = {
+        "dharma": ("content/ch2_shorts.json", "content/ch2_shorts/scripts.json",
+                   "UCM3QO5L_pmj34n1JVlbhh-w"),
+        "genx": ("content/ch1_shorts.json", "content/ch1_shorts/scripts.json",
+                 "UCI6EfsgM1HNjrYarvigxyrQ"),
+    }
 
     due_long = [v["key"] for v in pub["videos"]
                 if not v.get("video_id") and (not v.get("not_before")
@@ -97,19 +104,35 @@ def main() -> int:
                  if not v.get("video_id") and v.get("not_before")
                  and datetime.fromisoformat(v["not_before"].replace("Z", "+00:00")) > datetime.now(timezone.utc)]
     live_long = [v["key"] for v in pub["videos"] if v.get("video_id")]
-    live_shorts = len(shorts_man["shorts"])
-    unbuilt = [s["id"] for s in pool if s["id"] not in shorts_man["shorts"]]
+
+    shorts: dict = {}
+    for slug, (man_rel, pool_rel, cid) in SHORTS.items():
+        man = load(man_rel, {"shorts": {}})
+        pool = load(pool_rel, [])
+        rec = limits.get(cid, {})
+        capped = bool(rec.get("reset_at")) and datetime.fromisoformat(
+            rec["reset_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc)
+        shorts[slug] = {"live": len(man["shorts"]), "pool": len(pool),
+                        "waiting": len([s for s in pool if s["id"] not in man["shorts"]]),
+                        "capped_until": rec.get("reset_at") if capped else None}
 
     stale = []
     if "_error" not in runs:
         for name, every in EXPECTED.items():
             e = runs.get(name)
+            # publish-batch only has work when a long video is due; a long quiet
+            # gap between long videos is the plan, not a fault.
+            if name == "publish-batch" and not due_long:
+                continue
             if not e or not e.get("last_success"):
                 stale.append(f"{name}: never succeeded")
                 continue
             a = age_min(e["last_success"])
             if a is not None and a > every:
                 stale.append(f"{name}: last success {a/60:.1f} h ago (expected <= {every/60:.1f} h)")
+        for slug, s in shorts.items():
+            if s["waiting"] == 0 and not s["capped_until"]:
+                stale.append(f"{slug}: pool empty and not capped -- the rail has nothing to ship")
 
     report = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -117,9 +140,7 @@ def main() -> int:
         "live_long": live_long,
         "due_long": due_long,
         "held_long": held_long,
-        "live_shorts": live_shorts,
-        "shorts_pool": len(pool),
-        "shorts_not_yet_live": unbuilt,
+        "shorts": shorts,
         "thumbnails_queued": len(thumbs["thumbnails"]),
         "stale": stale,
     }
@@ -134,9 +155,13 @@ def main() -> int:
         lines.append(f"- long videos DUE now: {due_long}")
     if held_long:
         lines.append(f"- long videos held for cadence: {held_long}")
-    lines.append(f"- Shorts live: **{live_shorts}** of {len(pool)} in the pool "
-                 f"({len(unbuilt)} waiting)")
     lines.append(f"- thumbnails queued: {len(thumbs['thumbnails'])}")
+    lines.append("")
+    lines.append("## shorts")
+    for slug, s in shorts.items():
+        cap = f", capped until {s['capped_until']}" if s["capped_until"] else ""
+        lines.append(f"- {slug}: {s['live']} live of {s['pool']} in the pool "
+                     f"({s['waiting']} waiting{cap})")
     lines.append("")
     lines.append("## rails")
     if "_error" in runs:
