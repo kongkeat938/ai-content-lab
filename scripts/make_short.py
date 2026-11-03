@@ -168,7 +168,10 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
     listfile = os.path.join(d, "parts.txt")
     with open(listfile, "w") as fh:
         for p in parts:
-            fh.write(f"file '{p}'\n")
+            # ffmpeg resolves relative paths in a concat list against the list
+            # file's own directory, so a relative path here is doubled. Absolute
+            # paths are unambiguous.
+            fh.write(f"file '{os.path.abspath(p)}'\n")
     silent = os.path.join(d, "silent.mp4")
     run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", listfile,
          "-c", "copy", silent])

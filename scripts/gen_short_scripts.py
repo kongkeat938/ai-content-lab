@@ -25,20 +25,21 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-SCRIPTS = os.path.join(ROOT, "content", "ch2_shorts", "scripts.json")
 MODEL = "gemini-3.5-flash-lite"
 
-ANGLES = [
-    "ความคิดเรื่องงานพรุ่งนี้", "ตาสว่างทั้งที่ง่วง", "แบกเรื่องคนอื่นมาคิด",
-    "กังวลเรื่องเงินตอนดึก", "คิดถึงความผิดพลาดในอดีต", "คิดวนซ้ำเรื่องเดิม",
-    "กลัวอนาคต", "โกรธคนหนึ่งคนจนนอนไม่หลับ", "เปรียบเทียบตัวเองกับคนอื่น",
-    "รู้สึกเหงาในคืนที่เงียบ", "กดดันเรื่องที่ยังไม่เกิดขึ้น", "เสียใจที่พูดผิดไปแล้ว",
-    "ผัดวันประกันพรุ่งแล้วนอนไม่สบายใจ", "ร่างกายเกร็งเพราะความเครียดสะสม",
-    "อยากหลับแต่สมองไม่ยอมหยุด", "กลัวตื่นมาสาย", "ไม่กล้าปล่อยวางเรื่องที่คุมไม่ได้",
-    "คิดมากเรื่องสุขภาพ", "รู้สึกผิดกับคนในครอบครัว", "ทนเก็บความน้อยใจไว้คนเดียว",
-]
-
-PROMPT = """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "Farmmer — ธรรมะก่อนนอน"
+CHANNELS = {
+    "dharma": {
+        "path": os.path.join(ROOT, "content", "ch2_shorts", "scripts.json"),
+        "angles": [
+            "ความคิดเรื่องงานพรุ่งนี้", "ตาสว่างทั้งที่ง่วง", "แบกเรื่องคนอื่นมาคิด",
+            "กังวลเรื่องเงินตอนดึก", "คิดถึงความผิดพลาดในอดีต", "คิดวนซ้ำเรื่องเดิม",
+            "กลัวอนาคต", "โกรธคนหนึ่งคนจนนอนไม่หลับ", "เปรียบเทียบตัวเองกับคนอื่น",
+            "รู้สึกเหงาในคืนที่เงียบ", "กดดันเรื่องที่ยังไม่เกิดขึ้น", "เสียใจที่พูดผิดไปแล้ว",
+            "ผัดวันประกันพรุ่งแล้วนอนไม่สบายใจ", "ร่างกายเกร็งเพราะความเครียดสะสม",
+            "อยากหลับแต่สมองไม่ยอมหยุด", "กลัวตื่นมาสาย", "ไม่กล้าปล่อยวางเรื่องที่คุมไม่ได้",
+            "คิดมากเรื่องสุขภาพ", "รู้สึกผิดกับคนในครอบครัว", "ทนเก็บความน้อยใจไว้คนเดียว",
+        ],
+        "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "Farmmer — ธรรมะก่อนนอน"
 กลุ่มเป้าหมาย: คนไทยที่นอนไม่หลับ เครียด คิดมากตอนกลางคืน
 
 เขียน Shorts ใหม่ {count} คลิป เรื่อง: {angles}
@@ -49,14 +50,48 @@ PROMPT = """คุณคือผู้เขียนสคริปต์ Shor
 
 กติกา:
 - lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
-  (สำคัญ: Shorts ที่ได้วิวสูงในช่องแนวนี้ยาว 50-90 วินาที ไม่ใช่ 15 วินาที)
 - hook ต้องเป็นคำถามหรือประโยคที่คนนอนไม่หลับอ่านแล้วรู้สึกว่า "นี่คือฉัน"
-  ตัวอย่างที่ดี: "เหนื่อยใจอยู่ใช่ไหม ลองปล่อยสามอย่างนี้ดู" / "นอนไม่หลับเพราะคิดเรื่องเดิมอยู่หรือเปล่า"
 - เนื้อหาธรรมะใช้ได้จริง มี "หนึ่งสิ่งที่ทำได้จริง" แล้วทิ้งปมให้ไปดูคลิปยาว
-- ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ (เช่น "หนึ่ง" ไม่ใช่ "1")
+- ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
 - ไม่มี emoji ไม่มี markdown
 
-ตอบเป็น JSON array เท่านั้น"""
+ตอบเป็น JSON array เท่านั้น""",
+    },
+    "genx": {
+        "path": os.path.join(ROOT, "content", "ch1_shorts", "scripts.json"),
+        "angles": [
+            "ความจริงที่คนไม่อยากยอมรับ", "ความเชื่อที่ทำให้ชีวิตติดอยู่ที่เดิม",
+            "คำถามที่คนวัยผู้ใหญ่ไม่กล้าถามตัวเอง", "ความเงียบที่สอนอะไรบางอย่าง",
+            "การให้อภัยตัวเอง", "ความคาดหวังของคนอื่น", "การปล่อยวางสิ่งที่คุมไม่ได้",
+            "ความเหนื่อยที่ไม่มีใครเห็น", "การเริ่มต้นใหม่ตอนอายุมาก",
+            "ความหมายของการมีชีวิตอยู่", "การยอมรับความไม่สมบูรณ์แบบ",
+            "การไม่ต้องอธิบายตัวเองให้ทุกคนเข้าใจ", "ความกลัวที่ซ่อนอยู่หลังความโกรธ",
+            "บทเรียนจากความล้มเหลว", "การอยู่กับปัจจุบัน",
+        ],
+        "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "ตาต้า GenX — ปรัชญาชีวิต"
+กลุ่มเป้าหมาย: คนไทยวัยผู้ใหญ่ (Gen X) ที่เหนื่อยกับชีวิต คิดมาก กำลังหาความหมาย
+
+เขียน Shorts ใหม่ {count} คลิป เรื่อง: {angles}
+(ห้ามซ้ำกับที่เขียนไปแล้ว: {done})
+
+แต่ละคลิปเป็น JSON object:
+{{"hook":"ประโยคเปิด 1 บรรทัด เป็นความจริงที่คนอ่านแล้วสะดุด (ไม่เกิน 12 คำ)","lines":["...","...","...","...","...","...","...","...","..."],"cta":"ประโยคปิดชวนติดตาม 1 บรรทัด"}}
+
+กติกา:
+- lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
+- hook ต้องเป็นความจริงที่ท้าทายความเชื่อเดิมของคนวัยผู้ใหญ่ ไม่ใช่คำคมลอย ๆ
+- เนื้อหาต้องมี "สิ่งที่ทำได้จริง" หนึ่งอย่าง และทิ้งปมให้อยากรู้ต่อ
+- โทนเสียงสงบ จริงใจ ไม่เทศนา ไม่ตัดสิน
+- ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
+- ไม่มี emoji ไม่มี markdown
+
+ตอบเป็น JSON array เท่านั้น""",
+    },
+}
+
+ANGLES = CHANNELS["dharma"]["angles"]
+PROMPT = CHANNELS["dharma"]["prompt"]
+SCRIPTS = CHANNELS["dharma"]["path"]
 
 
 def ask(key: str, prompt: str) -> list:
@@ -83,23 +118,26 @@ def valid(s: dict) -> bool:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
     ap.add_argument("--count", type=int, default=6)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
+    cfg = CHANNELS[args.channel]
+    scripts_path = cfg["path"]
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         sys.exit("GEMINI_API_KEY is not set")
 
     existing = []
-    if os.path.exists(SCRIPTS):
-        with open(SCRIPTS, encoding="utf-8") as fh:
+    if os.path.exists(scripts_path):
+        with open(scripts_path, encoding="utf-8") as fh:
             existing = json.load(fh)
     done = [s["hook"] for s in existing]
 
-    angles = [a for a in ANGLES if a not in done][:max(args.count, 4)]
-    fresh = ask(key, PROMPT.format(count=args.count, angles=", ".join(angles) or "เรื่องใหม่",
-                                   done="; ".join(done[-12:]) or "ไม่มี"))
+    angles = [a for a in cfg["angles"] if a not in done][:max(args.count, 4)]
+    fresh = ask(key, cfg["prompt"].format(count=args.count, angles=", ".join(angles) or "เรื่องใหม่",
+                                          done="; ".join(done[-12:]) or "ไม่มี"))
     fresh = [s for s in fresh if valid(s)]
 
     next_id = max([int(s["id"]) for s in existing] + [0]) + 1
@@ -109,12 +147,13 @@ def main() -> int:
         next_id += 1
         added.append({"id": sid, "hook": s["hook"], "lines": s["lines"], "cta": s["cta"]})
 
-    print(f"{len(existing)} existing, {len(added)} new")
+    print(f"{args.channel}: {len(existing)} existing, {len(added)} new")
     for s in added:
         print(f"  {s['id']}: {s['hook']}")
     if args.dry_run or not added:
         return 0
-    with open(SCRIPTS, "w", encoding="utf-8") as fh:
+    os.makedirs(os.path.dirname(scripts_path), exist_ok=True)
+    with open(scripts_path, "w", encoding="utf-8") as fh:
         json.dump(existing + added, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     return 0

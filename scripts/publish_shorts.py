@@ -38,14 +38,41 @@ MANIFEST = os.path.join(ROOT, "content", "ch2_shorts.json")
 CHANNEL_ID = "UCM3QO5L_pmj34n1JVlbhh-w"
 TOKEN_ENV = "YT_CH2_REFRESH_TOKEN"
 LONG_URL = "https://youtu.be/F4qFHoVpEyI"
-LONG_TITLE = "ธรรมะก่อนนอน 120 นาที"
+
+# One rail, several channels. The body below reads these rather than the module
+# constants, so adding a channel is a data change, not a code change.
+CHANNELS = {
+    "dharma": {
+        "scripts": SCRIPTS, "manifest": MANIFEST, "channel_id": CHANNEL_ID,
+        "token": TOKEN_ENV, "work": os.path.join(ROOT, "work", "ch2_shorts"),
+        "tags": ["ธรรมะก่อนนอน", "นอนไม่หลับ", "ปล่อยวาง", "ธรรมะ", "สมาธิ",
+                 "คลายเครียด", "ฟังก่อนนอน", "Farmmer", "Shorts"],
+        "category": "22",
+        "tail": (f"\n\nฟังเวอร์ชันเต็ม 120 นาทีได้ที่นี่ → {LONG_URL}\n\n"
+                 "#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง"),
+    },
+    "genx": {
+        "scripts": os.path.join(ROOT, "content", "ch1_shorts", "scripts.json"),
+        "manifest": os.path.join(ROOT, "content", "ch1_shorts.json"),
+        "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+        "token": "YT_CH1_REFRESH_TOKEN",
+        "work": os.path.join(ROOT, "work", "ch1_shorts"),
+        "tags": ["ปรัชญาชีวิต", "ข้อคิด", "แง่คิด", "กำลังใจ", "ชีวิต", "GenX",
+                 "ตาต้าGenX", "Shorts"],
+        "category": "22",
+        "tail": ("\n\nรวมข้อคิดปรัชญาชีวิตไว้ให้แล้ว → "
+                 "https://www.youtube.com/playlist?list=PLXEV3B3DcgsU\n"
+                 "ทุกตอนอยู่ในช่องเดียว → https://www.youtube.com/@tatagenxgeny\n\n"
+                 "#ปรัชญาชีวิต #ข้อคิด #แง่คิด"),
+    },
+}
 
 
-def access_token() -> str:
+def access_token(spec: dict) -> str:
     cid, sec = os.environ.get("YT_CLIENT_ID"), os.environ.get("YT_CLIENT_SECRET")
-    rt = os.environ.get(TOKEN_ENV)
+    rt = os.environ.get(spec["token"])
     if not (cid and sec and rt):
-        sys.exit(f"Missing credentials: need YT_CLIENT_ID, YT_CLIENT_SECRET and {TOKEN_ENV}")
+        sys.exit(f"Missing credentials: need YT_CLIENT_ID, YT_CLIENT_SECRET and {spec['token']}")
     data = urllib.parse.urlencode({"client_id": cid, "client_secret": sec,
                                    "refresh_token": rt, "grant_type": "refresh_token"}).encode()
     try:
@@ -73,7 +100,7 @@ def save(man, path: str) -> None:
 LIMIT_FILE = os.path.join(ROOT, "content", "upload_limit.json")
 
 
-def note_upload_limit() -> None:
+def note_upload_limit(channel_id: str) -> None:
     """Remember that the channel is out of upload slots until the daily reset.
 
     The ceiling is per channel per day and resets at midnight Pacific (08:00 UTC).
@@ -85,13 +112,13 @@ def note_upload_limit() -> None:
     reset = now.replace(hour=8, minute=0, second=0, microsecond=0)
     if reset <= now:
         reset = reset + timedelta(days=1)
-    payload = {"channel_id": CHANNEL_ID, "hit_at": now.isoformat(timespec="seconds"),
+    payload = {"channel_id": channel_id, "hit_at": now.isoformat(timespec="seconds"),
                "reset_at": reset.isoformat(timespec="seconds")}
     with open(LIMIT_FILE, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     print(f"  recorded upload limit; resets {payload['reset_at']}")
-    commit(LIMIT_FILE, "publish(ch2): record the daily upload limit")
+    commit(LIMIT_FILE, f"publish({channel_id}): record the daily upload limit")
 
 
 def commit(path: str, message: str) -> None:
@@ -119,25 +146,29 @@ def commit(path: str, message: str) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--per-run", type=int, default=0, help="upload at most N per run (0 = all)")
     ap.add_argument("--privacy", default="public", choices=["private", "unlisted", "public"])
-    ap.add_argument("--work", default=os.path.join(ROOT, "work", "ch2_shorts"))
+    ap.add_argument("--work", help="override the build dir (default: per channel)")
     args = ap.parse_args()
 
-    scripts = load(SCRIPTS, [])
-    man = load(MANIFEST, {"channel_slug": "dharma", "channel_id": CHANNEL_ID, "shorts": {}})
+    spec = CHANNELS[args.channel]
+    work = args.work or spec["work"]
+    scripts = load(spec["scripts"], [])
+    man = load(spec["manifest"], {"channel_slug": args.channel, "channel_id": spec["channel_id"],
+                                  "shorts": {}})
     if not scripts:
-        sys.exit(f"no scripts at {SCRIPTS}")
+        sys.exit(f"no scripts at {spec['scripts']}")
 
     # If a previous run already hit the channel's daily upload ceiling, do not
     # build anything -- the upload cannot succeed until the reset, and a build
     # here costs minutes for nothing.
     lim = load(LIMIT_FILE, {})
-    if lim.get("reset_at"):
-        if datetime.fromisoformat(lim["reset_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
-            print(f"channel upload limit recorded; resets {lim['reset_at']} -- nothing to do")
-            return 0
+    if (lim.get("channel_id") == spec["channel_id"] and lim.get("reset_at")
+            and datetime.fromisoformat(lim["reset_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc)):
+        print(f"channel upload limit recorded; resets {lim['reset_at']} -- nothing to do")
+        return 0
 
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
     if args.per_run:
@@ -158,7 +189,7 @@ def main() -> int:
     from googleapiclient.errors import HttpError
     from google.oauth2.credentials import Credentials
 
-    creds = Credentials(token=access_token(), refresh_token=os.environ[TOKEN_ENV],
+    creds = Credentials(token=access_token(spec), refresh_token=os.environ[spec["token"]],
                         token_uri="https://oauth2.googleapis.com/token",
                         client_id=os.environ["YT_CLIENT_ID"],
                         client_secret=os.environ["YT_CLIENT_SECRET"])
@@ -166,8 +197,8 @@ def main() -> int:
     try:
         res = yt.channels().list(part="snippet", mine=True).execute()
         got = res["items"][0]["id"]
-        if got != CHANNEL_ID:
-            sys.exit(f"WRONG CHANNEL: token is {got}, expected {CHANNEL_ID}")
+        if got != spec["channel_id"]:
+            sys.exit(f"WRONG CHANNEL: token is {got}, expected {spec['channel_id']}")
         print(f"  authorised as {res['items'][0]['snippet']['title']} ({got})")
     except HttpError as exc:
         print(f"  channel check skipped ({exc.status_code})", file=sys.stderr)
@@ -176,12 +207,12 @@ def main() -> int:
     for s in todo:
         sid = s["id"]
         # Build if needed (CI has no prebuilt file).
-        out = os.path.join(args.work, sid, f"short_{sid}.mp4")
+        out = os.path.join(work, sid, f"short_{sid}.mp4")
         if not os.path.exists(out):
             print(f"building {sid} ...")
             r = subprocess.run([sys.executable, os.path.join(HERE, "make_short.py"),
-                                "--index", sid, "--out-dir", args.work],
-                               capture_output=True, text=True)
+                                "--scripts", spec["scripts"], "--index", sid,
+                                "--out-dir", work], capture_output=True, text=True)
             if r.returncode != 0:
                 print(f"  build failed: {r.stderr[-400:]}", file=sys.stderr)
                 rc = 1
@@ -192,15 +223,13 @@ def main() -> int:
             continue
 
         description = (f"{s['hook']}\n\n" + "\n".join(s["lines"]) +
-                       f"\n\n{s['cta']}\n\nฟังเวอร์ชันเต็ม 120 นาทีได้ที่นี่ "
-                       f"→ {LONG_URL}\n\n#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง")
+                       f"\n\n{s['cta']}" + spec["tail"])
         body = {
             "snippet": {
                 "title": (s["hook"][:95] + " #Shorts")[:100],
                 "description": description[:5000],
-                "tags": ["ธรรมะก่อนนอน", "นอนไม่หลับ", "ปล่อยวาง", "ธรรมะ", "สมาธิ",
-                         "คลายเครียด", "ฟังก่อนนอน", "Farmmer", "Shorts"],
-                "categoryId": "22",
+                "tags": spec["tags"],
+                "categoryId": spec["category"],
                 "defaultLanguage": "th",
                 "defaultAudioLanguage": "th",
             },
@@ -223,15 +252,15 @@ def main() -> int:
                 # end to the day, not a fault: stop, and do not mark the run failed,
                 # or every day would look broken and the real failures hide.
                 print("  daily upload limit reached; stopping this run", file=sys.stderr)
-                note_upload_limit()
+                note_upload_limit(spec["channel_id"])
                 break
             rc = 1
             continue
         vid = response["id"]
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
                               "title": body["snippet"]["title"]}
-        save(man, MANIFEST)   # record before anything else can fail
-        commit(MANIFEST, f"publish(ch2): record Short {sid}")
+        save(man, spec["manifest"])   # record before anything else can fail
+        commit(spec["manifest"], f"publish({args.channel}): record Short {sid}")
         print(f"  live: https://youtu.be/{vid}")
 
     print(f"\n{len([v for v in man['shorts'].values() if v.get('video_id')])}"
