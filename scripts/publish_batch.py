@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -83,6 +84,25 @@ def save(man: dict, path: str) -> None:
         json.dump(man, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     os.replace(tmp, path)
+
+
+def commit(path: str, message: str) -> None:
+    """Persist the manifest to git as soon as an id is known. An id that lives
+    only on an ephemeral runner is lost if the run dies before the workflow's
+    commit step, and the next run would upload the same video again."""
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return
+    try:
+        subprocess.run(["git", "add", os.path.relpath(path, ROOT)], cwd=ROOT, check=True)
+        subprocess.run(["git", "-c", "user.name=openhands",
+                        "-c", "user.email=openhands@all-hands.dev",
+                        "commit", "-q", "-m", message], cwd=ROOT, check=True)
+        subprocess.run(["git", "push"], cwd=ROOT, check=True,
+                       capture_output=True, timeout=300)
+        print("  manifest committed")
+    except subprocess.CalledProcessError as exc:
+        print(f"  manifest commit failed (the workflow step will retry): {exc}",
+              file=sys.stderr)
 
 
 def main() -> int:
@@ -205,6 +225,7 @@ def main() -> int:
         v["url"] = url
         v["state"] = "published"
         save(man, args.manifest)   # record BEFORE anything else can fail
+        commit(args.manifest, f"publish(ch2): record {key}")
         print(f"  live: {url} ({response['status']['privacyStatus']}) — recorded")
 
         thumb = v.get("thumbnail")

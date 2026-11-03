@@ -60,7 +60,7 @@ jobs:
           python3 scripts/publish_shorts.py $ARGS
 
       - name: Record the new video ids
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: always()
         run: |
           if git diff --quiet content/ch2_shorts.json; then
             echo "no change to the manifest"

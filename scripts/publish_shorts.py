@@ -69,6 +69,29 @@ def save(man, path: str) -> None:
     os.replace(tmp, path)
 
 
+def commit(path: str, message: str) -> None:
+    """Persist the manifest to git the moment an id is known.
+
+    The CI runner is ephemeral: if the run dies before the workflow's commit step
+    (a cancel, an upload-limit abort), an id that lives only on the runner is
+    lost, and the next run re-uploads the same Short. Committing here makes the
+    record survive the run it was made in.
+    """
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return
+    try:
+        subprocess.run(["git", "add", os.path.relpath(path, ROOT)], cwd=ROOT, check=True)
+        subprocess.run(["git", "-c", "user.name=openhands",
+                        "-c", "user.email=openhands@all-hands.dev",
+                        "commit", "-q", "-m", message], cwd=ROOT, check=True)
+        subprocess.run(["git", "push"], cwd=ROOT, check=True,
+                       capture_output=True, timeout=120)
+        print("  manifest committed")
+    except subprocess.CalledProcessError as exc:
+        print(f"  manifest commit failed (will retry at the workflow step): {exc}",
+              file=sys.stderr)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
@@ -159,13 +182,20 @@ def main() -> int:
             while response is None:
                 _, response = request.next_chunk()
         except HttpError as exc:
-            print(f"  UPLOAD FAILED: {exc}", file=sys.stderr)
+            text = str(exc)
+            print(f"  UPLOAD FAILED: {text}", file=sys.stderr)
             rc = 1
+            if "uploadLimitExceeded" in text:
+                # The channel has hit its daily upload ceiling. Retrying the rest
+                # cannot succeed today, and continuing only burns quota.
+                print("  daily upload limit reached; stopping this run", file=sys.stderr)
+                break
             continue
         vid = response["id"]
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
                               "title": body["snippet"]["title"]}
         save(man, MANIFEST)   # record before anything else can fail
+        commit(MANIFEST, f"publish(ch2): record Short {sid}")
         print(f"  live: https://youtu.be/{vid}")
 
     print(f"\n{len([v for v in man['shorts'].values() if v.get('video_id')])}"
