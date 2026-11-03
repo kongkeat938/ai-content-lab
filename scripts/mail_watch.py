@@ -43,6 +43,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 REPORT = os.path.join(ROOT, "docs", "MAIL-ALERTS.md")
 STATE = os.path.join(ROOT, "content", "mail_watch_state.json")
+# Mail detail must not land in a public repository, so it goes outside it.
+PRIVATE = os.environ.get("MAIL_WATCH_PRIVATE", os.path.expanduser("~/mail_watch_private.json"))
 
 # slug -> (refresh-token env var, the account's address)
 ACCOUNTS = {
@@ -51,6 +53,11 @@ ACCOUNTS = {
     "aeris-music": ("YT_CH3_REFRESH_TOKEN", "aerismusic8@gmail.com"),
     "kongkeat-story": ("YT_CH4_REFRESH_TOKEN", "kongkeat.p3@gmail.com"),
 }
+
+# Channels that are no longer ak's to run. aeris-music was handed to another AI
+# (K, 2026-11-03), so watching it is not a gap and not an alert -- it is simply
+# out of scope. Keeping it here means the report cannot quietly drift back.
+CANCELLED = {"aeris-music"}
 
 # Mail from these is treated as business-critical even without a keyword.
 IMPORTANT_SENDERS = ("youtube", "google", "adsense", "noreply", "no-reply",
@@ -188,6 +195,9 @@ def main() -> int:
     if not args.imap_only:
         lines.append("## Channel health (Data API — always available)")
         for slug, (var, _addr) in ACCOUNTS.items():
+            if slug in CANCELLED:
+                lines.append(f"- **{slug}**: out of scope (handed to another AI) — not watched")
+                continue
             alerts = channel_alerts(slug, var)
             real = [a for a in alerts if a["kind"] not in ("no-credential", "api-error")]
             gap = [a for a in alerts if a["kind"] in ("no-credential", "api-error")]
@@ -208,8 +218,15 @@ def main() -> int:
         if "cannot be read" in status or "IMAP failed" in status:
             blind = True
         total += len(alerts)
-        for a in alerts:
-            lines.append(f"- :email: **{a['from']}** — {a['subject']} ({a['date']})")
+        # This report is committed to a public repository, so it records that an
+        # alert arrived and how many -- never the sender or the subject line.
+        # The detail goes to a private file outside the repo.
+        for i, _a in enumerate(alerts, 1):
+            lines.append(f"- :email: alert {i} — recorded privately, not printed here")
+        if alerts:
+            with open(PRIVATE, "w", encoding="utf-8") as fh:
+                json.dump({"checked_at": now.isoformat(timespec="seconds"), "alerts": alerts},
+                          fh, indent=2, ensure_ascii=False)
         lines.append("")
 
     report = "\n".join(lines) + "\n"
