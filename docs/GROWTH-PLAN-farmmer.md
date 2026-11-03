@@ -91,3 +91,23 @@ formats**.
 1. Stayed-to-watch % of the top Shorts.
 2. Traffic source of the Shorts viewers (Shorts feed / search / browse).
 3. Long-form impressions and CTR.
+
+## ติดตั้งภาพปก — สถานะและวิธีทำต่อ (2026-11-03)
+
+ภาพปก 6 ใบพร้อมแล้วที่ `assets/branding/farmmer/thumbs/` แต่ยังติดตั้งไม่ได้เพราะ
+โควตา YouTube Data API ของวันหมด (รีเซ็ตเที่ยงคืนแปซิฟิก = **08:00 UTC**).
+
+รันเองได้ในคำสั่งเดียว เมื่อโควตากลับมา:
+
+```
+python3 scripts/set_thumbnails.py            # ตั้งทุกคลิปใน manifest
+python3 scripts/set_thumbnails.py --check    # ยืนยันว่าติดตั้งแล้ว
+```
+
+หรือรอให้ workflow `.github/workflows/set-thumbnails.yml` รันเอง
+(08:07/09:07/10:07/11:07 UTC) — แต่ **cron ของ GitHub ไม่น่าเชื่อถือในโปรเจกต์นี้**
+(ทั้ง repo นี้ไม่เคยมี schedule event เลย ดู `actions/runs?event=schedule`)
+ถ้าไม่ติดตั้งเองภายในคืนเดียว ให้รันคำสั่งข้างบนจากเซสชันถัดไป
+
+หมายเหตุ: วัดแล้วว่า `thumbnails.set` **ไม่ได้**มีโควตาแยกของตัวเอง — โควตาหมด
+ทั้งโปรเจกต์จะได้ `403 quotaExceeded` เหมือนกัน (ต่างจากที่ docstring เดิมเขียนไว้)

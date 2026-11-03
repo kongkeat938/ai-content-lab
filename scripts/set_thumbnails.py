@@ -3,9 +3,8 @@
 
 Studio's thumbnail button is gated behind phone verification for a new channel,
 and the browser login dies whenever the pod is recycled. The API has neither
-problem: a refresh token in the environment is enough, and `thumbnails.set` is
-on its own daily quota (100 calls) separate from the 10,000 units the rest of
-the API shares. This is the path that keeps working unattended.
+problem: a refresh token in the environment is enough. This is the path that
+keeps working unattended.
 
     python3 scripts/set_thumbnails.py --dry-run        # list what it would set
     python3 scripts/set_thumbnails.py                  # set every manifest entry
@@ -16,9 +15,13 @@ Credentials come from the environment, exactly like publish_youtube.py:
 YT_CLIENT_ID, YT_CLIENT_SECRET and YT_<SLUG>_REFRESH_TOKEN (here YT_CH2_...).
 In GitHub Actions they are repo secrets, so the job runs with no browser at all.
 
+Quota: measured 2026-11-03, `thumbnails.set` is NOT on a quota of its own -- a
+spent project quota returns `403 quotaExceeded` for it too, and the daily quota
+resets at midnight Pacific (08:00 UTC). So a quota error is reported as
+`deferred` and does not fail the run; the scheduled job retries after the reset.
+
 `thumbnails.set` is idempotent: setting the same image again is harmless, so a
-re-run after a dropped job costs nothing. Quota exhaustion is reported clearly
-and does not fail the whole run -- the remaining entries are still attempted.
+re-run after a dropped job costs nothing.
 """
 from __future__ import annotations
 
