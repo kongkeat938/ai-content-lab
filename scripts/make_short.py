@@ -33,7 +33,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 FONTS = os.path.join(ROOT, "assets", "fonts")
 VOICE = "th-TH-NiwatNeural"      # calm male narrator, the channel's voice
-RATE = "-8%"
+# A slower read: the niche's winners run about a minute, and a slow read holds a
+# sleepy listener better than a clipped one.
+RATE = "-15%"
 W, H = 1080, 1920
 GOLD = (245, 199, 90)
 WHITE = (250, 250, 252)
