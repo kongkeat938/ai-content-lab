@@ -92,15 +92,17 @@ all green): release `night-857bc8fdda62`, issue #3.
 ## First real build (night_dharma_01)
 
 * Script: `content/night_dharma_01/` — 28 dharma-before-sleep pieces, 16 457
-  characters, ~40 min of speech; `make_compilation` cycles it to length.
-* Out (120 min target): ~119 min · -14.x LUFS · true peak ≤ -3.2 dBFS ·
-  1920x1080 `tv` · bed ~20 dB under the voice · `moov` first (seekable).
+  characters, **30.2 min** of speech (measured: sum of the 28 part durations);
+  `make_compilation` cycles it to length (4 cycles for 120 min).
+* Out (120 min target, measured by `verify_night.py` on the mp4): 120.8 min ·
+  **-14.5 LUFS** · true peak **-3.1 dBFS** · 1920x1080 `tv` · bed 20.6 dB under
+  the voice · `moov` first (seekable) · mp4 717 MB.
 * Verified by `verify_night.py`: **pass**.
 
 ## What is not here yet
 
-* **A script long enough to avoid heavy repetition.** 40 min of speech is still
-  cycled ~3x to reach 120 min; a full 90-minute episode wants ~90 min of distinct
+* **A script long enough to avoid heavy repetition.** 30 min of speech is still
+  cycled 4x to reach 120 min; a full 90-minute episode wants ~90 min of distinct
   speech. The cost of the format is the script, not the render: 120 min of audio
   is ~16 minutes of synthesis. Each cycle is now **rotated** (piece order shifts)
   so a listener who leaves the file playing does not hear the identical sequence
