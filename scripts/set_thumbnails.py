@@ -112,6 +112,8 @@ def main() -> int:
     ap.add_argument("--only", action="append", help="video id (repeatable)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--check", action="store_true", help="report live thumbnails only")
+    ap.add_argument("--skip-existing", action="store_true",
+                    help="do not re-set a video that already serves a custom thumbnail")
     args = ap.parse_args()
 
     with open(args.manifest, encoding="utf-8") as fh:
@@ -130,26 +132,35 @@ def main() -> int:
             print(f"  {vid}: {'custom' if url else 'auto frame (no maxres)'} {url[:70]}")
         return 0
 
-    ok = failed = deferred = 0
+    ok = failed = deferred = skipped = 0
     for vid, rel in items.items():
         path = rel if os.path.isabs(rel) else os.path.join(ROOT, rel)
         if not os.path.exists(path):
             print(f"  {vid}: MISSING {rel}"); failed += 1; continue
         if args.dry_run:
             print(f"  {vid}: would set {rel} ({os.path.getsize(path)//1024} KB)"); continue
+        if args.skip_existing and current_thumbnail(vid, token):
+            # Already serving a custom image. Re-setting is idempotent but a
+            # thumbnails.set costs real quota, and YouTube rate-limits a burst
+            # (429 uploadRateLimitExceeded, measured 2026-11-03). Do not spend
+            # quota on a video that is already done.
+            print(f"  {vid}: already set, skipped"); skipped += 1; continue
         good, msg = set_thumbnail(vid, path, token)
         if good:
             print(f"  {vid}: OK")
         elif "quotaExceeded" in msg:
             # The daily quota resets at midnight Pacific; the schedule retries.
             print(f"  {vid}: deferred (quota resets 08:00 UTC)"); deferred += 1
+        elif "429" in msg or "RateLimit" in msg:
+            # A burst rate limit, not a defect: back off and let the next run finish.
+            print(f"  {vid}: deferred (rate limited, retry later)"); deferred += 1
         else:
             print(f"  {vid}: FAIL ({msg})"); failed += 1
         ok += good
 
     if args.dry_run:
         return 0
-    print(f"done: {ok} set, {deferred} deferred, {failed} failed")
+    print(f"done: {ok} set, {skipped} skipped, {deferred} deferred, {failed} failed")
     # A quota deferral is not a defect -- the next scheduled run finishes it.
     return 1 if failed else 0
 
