@@ -5,6 +5,24 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## 🏁 2026-11-03 — the business turn (ak runs it)
+K's standing order: **ak runs this as its own business; revenue is the objective; all tools;
+ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
+- **ch2 long-form is LIVE: `F4qFHoVpEyI`** (120 min, public). `night_110` held to 2026-11-05.
+- **7 Shorts live** (`exm1OwwngzI 5QRxCDH1iQw CAIFSg_Edxg AANBJpLDpUc MiF0Bz4Z_NQ ODC1nNwp6Sg
+  Luv3HBRgY48`); pool = 20 scripts, grows nightly via Gemini.
+- **Rails (all CI, no browser):** `publish_batch.py`+`publish-batch.yml` (long),
+  `make_short.py`+`publish_shorts.py`+`publish-shorts.yml` (Shorts),
+  `gen_short_scripts.py`+`grow-shorts-pool.yml` (content), `set_thumbnails.py` (covers).
+- **Rule learned:** never gate a write path on a read call's quota — `yt_auth.load_credentials`
+  verifies the channel with `channels.list` (quota-limited) and exits when quota is spent,
+  which killed publishing; take the token straight from the env instead. `videos.insert` has its
+  own bucket and works while reads 403.
+- **Rule learned:** an ephemeral runner loses an id that is only in its working tree — commit
+  the ledger **inside** the script the moment an id returns, or a failed run re-uploads.
+- **ch2 daily upload ceiling is real:** `uploadLimitExceeded` after ~7-8 uploads/day.
+- Gemini text = `gemini-3.5-flash-lite` only (2.5/2.0-flash → 404). Plan: `docs/REVENUE-PLAN.md`.
+
 ## 🗂️ TOPIC FILES
 - `topics/00-pipeline-and-channel-facts.md` — the 3 channels, registry, yt938-1, view data, image ceilings.
 - `topics/01-pipeline-build-and-measure.md` — build/measure loop, ffmpeg, gates, review page.
