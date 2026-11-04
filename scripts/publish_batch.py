@@ -97,6 +97,14 @@ def commit(path: str, message: str) -> None:
         subprocess.run(["git", "-c", "user.name=openhands",
                         "-c", "user.email=openhands@all-hands.dev",
                         "commit", "-q", "-m", message], cwd=ROOT, check=True)
+        # Rebase before pushing. Two runs can land a commit each in the same
+        # second; a bare push then loses the loser's id, and the id is the only
+        # thing stopping a re-upload. Measured 2026-11-03: a rejected push lost
+        # tSgNrHJGVoo this way and left a duplicate 120-minute video live.
+        subprocess.run(["git", "-c", "user.name=openhands",
+                        "-c", "user.email=openhands@all-hands.dev",
+                        "pull", "--rebase", "--autostash", "origin", "main"],
+                       cwd=ROOT, check=True, capture_output=True, timeout=120)
         subprocess.run(["git", "push"], cwd=ROOT, check=True,
                        capture_output=True, timeout=300)
         print("  manifest committed")
@@ -105,12 +113,41 @@ def commit(path: str, message: str) -> None:
               file=sys.stderr)
 
 
+def existing_titles(yt, channel_id: str) -> dict:
+    """Map exact title -> video_id for everything already on the channel.
+
+    This is the guard that makes a re-upload impossible even when the manifest
+    is stale. `actions/checkout` pins the run to the SHA it was created with, so
+    a run that starts after a sibling's commit still reads the manifest from
+    *before* that commit -- that is exactly how night_120 was posted twice on
+    2026-11-03 (F4qFHoVpEyI by one run, tSgNrHJGVoo by the next). The live
+    channel is the only source that cannot be stale, so ask it.
+    """
+    up = yt.channels().list(part="contentDetails", id=channel_id).execute()
+    pl = up["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+    out, page = {}, None
+    while True:
+        req = yt.playlistItems().list(part="snippet", playlistId=pl, maxResults=50)
+        if page:
+            req = yt.playlistItems().list(part="snippet", playlistId=pl,
+                                          maxResults=50, pageToken=page)
+        r = req.execute()
+        for it in r["items"]:
+            sn = it["snippet"]
+            out.setdefault(sn["title"], sn["resourceId"]["videoId"])
+        page = r.get("nextPageToken")
+        if not page:
+            return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", default=MANIFEST)
     ap.add_argument("--only", action="append")
     ap.add_argument("--privacy", choices=["private", "unlisted", "public"])
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--forget", metavar="KEY",
+                    help="clear a recorded video_id (for a known duplicate that was deleted)")
     ap.add_argument("--cache", default=os.path.join(ROOT, "work", "publish_cache"))
     args = ap.parse_args()
 
@@ -120,6 +157,17 @@ def main() -> int:
     vids = man["videos"]
     if args.only:
         vids = [v for v in vids if v["key"] in args.only]
+
+    if args.forget:
+        hit = [v for v in man["videos"] if v["key"] == args.forget]
+        if not hit or not hit[0].get("video_id"):
+            sys.exit(f"{args.forget}: no recorded video_id to forget")
+        print(f"{args.forget}: forgetting {hit[0]['video_id']}")
+        for field in ("video_id", "url"):
+            hit[0].pop(field, None)
+        hit[0]["state"] = "ready"
+        save(man, args.manifest)
+        return 0
 
     todo = [v for v in vids if not v.get("video_id") and _due(v)]
     held = [v for v in vids if not v.get("video_id") and not _due(v)]
@@ -172,9 +220,28 @@ def main() -> int:
               f"the per-channel secret pins the target channel", file=sys.stderr)
 
     os.makedirs(args.cache, exist_ok=True)
+    # The live channel, not the manifest, is the authority on what is already
+    # posted -- see existing_titles() for why the manifest can be stale.
+    try:
+        posted = existing_titles(yt, man["channel_id"])
+        print(f"  channel holds {len(posted)} videos; will refuse to re-upload any of them")
+    except HttpError as exc:
+        print(f"  could not read the channel ({exc.status_code}); "
+              f"falling back to the manifest's own video_id guard", file=sys.stderr)
+        posted = {}
     rc = 0
     for v in todo:
         key = v["key"]
+        if v["title"] in posted:
+            vid = posted[v["title"]]
+            print(f"\n{key}: SKIP — an identical title is already live ({vid}); "
+                  f"recording it instead of re-uploading")
+            v["video_id"] = vid
+            v["url"] = f"https://youtu.be/{vid}"
+            v["state"] = "published"
+            save(man, args.manifest)
+            commit(args.manifest, f"publish(ch2): {key} already live as {vid} — not re-uploaded")
+            continue
         local = os.path.join(args.cache, f"{key}.mp4")
         if not (os.path.exists(local) and os.path.getsize(local) > 0):
             print(f"downloading {v['video_url']} -> {local}")
