@@ -178,3 +178,15 @@ picks the balance -- `--alpha` 0.35 (brightest) to 1.00 (closest to K); 0.55 is
 the default and keeps the tones intact.
 
 Listening set: `work/k_voice/watch/ab.html`.
+
+
+### Decision (2026-11-02)
+
+K listened to `work/k_voice/watch/ab.html` and picked **alpha 0.55** -- the
+balanced variant. It is now the default in `scripts/tts_ktone.py`
+(`K_TONE_ALPHA`, or `--alpha`). The full episode already rendered with it:
+`work/k_tone_01/video_fixed.mp4`, verify pass.
+
+Verified after the choice that the stored render really is 0.55: rebuilding
+`05_forgive_self` through the same `make_audio.build(..., narrator="openvoice")`
+path gives centroid 1104 Hz against the stored file's 1103 Hz.

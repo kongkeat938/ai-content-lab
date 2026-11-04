@@ -51,7 +51,10 @@ VOICE = "th-TH-NiwatNeural"
 RATE, PITCH = "-12%", "-10Hz"
 SR = 22050          # OpenVoice's own rate; the envelope is estimated here
 NFFT, HOP = 1024, 256
-ALPHA = 0.55        # how far the envelope moves toward K; 0 = edge, 1 = fully K
+# How far the envelope moves toward K: 0 = edge, 1 = fully K. 0.55 is K's pick
+# (2026-11-02) -- bright enough to stop the episode sounding muffled, close
+# enough that it still reads as his voice. Override with K_TONE_ALPHA or --alpha.
+ALPHA = float(os.environ.get("K_TONE_ALPHA", "0.55"))
 ENV_SIGMA_HZ = 350  # envelope smoothing -- below the pitch, above the formants
 # The envelope transfer leaves the voice a little soft in the 3-6 kHz band that
 # carries consonant clarity; this puts it back without touching the timbre.
