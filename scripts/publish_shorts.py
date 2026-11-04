@@ -106,25 +106,39 @@ def save(man, path: str) -> None:
 
 
 LIMIT_FILE = os.path.join(ROOT, "content", "upload_limit.json")
+# How long a real ceiling refusal parks the rail before it probes again.
+# Shorter than the daily reset, because the reset clock is unreliable.
+PROBE_HOURS = 3
 
 
-def note_upload_limit(channel_id: str) -> None:
-    """Remember that the channel is out of upload slots until the daily reset.
+def note_upload_limit(channel_id: str, detail: str = "") -> None:
+    """Park the rail for a short probe window after a real ceiling refusal.
 
-    The ceiling is per channel per day and resets at midnight Pacific (08:00 UTC).
     Keyed by channel: one channel hitting its ceiling must not make the other
     look blocked. Without this note the foreman re-dispatches the rail every tick,
     and every tick burns a run to learn the same thing.
+
+    The window is short on purpose. The ceiling's reset is not a clock we can
+    trust: measured 2026-11-04, ch2 was recorded as capped at 09:38 UTC, yet it
+    accepted an upload at 04:28 the next morning, and a note set to the next
+    midnight Pacific sat on 39 ready Shorts for ~19 h. So the note is a probe,
+    not a sentence -- it parks the rail for PROBE_HOURS and the next run tries
+    again, re-recording only if the channel really is still capped.
     """
     now = datetime.now(timezone.utc)
-    reset = now.replace(hour=8, minute=0, second=0, microsecond=0)
-    if reset <= now:
-        reset = reset + timedelta(days=1)
+    midnight = now.replace(hour=8, minute=0, second=0, microsecond=0)
+    if midnight <= now:
+        midnight = midnight + timedelta(days=1)
+    reset = min(midnight, now + timedelta(hours=PROBE_HOURS))
     limits = load(LIMIT_FILE, {})
     if not isinstance(limits, dict) or "channels" not in limits:
         limits = {"channels": {}}
-    limits["channels"][channel_id] = {"hit_at": now.isoformat(timespec="seconds"),
-                                      "reset_at": reset.isoformat(timespec="seconds")}
+    rec = {"hit_at": now.isoformat(timespec="seconds"),
+           "reset_at": reset.isoformat(timespec="seconds"),
+           "probe_hours": PROBE_HOURS}
+    if detail:
+        rec["detail"] = detail[:200]
+    limits["channels"][channel_id] = rec
     with open(LIMIT_FILE, "w", encoding="utf-8") as fh:
         json.dump(limits, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
@@ -284,7 +298,7 @@ def main() -> int:
                 # end to the day, not a fault: stop, and do not mark the run failed,
                 # or every day would look broken and the real failures hide.
                 print("  daily upload limit reached; stopping this run", file=sys.stderr)
-                note_upload_limit(spec["channel_id"])
+                note_upload_limit(spec["channel_id"], text)
                 break
             rc = 1
             continue
