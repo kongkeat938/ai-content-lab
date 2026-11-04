@@ -46,6 +46,9 @@ CHANNELS = {
             "ต้องการการยอมรับจากคนอื่น", "คิดถึงบ้านและพ่อแม่", "เหงาในคืนวันหยุด",
             "กลัวว่าพรุ่งนี้จะแย่กว่าเดิม", "ไม่กล้าบอกใครว่าไม่ไหว",
         ],
+        # The hooks that measured best all carry one of these; valid() enforces
+        # it so the pool cannot fill up with the losing shape again.
+        "cues": ("ลอง", "คืนนี้", "เปิดทิ้งไว้"),
         "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "Farmmer — ธรรมะก่อนนอน"
 กลุ่มเป้าหมาย: คนไทยที่นอนไม่หลับ เครียด คิดมากตอนกลางคืน
 
@@ -57,9 +60,11 @@ CHANNELS = {
 
 กติกา:
 - lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
-- hook ต้องมี "สิ่งที่ทำได้คืนนี้" เป็นรูปธรรม เช่น ชวนทำท่านี้ เปิดคลิปทิ้งไว้ ลองหายใจแบบหนึ่ง
-  ห้ามเป็นแค่การทวนปัญหาว่านอนไม่หลับ (ข้อมูลจริง: ฮุกที่บอกให้ลงมือทำได้ 1000+ วิว
-  ฮุกที่แค่ทวนปัญหาได้ไม่ถึง 300)
+- hook บังคับ: ต้องมีคำใดคำหนึ่งในนี้ "ลอง" หรือ "คืนนี้" หรือ "เปิดทิ้งไว้" และต้องบอก
+  สิ่งที่ทำได้จริงคืนนี้ เช่น "คืนนี้ลองวางมือบนท้องแล้วหายใจช้า ๆ"
+  ห้ามเขียนฮุกที่เป็นแค่การทวนปัญหาว่า "ทำไมนอนไม่หลับ" เด็ดขาด
+  (วัดจริง: ฮุกที่บอกให้ลงมือทำได้ 300-570 วิว/วัน ฮุกที่ทวนปัญหาได้ 74-173 วิว/วัน)
+- ชื่อเรื่อง (angles) เป็นแค่ "หัวข้อ" ไม่ใช่ตัวฮุก ให้เปลี่ยนหัวข้อนั้นให้เป็นคำแนะนำที่ลงมือทำได้
 - เนื้อหาธรรมะใช้ได้จริง มี "หนึ่งสิ่งที่ทำได้จริง" แล้วทิ้งปมให้ไปดูคลิปยาว
 - ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
 - ไม่มี emoji ไม่มี markdown
@@ -86,6 +91,7 @@ CHANNELS = {
             "การเห็นคุณค่าในสิ่งเล็ก ๆ", "ความกล้าที่จะเริ่มใหม่",
             "การไม่จมอยู่กับอดีต", "ความสุขที่ไม่ต้องรอใคร",
         ],
+        "cues": ("มีสิทธิ์", "ไม่ต้อง", "อนุญาต"),
         "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "ตาต้า GenX — ปรัชญาชีวิต"
 กลุ่มเป้าหมาย: คนไทยวัยผู้ใหญ่ (Gen X) ที่เหนื่อยกับชีวิต คิดมาก กำลังหาความหมาย
 
@@ -97,8 +103,11 @@ CHANNELS = {
 
 กติกา:
 - lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
-- hook ต้องให้ "ความปลดปล่อย" หรือ "การอนุญาต" แก่คนอ่าน เช่น บอกว่าไม่ต้องเก่งที่สุด
-  หรือก้าวเล็ก ๆ ก็มีค่า (ข้อมูลจริง: ฮุกแบบนี้ได้ 300+ วิว/วัน ฮุกแบบทวนความจริงเฉย ๆ ได้ต่ำกว่ามาก)
+- hook บังคับ: ต้องมีคำใดคำหนึ่งในนี้ "มีสิทธิ์" หรือ "ไม่ต้อง" หรือ "อนุญาต" และต้องให้
+  "ความปลดปล่อย" หรือ "การอนุญาต" แก่คนอ่าน เช่น "คุณมีสิทธิ์พักโดยไม่ต้องขอโทษใคร"
+  ห้ามเขียนฮุกที่เป็นแค่การทวนความจริงเฉย ๆ เด็ดขาด
+  (วัดจริง: ฮุกแบบให้สิทธิ์ได้ 310-373 วิว/วัน ฮุกแบบทวนความจริงได้ต่ำกว่ามาก)
+- ชื่อเรื่อง (angles) เป็นแค่ "หัวข้อ" ไม่ใช่ตัวฮุก ให้เปลี่ยนหัวข้อนั้นให้เป็นคำอนุญาตที่ลงมือทำได้
 - เนื้อหาต้องมี "สิ่งที่ทำได้จริง" หนึ่งอย่าง และทิ้งปมให้อยากรู้ต่อ
 - โทนเสียงสงบ จริงใจ ไม่เทศนา ไม่ตัดสิน
 - ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
@@ -123,7 +132,7 @@ def ask(key: str, prompt: str) -> list:
     return json.loads(txt)
 
 
-def valid(s: dict) -> bool:
+def valid(s: dict, cues=()) -> bool:
     if not isinstance(s, dict):
         return False
     if not s.get("hook") or not isinstance(s.get("lines"), list) or not s.get("cta"):
@@ -132,7 +141,13 @@ def valid(s: dict) -> bool:
         return False
     joined = " ".join([s["hook"], *s["lines"], s["cta"]])
     # Digits must already be Thai words: edge-tts has no Thai number dictionary.
-    return not re.search(r"[0-9๐-๙]", joined)
+    if re.search(r"[0-9๐-๙]", joined):
+        return False
+    # The measured winning hook shape must be present, or the pool drifts back to
+    # the shape that got 74-173 views/day. See docs/HOOKS-MEASURED.md.
+    if cues and not any(c in s["hook"] for c in cues):
+        return False
+    return True
 
 
 def _overlaps(angle: str, text: str, floor: int = 3) -> bool:
@@ -194,9 +209,17 @@ def main() -> int:
     if not angles:
         sys.exit("no fresh angles available and Gemini returned none")
 
-    fresh = ask(key, cfg["prompt"].format(count=args.count, angles=", ".join(angles[:args.count + 4]),
-                                          done="; ".join(done[-12:]) or "ไม่มี"))
-    fresh = [s for s in fresh if valid(s)]
+    cues = cfg.get("cues", ())
+    prompt = cfg["prompt"].format(count=args.count, angles=", ".join(angles[:args.count + 4]),
+                                  done="; ".join(done[-12:]) or "ไม่มี")
+    fresh = [s for s in ask(key, prompt) if valid(s, cues)]
+    # Gemini sometimes ignores the hook rule; ask once more before giving up, so
+    # a thin batch does not silently leave the pool short.
+    if len(fresh) < args.count:
+        print(f"  only {len(fresh)}/{args.count} passed the hook check; asking again")
+        again = [s for s in ask(key, prompt) if valid(s, cues)]
+        seen_hooks = {s["hook"] for s in fresh}
+        fresh += [s for s in again if s["hook"] not in seen_hooks]
 
     next_id = max([int(s["id"]) for s in existing] + [0]) + 1
     added = []
