@@ -79,3 +79,31 @@ A folder `K_VOICE` exists in each. Drop the file into any of them from the phone
 app; it appears on PC1 within a minute and ak reads it from there.
 
 Uploads are capped at 200 MB and limited to audio/zip extensions.
+
+## Tone clone on the pod (measured 2026-11-03)
+
+`scripts/tts_openvoice.py` narrates in K's tone with no key, no GPU and no fee.
+edge-tts writes the Thai words; OpenVoice v2's tone-colour converter repaints
+them with K's timbre, taken from the recording he sent. Because it is a tone
+converter, not a text-to-speech clone, it never sees Thai phonemes -- it works on
+any language, which is why Thai is possible at all here.
+
+    python3 scripts/tts_openvoice.py --build-se work/k_voice/k_raw.wav
+    python3 scripts/tts_openvoice.py --text "สวัสดีครับ" --out /tmp/a.mp3
+    python3 scripts/tts_openvoice.py --script content/ch2_shorts/scripts.json \
+        --index 32 --out work/ch2_shorts/32/voice.mp3
+
+Measured on this pod's 4-core CPU:
+
+| check | result |
+|---|---|
+| speaker similarity to K (cosine) | 0.56 (edge-tts) -> **0.88** (converted) |
+| F0 median | 141.6 Hz -> **111.1 Hz** (K = 117.6 Hz) |
+| Thai intelligibility | re-transcribed word-perfect |
+| conversion speed | 9.4 s for a 10 s clip |
+| Short built end to end | 25.4 s, **-14.8 LUFS / -2.9 dBTP** |
+
+Setup lives at `/workspace/OpenVoice` (repo + `checkpoints_v2/converter`) and
+`work/k_voice/k_se.pth` (K's speaker embedding). Both are outside the repo and
+die with the pod; re-run the setup block in the script's docstring to rebuild.
+`tau=0.5` measured best (0.8898 vs 0.878-0.888 for 0.1-0.9).
