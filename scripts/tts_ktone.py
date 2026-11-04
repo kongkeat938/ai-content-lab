@@ -55,7 +55,8 @@ ALPHA = 0.55        # how far the envelope moves toward K; 0 = edge, 1 = fully K
 ENV_SIGMA_HZ = 350  # envelope smoothing -- below the pitch, above the formants
 # The envelope transfer leaves the voice a little soft in the 3-6 kHz band that
 # carries consonant clarity; this puts it back without touching the timbre.
-CLARITY_EQ = "highpass=f=90,equalizer=f=3200:t=q:w=1.1:g=3.5,equalizer=f=5200:t=q:w=1.5:g=2.5"
+CLARITY_EQ = ("highpass=f=90,equalizer=f=2600:t=q:w=1.1:g=5,"
+               "equalizer=f=4200:t=q:w=1.3:g=4,equalizer=f=7000:t=q:w=1.6:g=3")
 
 _cvt = None
 _se = None
