@@ -22,9 +22,12 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
   the ledger **inside** the script the moment an id returns, or a failed run re-uploads.
 - **ch2 daily upload ceiling is real:** `uploadLimitExceeded` after ~7-8 uploads/day.
 - Gemini text = `gemini-3.5-flash-lite` only (2.5/2.0-flash → 404). Plan: `docs/REVENUE-PLAN.md`.
-- **GitHub `schedule` NEVER fires here** (`event=schedule` total 0) → automation = **watchdog**
-  (self-chaining) → **foreman** (dispatches what is due, idempotent) → rails; `health.py` →
-  `docs/HEALTH.md`. Kill switch `content/STOP`. Docs: `docs/MONITORING.md`.
+- **GitHub `schedule` NOW FIRES here** — corrected 2026-11-04: `event=schedule`
+  total_count = **6** and the ticks ran (`grow-shorts-pool` 01:59Z, `set-thumbnails`
+  00:53Z, `publish-batch` 23:18Z). The earlier "total 0" was a new-repo cold start,
+  not a permanent block. The watchdog→foreman chain is still the *reliable* path
+  (it re-chains itself), but do not claim cron is dead. Kill switch `content/STOP`.
+  Docs: `docs/MONITORING.md`.
 - **Niche truth (measured 2026-11-03, ch2 dharma):** long-form winners = **บทสวดมนต์ก่อนนอน /
   ปล่อยวาง, 20 min–3 h** (21.4M, 21.0M, 12.4M views). Shorts winners = **53 s–1:33** with a
   **question** hook ("เหนื่อยใจอยู่ใช่ไหม"). Our Shorts were 19 s → changed to 8-9 lines + rate
