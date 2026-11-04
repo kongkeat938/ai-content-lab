@@ -212,29 +212,70 @@ def duration(path: str) -> float:
     return float(r.stdout.strip())
 
 
-def synth_auto(text: str, voice: str, rate: str, pitch: str, out: str) -> str:
-    """Synthesise with K's cloned voice when configured, else edge-tts.
+def synth_auto(text: str, voice: str, rate: str, pitch: str, out: str,
+               narrator: str | None = None) -> str:
+    """Synthesise with the narrator the caller or the environment selects.
+
+    `narrator` (or `NARRATOR` when it is None) picks the voice, so one setting
+    re-voices a whole long build, or one piece of it:
+
+        openvoice  K's tone, cloned on the pod (needs work/k_voice/k_se.pth)
+        fish       K's clone via Fish Audio (needs FISH_API_KEY + reference id)
+        edge       the house edge-tts voice
+
+    Unset means "openvoice when it is set up, else fish when it is, else edge",
+    so the pipeline works on a machine that has none of them. A narrator that is
+    named but not ready falls back rather than failing the build.
 
     Used by build() -- the path the long night videos take. build_with_timing()
     still uses edge-tts, because its exact per-line timings come from edge-tts
-    word boundaries, which Fish Audio does not return here.
+    word boundaries, which the other two do not return here.
     """
-    try:
-        import tts_fish
-    except ImportError:
-        tts_fish = None
-    if tts_fish and tts_fish.available():
-        return tts_fish.synth(text, out)
+    want = (narrator if narrator is not None else os.environ.get("NARRATOR", "")).strip().lower()
+
+    def _openvoice():
+        try:
+            import tts_openvoice
+        except ImportError:
+            return None
+        if tts_openvoice.available():
+            tts_openvoice.synth(text, out)
+            return out
+        return None
+
+    def _fish():
+        try:
+            import tts_fish
+        except ImportError:
+            return None
+        if tts_fish.available():
+            return tts_fish.synth(text, out)
+        return None
+
+    if want == "edge":
+        picked = None
+    elif want == "openvoice":
+        picked = _openvoice()
+    elif want == "fish":
+        picked = _fish()
+    else:
+        picked = _openvoice() or _fish()
+    if picked:
+        return picked
+
+    if want in ("openvoice", "fish"):
+        print(f"  NARRATOR={want} not ready, falling back to edge-tts",
+              file=sys.stderr)
     asyncio.run(synth(text, voice, rate, pitch, out))
     return out
 
 
 def build(script: str, out: str, voice: str, rate: str, pitch: str,
-          tail: float) -> dict:
+          tail: float, narrator: str | None = None) -> dict:
     text = prep(open(script, encoding="utf-8").read())
     tmp = out + ".raw.mp3"
     staged = out + ".staged.wav"
-    synth_auto(text, voice, rate, pitch, tmp)
+    synth_auto(text, voice, rate, pitch, tmp, narrator=narrator)
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", tmp, "-af", CHAIN,
          "-ar", "48000", "-ac", "2", staged])
     loudnorm2(staged, out, pad=tail)

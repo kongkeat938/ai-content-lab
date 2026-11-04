@@ -107,3 +107,38 @@ Setup lives at `/workspace/OpenVoice` (repo + `checkpoints_v2/converter`) and
 `work/k_voice/k_se.pth` (K's speaker embedding). Both are outside the repo and
 die with the pod; re-run the setup block in the script's docstring to rebuild.
 `tau=0.5` measured best (0.8898 vs 0.878-0.888 for 0.1-0.9).
+
+## Narrator switch (2026-11-03)
+
+`NARRATOR` picks the voice for a whole build, and a filename tag picks it per
+piece, so one compilation can mix K's tone with the house voice:
+
+    NARRATOR=openvoice python3 scripts/build_night.py --content content/k_tone_01 \
+        --work work/k_tone_01 --out work/k_tone_01 --minutes 11
+    # a piece named 02_body.edge.txt speaks in edge-tts while its neighbours
+    # keep K's tone; the tag is edge | fish | openvoice, and anything else means
+    # "whatever NARRATOR says".
+
+A narrator that is named but not ready falls back to edge-tts and says so, so a
+build never dies because a checkpoint is missing.
+
+### First full episode in K's tone (measured)
+
+`work/k_tone_01` -- 8 new pieces, ~11 minutes of text, repeated to 17.9 min.
+
+| check | result |
+|---|---|
+| length | 1072.0 s = **17.9 min** (picture/audio agree to 0.06 s) |
+| loudness | **-14.5 LUFS** |
+| true peak | **-3.2 dBFS** |
+| picture | 1920x1080, color_range=tv |
+| bed headroom | 21.0 dB under the voice |
+| verdict | **pass**, failures = [] |
+| render time | ~11 min of CPU for 9 min of speech (~0.79x realtime) |
+
+### Mixed voices in one file (measured)
+
+`content/k_mix_demo` -> `work/k_mix_demo/mix.mp3`: piece 1 and 3 in K's tone,
+piece 2 in the house voice. F0 medians: K pieces **113.5 / 110.3 Hz**, house
+piece **137.9 Hz**, K's own recording **117.6 Hz** -- the switch is real, not
+nominal.
