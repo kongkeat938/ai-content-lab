@@ -50,6 +50,20 @@ def duration(path: str) -> float:
     return float(r.stdout.strip())
 
 
+def narrator_for(base: str) -> str | None:
+    """Which voice a piece wants, from a marker in its filename.
+
+    A compilation can mix narrators: a piece named `09_metta.edge.txt` is spoken
+    in the house voice while its neighbours keep K's tone. The marker is the final
+    dot-separated tag (after the name); anything else is `None`, meaning "whatever
+    the environment says".
+    """
+    tags = base.split(".")
+    if len(tags) >= 2 and tags[-1] in ("edge", "fish", "openvoice"):
+        return tags[-1]
+    return None
+
+
 def build_part(script: str, work: str) -> dict:
     """Synthesise and master one piece. Resumable: an existing part is reused."""
     base = os.path.splitext(os.path.basename(script))[0]
@@ -60,10 +74,14 @@ def build_part(script: str, work: str) -> dict:
         if info.get("duration_sec", 0) > 30:
             print(f"  {base}: cached ({info['duration_sec']:.0f}s)")
             return info
-    info = make_audio.build(script, out, VOICE, RATE, PITCH, PAUSE_BETWEEN)
+    narrator = narrator_for(base)
+    info = make_audio.build(script, out, VOICE, RATE, PITCH, PAUSE_BETWEEN,
+                            narrator=narrator)
     info["name"] = base
+    info["narrator"] = narrator or os.environ.get("NARRATOR", "auto")
     json.dump(info, open(meta, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-    print(f"  {base}: {info['duration_sec']:.0f}s  {info['lufs']} LUFS")
+    print(f"  {base}: {info['duration_sec']:.0f}s  {info['lufs']} LUFS  "
+          f"[{info['narrator']}]")
     return info
 
 
