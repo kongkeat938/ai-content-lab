@@ -58,6 +58,31 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
 - **`--only` must be wired into the selection loop**, not just the arg parser — first run of
   the backfill ignored it and touched all 10 (had to revert 4).
 
+## 🏛️ Authority (2026-11-04, session 2) — ak decides everything
+K's words: **"ak ต้องบริหารและตัดสินใจเองทุกอย่าง k กำหนดเป้าหมายให้เท่านั้น"** → ak holds
+full operational authority; K sets goals only. **Do not bring operational choices back to K.**
+Reversible, in-policy work (content, funnels, rails, cadence, promotion) = ak acts. Keep
+asking K ONLY for the irreversible/identity items: AdSense/tax/identity, creating accounts,
+and **spending money**. `docs/NEEDS-K.md` shrinks to that.
+
+## 🔗 Funnel decision (2026-11-04, session 2) — point at the PLAYLIST, not the video
+- A single `youtu.be/<id>` link is fragile (delete the video → the link dies on every Short).
+  The **playlist** (`PLBpZCGnd7Q5Y` "หลับลึกทั้งคืน — ฟังยาว") is durable and autoplays into
+  the next long file → more watch-hours per tap. Decision: every dharma Short and every
+  long-form description links the **playlist** (and the 120-min file). Applied live to the 21
+  sleep Shorts + 2 long videos; `publish_shorts.py` writes it for all future Shorts.
+- **`night_110` was a duplicate risk:** its description/title were near-identical to the live
+  120-min file (`F4qFHoVpEyI`), and it is a *different* 684 MB render. Retitled + re-described
+  as "ฉบับยาวพิเศษ" before it auto-publishes 2026-11-05 20:00 Thai.
+- **Cross-promo:** `promote_channels.py --apply` wrote the sibling-channel block into 9 genx +
+  8 dharma videos that lacked it (1 dharma skipped: description too long). ch4 (kongkeat) was
+  already complete.
+- **`publish-batch` uploads while the read quota is spent** (`videos.insert` has its own
+  bucket; the rail skips the `channels.list` check on a 403) — so night_110 is not blocked.
+- **`night-compilation` does NOT upload by itself** ("ak does not upload; K reviews the first
+  work of each channel") — but K has approved ch2 long-form, so the rail is effectively open;
+  treat the `publish: true` input as approved for ch2.
+
 ## 🗂️ TOPIC FILES
 - `topics/00-pipeline-and-channel-facts.md` — the 3 channels, registry, yt938-1, view data, image ceilings.
 - `topics/01-pipeline-build-and-measure.md` — build/measure loop, ffmpeg, gates, review page.
