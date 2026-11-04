@@ -46,7 +46,7 @@ PY
 
 if [ "${1:-}" = "--se" ] && [ -n "${2:-}" ]; then
   echo "== K's speaker embedding from $2"
-  python3 "$REPO_ROOT/scripts/tts_openvoice.py" --build-se "$2"
+  python3 "$REPO_ROOT/scripts/tts_ktone.py" --build-se "$2"
 fi
 
-echo "done. narrate with: python3 scripts/tts_openvoice.py --text '...' --out /tmp/a.mp3"
+echo "done. narrate with: python3 scripts/tts_ktone.py --text '...' --out /tmp/a.mp3"

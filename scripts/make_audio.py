@@ -219,7 +219,7 @@ def synth_auto(text: str, voice: str, rate: str, pitch: str, out: str,
     `narrator` (or `NARRATOR` when it is None) picks the voice, so one setting
     re-voices a whole long build, or one piece of it:
 
-        openvoice  K's tone, cloned on the pod (needs work/k_voice/k_se.pth)
+        openvoice  K's tone, via source-filter repaint (scripts/tts_ktone.py)
         fish       K's clone via Fish Audio (needs FISH_API_KEY + reference id)
         edge       the house edge-tts voice
 
@@ -233,14 +233,16 @@ def synth_auto(text: str, voice: str, rate: str, pitch: str, out: str,
     """
     want = (narrator if narrator is not None else os.environ.get("NARRATOR", "")).strip().lower()
 
-    def _openvoice():
+    def _ktone():
+        # tts_ktone keeps edge-tts' own pitch and timing and only repaints the
+        # timbre, so Thai tones survive. tts_openvoice converted the waveform
+        # outright and mangled them -- see tts_ktone's docstring.
         try:
-            import tts_openvoice
+            import tts_ktone
         except ImportError:
             return None
-        if tts_openvoice.available():
-            tts_openvoice.synth(text, out)
-            return out
+        if tts_ktone.available():
+            return tts_ktone.synth(text, out)
         return None
 
     def _fish():
@@ -255,11 +257,11 @@ def synth_auto(text: str, voice: str, rate: str, pitch: str, out: str,
     if want == "edge":
         picked = None
     elif want == "openvoice":
-        picked = _openvoice()
+        picked = _ktone()
     elif want == "fish":
         picked = _fish()
     else:
-        picked = _openvoice() or _fish()
+        picked = _ktone() or _fish()
     if picked:
         return picked
 
