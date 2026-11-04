@@ -1,8 +1,8 @@
 {
   "channels": {
     "UCI6EfsgM1HNjrYarvigxyrQ": {
-      "hit_at": "2026-11-04T20:35:17+00:00",
-      "reset_at": "2026-11-04T23:35:17+00:00",
+      "hit_at": "2026-11-04T23:44:59+00:00",
+      "reset_at": "2026-11-05T02:44:59+00:00",
       "probe_hours": 3,
       "detail": "<HttpError 400 when requesting None returned \"The user has exceeded the number of videos they may upload.\". Details: \"[{'message': 'The user has exceeded the number of videos they may upload.', 'domai"
     },
