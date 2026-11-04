@@ -87,7 +87,14 @@ def build(audio: str, image: str, out: str, title: str, loop_seconds: float,
         adur = duration(audio)
 
         def encode(dst: str, gain_db: float = 0.0) -> None:
-            af = f"volume={gain_db:.2f}dB" if gain_db else "anull"
+            # A clean loop is the strongest watch-time lever measured on these
+            # channels: the top videos all show averageViewPercentage > 100%.
+            # The bed fades in from silence, so fading the tail out to silence
+            # makes end->start seamless and a replay continuous, instead of the
+            # hard stop that gives a listener a reason to swipe away.
+            fo = max(0.0, adur - 8.0)
+            chain = f"afade=t=in:st=0:d=4,afade=t=out:st={fo:.3f}:d=8"
+            af = f"volume={gain_db:.2f}dB,{chain}" if gain_db else chain
             run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1",
                  "-i", loop, "-i", audio,
                  "-map", "0:v", "-map", "1:a", "-t", f"{adur:.3f}", "-shortest",
