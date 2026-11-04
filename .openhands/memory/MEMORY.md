@@ -39,6 +39,25 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
   never K).
 - **ch2 upload ceiling ~7-8/day**; `thumbnails.set` 429s after ~3 → use `--skip-existing`.
 
+## 📊 2026-11-04 (session 2) — status report + fast-revenue plan
+- **Measured live:** genx **26** subs / 9,518 views · dharma **22** / 6,751 · kongkeat **7** /
+  3,746. Total 55 subs, 20,015 views, **348 watch-h (upper bound)**. **Shorts = 98.4% of all
+  views.** Docs: `docs/STATUS-2026-11-04.md`, `docs/FAST-REVENUE-PLAN.md`.
+- **YPP 2026 (verified):** Tier 1 = **500 subs + 3,000 h (or 3M Shorts views/90 d)** → fan
+  funding; Tier 2 = 1,000 subs + 4,000 h (or 10M Shorts). **Doubles 2027-02-01.** Thailand
+  eligible. Shorts views and watch hours never combine.
+- **Funnel repair (done):** 10 dharma Shorts shipped with no link to the 120-min video.
+  `scripts/backfill_short_links.py` added it to the **6 sleep-hook Shorts**; the other 4 are
+  story/quote clips (`ข้อคิดชีวิต`/`การ์ตูนครอบครัว`) where a sleep link is a mismatch — left
+  alone. dharma funnel now 21/25.
+- **Fixed 3 rail defects:** (a) `Mv0jl7KhxIE` (deleted dup) in `ch2_thumbnails.json` made
+  `set-thumbnails` exit 1 every run → removed; (b) `health.py` read runs from one repo-wide
+  `?per_page=60` page (filled by `pages build and deployment`) so slow rails read STALE →
+  now reads each workflow's own runs endpoint; (c) `foreman.yml` died on a rebase conflict over
+  the generated `docs/HEALTH.md` → push first, abort-and-skip on conflict.
+- **`--only` must be wired into the selection loop**, not just the arg parser — first run of
+  the backfill ignored it and touched all 10 (had to revert 4).
+
 ## 🗂️ TOPIC FILES
 - `topics/00-pipeline-and-channel-facts.md` — the 3 channels, registry, yt938-1, view data, image ceilings.
 - `topics/01-pipeline-build-and-measure.md` — build/measure loop, ffmpeg, gates, review page.
