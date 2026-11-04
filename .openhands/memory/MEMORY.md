@@ -8,7 +8,11 @@ in `topics/*.md` and the daily logs.
 ## 🏁 2026-11-03 — the business turn (ak runs it)
 K's standing order: **ak runs this as its own business; revenue is the objective; all tools;
 ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
-- **ch2 long-form is LIVE: `F4qFHoVpEyI`** (120 min, public). `night_110` held to 2026-11-05.
+- **ch2 long-form is LIVE: `F4qFHoVpEyI`** (120 min) and **`2PEjuEFpeY8`**
+  (K-tone, 17 min, public 2026-11-04 — K approved the tone and said to release).
+  `night_110` held to 2026-11-05 20:00 Thai. **Publishing works while the read
+  quota is spent** (`videos.insert` has its own bucket; the rail skips the
+  `channels.list` check on a quota 403).
 - **7 Shorts live** (`exm1OwwngzI 5QRxCDH1iQw CAIFSg_Edxg AANBJpLDpUc MiF0Bz4Z_NQ ODC1nNwp6Sg
   Luv3HBRgY48`); pool = 20 scripts, grows nightly via Gemini.
 - **Rails (all CI, no browser):** `publish_batch.py`+`publish-batch.yml` (long),
