@@ -51,3 +51,31 @@ Nothing else changes: the mastering chain still normalises to -14 LUFS / -3 dBTP
 
 A 2-hour read is the hard case. Build one night video with K's voice and measure
 it before switching the channel over; a short sample can drift over a long read.
+
+## Sending the recording to ak (K, pick one)
+
+K has no way to attach audio in the chat, and PC1 has **no microphone**
+(measured: the only audio endpoint is "Speakers"). Record on the phone, then:
+
+**Option 1 — upload page (easiest, nothing to install).**
+Open this on the phone, pick the file, press send:
+
+    https://work-2-zmmehfjlyrrhipvr.prod-runtime.all-hands.dev/
+
+The file lands in `work/k_voice/inbox/` on the pod. ak starts the page with
+`scripts/voice_inbox.py`. The page dies when the pod recycles, so ask ak to
+restart it if it does not load.
+
+**Option 2 — Google Drive (works even while the pod is down).**
+PC1 already syncs three Drive accounts:
+
+| drive | account |
+|---|---|
+| G: | kongkeat.938@gmail.com |
+| H: | aerismusic8@gmail.com |
+| I: | farmmer.938@gmail.com |
+
+A folder `K_VOICE` exists in each. Drop the file into any of them from the phone
+app; it appears on PC1 within a minute and ak reads it from there.
+
+Uploads are capped at 200 MB and limited to audio/zip extensions.
