@@ -33,6 +33,33 @@
       "url": "https://youtu.be/F4qFHoVpEyI"
     },
     {
+      "key": "k_tone_01",
+      "state": "published",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/k_tone_01.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/k_tone_01.mp3",
+      "thumbnail": "assets/branding/farmmer/thumbs/k_tone_01.jpg",
+      "duration_sec": 1037.58,
+      "title": "ธรรมะก่อนนอน 17 นาที ปล่อยวางทุกเรื่อง หลับลึกถึงเช้า",
+      "description": "เสียงบรรยายธรรมะก่อนนอน 17 นาที กล่อมใจให้สงบ ปล่อยวางความกังวลและเรื่องที่ค้างคาใจ ก่อนหลับตาพักผ่อน เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน\n\nเปิดทิ้งไว้ ไม่ต้องตั้งใจฟัง แค่ปล่อยใจไปกับเสียงและลมหายใจ\n\nเนื้อหา: เปิดใจ · ผ่อนร่างกาย · หายใจ · ปล่อยวาง · ให้อภัยตัวเอง · ให้อภัยคนอื่น · ขอบคุณวันนี้ · ความไม่เที่ยง\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้ใจได้พัก\n\n— ช่องพี่น้อง —\nkongkeat pratumma — เรื่องเล่าการ์ตูน\nhttps://www.youtube.com/@kongkeatpratumma\n\nรวมทุกตอนไว้ในช่องเดียว: https://www.youtube.com/@farmmer-n9t",
+      "tags": [
+        "ธรรมะก่อนนอน",
+        "ฟังธรรมะก่อนนอน",
+        "เสียงธรรมะนอนหลับ",
+        "ธรรมะผ่อนคลาย",
+        "นอนไม่หลับ",
+        "หลับสบาย",
+        "ปล่อยวาง",
+        "สมาธิก่อนนอน",
+        "ธรรมะ 17 นาที",
+        "Farmmer ธรรมะก่อนนอน"
+      ],
+      "category_id": "22",
+      "privacy": "public",
+      "not_before": null,
+      "video_id": "2PEjuEFpeY8",
+      "url": "https://youtu.be/2PEjuEFpeY8"
+    },
+    {
       "key": "night_110",
       "state": "ready",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night_dharma_01/video.mp4",
