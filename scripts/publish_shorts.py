@@ -38,6 +38,7 @@ MANIFEST = os.path.join(ROOT, "content", "ch2_shorts.json")
 CHANNEL_ID = "UCM3QO5L_pmj34n1JVlbhh-w"
 TOKEN_ENV = "YT_CH2_REFRESH_TOKEN"
 LONG_URL = "https://youtu.be/F4qFHoVpEyI"
+LONG_PLAYLIST = "PLBpZCGnd7Q5Y"   # "หลับลึกทั้งคืน — ฟังยาว"
 
 # One rail, several channels. The body below reads these rather than the module
 # constants, so adding a channel is a data change, not a code change.
@@ -53,7 +54,12 @@ CHANNELS = {
         # 74-173 for the restating-the-problem shape (docs/HOOKS-MEASURED.md).
         # _winning_first() publishes these ahead of the others.
         "cues": ("ลอง", "คืนนี้", "เปิดทิ้งไว้"),
-        "tail": (f"\n\nฟังเวอร์ชันเต็ม 120 นาทีได้ที่นี่ → {LONG_URL}\n\n"
+        # The funnel points at the *playlist*, not only the single 120-min file:
+        # the playlist is durable (it survives a deleted video) and it autoplays
+        # into the next long file, so one tap earns more watch-hours than one video.
+        "tail": (f"\n\nฟังเวอร์ชันเต็ม 120 นาทีได้ที่นี่ → {LONG_URL}\n"
+                 f"ฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → "
+                 f"https://www.youtube.com/playlist?list={LONG_PLAYLIST}\n\n"
                  "#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง"),
     },
     "genx": {
