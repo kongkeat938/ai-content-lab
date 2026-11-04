@@ -82,15 +82,15 @@ Uploads are capped at 200 MB and limited to audio/zip extensions.
 
 ## Tone clone on the pod (measured 2026-11-03)
 
-`scripts/tts_openvoice.py` narrates in K's tone with no key, no GPU and no fee.
+`scripts/tts_ktone.py` narrates in K's tone with no key, no GPU and no fee.
 edge-tts writes the Thai words; OpenVoice v2's tone-colour converter repaints
 them with K's timbre, taken from the recording he sent. Because it is a tone
 converter, not a text-to-speech clone, it never sees Thai phonemes -- it works on
 any language, which is why Thai is possible at all here.
 
-    python3 scripts/tts_openvoice.py --build-se work/k_voice/k_raw.wav
-    python3 scripts/tts_openvoice.py --text "สวัสดีครับ" --out /tmp/a.mp3
-    python3 scripts/tts_openvoice.py --script content/ch2_shorts/scripts.json \
+    python3 scripts/tts_ktone.py --build-se work/k_voice/restored/denoised.wav
+    python3 scripts/tts_ktone.py --text "สวัสดีครับ" --out /tmp/a.mp3
+    python3 scripts/tts_ktone.py --script content/ch2_shorts/scripts.json \
         --index 32 --out work/ch2_shorts/32/voice.mp3
 
 Measured on this pod's 4-core CPU:
@@ -142,3 +142,39 @@ build never dies because a checkpoint is missing.
 piece 2 in the house voice. F0 medians: K pieces **113.5 / 110.3 Hz**, house
 piece **137.9 Hz**, K's own recording **117.6 Hz** -- the switch is real, not
 nominal.
+
+## Why the first episode sounded dull, and the fix (2026-11-02)
+
+K listened to the first full episode and heard three faults: too dull, wrong
+words, choppy. Measured, all three traced to OpenVoice's converter being used as
+the thing that *produces* the audio:
+
+| fault | measurement |
+|---|---|
+| too dull | spectral centroid **1368 Hz -> 690 Hz** (K's own voice: 565 Hz). Energy below 300 Hz rose 42% -> 56% of the total, and 1-3 kHz fell 6.2% -> 1.1% |
+| wrong words | "ไล่" came back as ไต่ / เลย / ไร้ and "ทวง" as "ถูก". Same sentences were word-perfect from edge-tts alone, so the converter, not the TTS, was at fault. F0-contour correlation with the source: **0.26** |
+| choppy | watermark on by default injects a pseudo-random signal into the audio |
+
+### The fix: source-filter repaint
+
+The converter is now used only as a *filter estimate*. Convert the clip, measure
+how the converter moved the spectral envelope, then apply that movement to the
+**original** edge-tts waveform. The source keeps its own pitch, harmonics, timing
+and pauses -- every cue Thai meaning rides on -- and only the timbre moves.
+
+Measured on the same sentence, matched text:
+
+| | F0-contour r | spectral centroid | MFCC distance to K |
+|---|---|---|---|
+| edge-tts | 1.000 | 1384 Hz | 322.9 |
+| OpenVoice direct (old) | **0.331** | 808 Hz | 293.8 |
+| source-filter, alpha 0.55 | **0.900** | 1077 Hz | 306.5 |
+| source-filter, alpha 1.00 | 0.887 | 838 Hz | 268.6 |
+
+`scripts/tts_ktone.py` implements this; `NARRATOR=openvoice` uses it. The
+watermark is off. There is a real trade-off: the closer to K's timbre, the
+duller, because K's own recording is duller than edge-tts (677 vs 1384 Hz). K
+picks the balance -- `--alpha` 0.35 (brightest) to 1.00 (closest to K); 0.55 is
+the default and keeps the tones intact.
+
+Listening set: `work/k_voice/watch/ab.html`.
