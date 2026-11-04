@@ -87,6 +87,17 @@ duller) — **K picks by ear**; that is taste, not a bug. Full episode re-render
 **ASR is not a valid A/B tool here** (gemini-3.5-flash-lite transcribed one file 4
 different ways) — use F0-contour correlation + MFCC distance.
 
+## 🔬 Reach measured properly (2026-11-04, `docs/COMPARE-2026-11-04.md`)
+- `scripts/analyze_reach.py` groups Shorts by hook shape, median views/day,
+  comparing only 0.5-8-day-old clips. dharma tonight-action **341.8** vs
+  problem **163.0** (2.1x); genx self-truth **463.5**; kongkeat family
+  **86.7**. 120-min file ≈ **28x** the watch-hours of the best Short.
+- **Ceiling note is a 3h probe now, not a sentence to midnight.** A stale
+  note parked 39 ready Shorts ~19h (ch2 accepted 8 uploads the next
+  morning). ch2 ceiling ≈ **8-9 uploads/day**.
+- **Hour-of-post is confounded with content type** — the dead dharma clips
+  are story Shorts, not sleep hooks. Do not credit the hour.
+
 ## 🎯 Reach rule (measured 2026-11-04, `docs/HOOKS-MEASURED.md`)
 - **dharma (ch2):** a hook that names something to do *tonight* (`ลอง`/`คืนนี้`/
   `เปิดทิ้งไว้`) = **300-570 views/day**; a hook that only restates the problem
