@@ -1,0 +1,108 @@
+<!doctype html><html lang="th"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เสียงโทน K — คลิปเต็ม + เทียบเสียง</title>
+<style>
+ :root{--bg:#0f1720;--card:#132030;--line:#22384d;--mut:#8fa3b6;--ok:#4ade80;--bad:#f87171}
+ *{box-sizing:border-box}
+ body{font-family:system-ui,'Segoe UI','Noto Sans Thai',sans-serif;background:var(--bg);color:#e8eef5;
+      margin:0 auto;padding:22px;max-width:900px;line-height:1.65}
+ h1{font-size:21px;margin:0 0 4px} h2{font-size:15px;margin:0 0 2px}
+ .sub{color:var(--mut);font-size:13px;margin-bottom:16px}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
+ .why{color:var(--mut);font-size:12px;margin:0 0 10px}
+ audio,video{width:100%;border-radius:10px} video{background:#000;display:block}
+ table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+ th,td{padding:5px 8px;border-bottom:1px solid #1e2f42;text-align:right}
+ th:first-child,td:first-child{text-align:left;color:#cfe0f0}
+ .best{color:var(--ok);font-weight:600} .bad{color:var(--bad)}
+ .rec{background:#16351f;border-color:#2e7d4f}
+ .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#1f6feb;color:#fff;margin-left:6px}
+ .dl{display:inline-block;margin:6px 8px 0 0;padding:7px 14px;border-radius:9px;background:#1f6feb;
+     color:#fff;text-decoration:none;font-size:13px}
+</style>
+<h1>เสียงโทน K <span class="tag">ลิงก์ถาวร</span></h1>
+<div class="sub">17.3 นาที · ธรรมะก่อนนอน · บทใหม่ · พากย์ด้วยโทนเสียง K (source-filter repaint)</div>
+
+<div class="card" style="padding:10px">
+  <video controls preload="metadata" src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/k_tone_01.mp4"></video>
+</div>
+<p>
+  <a class="dl" href="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/k_tone_01.mp4">⬇ ดาวน์โหลดวิดีโอ (103 MB)</a>
+  <a class="dl" href="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/k_tone_01.mp3">⬇ เฉพาะเสียง (16 MB)</a>
+</p>
+
+<div class="card">
+  <h2>ตัวเลขที่วัดได้ (verify_night)</h2>
+  <table>
+    <tr><td>ความยาว</td><td>1037.6 วิ = <b>17.3 นาที</b> (ภาพ/เสียงต่าง 0.02 วิ)</td></tr>
+    <tr><td>ระดับเสียง</td><td class="best">-14.5 LUFS</td></tr>
+    <tr><td>true peak</td><td class="best">-3.1 dBFS</td></tr>
+    <tr><td>ภาพ</td><td class="best">1920x1080 · color_range=tv</td></tr>
+    <tr><td>เบดดนตรี</td><td>20.7 dB ใต้เสียงพูด</td></tr>
+    <tr><td>verdict</td><td class="best">pass · failures = []</td></tr>
+  </table>
+</div>
+
+<h1 style="font-size:17px;margin:26px 0 2px">🎧 เทียบเสียง — เลือกโทนที่ชอบ</h1>
+<div class="sub">ข้อความเดียวกันทุกไฟล์ · ระดับเสียงเท่ากัน (-14 LUFS) · วิธีใหม่ทำให้วรรณยุกต์ถูก (r 0.92 vs 0.52 เดิม)</div>
+
+<div class="card">
+  <h2>0. เสียงบ้าน (edge-tts) — ต้นฉบับ</h2>
+  <p class="why">ยังไม่แปลง · ใช้เทียบว่าสว่างเป็นอย่างไร</p>
+  <audio controls src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/ab_ref_house.mp3"></audio>
+</div>
+
+<div class="card">
+  <h2>1. วิธีเดิม (ที่ K บอกว่าทุ้ม + คำเพี้ยน) <span class="bad">✗</span></h2>
+  <p class="why">OpenVoice ตรง ๆ · วรรณยุกต์เพี้ยน (r 0.52) · ทึบ 817 Hz</p>
+  <audio controls src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/ab_old_openvoice.mp3"></audio>
+</div>
+
+<div class="card rec">
+  <h2>2. วิธีใหม่ · สมดุล (alpha 0.55) — <span class="best">แนะนำ</span></h2>
+  <p class="why">คำถูก (r <b>0.92</b>) · สว่างขึ้นเป็น 1223 Hz · ได้โทน K</p>
+  <audio controls src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/ab_ktone_55.mp3"></audio>
+</div>
+
+<div class="card">
+  <h2>3. วิธีใหม่ · สว่างสุด (alpha 0.35)</h2>
+  <p class="why">ใกล้เสียงบ้านที่สุด · โทน K บาง ๆ (r 0.93 · 1362 Hz)</p>
+  <audio controls src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/ab_ktone_35.mp3"></audio>
+</div>
+
+<div class="card">
+  <h2>4. วิธีใหม่ · เข้ม (alpha 0.80)</h2>
+  <p class="why">ใกล้เสียง K มาก · ทึบกว่าเล็กน้อย (r 0.87 · 1070 Hz)</p>
+  <audio controls src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/ab_ktone_80.mp3"></audio>
+</div>
+
+<div class="card">
+  <h2>5. วิธีใหม่ · เหมือน K ที่สุด (alpha 1.00)</h2>
+  <p class="why">MFCC ใกล้ K ที่สุด (282.8) · ทึบสุด (959 Hz)</p>
+  <audio controls src="https://github.com/kongkeat938/ai-content-lab/releases/download/k_tone_01/ab_ktone_100.mp3"></audio>
+</div>
+
+<div class="card">
+  <h2>ตัวเลขที่วัดได้</h2>
+  <table>
+    <tr><th>ไฟล์</th><th>centroid<br><span style="color:var(--mut);font-weight:400">ความสว่าง</span></th>
+        <th>MFCC→K<br><span style="color:var(--mut);font-weight:400">ยิ่งต่ำยิ่งเหมือน</span></th>
+        <th>tone-r<br><span style="color:var(--mut);font-weight:400">วรรณยุกต์ตรง</span></th></tr>
+    <tr><td>เสียงบ้าน</td><td>1386 Hz</td><td>322.8</td><td>0.99</td></tr>
+    <tr><td>วิธีเดิม ✗</td><td>817 Hz</td><td>292.4</td><td class="bad">0.52</td></tr>
+    <tr><td><b>ใหม่ a=0.35</b></td><td class="best">1362 Hz</td><td>327.8</td><td>0.93</td></tr>
+    <tr><td><b>ใหม่ a=0.55</b></td><td class="best">1223 Hz</td><td>315.5</td><td class="best">0.92</td></tr>
+    <tr><td><b>ใหม่ a=0.80</b></td><td>1070 Hz</td><td>297.2</td><td>0.87</td></tr>
+    <tr><td><b>ใหม่ a=1.00</b></td><td>959 Hz</td><td class="best">282.8</td><td>0.85</td></tr>
+    <tr><td>เสียง K จริง</td><td>677 Hz</td><td>0.0</td><td>—</td></tr>
+  </table>
+  <p class="why" style="margin-top:10px">
+    <b>สรุป:</b> วิธีใหม่แก้คำเพี้ยน (0.52 → 0.92) และแก้สะดุด · แต่มี trade-off จริง —
+    ยิ่งเหมือน K ยิ่งทึบ เพราะเสียง K เองทึบกว่า edge (677 vs 1386 Hz) · K เลือก alpha ที่ชอบ
+  </p>
+</div>
+
+<p style="color:#6b7c8f;font-size:12px;margin-top:18px">
+ ak · source-filter tone transfer · ลิงก์นี้อยู่บน GitHub Pages ไม่ตายเมื่อ sandbox รีไซเคิล<br>
+ ไฟล์สื่ออยู่บน <a href="https://github.com/kongkeat938/ai-content-lab/releases/tag/k_tone_01" style="color:#7aa7d8">GitHub Release</a> · 2 พ.ย. 2026</p>
+</html>
