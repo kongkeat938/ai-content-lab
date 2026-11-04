@@ -54,8 +54,14 @@ jobs:
           git config user.email "openhands@all-hands.dev"
           git add docs/HEALTH.md
           git commit -m "chore(health): refresh the report"
-          # another workflow (publish-batch, publish-shorts, account-watch) may
-          # have pushed while this job ran; without the rebase the push is
-          # rejected and the report is lost.
-          git pull --rebase --autostash origin main
-          git push
+          # Another workflow (publish-batch, publish-shorts, account-watch, or a
+          # second foreman) may push while this job runs. HEALTH.md is a
+          # generated artifact, so a rebase conflict on it must not fail the
+          # run: abort and let the next foreman tick regenerate it.
+          if git push; then exit 0; fi
+          if ! git pull --rebase --autostash origin main; then
+            git rebase --abort || true
+            echo "rebase conflict on the generated report -- next run refreshes it"
+            exit 0
+          fi
+          git push || echo "push still rejected -- next run refreshes the report"

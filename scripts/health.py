@@ -56,18 +56,29 @@ def load(rel: str, default):
 
 
 def last_runs() -> dict:
-    """The newest run of each workflow, and the newest *successful* run."""
-    try:
-        runs = gh(f"/repos/{REPO}/actions/runs?per_page=60")["workflow_runs"]
-    except Exception as exc:  # network, auth, rate limit
-        return {"_error": str(exc)[:120]}
+    """The newest run of each watched workflow, and its newest *successful* run.
+
+    Read per workflow, not from one repo-wide page. A single
+    `/actions/runs?per_page=60` page holds only the most recent ~60 runs across
+    every workflow; on a busy day `pages build and deployment` alone fills it, so
+    a slow rail's last success slides out of the window and is reported STALE
+    although it ran (measured 2026-11-04: grow-shorts-pool succeeded 01:59Z but
+    the 60-run page only reached back to 04:30Z). Querying the workflow's own
+    endpoint makes the window the workflow's, not the repo's.
+    """
     out: dict = {}
-    for r in runs:
-        name = r["name"]
-        e = out.setdefault(name, {"last": r["created_at"], "last_status": r["conclusion"],
-                                  "last_success": None})
-        if r["conclusion"] == "success" and not e["last_success"]:
-            e["last_success"] = r["created_at"]
+    for name in EXPECTED:
+        try:
+            runs = gh(f"/repos/{REPO}/actions/workflows/{name}.yml/runs?per_page=30")
+        except Exception as exc:  # network, auth, rate limit
+            return {"_error": str(exc)[:120]}
+        items = runs.get("workflow_runs", [])
+        if not items:
+            continue
+        last = items[0]
+        success = next((r for r in items if r["conclusion"] == "success"), None)
+        out[name] = {"last": last["created_at"], "last_status": last["conclusion"],
+                     "last_success": success["created_at"] if success else None}
     return out
 
 

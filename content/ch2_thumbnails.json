@@ -1,5 +1,5 @@
 {
-  "_comment": "video_id -> thumbnail file, for ch2 Farmmer (@farmmer-n9t). Read by scripts/set_thumbnails.py. 1280x720 JPGs in assets/branding/farmmer/thumbs/. The workflow installs every entry; thumbnails.set is idempotent so re-runs are free. 9bytRcx7SaY was removed: that id 404s on every size, so it is not a live video.",
+  "_comment": "video_id -> thumbnail file, for ch2 Farmmer (@farmmer-n9t). Read by scripts/set_thumbnails.py. 1280x720 JPGs in assets/branding/farmmer/thumbs/. The workflow installs every entry; thumbnails.set is idempotent so re-runs are free. Dead ids are removed, not kept: 9bytRcx7SaY (404 on every size) and Mv0jl7KhxIE (deleted unlisted twin) each made the job exit 1 on every run without ever installing anything.",
   "channel_slug": "dharma",
   "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
   "thumbnails": {
@@ -7,7 +7,6 @@
     "rT5RiIHJct8": "assets/branding/farmmer/thumbs/rT5RiIHJct8.jpg",
     "GLPKPl_MMR4": "assets/branding/farmmer/thumbs/GLPKPl_MMR4.jpg",
     "oL_LdwFwsb4": "assets/branding/farmmer/thumbs/oL_LdwFwsb4.jpg",
-    "Mv0jl7KhxIE": "assets/branding/farmmer/thumbs/Mv0jl7KhxIE.jpg",
     "DHs1j6o0JE0": "assets/branding/farmmer/thumbs/DHs1j6o0JE0.jpg",
     "F4qFHoVpEyI": "assets/branding/farmmer/thumbs/night_120.jpg",
     "2PEjuEFpeY8": "assets/branding/farmmer/thumbs/k_tone_01.jpg"
