@@ -1,0 +1,52 @@
+name: check-duplicates
+
+# Weekly scan for a video that is already live twice on one channel.
+#
+# Why this exists: night_120 went live twice on 2026-11-03 because two publish
+# runs raced on a stale checkout and the loser's push was rejected, so the
+# manifest never learned the second id. The id in the manifest is the only thing
+# stopping a re-upload, so a lost id means a silent duplicate. A duplicate costs
+# watch-hours to its own twin and looks careless to a viewer; this catches it.
+#
+# Read-only. It opens one issue and fails the run when a duplicate is found, so
+# the finding is visible without watching the log.
+on:
+  schedule:
+    - cron: "23 5 * * 1"   # Monday 05:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scan every channel for a repeated title
+        id: scan
+        continue-on-error: true
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: python3 scripts/check_duplicates.py | tee /tmp/dups.txt
+
+      - name: Open one issue if a duplicate was found
+        if: steps.scan.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "duplicate video found on a channel" \
+            --body "$(printf 'A video title appears twice on one channel.\n\n```\n%s\n```\n\nKeep the public copy; delete the redundant one, or run `publish_batch.py --forget <key>` if the manifest points at the deleted id.\n\nRun: %s/%s/actions/runs/%s\n' "$(cat /tmp/dups.txt)" "${{ github.server_url }}" "${{ github.repository }}" "${{ github.run_id }}")"
+          exit 1
