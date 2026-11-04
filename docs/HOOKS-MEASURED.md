@@ -1,10 +1,15 @@
 # Which hooks win — measured, not guessed
 
 Source: `scripts/report_reach.py` (views ÷ days the video has been up), run
-2026-11-03 on the live channels. Views/day is the only honest signal available:
-the refresh tokens carry the `youtube` scope only, so the YouTube Analytics API
-(refusing them) cannot give retention or impressions. A clip younger than a day
-reads high because the first push inflates it, so compare clips of similar age.
+2026-11-03 on the live channels. Views/day is the reach signal.
+
+> **Correction (2026-11-04):** an earlier version of this file claimed the refresh
+> tokens cannot read the YouTube Analytics API. That was **wrong** — the granted
+> `https://www.googleapis.com/auth/youtube` scope is accepted by the Analytics API.
+> `scripts/analytics.py` now reads real watch-hours and average view percentage per
+> video, so reach (views) and hold (watch time) can be judged together. The tables
+> below stay useful as the views/day record; the watch-time winners are in
+> `docs/ANALYTICS-2026-11-04.md`.
 
 ## ch1 — ตาต้า GenX (ปรัชญาชีวิต)
 
