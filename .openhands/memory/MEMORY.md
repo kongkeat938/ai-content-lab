@@ -87,6 +87,16 @@ duller) — **K picks by ear**; that is taste, not a bug. Full episode re-render
 **ASR is not a valid A/B tool here** (gemini-3.5-flash-lite transcribed one file 4
 different ways) — use F0-contour correlation + MFCC distance.
 
+## 🧬 Duplicate guard (2026-11-04)
+- **A raced CI run can re-upload a live video.** `actions/checkout` pins a run
+  to its creation SHA, so two runs on one commit both see a manifest with no
+  `video_id`; the loser's `git push` is rejected and its id is lost → a silent
+  duplicate (night_120 went live twice: `F4qFHoVpEyI` + `tSgNrHJGVoo`).
+- **Fix:** `publish_batch.py` rebases before push AND refuses any title already
+  on the live channel (`existing_titles()`), plus `--forget KEY`.
+- **Check:** `scripts/check_duplicates.py` (weekly `check-duplicates.yml`).
+  Only repeated *titles* count; equal-length Shorts are NOT duplicates.
+
 ## 🔬 Reach measured properly (2026-11-04, `docs/COMPARE-2026-11-04.md`)
 - `scripts/analyze_reach.py` groups Shorts by hook shape, median views/day,
   comparing only 0.5-8-day-old clips. dharma tonight-action **341.8** vs
