@@ -68,6 +68,18 @@ ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
 - **Chrome cookies cannot be decrypted** (v20 App-Bound Encryption) — do not retry that path.
 - `scripts/mail_watch.py` writes mail detail to `~/mail_watch_private.json`, never the public repo.
 
+## 🎙️ K's tone voice — the rule that matters (measured 2026-11-02)
+**Never let OpenVoice's converter *produce* the audio.** Used directly it mangles
+Thai: F0-contour r 0.26-0.33 ("ไล่"→ไต่/เลย/ไร้, "ทวง"→"ถูก"), centroid 1368→690 Hz
+(dull), and it adds a watermark by default. **Fix = `scripts/tts_ktone.py`**:
+convert, measure the envelope delta, apply it to the ORIGINAL edge-tts waveform →
+r **0.92**, centroid **1223 Hz**. `NARRATOR=openvoice` now means tts_ktone (the old
+`tts_openvoice.py` is deleted). `--alpha` 0.35 (brightest) … 1.00 (closest to K,
+duller) — **K picks by ear**; that is taste, not a bug. Full episode re-rendered
+(17.3 min, verify pass). Listening set: `work/k_voice/watch/ab.html`.
+**ASR is not a valid A/B tool here** (gemini-3.5-flash-lite transcribed one file 4
+different ways) — use F0-contour correlation + MFCC distance.
+
 ## Standing rules
 - **AUDIO FIRST**; never claim to have watched/heard — measured numbers only.
 - **ak does not upload** — K reviews the first work of each channel.
