@@ -80,6 +80,18 @@ duller) — **K picks by ear**; that is taste, not a bug. Full episode re-render
 **ASR is not a valid A/B tool here** (gemini-3.5-flash-lite transcribed one file 4
 different ways) — use F0-contour correlation + MFCC distance.
 
+## 🎯 Reach rule (measured 2026-11-04, `docs/HOOKS-MEASURED.md`)
+- **dharma (ch2):** a hook that names something to do *tonight* (`ลอง`/`คืนนี้`/
+  `เปิดทิ้งไว้`) = **300-570 views/day**; a hook that only restates the problem
+  ("ทำไมนอนไม่หลับ") = **74-173**. ch1 = permission hooks (`มีสิทธิ์`/`ไม่ต้อง`/
+  `อนุญาต`) 310-373/day.
+- Enforced in **two** places: `publish_shorts.py::winning_first()` (publish order)
+  and `gen_short_scripts.py::valid(s,cues)` (generation). Do not let the pool
+  drift back — that was the defect: 24 losing hooks were queued ahead of 14 winning.
+- Long videos (the watch-hour engine) must carry the funnel block too; Shorts did,
+  the long ones did not until 2026-11-04.
+- **The bottleneck is the shared read quota** (resets 08:00 UTC), not the rails.
+
 ## Standing rules
 - **AUDIO FIRST**; never claim to have watched/heard — measured numbers only.
 - **ak does not upload** — K reviews the first work of each channel.

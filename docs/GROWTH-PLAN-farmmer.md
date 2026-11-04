@@ -111,3 +111,27 @@ python3 scripts/set_thumbnails.py --check    # ยืนยันว่าติ
 
 หมายเหตุ: วัดแล้วว่า `thumbnails.set` **ไม่ได้**มีโควตาแยกของตัวเอง — โควตาหมด
 ทั้งโปรเจกต์จะได้ `403 quotaExceeded` เหมือนกัน (ต่างจากที่ docstring เดิมเขียนไว้)
+
+## What changed 2026-11-04 (ak, measured)
+
+The plan above was right about the diagnosis and the fix, but two things were
+stopping it from happening:
+
+1. **The drip was publishing the losing shape first.** `publish_shorts.py`
+   walked the pool in file order, and the pool had the problem-shaped hooks
+   first: 24 losing then 14 winning for dharma, 12 losing then 6 winning for ch1.
+   Fixed with `winning_first()` — the measured winning shape now goes out first.
+2. **The generator was feeding itself the wrong titles.** The curated `angles`
+   list is problem-shaped ("why can't I sleep") and the prompt forbade exactly
+   the hook shape that wins, with nothing checking the result. The rule is now
+   explicit and `valid()` enforces it. Live test: dharma 3/3, genx 3/3.
+
+Also: the long videos carried no sibling/channel block, so an audience arriving
+on the 120-minute file had no next step. Both entries now carry the same block
+`promote_channels.py` writes. And `night_110` was held for 07:00 Thai — a sleep
+channel posting at breakfast — now 20:00 Thai.
+
+**Still blocked:** the daily read quota. 39 dharma + 12 ch1 Shorts and 7
+thumbnails are queued behind it, resetting 08:00 UTC. Nothing in the repo can
+spend its way past that; it is one shared project quota across all three
+channels.
