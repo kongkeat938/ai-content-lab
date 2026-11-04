@@ -65,6 +65,10 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          # Optional: K's cloned voice (scripts/tts_fish.py). Unset means the
+          # house edge-tts voice is used, so the rail never depends on it.
+          FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
+          FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
         run: |
           ARGS="--channel ${{ matrix.channel }}"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi

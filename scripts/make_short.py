@@ -172,7 +172,17 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
     spoken = "\n".join([script["hook"], *script["lines"], script["cta"]])
     voice_mp3 = os.path.join(d, "voice.mp3")
     if not os.path.exists(voice_mp3):
-        asyncio.run(speak(spoken, voice_mp3))
+        # K's cloned voice when it is configured (see tts_fish.py), the house
+        # edge-tts voice otherwise. Either way the file lands at voice.mp3, so a
+        # voice already synthesised by hand is never overwritten.
+        try:
+            import tts_fish
+        except ImportError:
+            tts_fish = None
+        if tts_fish and tts_fish.available():
+            tts_fish.synth(spoken, voice_mp3)
+        else:
+            asyncio.run(speak(spoken, voice_mp3))
     dur = duration(voice_mp3)
 
     # Captions: one PNG per line, shown for its share of the audio.

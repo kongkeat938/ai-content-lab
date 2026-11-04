@@ -65,6 +65,9 @@ jobs:
                  scripts/make_bed.py scripts/make_audio.py \
                  scripts/make_night_video.py scripts/make_poster.py \
                  scripts/verify_night.py | sha256sum | cut -c1-12)"
+          # Fold the voice into the fingerprint: switching between K's cloned
+          # voice and edge-tts changes the audio and must force a rebuild.
+          fp="${fp}-$(echo "${FISH_REFERENCE_ID:-edge}" | sha256sum | cut -c1-6)"
           echo "fp=$fp" >> "$GITHUB_OUTPUT"
           if gh release view "night-$fp" >/dev/null 2>&1; then
             echo "build $fp already exists; nothing changed"
@@ -74,9 +77,14 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
 
       - name: Build and verify
         if: steps.fp.outputs.skip != 'true'
+        env:
+          # Optional: K's cloned voice (scripts/tts_fish.py). Unset = edge-tts.
+          FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
+          FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
         run: |
           python3 scripts/build_night.py \
             --content "${{ inputs.content || 'content/night_dharma_01' }}" \

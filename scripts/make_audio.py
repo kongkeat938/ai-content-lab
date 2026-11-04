@@ -212,12 +212,29 @@ def duration(path: str) -> float:
     return float(r.stdout.strip())
 
 
+def synth_auto(text: str, voice: str, rate: str, pitch: str, out: str) -> str:
+    """Synthesise with K's cloned voice when configured, else edge-tts.
+
+    Used by build() -- the path the long night videos take. build_with_timing()
+    still uses edge-tts, because its exact per-line timings come from edge-tts
+    word boundaries, which Fish Audio does not return here.
+    """
+    try:
+        import tts_fish
+    except ImportError:
+        tts_fish = None
+    if tts_fish and tts_fish.available():
+        return tts_fish.synth(text, out)
+    asyncio.run(synth(text, voice, rate, pitch, out))
+    return out
+
+
 def build(script: str, out: str, voice: str, rate: str, pitch: str,
           tail: float) -> dict:
     text = prep(open(script, encoding="utf-8").read())
     tmp = out + ".raw.mp3"
     staged = out + ".staged.wav"
-    asyncio.run(synth(text, voice, rate, pitch, tmp))
+    synth_auto(text, voice, rate, pitch, tmp)
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", tmp, "-af", CHAIN,
          "-ar", "48000", "-ac", "2", staged])
     loudnorm2(staged, out, pad=tail)
