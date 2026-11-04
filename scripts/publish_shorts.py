@@ -48,6 +48,11 @@ CHANNELS = {
         "tags": ["ธรรมะก่อนนอน", "นอนไม่หลับ", "ปล่อยวาง", "ธรรมะ", "สมาธิ",
                  "คลายเครียด", "ฟังก่อนนอน", "Farmmer", "Shorts"],
         "category": "22",
+        # Hooks carrying one of these words name something the viewer can do
+        # tonight, which is the shape that measured 300-570 views/day against
+        # 74-173 for the restating-the-problem shape (docs/HOOKS-MEASURED.md).
+        # _winning_first() publishes these ahead of the others.
+        "cues": ("ลอง", "คืนนี้", "เปิดทิ้งไว้"),
         "tail": (f"\n\nฟังเวอร์ชันเต็ม 120 นาทีได้ที่นี่ → {LONG_URL}\n\n"
                  "#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง"),
     },
@@ -60,6 +65,9 @@ CHANNELS = {
         "tags": ["ปรัชญาชีวิต", "ข้อคิด", "แง่คิด", "กำลังใจ", "ชีวิต", "GenX",
                  "ตาต้าGenX", "Shorts"],
         "category": "22",
+        # ch1's winning shape is permission, not an instruction -- see the same
+        # table. These hooks measured 310-373 views/day.
+        "cues": ("มีสิทธิ์", "ไม่ต้อง", "อนุญาต"),
         "tail": ("\n\nรวมข้อคิดปรัชญาชีวิตไว้ให้แล้ว → "
                  "https://www.youtube.com/playlist?list=PLXEV3B3DcgsU\n"
                  "ทุกตอนอยู่ในช่องเดียว → https://www.youtube.com/@tatagenxgeny\n\n"
@@ -153,6 +161,19 @@ def commit(path: str, message: str) -> None:
               file=sys.stderr)
 
 
+def winning_first(todo: list, cues) -> list:
+    """Put the hooks that measured best at the front of the publish queue.
+
+    The pool is ordered by id, so a plain drip spends its first weeks on
+    whichever shape happened to be generated first. The winning shape is known
+    (docs/HOOKS-MEASURED.md), so order by it: a stable sort keeps the id order
+    inside each group. A channel with no cues keeps the old behaviour.
+    """
+    if not cues:
+        return todo
+    return sorted(todo, key=lambda s: 0 if any(c in s["hook"] for c in cues) else 1)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
@@ -181,6 +202,7 @@ def main() -> int:
         return 0
 
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
+    todo = winning_first(todo, spec.get("cues"))
     if args.per_run:
         todo = todo[:args.per_run]
     done = [s["id"] for s in scripts if man["shorts"].get(s["id"], {}).get("video_id")]

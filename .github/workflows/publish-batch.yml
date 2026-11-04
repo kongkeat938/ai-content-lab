@@ -74,4 +74,7 @@ jobs:
           git config user.email "openhands@all-hands.dev"
           git add content/ch2_publish.json
           git commit -m "publish(ch2): record new live video ids"
+          # Losing this push loses the video_id, and the next run would upload
+          # the same video again. Rebase onto whatever landed while we ran.
+          git pull --rebase --autostash origin main
           git push
