@@ -32,10 +32,30 @@ CHANNELS = {
 }
 
 
+def _client() -> tuple:
+    """(client_id, client_secret), from YT_CLIENT_ID/SECRET or the CLIENT_SECRET blob.
+
+    The blob path means a plain agent session that only holds CLIENT_SECRET still
+    works -- the same fallback yt_auth.py uses.
+    """
+    cid = (os.environ.get("YT_CLIENT_ID") or "").strip()
+    secret = (os.environ.get("YT_CLIENT_SECRET") or "").strip()
+    if cid and secret:
+        return cid, secret
+    raw = (os.environ.get("CLIENT_SECRET") or "").strip()
+    if raw:
+        doc = json.loads(raw)
+        for key in ("web", "installed"):
+            section = doc.get(key)
+            if isinstance(section, dict) and section.get("client_id"):
+                return section["client_id"], section["client_secret"]
+    raise SystemExit("Set YT_CLIENT_ID + YT_CLIENT_SECRET, or CLIENT_SECRET.")
+
+
 def access_token(env: str) -> str:
+    cid, secret = _client()
     data = urllib.parse.urlencode({
-        "client_id": os.environ["YT_CLIENT_ID"],
-        "client_secret": os.environ["YT_CLIENT_SECRET"],
+        "client_id": cid, "client_secret": secret,
         "refresh_token": os.environ[env], "grant_type": "refresh_token"}).encode()
     with urllib.request.urlopen("https://oauth2.googleapis.com/token", data=data, timeout=30) as fh:
         return json.load(fh)["access_token"]
