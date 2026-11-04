@@ -81,6 +81,10 @@ nothing was needed** (see below); (2) PromptPay = **declined**; (3) FB/affiliate
   `g0eWYjCEYTc` 3.10 h @ 115.1%. avg% > 100% = the viewer re-watched/looped. kongkeat/genx give
   ~3× more watch-h per view than dharma (dharma has views but short watch). Build videos that
   **loop cleanly** (end cuts back to start, no hard outro) — that is the controllable lever.
+- **API limits confirmed (2026-11-04):** `commentThreads` → 403 (needs `youtube.force-ssl`,
+  which our tokens lack) ⇒ **pinned comments are impossible via API**; the feed funnel must
+  be in the **description**. `impressions`/`impressionClickThroughRate` are not valid
+  Analytics v2 metrics (400) ⇒ CTR is not directly readable.
 - Distance to YPP (honest): 500 subs at 0.75/day ≈ 593 d; 3,000 h at 1.08 h/day ≈ 2,750 d;
   3M Shorts views/90d needs 112× the current rate. Nothing is close; watch-hour is the only
   route where 1 unit = 1 count.
