@@ -127,15 +127,19 @@ def main() -> int:
         limits = {}
     limits = limits.get("channels", limits)   # tolerate the pre-2026-11-03 flat shape
     waiting: dict[str, int] = {}
+    capped: dict[str, bool] = {}
     for slug, man_rel, pool_rel, cid in channels:
         man = load(man_rel, {"shorts": {}})
         pool = load(pool_rel, [])
         waiting[slug] = len([s for s in pool if s["id"] not in man["shorts"]])
         rec = limits.get(cid, {}) if isinstance(limits, dict) else {}
-        capped = bool(rec.get("reset_at")) and parse(rec["reset_at"]) > now()
-        if capped:
+        capped[slug] = bool(rec.get("reset_at")) and parse(rec["reset_at"]) > now()
+        if capped[slug]:
             print(f"  {slug}: upload slots exhausted until {rec['reset_at']}")
-    if any(n for n in waiting.values()):
+    # Only dispatch when a channel both has material and can actually upload it;
+    # while every channel is capped the job would short-circuit on the same note,
+    # so dispatching it just spends a runner for nothing.
+    if any(waiting[s] and not capped[s] for s in waiting):
         plan.append(("publish-shorts", {"per_run": "2"}))
 
     # 4. Refill a pool before it empties: ask Gemini when fewer than 8 remain.
