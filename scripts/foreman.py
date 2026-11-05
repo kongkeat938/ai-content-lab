@@ -112,6 +112,19 @@ def main() -> int:
     if due_long:
         plan.append(("publish-batch", {}))
 
+    # 2b. The same for ch4's long-form, whose own manifest drives publish-ch4.
+    #     Its cap clears at 08:00 UTC, so the rail is due as soon as the pod's
+    #     limit note has passed; a still-capped tick just re-records and defers.
+    pub4 = load("content/ch4_publish.json", {"videos": []})
+    due4 = [v for v in pub4["videos"] if not v.get("video_id")
+            and (not v.get("not_before") or parse(v["not_before"]) <= now())]
+    lim4 = load("content/upload_limit.json", {}).get("channels", {}).get(pub4.get("channel_id"), {})
+    capped4 = bool(lim4.get("reset_at")) and parse(lim4["reset_at"]) > now()
+    if due4 and not capped4:
+        plan.append(("publish-ch4", {}))
+    elif due4:
+        print(f"  ch4: long-form due but upload-capped until {lim4['reset_at']}")
+
     # 3. Shorts: drip a couple per dispatch, but only for a channel that still
     #    has material and has not exhausted its daily upload slots. The workflow
     #    is a matrix over the channels, so one dispatch covers both; a capped
