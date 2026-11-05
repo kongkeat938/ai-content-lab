@@ -150,6 +150,14 @@ def main() -> int:
         if g_age is None or g_age > 20 * 60:
             plan.append(("grow-shorts-pool", {"count": "8"}))
 
+    # 4b. Keep the funnel wired. A Short is only worth the reach it forwards, and
+    #     every new Short that the drip posts needs the playlist link. GitHub's
+    #     scheduler never fires here, so the daily link-shorts cron cannot be
+    #     relied on -- dispatch it from the chain, at most once every 6 h.
+    l_age = last_success_min("link-shorts", ids)
+    if l_age is None or l_age > 6 * 60:
+        plan.append(("link-shorts", {}))
+
     # 5. Keep the long rail fed: a weekly 2-hour build if the newest one is over
     #    6 days old. night-compilation fingerprints its own content, so a repeat
     #    on unchanged material is a cheap skip, not a 40-minute render.
