@@ -1,0 +1,87 @@
+name: ch4-longform
+
+# Builds a ch4 (เรื่องเล่าการ์ตูน) family-moment long-form and puts the media on a
+# Release, so the Shorts funnel has an on-niche destination.
+#
+# Why: ch4's only long-form is the classical-tale set (มัทนะพาธา, ไกรทอง), which
+# measured 1-6 views, while the family-moment Shorts measured 460-1,083 and loop
+# past 100%. The funnel now points every ch4 Short at a long-form, so that
+# destination must be the shape the audience actually watches. This reuses the
+# verified dharma night rail (build_night.py), which is why the rail was given
+# --title/--subtitle/--voice.
+#
+# It does NOT upload to YouTube. The publish step is a separate, explicit run.
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "Target length in minutes"
+        default: "60"
+      content:
+        description: "Content directory"
+        default: "content/ch4_family_01"
+  schedule:
+    # Weekly, Tuesday 02:37 UTC -- off the dharma rail's Monday slot.
+    - cron: "37 2 * * 2"
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: ch4-longform
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ffmpeg + Thai fonts + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-tlwg-garuda fonts-tlwg-kinnari fonts-tlwg-norasi
+          pip install --quiet -r requirements.txt
+
+      - name: Build and verify
+        run: |
+          python3 scripts/build_night.py \
+            --content "${{ inputs.content || 'content/ch4_family_01' }}" \
+            --work work/ch4_family_01 \
+            --out work/ch4_family_01 \
+            --minutes "${{ inputs.minutes || '60' }}" \
+            --title "เรื่องเล่าอบอุ่นใจ" \
+            --subtitle "รวมเรื่องครอบครัว ฟังเพลินทั้งคืน" \
+            --voice th-TH-PremwadeeNeural
+
+      - name: Show the receipt
+        if: always()
+        run: test -f work/ch4_family_01/receipt.json && cat work/ch4_family_01/receipt.json || echo "no receipt"
+
+      - name: Publish the media to a Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="ch4-family-long-01"
+          gh release create "$tag" \
+            work/ch4_family_01/video.mp4 work/ch4_family_01/compilation.mp3 \
+            --repo "${{ github.repository }}" \
+            --title "$tag" \
+            --notes "ch4 family-moment long-form. Regenerable from content/ch4_family_01 + scripts/." \
+            || gh release upload "$tag" work/ch4_family_01/video.mp4 work/ch4_family_01/compilation.mp3 \
+               --repo "${{ github.repository }}" --clobber
+
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "ch4-longform run failed" \
+            --body "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
