@@ -113,6 +113,53 @@ def commit(path: str, message: str) -> None:
               file=sys.stderr)
 
 
+def _upload_capped(channel_id: str) -> str | None:
+    """Return the recorded reset time if this channel is known to be upload-capped.
+
+    ch4 is on a per-channel upload cap most days ("uploadLimitExceeded"); the pod
+    records when it was hit and when it clears in content/upload_limit.json.
+    Checking it here saves a 132 MB download on every capped tick.
+    """
+    from datetime import datetime, timezone
+    path = os.path.join(ROOT, "content", "upload_limit.json")
+    if not os.path.exists(path):
+        return None
+    rec = json.load(open(path, encoding="utf-8")).get("channels", {}).get(channel_id)
+    if not rec or not rec.get("reset_at"):
+        return None
+    try:
+        when = datetime.fromisoformat(rec["reset_at"].replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return rec["reset_at"] if when > datetime.now(timezone.utc) else None
+
+
+def _note_upload_capped(channel_id: str, detail: str) -> None:
+    """Record a per-channel upload cap, with the reset the API actually honours.
+
+    "uploadLimitExceeded" is the per-channel daily cap; it clears at midnight
+    Pacific (08:00 UTC), not a few hours after it is hit. The pod's 3-hour probe
+    window is wrong for this error, so set the reset to the next 08:00 UTC.
+    """
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
+    reset = now.replace(hour=8, minute=0, second=0, microsecond=0)
+    if reset <= now:
+        reset += timedelta(days=1)
+    path = os.path.join(ROOT, "content", "upload_limit.json")
+    data = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {"channels": {}}
+    data.setdefault("channels", {})[channel_id] = {
+        "hit_at": now.isoformat(timespec="seconds"),
+        "reset_at": reset.isoformat(timespec="seconds"),
+        "probe_hours": 24,
+        "detail": detail[:200],
+    }
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(data, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+    print(f"  recorded upload cap; resets {reset.isoformat(timespec='seconds')}")
+
+
 def existing_titles(yt, channel_id: str) -> dict:
     """Map exact title -> video_id for everything already on the channel.
 
@@ -188,6 +235,12 @@ def main() -> int:
         return 0
     if not todo:
         print("nothing to do")
+        return 0
+
+    capped = _upload_capped(man["channel_id"])
+    if capped:
+        print(f"channel {man['channel_id']} is upload-capped until {capped}; "
+              f"deferring (the scheduled tick will retry after the reset)")
         return 0
 
     from googleapiclient.discovery import build
@@ -282,6 +335,12 @@ def main() -> int:
                 if status:
                     print(f"  {int(status.progress() * 100)}%", flush=True)
         except HttpError as exc:
+            text = str(exc)
+            if "uploadLimitExceeded" in text or "Video Uploads per day" in text:
+                _note_upload_capped(man["channel_id"], text)
+                print(f"  {key}: channel upload cap hit; deferred to the next reset",
+                      file=sys.stderr)
+                continue
             print(f"  UPLOAD FAILED: {exc}", file=sys.stderr)
             rc = 1
             continue
