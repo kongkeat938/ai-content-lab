@@ -267,6 +267,16 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## ✅ K verification done (2026-11-04)
+- K completed **phone verification + advanced features**. API confirms `longUploadsStatus=allowed`
+  on all 3 channels; avatars/banners set; **all 7 ch2 thumbnails were already live via the Data
+  API** (so the API thumbnail path never needed verification — the old 'K must verify to set
+  thumbnails' belief was wrong).
+- Real gap found and fixed: every channel had **empty `channel.keywords`** (feeds search +
+  related-channels rail). `scripts/set_channel_seo.py` sets them by reading branding first and
+  writing only keywords back (a blind `channels.update` wipes the banner). Applied + verified
+  live on dharma/genx/kongkeat-story.
+
 ## 🤝 Vendor consult (2026-11-04) — K's "ask other AI vendors" loop
 - K's rule: recurring K-only blockers go to other vendors; whichever solves it becomes a
   standing advisor. Detail: `docs/CONSULT-2026-11-04.md`.
