@@ -58,7 +58,7 @@ jobs:
             --minutes "${{ inputs.minutes || '60' }}" \
             --title "เรื่องเล่าอบอุ่นใจ" \
             --subtitle "รวมเรื่องครอบครัว ฟังเพลินทั้งคืน" \
-            --voice th-TH-PremwadeeNeural
+            --voice th-TH-NiwatNeural
 
       - name: Show the receipt
         if: always()
