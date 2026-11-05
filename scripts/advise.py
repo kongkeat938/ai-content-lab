@@ -89,7 +89,7 @@ def ask_pollinations(prompt: str, tries: int = 3) -> str:
     raise RuntimeError(last)
 
 
-def ask_openhands(prompt: str, model: str | None = None, poll_seconds: int = 600) -> str:
+def ask_openhands(prompt: str, model: str | None = None, poll_seconds: int = 1200) -> str:
     """Delegate to a fresh OpenHands Cloud conversation and wait for its reply.
 
     ``model`` overrides the conversation's LLM (e.g. openhands/claude-sonnet-4-5),
