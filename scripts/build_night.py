@@ -43,6 +43,10 @@ def main() -> int:
                     help="cover source image")
     ap.add_argument("--loop-seconds", type=float, default=24.0)
     ap.add_argument("--skip-video", action="store_true")
+    ap.add_argument("--title", default="หลับถึงเช้า", help="poster title")
+    ap.add_argument("--subtitle", default="ธรรมะก่อนนอน เปิดทิ้งไว้ทั้งคืน",
+                    help="poster subtitle")
+    ap.add_argument("--voice", default=None, help="edge-tts voice (default: dharma's)")
     a = ap.parse_args()
 
     out = a.out or a.work
@@ -61,14 +65,15 @@ def main() -> int:
         ("audio", [sys.executable, os.path.join(HERE, "make_compilation.py"),
                    "--out", mp3, "--part",
                    os.path.join(a.content, "[0-9]*.txt"),
-                   "--work", a.work, "--minutes", str(a.minutes)]),
+                   "--work", a.work, "--minutes", str(a.minutes),
+                   "--voice", a.voice or "th-TH-NiwatNeural"]),
     ]
     if not a.skip_video:
         steps += [
             ("cover", [sys.executable, "-c",
                        f"import sys;sys.path.insert(0,{HERE!r});import make_poster;"
-                       f"make_poster.build({a.image!r},{cover!r},'หลับถึงเช้า',"
-                       f"'ธรรมะก่อนนอน เปิดทิ้งไว้ทั้งคืน',3)"]),
+                       f"make_poster.build({a.image!r},{cover!r},{a.title!r},"
+                       f"{a.subtitle!r},3)"]),
             ("video", [sys.executable, os.path.join(HERE, "make_night_video.py"),
                        "--audio", mp3, "--image", a.image, "--cover", cover,
                        "--out", mp4, "--loop-seconds", str(a.loop_seconds)]),

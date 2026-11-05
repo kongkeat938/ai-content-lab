@@ -64,7 +64,7 @@ def narrator_for(base: str) -> str | None:
     return None
 
 
-def build_part(script: str, work: str) -> dict:
+def build_part(script: str, work: str, voice: str = VOICE) -> dict:
     """Synthesise and master one piece. Resumable: an existing part is reused."""
     base = os.path.splitext(os.path.basename(script))[0]
     out = os.path.join(work, f"part_{base}.mp3")
@@ -75,7 +75,7 @@ def build_part(script: str, work: str) -> dict:
             print(f"  {base}: cached ({info['duration_sec']:.0f}s)")
             return info
     narrator = narrator_for(base)
-    info = make_audio.build(script, out, VOICE, RATE, PITCH, PAUSE_BETWEEN,
+    info = make_audio.build(script, out, voice, RATE, PITCH, PAUSE_BETWEEN,
                             narrator=narrator)
     info["name"] = base
     info["narrator"] = narrator or os.environ.get("NARRATOR", "auto")
@@ -164,6 +164,7 @@ def main() -> None:
     ap.add_argument("--minutes", type=float, default=0.0,
                     help="target length; repeat the pieces until reached "
                          "(a sleep file is meant to be left playing)")
+    ap.add_argument("--voice", default=VOICE, help="edge-tts voice")
     a = ap.parse_args()
 
     scripts = []
@@ -175,7 +176,7 @@ def main() -> None:
     os.makedirs(a.work, exist_ok=True)
 
     print(f"building {len(scripts)} pieces")
-    infos = [build_part(s, a.work) for s in scripts]
+    infos = [build_part(s, a.work, a.voice) for s in scripts]
     part_files = [os.path.join(a.work, f"part_{i['name']}.mp3") for i in infos]
 
     cycles = 1
