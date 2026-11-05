@@ -177,6 +177,14 @@ def ask(key: str, prompt: str) -> list:
     raise RuntimeError(last)
 
 
+# Letters outside Thai and Latin mean the model leaked another script (measured
+# 2026-11-05: a ch4 hook came back with a Hangul syllable, a ch2 line with Telugu).
+# edge-tts reads those as noise, so they must never reach the pool. Latin is kept
+# because the channel names (GenX, Farmmer) legitimately appear in the copy.
+_FOREIGN = re.compile(
+    r"[^\u0e00-\u0e7fA-Za-z0-9\s.,!?%\-–—:;()\u2018\u2019\u201c\u201d\u2026/&']")
+
+
 def valid(s: dict, cues=()) -> bool:
     if not isinstance(s, dict):
         return False
@@ -187,6 +195,8 @@ def valid(s: dict, cues=()) -> bool:
     joined = " ".join([s["hook"], *s["lines"], s["cta"]])
     # Digits must already be Thai words: edge-tts has no Thai number dictionary.
     if re.search(r"[0-9๐-๙]", joined):
+        return False
+    if _FOREIGN.search(joined):
         return False
     # The measured winning hook shape must be present, or the pool drifts back to
     # the shape that got 74-173 views/day. See docs/HOOKS-MEASURED.md.
