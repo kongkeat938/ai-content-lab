@@ -1,17 +1,17 @@
-# Channel health — 2026-11-05T22:53:50+00:00
+# Channel health — 2026-11-05T23:26:41+00:00
 
 - long videos live: **3** ['night_120', 'k_tone_01', 'night_110']
 - thumbnails queued: 7
 
 ## shorts
-- dharma: 67 live of 72 in the pool (5 waiting)
-- genx: 40 live of 42 in the pool (2 waiting)
+- dharma: 67 live of 80 in the pool (13 waiting)
+- genx: 41 live of 50 in the pool (9 waiting)
 
 ## rails
-- foreman: last None 0 min ago; last success 0.0 h ago
-- grow-shorts-pool: last None 2 min ago; last success 20.9 h ago
-- publish-batch: last success 249 min ago; last success 4.2 h ago
-- publish-shorts: last None 2 min ago; last success 2.1 h ago
-- set-thumbnails: last success 1 min ago; last success 0.0 h ago
+- foreman: last None 0 min ago; last success 0.6 h ago
+- grow-shorts-pool: last success 34 min ago; last success 0.6 h ago
+- publish-batch: last success 282 min ago; last success 4.7 h ago
+- publish-shorts: last None 0 min ago; last success 0.6 h ago
+- set-thumbnails: last success 33 min ago; last success 0.6 h ago
 
 ## all rails fresh
