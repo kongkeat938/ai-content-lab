@@ -354,6 +354,21 @@ different ways) — use F0-contour correlation + MFCC distance.
   writing only keywords back (a blind `channels.update` wipes the banner). Applied + verified
   live on dharma/genx/kongkeat-story.
 
+## 🤝 Advisor panel — MUST be 3+ vendors (`scripts/advise.py`, 2026-11-05)
+K's rule: recurring K-only blockers go to other AI vendors; whichever solves it becomes a
+standing advisor. **K corrected ak: a single advisor that "falls over" is a failure — keep
+at least 3 AI vendors on the panel.** `scripts/advise.py` asks all of them and reports who
+answered (one dead vendor must not stop a decision).
+| # | vendor | route | status 2026-11-05 |
+|---|---|---|---|
+| 1 | **Gemini** | `GEMINI_API_KEY`, tries 3.5/3.1-flash-lite/flash-lite-latest | ✅ 200 |
+| 2 | **Pollinations** | `text.pollinations.ai` model=**openai**, no key | ✅ 200 (most other models 402) |
+| 3 | **OpenHands Cloud** | `KONGKEAT_OH_KEY` → `POST /api/v1/app-conversations` (own DeepSeek agent), poll events | ✅ works, ~2-4 min |
+- **Unreachable (do not retry blindly):** ChatGPT (PC1 CDP 9222 → **404**; port open, chrome.exe pid), DeepSeek (login), Devin (`DEVIN_API_KEY` 403), DuckDuckGo AI (**ERR_BN_LIMIT**, needs JS challenge), DeepInfra (needs key), HF (needs token). `llm-proxy.app.all-hands.dev` needs a per-conversation token, not the API key.
+- OpenHands event shape: reply is `source="agent"` (not "assistant"), `kind=MessageEvent`,
+  `message.content` = list of `{type:text,text:...}`. `start-tasks?ids=` returns a **list**.
+- Detail: `docs/CONSULT-2026-11-04.md` (section "แก้ 2026-11-05").
+
 ## 🤝 Vendor consult (2026-11-04) — K's "ask other AI vendors" loop
 - K's rule: recurring K-only blockers go to other vendors; whichever solves it becomes a
   standing advisor. Detail: `docs/CONSULT-2026-11-04.md`.
