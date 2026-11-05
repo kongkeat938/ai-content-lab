@@ -316,10 +316,12 @@ def main() -> int:
         except HttpError as exc:
             text = str(exc)
             print(f"  UPLOAD FAILED: {text}", file=sys.stderr)
-            if "uploadLimitExceeded" in text:
-                # The channel has hit its daily upload ceiling. This is an expected
-                # end to the day, not a fault: stop, and do not mark the run failed,
-                # or every day would look broken and the real failures hide.
+            # Two shapes mean the same thing: a per-channel ceiling
+            # ("uploadLimitExceeded") and the project-wide daily cap ("Quota exceeded
+            # for quota metric 'Video Uploads' ... per day", measured 2026-11-05).
+            # Both are an expected end to the day, not a fault: stop without marking
+            # the run failed, or every day looks broken and real failures hide.
+            if "uploadLimitExceeded" in text or "Video Uploads per day" in text:
                 print("  daily upload limit reached; stopping this run", file=sys.stderr)
                 note_upload_limit(spec["channel_id"], text)
                 break
