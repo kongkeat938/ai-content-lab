@@ -267,6 +267,15 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## ⏳ Time-to-results (measured 2026-11-05)
+- K asked how long until results. 90-day reality (3 channels): Shorts 9,947 views / 30.6 h;
+  **long-form 383 views / 3.35 h** (long-form is what counts toward YPP watch hours).
+- YPP: 1,000 subs + (4,000 long watch-h OR 10M Shorts views/90d). Gap: watch-h ~300×,
+  Shorts views ~1,000×, subs ~12×. **Feb 1 2027 thresholds DOUBLE** (8,000 h / 20M views).
+- Watch-hour per view: long-form 0.0062 vs Shorts 0.0018 → long-form ~3.4× more efficient per
+  view. Honest verdict: monetization is NOT reachable in 1-2 years at this rate; near-term
+  deliverable = the working agent + audience growth. `docs/TIME-TO-RESULTS.md`.
+
 ## 🧪 Multi-model script panel (2026-11-04) — K's "หลาย AI คัดกรองบท"
 - `scripts/panel_script.py` = the vetting step: several models score a draft 0-100, list
   weak points, propose a revision; the highest-scoring revision that still passes `valid()`
