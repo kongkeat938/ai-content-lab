@@ -11,6 +11,12 @@
       "reset_at": "2026-11-05T11:24:38+00:00",
       "probe_hours": 3,
       "detail": "<HttpError 400 when requesting None returned \"The user has exceeded the number of videos they may upload.\". Details: \"[{'message': 'The user has exceeded the number of videos they may upload.', 'domai"
+    },
+    "UC7gCIu4G_7QCEJ8hJ-34zoQ": {
+      "hit_at": "2026-11-05T15:36:15+00:00",
+      "reset_at": "2026-11-05T18:36:15+00:00",
+      "probe_hours": 3,
+      "detail": "<HttpError 400 when requesting None returned \"The user has exceeded the number of videos they may upload.\". Details: \"[{'message': 'The user has exceeded the number of videos they may upload.', 'domai"
     }
   }
 }
