@@ -13,9 +13,9 @@
       "detail": "<HttpError 429 when requesting None returned \"Quota exceeded for quota metric 'Video Uploads' and limit 'Video Uploads per day' of service 'youtube.googleapis.com' for consumer 'project_number:8880234"
     },
     "UC7gCIu4G_7QCEJ8hJ-34zoQ": {
-      "hit_at": "2026-11-05T15:36:15+00:00",
-      "reset_at": "2026-11-05T18:36:15+00:00",
-      "probe_hours": 3,
+      "hit_at": "2026-11-05T18:43:18+00:00",
+      "reset_at": "2026-11-06T08:00:00+00:00",
+      "probe_hours": 24,
       "detail": "<HttpError 400 when requesting None returned \"The user has exceeded the number of videos they may upload.\". Details: \"[{'message': 'The user has exceeded the number of videos they may upload.', 'domai"
     }
   }
