@@ -7,8 +7,8 @@
       "detail": "<HttpError 400 when requesting None returned \"The user has exceeded the number of videos they may upload.\". Details: \"[{'message': 'The user has exceeded the number of videos they may upload.', 'domai"
     },
     "UCM3QO5L_pmj34n1JVlbhh-w": {
-      "hit_at": "2026-11-04T17:44:26+00:00",
-      "reset_at": "2026-11-04T20:44:26+00:00",
+      "hit_at": "2026-11-05T07:38:09+00:00",
+      "reset_at": "2026-11-05T08:00:00+00:00",
       "probe_hours": 3,
       "detail": "<HttpError 400 when requesting None returned \"The user has exceeded the number of videos they may upload.\". Details: \"[{'message': 'The user has exceeded the number of videos they may upload.', 'domai"
     }
