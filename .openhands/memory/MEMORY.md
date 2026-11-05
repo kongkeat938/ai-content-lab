@@ -43,7 +43,9 @@ use **`th-TH-NiwatNeural`** (6 ok/0 fail).
 **Upload cap is two kinds:** ch1/ch2 = project-wide 429 ("Video Uploads per day"); ch4 =
 per-channel 400 `uploadLimitExceeded`, clears at **08:00 UTC** (not 3 h). `publish_batch.py`
 now defers cleanly when `content/upload_limit.json` says a channel is capped (no 132 MB
-re-download), and `publish-ch4` runs 08:03 UTC to grab a slot before the Shorts rail.
+re-download). **GitHub's scheduler never fires here**, so `foreman.py` (run by the watchdog
+chain) dispatches `link-shorts` every ≤6 h and `publish-ch4` once ch4's cap note has
+cleared. Final funnel state: **0 Shorts missing a destination on all 3 channels.**
 
 ## 🏁 2026-11-03 — the business turn (ak runs it)
 K's standing order: **ak runs this as its own business; revenue is the objective; all tools;
