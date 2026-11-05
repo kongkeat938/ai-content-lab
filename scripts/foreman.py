@@ -121,6 +121,8 @@ def main() -> int:
          "UCM3QO5L_pmj34n1JVlbhh-w"),
         ("genx", "content/ch1_shorts.json", "content/ch1_shorts/scripts.json",
          "UCI6EfsgM1HNjrYarvigxyrQ"),
+        ("kongkeat", "content/ch4_shorts.json", "content/ch4_shorts/scripts.json",
+         "UC7gCIu4G_7QCEJ8hJ-34zoQ"),
     ]
     limits = load("content/upload_limit.json", {})
     if not isinstance(limits, dict):

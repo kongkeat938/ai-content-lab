@@ -21,8 +21,10 @@ on:
     paths:
       - "content/ch1_shorts/scripts.json"
       - "content/ch2_shorts/scripts.json"
+      - "content/ch4_shorts/scripts.json"
       - "content/ch1_shorts.json"
       - "content/ch2_shorts.json"
+      - "content/ch4_shorts.json"
       - "scripts/publish_shorts.py"
       - "scripts/make_short.py"
 
@@ -46,6 +48,8 @@ jobs:
             manifest: content/ch2_shorts.json
           - channel: genx
             manifest: content/ch1_shorts.json
+          - channel: kongkeat
+            manifest: content/ch4_shorts.json
     steps:
       - uses: actions/checkout@v4
 
@@ -65,6 +69,7 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
           # Optional: K's cloned voice (scripts/tts_fish.py). Unset means the
           # house edge-tts voice is used, so the rail never depends on it.
           FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
