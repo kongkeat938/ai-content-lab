@@ -16,13 +16,10 @@ on:
     inputs:
       minutes:
         description: "Target length in minutes"
-        default: "60"
+        default: "30"
       content:
         description: "Content directory"
         default: "content/ch4_family_01"
-  schedule:
-    # Weekly, Tuesday 02:37 UTC -- off the dharma rail's Monday slot.
-    - cron: "37 2 * * 2"
 
 permissions:
   contents: write
@@ -55,7 +52,7 @@ jobs:
             --content "${{ inputs.content || 'content/ch4_family_01' }}" \
             --work work/ch4_family_01 \
             --out work/ch4_family_01 \
-            --minutes "${{ inputs.minutes || '60' }}" \
+            --minutes "${{ inputs.minutes || '30' }}" \
             --title "เรื่องเล่าอบอุ่นใจ" \
             --subtitle "รวมเรื่องครอบครัว ฟังเพลินทั้งคืน" \
             --voice th-TH-NiwatNeural
