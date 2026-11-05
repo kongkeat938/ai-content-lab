@@ -108,6 +108,13 @@ nothing was needed** (see below); (2) PromptPay = **declined**; (3) FB/affiliate
   treat the `publish: true` input as approved for ch2.
 
 ## ⚙️ Rail ops — measured 2026-11-05
+- **Thumbnail gate = per-account, NOT "every channel" (corrected 2026-11-05).** Live
+  `thumbnails.set` test: **ch1 + ch2 OK**, **ch4 (kongkeat.p3) → 403 "doesn't have
+  permissions to upload and set custom video thumbnails."** So the old "thumbnail locked
+  behind phone verification (ทุกช่อง)" was wrong — only ch4 needs K to verify. The path is
+  **Studio → Settings → Channel → Feature eligibility → Intermediate → VERIFY PHONE
+  NUMBER** (also `youtube.com/verify`); custom thumbnails is an *intermediate* feature.
+  Detail: `.openhands/memory/2026-11-05.md`.
 - **The watchdog chain's weak point is the link job itself.** A ~2 h `ubuntu-latest`
   job can be reaped mid-run (`"The hosted runner lost communication with the server."`),
   so the closing `dispatch("watchdog")` never fires and **the whole timer stops** until
