@@ -67,9 +67,12 @@ def ask_gemini(prompt: str) -> str:
 
 
 def ask_pollinations(prompt: str) -> str:
-    q = urllib.parse.quote(prompt)
-    url = f"https://text.pollinations.ai/{q}?model=openai"
-    with urllib.request.urlopen(url, timeout=180) as fh:
+    # POST, not the GET path: a long Thai prompt overflows the URL and 404s.
+    body = {"model": "openai", "messages": [{"role": "user", "content": prompt}]}
+    req = urllib.request.Request(
+        "https://text.pollinations.ai/", data=json.dumps(body).encode(),
+        headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=180) as fh:
         return fh.read().decode("utf-8", "replace").strip()
 
 
