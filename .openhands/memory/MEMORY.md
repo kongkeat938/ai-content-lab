@@ -267,6 +267,17 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## 🚀 ch4 on the Shorts rail — LIVE (2026-11-05)
+- K handed ak administration ("บริหารเองต่อได้เลย"). Decision: scale the channel that already
+  works. ch4 had pivoted to family moments organically but was publishing by hand.
+- Wired `kongkeat` into `publish_shorts.py` (tags/category/cues/tail), the `publish-shorts.yml`
+  matrix + trigger paths, `grow-shorts-pool.yml`, and `foreman.py` (upload-cap tracking).
+- **Proven live:** the push triggered publish-shorts and the ch4 job published **6 Shorts
+  automatically** (ch4 videos 18→24; ids in `content/ch4_shorts.json`). ch4 now drips on the
+  same rail as ch1/ch2. Decision record `docs/DECISIONS-2026-11-05.md`.
+- Note: `grow-shorts-pool.yml` + `publish-shorts.yml` matrix channel key is `kongkeat-story` for
+  the generator but `kongkeat` for the publisher -- keep that in mind when editing either.
+
 ## ⏳ Time-to-results (measured 2026-11-05)
 - K asked how long until results. 90-day reality (3 channels): Shorts 9,947 views / 30.6 h;
   **long-form 383 views / 3.35 h** (long-form is what counts toward YPP watch hours).
