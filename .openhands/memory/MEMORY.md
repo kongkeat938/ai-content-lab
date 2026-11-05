@@ -5,6 +5,26 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## ⭐ 2026-11-05 — Shorts watch-hours do NOT count toward YPP (measured)
+Verified on the official page (support.google.com/youtube/answer/72851): "any qualified
+watch hours from Shorts views in the **Shorts Feed** won't count towards the 4,000
+qualified public watch hours threshold." **28-day split measured** (Analytics
+`creatorContentType`): Shorts **30.3 h** vs long-form **2.9 h** → **91% of our watch
+time is invisible to the only gate that pays.** The 4,000-h path is at 2.9 h (0.07%);
+the 10 M Shorts-views/90-day path needs ~300× today's 354 views/day. **Neither is close.**
+⇒ **The lever is long-form (and/or the alternative revenue in `docs/FAST-REVENUE-PLAN.md`),
+not more Shorts.** Shorts stay as reach + subs only. Advisor (Gemini) agrees.
+**Loop is the watch-time lever, measured:** genx `WA8g6zCiMmo` (25 s) avg% **347.8** →
+6.7 watch-h from 925 views; kongkeat `udi7bekVJiA` avg% 103.6 → 8.1 h. But those hours
+are Shorts-Feed → still don't count. Long-form live: `F4qFHoVpEyI` (2 h 47 m, 293 views),
+`q6VXmPP57xY` (1 h 50 m, 4 views), `2PEjuEFpeY8` (17 m, 13 views).
+**Quota is project-wide, not per channel** — a "Video Uploads per day" 429 stops all 3
+channels at once (measured 2026-11-05 15:36Z, resets ~08:00 UTC). `publish_shorts.py`
+now treats both `uploadLimitExceeded` and `Video Uploads per day` as an expected stop.
+**Generator guard:** `gen_short_scripts.py valid()` now rejects any character outside
+Thai/Latin/digits/punct — Gemini had leaked Hangul/Japanese/Telugu into 4 live
+descriptions + 3 pool lines (all repaired 2026-11-05).
+
 ## 🏁 2026-11-03 — the business turn (ak runs it)
 K's standing order: **ak runs this as its own business; revenue is the objective; all tools;
 ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
