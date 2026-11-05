@@ -32,6 +32,8 @@ jobs:
             scripts: content/ch2_shorts/scripts.json
           - channel: genx
             scripts: content/ch1_shorts/scripts.json
+          - channel: kongkeat-story
+            scripts: content/ch4_shorts/scripts.json
     steps:
       - uses: actions/checkout@v4
 

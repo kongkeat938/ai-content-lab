@@ -79,6 +79,23 @@ CHANNELS = {
                  "ทุกตอนอยู่ในช่องเดียว → https://www.youtube.com/@tatagenxgeny\n\n"
                  "#ปรัชญาชีวิต #ข้อคิด #แง่คิด"),
     },
+    "kongkeat": {
+        "scripts": os.path.join(ROOT, "content", "ch4_shorts", "scripts.json"),
+        "manifest": os.path.join(ROOT, "content", "ch4_shorts.json"),
+        "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+        "token": "YT_CH4_REFRESH_TOKEN",
+        "work": os.path.join(ROOT, "work", "ch4_shorts"),
+        "tags": ["เรื่องเล่า", "นิทาน", "ครอบครัว", "เรื่องสั้น", "อบอุ่นใจ",
+                 "การ์ตูน", "เรื่องเล่าการ์ตูน", "kongkeat", "Shorts"],
+        "category": "24",
+        # The channel pivoted to family moments (docs/STORY-CHANNEL-PIVOT.md):
+        # a specific relationship plus a physical act measured 460-1,083 views
+        # against 1-6 for the classical-tale shape. Publish these first.
+        "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
+        "tail": ("\n\nเรื่องเล่าอบอุ่นใจทุกตอนอยู่ในช่องเดียว → "
+                 "https://www.youtube.com/@kongkeatpratumma\n\n"
+                 "#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"),
+    },
 }
 
 
