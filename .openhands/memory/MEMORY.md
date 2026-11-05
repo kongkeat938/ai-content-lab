@@ -107,6 +107,18 @@ nothing was needed** (see below); (2) PromptPay = **declined**; (3) FB/affiliate
   work of each channel") — but K has approved ch2 long-form, so the rail is effectively open;
   treat the `publish: true` input as approved for ch2.
 
+## ⚙️ Rail ops — measured 2026-11-05
+- **The watchdog chain's weak point is the link job itself.** A ~2 h `ubuntu-latest`
+  job can be reaped mid-run (`"The hosted runner lost communication with the server."`),
+  so the closing `dispatch("watchdog")` never fires and **the whole timer stops** until
+  a human re-dispatches. Detect: latest `watchdog` run = `failure`/stale.
+  Recover: `gh workflow run watchdog.yml -f cycles=2 -f interval=5400 -f chain=true`.
+- **GitHub Actions logs are NOT readable here** — `/actions/runs/<id>/logs` yields a
+  22-byte stub zip; `/jobs/<id>/logs` = 404. Read the failure via **check-run
+  annotations**: `gh api repos/.../check-runs/<job_id>/annotations`.
+- A `queued` run that never starts (e.g. account-watch `41809364136`) cannot be
+  cancelled (409); ignore it.
+
 ## 🗂️ TOPIC FILES
 - `topics/00-pipeline-and-channel-facts.md` — the 3 channels, registry, yt938-1, view data, image ceilings.
 - `topics/01-pipeline-build-and-measure.md` — build/measure loop, ffmpeg, gates, review page.
