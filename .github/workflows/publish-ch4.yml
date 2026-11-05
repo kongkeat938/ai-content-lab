@@ -66,13 +66,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet content/ch4_publish.json; then
+          if git diff --quiet content/ch4_publish.json content/upload_limit.json; then
             echo "no change to the manifest"
             exit 0
           fi
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/ch4_publish.json
-          git commit -m "publish(ch4): record new live video ids"
+          git add content/ch4_publish.json content/upload_limit.json
+          git commit -m "publish(ch4): record live video ids / upload-cap reset"
           git pull --rebase --autostash origin main
           git push
