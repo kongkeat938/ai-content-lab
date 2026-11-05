@@ -25,6 +25,26 @@ now treats both `uploadLimitExceeded` and `Video Uploads per day` as an expected
 Thai/Latin/digits/punct — Gemini had leaked Hangul/Japanese/Telugu into 4 live
 descriptions + 3 pool lines (all repaired 2026-11-05).
 
+## 🔗 2026-11-05 — the Shorts→long-form funnel is now wired (the measured lever)
+A Short is only worth the reach it *forwards*: its own watch time does not count toward
+YPP. **45 Shorts had no destination at all** (genx 14, dharma 5, **kongkeat 26 = its
+whole catalog**). `scripts/link_shorts.py` (+ `.github/workflows/link-shorts.yml`) appends
+each channel's long-form playlist link, idempotent + additive; applied live → **45 linked,
+0 failed**, re-run → 0 missing. **The long-form rail is undiscovered, not broken:**
+`F4qFHoVpEyI` has 301 Data-API views but **2 Analytics views / 0 counted minutes** (both
+from RELATED_VIDEO), and its Release MP4 is faststart-OK (`ftyp`+`moov` in the first 8 KB).
+**ch4 has no on-niche long-form** — its only long-form is the classical-tale set (1-6
+views); the family shape measured 460-1,083. So `content/ch4_family_01/` (10 warm family
+pieces) + a dispatch-only `ch4-longform` workflow (builds in CI — **the pod has no ffmpeg /
+PIL / edge-tts**) renders a 20-min file that **verified pass** (-14.5 LUFS / -3.2 dBTP /
+1920x1080 tv) and lands on Release `ch4-family-long-01`. `publish-ch4` uploads it.
+**Voice trap:** `th-TH-PremwadeeNeural` failed all 5 CI attempts ("No audio received");
+use **`th-TH-NiwatNeural`** (6 ok/0 fail).
+**Upload cap is two kinds:** ch1/ch2 = project-wide 429 ("Video Uploads per day"); ch4 =
+per-channel 400 `uploadLimitExceeded`, clears at **08:00 UTC** (not 3 h). `publish_batch.py`
+now defers cleanly when `content/upload_limit.json` says a channel is capped (no 132 MB
+re-download), and `publish-ch4` runs 08:03 UTC to grab a slot before the Shorts rail.
+
 ## 🏁 2026-11-03 — the business turn (ak runs it)
 K's standing order: **ak runs this as its own business; revenue is the objective; all tools;
 ask ChatGPT/Gemini on a first failure, never ask K.** K owns the accounts.
