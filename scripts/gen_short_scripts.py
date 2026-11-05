@@ -20,12 +20,15 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-MODEL = "gemini-3.5-flash-lite"
+# Free-tier models come and go; the first that answers wins. Measured 2026-11-04:
+# gemini-3.5-flash-lite intermittently 503s, gemini-3.1-flash-lite answered.
+MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
 
 CHANNELS = {
     "dharma": {
@@ -123,13 +126,22 @@ SCRIPTS = CHANNELS["dharma"]["path"]
 
 
 def ask(key: str, prompt: str) -> list:
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={key}"
     body = json.dumps({"contents": [{"parts": [{"text": prompt}]}],
                        "generationConfig": {"responseMimeType": "application/json"}}).encode()
-    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as fh:
-        txt = json.load(fh)["candidates"][0]["content"]["parts"][0]["text"]
-    return json.loads(txt)
+    last = "no model answered"
+    for model in MODELS:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+        req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=120) as fh:
+                txt = json.load(fh)["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(txt)
+        except urllib.error.HTTPError as e:
+            last = f"{model} HTTP {e.code}"
+        except Exception as e:  # noqa: BLE001
+            last = f"{model} {type(e).__name__}"
+        time.sleep(2)
+    raise RuntimeError(last)
 
 
 def valid(s: dict, cues=()) -> bool:
@@ -184,6 +196,10 @@ def main() -> int:
     ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
     ap.add_argument("--count", type=int, default=6)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--vet", dest="vet", action="store_true", default=True,
+                    help="filter each draft through the multi-model panel (default on)")
+    ap.add_argument("--no-vet", dest="vet", action="store_false")
+    ap.add_argument("--vet-rounds", type=int, default=2)
     args = ap.parse_args()
 
     cfg = CHANNELS[args.channel]
@@ -227,6 +243,27 @@ def main() -> int:
         sid = f"{next_id:02d}"
         next_id += 1
         added.append({"id": sid, "hook": s["hook"], "lines": s["lines"], "cta": s["cta"]})
+
+    # Filter every draft through the multi-model panel before it joins the pool,
+    # so a weak hook is revised here rather than measured as a losing video later.
+    if args.vet and added:
+        sys.path.insert(0, HERE)
+        try:
+            from panel_script import panel as panel_vet
+        except Exception as e:  # noqa: BLE001
+            print(f"  panel unavailable ({e}); keeping raw drafts")
+        else:
+            for s in added:
+                print(f"  vetting {s['id']}: {s['hook'][:36]}")
+                try:
+                    res = panel_vet(args.channel, {"hook": s["hook"], "lines": s["lines"],
+                                                   "cta": s["cta"]}, args.vet_rounds, key)
+                    ch = res["chosen"]
+                    if valid(ch, cues):
+                        s.update(hook=ch["hook"], lines=ch["lines"], cta=ch["cta"])
+                        s["vetted"] = True
+                except Exception as e:  # noqa: BLE001
+                    print(f"    panel failed for {s['id']} ({type(e).__name__}); keeping draft")
 
     print(f"{args.channel}: {len(existing)} existing, {len(added)} new")
     for s in added:

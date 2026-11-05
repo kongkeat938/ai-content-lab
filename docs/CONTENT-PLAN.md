@@ -1,5 +1,11 @@
 # CONTENT PLAN — Thai public-domain stories for ~20-minute episodes
 
+> **⚠️ อัปเดต 2026-11-04 — ช่องนิทาน (ch4) เปลี่ยนแนวแล้ว.** ข้อมูลจริงบอกว่า
+> เรื่องคลาสสิกในตารางนี้ได้ 1-6 วิว ขณะที่ "ช่วงเวลาครอบครัวเจาะจง" ได้ 460-1,083 วิว.
+> ช่อง `เรื่องเล่าการ์ตูน` จึงเปลี่ยนไปทำเรื่องครอบครัวเป็นแนวหลัก (มติ 2/2 ที่ปรึกษา).
+> ดู `docs/STORY-CHANNEL-PIVOT.md`. ตารางข้างล่างยังใช้ได้กับ **ช่องเรื่องเล่าคลาสสิก
+> แยกต่างหาก** ที่มีกลุ่มเป้าหมายชัดเจน ไม่ใช่ช่องนี้.
+
 Every entry below was checked against Thai Wikipedia or Wikisource. Death dates
 are the legal test: Thai copyright lasts the author's life **plus 50 years**
 (Copyright Act B.E. 2537, section 19), so a work is free once its author died

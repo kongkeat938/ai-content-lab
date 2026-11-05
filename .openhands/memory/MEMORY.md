@@ -267,6 +267,25 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## 🧪 Multi-model script panel (2026-11-04) — K's "หลาย AI คัดกรองบท"
+- `scripts/panel_script.py` = the vetting step: several models score a draft 0-100, list
+  weak points, propose a revision; the highest-scoring revision that still passes `valid()`
+  wins, 2 rounds. Votes are written to `<input>.panel.json` (auditable, not a black box).
+- `gen_short_scripts.py` now runs the panel on every fresh draft (`--no-vet` to skip).
+- **Voters measured 2026-11-04:** `gemini-3.1-flash-lite` + `gemini-3-flash-preview` reliable;
+  `gemini-3.5-flash-lite` 503s intermittently; `gemini-2.5-*` retired (404); `gemma-*` 500;
+  **Pollinations anonymous = 1 reply/45 s per IP** and truncates long JSON (needs
+  `reasoning_effort:low` + `max_tokens`, still rate-limited). Independent voters: a busy one
+  lowers the vote count, never the run. Proof: a losing-shape draft scored 65 → 92 after vetting.
+- Formula doc: `docs/CONTENT-FORMULA.md`.
+
+## 🎯 ch4 "เรื่องเล่าการ์ตูน" pivoted (2026-11-04)
+- Measured: classical tales มัทนะพาธา 1 view, ไกรทอง 5, จดหมายจากสิบปีก่อน 6; but specific
+  family moments — แม่ทำกับข้าว 1,083 views / 103.6% watch, คุกเข่าขอโทษพ่อ 460 / 115%.
+- **Both vendors (Gemini + Pollinations) said `pivot`.** ak decision: drop classical tales as
+  the main line; the channel now does **specific family moments (relationship + physical act)**.
+  `docs/STORY-CHANNEL-PIVOT.md`; CONTENT-PLAN.md carries a warning banner.
+
 ## ✅ K verification done (2026-11-04)
 - K completed **phone verification + advanced features**. API confirms `longUploadsStatus=allowed`
   on all 3 channels; avatars/banners set; **all 7 ch2 thumbnails were already live via the Data
