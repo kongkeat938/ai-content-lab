@@ -1,0 +1,32 @@
+{
+  "_comment": "Videos ready to publish to ch4 เรื่องเล่าการ์ตูน (@kongkeatpratumma), oldest first. Read by scripts/publish_batch.py --manifest content/ch4_publish.json. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post. `privacy` stays 'private' until K reviews the channel's first long-form, per the HOLD rules.",
+  "channel_slug": "kongkeat-story",
+  "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "videos": [
+    {
+      "key": "ch4_family_long_01",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-01/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-01/compilation.mp3",
+      "duration_sec": 3600,
+      "title": "เรื่องเล่าอบอุ่นใจ รวมเรื่องครอบครัว ฟังเพลินทั้งคืน",
+      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่องเป็นชั่วโมง เหมาะเปิดฟังตอนพักผ่อน ทำงานบ้าน หรือก่อนนอน\n\nทุกเรื่องคือช่วงเวลาธรรมดาที่เราหลงลืมไปแล้ว: พ่อสอนขี่จักรยาน กล่องข้าวที่แม่ทำก่อนฟ้าสว่าง นิทานของยายคืนที่ไฟดับ\n\nฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจทุกตอน ขอบคุณที่รับฟังครับ\n\nรวมทุกตอนไว้ในช่องเดียว: https://www.youtube.com/@kongkeatpratumma\n\nฟังเรื่องเล่าต่อเนื่อง (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLU4aztRNvt28",
+      "tags": [
+        "เรื่องเล่า",
+        "เรื่องเล่าอบอุ่นใจ",
+        "ครอบครัว",
+        "เรื่องสั้น",
+        "ฟังก่อนนอน",
+        "เรื่องเล่าครอบครัว",
+        "พ่อแม่ลูก",
+        "กำลังใจ",
+        "เรื่องเล่าไทย",
+        "ฟังเพลิน",
+        "เรื่องเล่าการ์ตูน",
+        "kongkeat pratumma"
+      ],
+      "category_id": "24",
+      "privacy": "private"
+    }
+  ]
+}
