@@ -364,6 +364,15 @@ def main() -> int:
                 print(f"  thumbnail deferred ({exc.status_code}); "
                       f"set_thumbnails.py will finish it", file=sys.stderr)
 
+        pl = v.get("playlist")
+        if pl:
+            try:
+                yt.playlistItems().insert(part="snippet", body={"snippet": {
+                    "playlistId": pl, "resourceId": {"kind": "youtube#video", "videoId": vid}}}).execute()
+                print(f"  added to playlist {pl}")
+            except HttpError as exc:
+                print(f"  playlist insert deferred ({exc.status_code})", file=sys.stderr)
+
     live = [v for v in man["videos"] if v.get("video_id")]
     print(f"\n{len(live)}/{len(man['videos'])} live: " +
           ", ".join(f"{v['key']}={v['url']}" for v in live))
