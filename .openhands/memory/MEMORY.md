@@ -282,6 +282,10 @@ different ways) — use F0-contour correlation + MFCC distance.
 ## 🎯 ch4 "เรื่องเล่าการ์ตูน" pivoted (2026-11-04)
 - Measured: classical tales มัทนะพาธา 1 view, ไกรทอง 5, จดหมายจากสิบปีก่อน 6; but specific
   family moments — แม่ทำกับข้าว 1,083 views / 103.6% watch, คุกเข่าขอโทษพ่อ 460 / 115%.
+- **ch4 thumbnail gate CLEARED (2026-11-05):** after K's verification, `thumbnails.set` on ch4
+  returns **SET OK 3/3** (was 403 "doesn't have permissions"). No verification gate remains
+  anywhere — thumbnails work on all channels via API. ch4 is now in `gen_short_scripts.py`
+  (`--channel kongkeat-story`), so the pivot can produce content.
 - **Both vendors (Gemini + Pollinations) said `pivot`.** ak decision: drop classical tales as
   the main line; the channel now does **specific family moments (relationship + physical act)**.
   `docs/STORY-CHANNEL-PIVOT.md`; CONTENT-PLAN.md carries a warning banner.
