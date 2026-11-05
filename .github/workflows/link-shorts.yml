@@ -1,0 +1,59 @@
+name: link-shorts
+
+# Keeps every Short pointed at its channel's long-form playlist -- the funnel.
+#
+# Why this job exists: the only reach these channels have is the Shorts Feed, and
+# Shorts-Feed watch time does NOT count toward the 4,000-hour YPP threshold
+# (YouTube, measured 2026-11-05). A Short is therefore only worth its reach if it
+# sends that reach to a long-form video, where the watch time counts. New Shorts
+# get the link from publish_shorts.py; this backfills the ones uploaded before it
+# did, and repairs any channel whose tail was never wired. It is idempotent -- a
+# Short already carrying the playlist id is skipped -- so a frequent tick spends
+# nothing when there is nothing to fix.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Space-separated video ids (blank = every Short missing the link)"
+        default: ""
+      dry_run:
+        description: "true to only list what would be linked"
+        default: "false"
+  schedule:
+    # Once a day, after the API quota reset (midnight Pacific = 08:00 UTC).
+    - cron: "0 9 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-shorts
+  cancel-in-progress: false
+
+jobs:
+  link:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Wire the Shorts -> long-form funnel
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: |
+          ONLY="${{ github.event.inputs.only }}"
+          ARGS="--apply"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS=""; fi
+          for v in $ONLY; do ARGS="$ARGS --only $v"; done
+          for ch in kongkeat dharma genx; do
+            echo "== $ch =="
+            python3 scripts/link_shorts.py --channel "$ch" $ARGS || true
+          done
