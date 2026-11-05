@@ -21,6 +21,12 @@ on:
   push:
     paths:
       - "content/ch4_publish.json"
+  schedule:
+    # ch4 hits its per-day upload cap most days; the cap clears ~3h after it is
+    # hit (measured: content/upload_limit.json). A frequent tick is cheap -- an
+    # entry with a video_id is never re-uploaded -- so run often enough to catch
+    # the reset without anyone dispatching by hand.
+    - cron: "23 */2 * * *"
 
 permissions:
   contents: write
