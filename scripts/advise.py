@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-"""Ask several independent AI vendors one question and print every answer.
+"""Ask a panel of independent AI advisors one question and print every answer.
 
-K's rule: never bring a decision to a person; take it to an AI. A single vendor
-can be down, rate-limited or retired at any moment (measured: Gemini 503s,
-Pollinations 402s, ChatGPT's CDP route 404s), so one advisor is a single point of
-failure. This asks a *panel* and reports which answered, so a question still gets
-an answer when one or two vendors are unreachable.
+K's rule: never bring a decision to a person; take it to an AI. K also requires
+**at least five advisors on every question** -- a single vendor is a single point
+of failure (measured: ChatGPT's CDP route 404s, Gemini 503s, Pollinations 402s),
+and one dead vendor must never stop a decision. This asks the whole panel and
+reports which answered.
 
-Advisors, in the order they are tried (all free):
-  1. gemini       -- GEMINI_API_KEY, models gemini-3.5/3.1-flash-lite
-  2. pollinations -- text.pollinations.ai, no key (model "openai")
-  3. openhands    -- the OpenHands Cloud API (KONGKEAT_OH_KEY); starts a
-                     delegated conversation (its own DeepSeek agent) and polls
-                     for the reply. Slowest, so it runs last.
+Advisors, in the order they are tried (all free, all measured working 2026-11-05):
+  1. gemini           -- GEMINI_API_KEY (3.5/3.1-flash-lite/flash-lite-latest)
+  2. pollinations     -- text.pollinations.ai/openai, no key
+  3. openhands        -- OpenHands Cloud (KONGKEAT_OH_KEY), its own DeepSeek agent
+  4. openhands-claude -- same key, llm_model=openhands/claude-sonnet-4-5
+  5. openhands-gpt    -- same key, llm_model=openhands/gpt-5
+
+The three OpenHands entries share one key but run genuinely different models, so
+the panel is five independent opinions, not five copies of one. Each OpenHands
+conversation is slow (~2-4 min), so the panel runs them last and in sequence.
 
     python3 scripts/advise.py "what should I change first?"
     python3 scripts/advise.py --extra "28-day: Shorts 30.3h, long-form 2.9h" "..."
@@ -28,6 +32,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -67,17 +72,19 @@ def ask_gemini(prompt: str) -> str:
 
 
 def ask_pollinations(prompt: str, tries: int = 3) -> str:
-    # POST, not the GET path: a long Thai prompt overflows the URL and 404s.
-    # The free tier also 402s when hit too fast, so back off and retry.
+    # /openai returns the standard chat-completions JSON. The bare "/" path and
+    # the GET path both fail on a long prompt, and the free tier allows only
+    # one reply every 45 s per IP, so retry with backoff.
     body = {"model": "openai", "messages": [{"role": "user", "content": prompt}]}
     last = ""
     for i in range(tries):
         try:
             req = urllib.request.Request(
-                "https://text.pollinations.ai/", data=json.dumps(body).encode(),
+                "https://text.pollinations.ai/openai", data=json.dumps(body).encode(),
                 headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=180) as fh:
-                text = fh.read().decode("utf-8", "replace").strip()
+                d = json.load(fh)
+            text = (d["choices"][0]["message"].get("content") or "").strip()
             if text:
                 return text
             last = "empty reply"
@@ -167,20 +174,31 @@ def main() -> int:
         parts.append(SYSTEM)
     prompt = "\n\n".join(parts)
 
-    answered = 0
-    for name in names:
+    # Ask every advisor at once: each OpenHands entry is a ~2-4 min conversation,
+    # so running them in sequence would make the panel needlessly slow.
+    results: dict[str, str] = {}
+
+    def run(name: str) -> None:
         fn = ADVISORS.get(name)
         if fn is None:
-            print(f"### {name}\n  (unknown advisor)\n")
-            continue
-        print(f"### {name}")
+            results[name] = "(unknown advisor)"
+            return
         try:
-            ans = fn(prompt)
-            answered += 1
-            print(ans.strip(), "\n")
+            results[name] = fn(prompt).strip()
         except Exception as exc:  # noqa: BLE001 - a dead advisor must not stop the panel
-            print(f"  (unavailable: {str(exc)[:200]})\n")
-    print(f"--- {answered}/{len(names)} advisors answered ---")
+            results[name] = f"(unavailable: {str(exc)[:200]})"
+
+    with ThreadPoolExecutor(max_workers=len(names)) as pool:
+        list(pool.map(run, names))
+
+    answered = 0
+    for name in names:
+        print(f"### {name}", flush=True)
+        ans = results.get(name, "(no result)")
+        if not ans.startswith("(unavailable"):
+            answered += 1
+        print(ans, "\n", flush=True)
+    print(f"--- {answered}/{len(names)} advisors answered ---", flush=True)
     return 0 if answered else 1
 
 
