@@ -248,6 +248,20 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## 🤝 Vendor consult (2026-11-04) — K's "ask other AI vendors" loop
+- K's rule: recurring K-only blockers go to other vendors; whichever solves it becomes a
+  standing advisor. Detail: `docs/CONSULT-2026-11-04.md`.
+- **Reachable from the pod:** Gemini API (free key; `gemini-3.5-flash-lite` works,
+  `2.5-flash`/`2.0-flash` are retired) and **Pollinations text** (`text.pollinations.ai`,
+  no key, 200). **ChatGPT = only via PC1's logged-in Chrome** (its CDP 9222 was dead today).
+  **DeepSeek needs a login** on PC1. **Devin `DEVIN_API_KEY` on PC1 = 403, unusable.**
+  HF inference needs a token (old `api-inference` endpoint is gone; `router.huggingface.co` = 401).
+- **Advisor pick:** ChatGPT primary (most concrete), Gemini API secondary (automatable).
+- Consult outcome: (P1) **no legitimate custom-thumbnail bypass exists** — ChatGPT + Gemini
+  agree; the free move is a **title-card in the first frame**. (P2) image path that needs no K:
+  **SVG/Pillow + Wikimedia Commons + Pexels API** (`PEXELS_API_KEY` exists on PC1).
+  (P3) confirms the loop lever (avg% > 100%) and shifting Shorts → long-form.
+
 ## 🌐 No-browser path — YouTube Data API from CI (2026-11-03)
 - **Studio UI blocked by phone verification + pod recycles kill the browser login → do
   NOT ask K to log in. Use the Data API.** Creds are repo secrets; a GitHub Actions job
