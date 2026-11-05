@@ -267,6 +267,20 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
   rail is proven. Thai scripts + render is what "ปั้นช่อง" needs.
 
+## 🏷️ ch4 name/handle (2026-11-05, K: "ไม่อยากใช้ชื่อนี้บนคลิป")
+- Channel TITLE is already **เรื่องเล่าการ์ตูน**. The **HANDLE** is still `@kongkeatpratumma`
+  (a personal name). **The Data API CANNOT rename a handle** -- K must do it in YouTube Studio
+  (Settings > Channel > Handle). Available as of 2026-11-05: @ruenglaokatoon, @ruenglaocartoon,
+  @storycartoonth, @ruenglao, @niThaanCartoon (checked via 404 on youtube.com/@<h>).
+- No watermark/name is burned into the video; the only place the name showed was the
+  description tail. Fixed everywhere with the **name-free channel URL**
+  `https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ`.
+- **Live repair done:** `scripts/scrub_channel_name.py --channel ch4 --apply` rewrote the
+  descriptions of 27 ch4 uploads (idempotent; also repairs a doubled `youtube.com/https://`
+  that a first pass introduced). Other scripts/tails (publish_shorts, short_doors,
+  promote_channels, ch2_publish cross-links, channels.json, report/analyze labels) now
+  carry no personal name either.
+
 ## 🚀 ch4 on the Shorts rail — LIVE (2026-11-05)
 - K handed ak administration ("บริหารเองต่อได้เลย"). Decision: scale the channel that already
   works. ch4 had pivoted to family moments organically but was publishing by hand.
