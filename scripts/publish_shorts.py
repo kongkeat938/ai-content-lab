@@ -93,7 +93,7 @@ CHANNELS = {
         # against 1-6 for the classical-tale shape. Publish these first.
         "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
         "tail": ("\n\nเรื่องเล่าอบอุ่นใจทุกตอนอยู่ในช่องเดียว → "
-                 "https://www.youtube.com/@kongkeatpratumma\n\n"
+                 "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ\n\n"
                  "#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"),
     },
 }

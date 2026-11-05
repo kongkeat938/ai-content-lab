@@ -36,14 +36,14 @@
     },
     {
       "slug": "kongkeat-story",
-      "name": "kongkeat pratumma",
-      "handle": "@kongkeatpratumma",
+      "name": "เรื่องเล่าการ์ตูน",
+      "handle": "@kongkeatpratumma (K to change in Studio — API cannot rename a handle)",
       "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
       "angle": "เรื่องเล่าการ์ตูน — ซีรี่ส์การ์ตูน/ละครที่ติดตามตอนต่อตอน",
       "videos_seen": 8,
       "account": "kongkeat.p3@gmail.com",
       "token_path": "~/.config/content-lab/yt_token_kongkeat-story.json",
-      "status": "live — 8 videos (long-form Thai story/drama + Shorts). Series brand decided 2026-10-31: เรื่องเล่าการ์ตูน. The channel NAME is still 'kongkeat pratumma' because the YouTube Data API cannot rename a personal channel — K must do it in YouTube Studio."
+      "status": "live — 8 videos (long-form Thai story/drama + Shorts). Series brand decided 2026-10-31: เรื่องเล่าการ์ตูน. Channel TITLE is เรื่องเล่าการ์ตูน (set 2026-11-05). The HANDLE is still @kongkeatpratumma because the Data API cannot rename a handle — K must change it in YouTube Studio (Settings > Channel > Handle). All clip/description text now uses the name-free channel URL https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ so no personal name shows on a clip."
     }
   ]
 }
