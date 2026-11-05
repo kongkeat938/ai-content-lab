@@ -66,26 +66,45 @@ def ask_gemini(prompt: str) -> str:
     raise RuntimeError(last)
 
 
-def ask_pollinations(prompt: str) -> str:
+def ask_pollinations(prompt: str, tries: int = 3) -> str:
     # POST, not the GET path: a long Thai prompt overflows the URL and 404s.
+    # The free tier also 402s when hit too fast, so back off and retry.
     body = {"model": "openai", "messages": [{"role": "user", "content": prompt}]}
-    req = urllib.request.Request(
-        "https://text.pollinations.ai/", data=json.dumps(body).encode(),
-        headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=180) as fh:
-        return fh.read().decode("utf-8", "replace").strip()
+    last = ""
+    for i in range(tries):
+        try:
+            req = urllib.request.Request(
+                "https://text.pollinations.ai/", data=json.dumps(body).encode(),
+                headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=180) as fh:
+                text = fh.read().decode("utf-8", "replace").strip()
+            if text:
+                return text
+            last = "empty reply"
+        except urllib.error.HTTPError as exc:
+            last = f"HTTP {exc.code}"
+        except Exception as exc:  # noqa: BLE001
+            last = str(exc)[:120]
+        time.sleep(20 * (i + 1))
+    raise RuntimeError(last)
 
 
-def ask_openhands(prompt: str, poll_seconds: int = 600) -> str:
-    """Delegate to a fresh OpenHands Cloud conversation and wait for its reply."""
+def ask_openhands(prompt: str, model: str | None = None, poll_seconds: int = 600) -> str:
+    """Delegate to a fresh OpenHands Cloud conversation and wait for its reply.
+
+    ``model`` overrides the conversation's LLM (e.g. openhands/claude-sonnet-4-5),
+    which lets one API key act as several independent advisors.
+    """
     key = os.environ.get("KONGKEAT_OH_KEY") or os.environ.get("OPENHANDS_CLOUD_API_KEY") \
         or os.environ.get("OPENHANDS_API_KEY")
     if not key:
         raise RuntimeError("no OpenHands API key set")
     auth = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-    start = _post(f"{OH_BASE}/api/v1/app-conversations",
-                  {"initial_message": {"content": [{"type": "text", "text": prompt}]},
-                   "title": "ak advisor panel"}, headers=auth, timeout=60)
+    body = {"initial_message": {"content": [{"type": "text", "text": prompt}]},
+            "title": "ak advisor panel"}
+    if model:
+        body["llm_model"] = model
+    start = _post(f"{OH_BASE}/api/v1/app-conversations", body, headers=auth, timeout=60)
     task_id = start.get("id")
     conv_id = start.get("app_conversation_id")
     deadline = time.time() + poll_seconds
@@ -126,6 +145,9 @@ ADVISORS = {
     "gemini": ask_gemini,
     "pollinations": ask_pollinations,
     "openhands": ask_openhands,
+    # same OpenHands key, a different underlying model -> a genuinely different advisor
+    "openhands-claude": lambda p: ask_openhands(p, model="openhands/claude-sonnet-4-5"),
+    "openhands-gpt": lambda p: ask_openhands(p, model="openhands/gpt-5"),
 }
 
 
