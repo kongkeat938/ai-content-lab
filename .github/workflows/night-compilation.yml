@@ -5,10 +5,9 @@ name: night-compilation
 # rail: auto-shorts already publishes Shorts, but Shorts earn reach, not watch
 # hours -- the long file is what the niche actually watches.
 #
-# It does NOT upload to YouTube. ak does not upload; K reviews the first work of
-# each channel. The run leaves a verified file plus a receipt and opens one
-# review issue. Once K approves, the same job can upload with the channel
-# secrets and a `publish: true` input.
+# It does NOT upload to YouTube. ak decides when to publish (the 2026-11-06 grant
+# lifted the ask-K-first gate); the build leaves a verified file plus a receipt
+# and opens one review issue. Publishing is a separate publish-batch run.
 #
 # Free tools only: edge-tts for the voice, ffmpeg for the mix, the synthesiser in
 # scripts/make_bed.py for the bed. No paid API, no secret needed to build.
