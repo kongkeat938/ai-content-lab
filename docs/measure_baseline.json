@@ -1,0 +1,63 @@
+{
+  "at": "2026-11-06T14:31:03.029416+00:00",
+  "pre_window": [
+    "2026-10-21",
+    "2026-11-03"
+  ],
+  "channels": {
+    "genx": {
+      "longform_ids": [
+        "5yTgjaeTmFw",
+        "7Hcgn6DG5jg",
+        "Bjt-I_6-8Jo",
+        "D52wjUDS88k",
+        "E1gxiblSUo0",
+        "EGAnr1gjWME",
+        "FbGLaQ1v3Ac",
+        "M9zsXyQqI-o",
+        "SjCqX3Ewugw",
+        "U4iW1TGsvXs",
+        "aeNK2Qh5ytc",
+        "ej2Fq3WC_6g",
+        "f1ZhIvKVBOU",
+        "jmmTK_AY1js",
+        "paEd6W-3k1A",
+        "s6j2ePit4gg",
+        "uKJCdBRZtBg"
+      ],
+      "pre_longform_views": 79,
+      "pre_days": 14,
+      "pre_views_per_day": 5.6,
+      "all_pre_views": 5739
+    },
+    "dharma": {
+      "longform_ids": [
+        "2PEjuEFpeY8",
+        "2r8CGSE-vUc",
+        "9bytRcx7SaY",
+        "F4qFHoVpEyI",
+        "GLPKPl_MMR4",
+        "V7E6OZZJ3xQ",
+        "_qOSft3tzJ8",
+        "q6VXmPP57xY",
+        "rT5RiIHJct8"
+      ],
+      "pre_longform_views": 167,
+      "pre_days": 14,
+      "pre_views_per_day": 11.9,
+      "all_pre_views": 6693
+    },
+    "kongkeat": {
+      "longform_ids": [
+        "8Xiq1ganmRs",
+        "cZnCQ-p1nqE",
+        "n0k_tUNXFtw",
+        "nmNJwOh9Ymg"
+      ],
+      "pre_longform_views": 12,
+      "pre_days": 14,
+      "pre_views_per_day": 0.9,
+      "all_pre_views": 3690
+    }
+  }
+}
