@@ -52,9 +52,11 @@ THEMES = {
 PROMPT = (
     "คุณเป็นผู้เชี่ยวชาญ SEO YouTube ภาษาไทย ให้เขียน 'ชื่อคลิปใหม่' ที่คนไทย "
     "จะค้นเจอและอยากกดดู ตามเงื่อนไข:\n"
-    "- ภาษาไทย ความยาวไม่เกิน 60 ตัวอักษร\n"
-    "- ต้องมีคำค้น (keyword) ที่คนค้นหาจริง อย่างน้อย 1 คำ\n"
-    "- คงอารมณ์/สาระเดิมของคลิป แต่ตัดให้กระชับ\n"
+    "- ภาษาไทย ความยาวไม่เกิน {maxlen} ตัวอักษร\n"
+    "- ต้องมีคำค้น (keyword) ที่คนค้นหาจริง และ 'ตรงกับเนื้อหาของคลิปนี้จริง ๆ' "
+    "(ไม่ใช่คีย์เวิร์ดประจำช่องที่ยัดใส่ทุกคลิป) — เลือกให้ต่างกันตามเนื้อหา\n"
+    "- ห้ามเปลี่ยนความหมายของคลิป ห้ามให้สัญญาเกินจริง\n"
+    "- คงสาระเดิมของคลิป แต่ตัดให้กระชับ\n"
     "- ห้ามใส่เครื่องหมายคำพูดหรืออีโมจิ\n"
     'ตอบเป็น JSON เท่านั้น: {{"title": "...", "keyword": "...", "reason": "..."}}\n\n'
     "ธีมช่อง: {theme}\nชื่อเดิม: {old}\n"
@@ -99,8 +101,8 @@ def ask_pollinations(prompt: str) -> dict:
 ADVISORS = {"gemini": ask_gemini, "pollinations": ask_pollinations}
 
 
-def best_title(old: str, theme: str, advisors: list[str]) -> dict:
-    prompt = PROMPT.format(theme=theme, old=old)
+def best_title(old: str, theme: str, advisors: list[str], maxlen: int = 60) -> dict:
+    prompt = PROMPT.format(theme=theme, old=old, maxlen=maxlen)
 
     def run(name: str) -> tuple[str, dict]:
         try:
@@ -111,11 +113,11 @@ def best_title(old: str, theme: str, advisors: list[str]) -> dict:
     with ThreadPoolExecutor(max_workers=len(advisors)) as pool:
         got = dict(pool.map(run, advisors))
 
-    # Prefer a proposal that is Thai, within 60 chars, and carries a keyword.
+    # Prefer a proposal that is Thai, within the length budget, and carries a keyword.
     for name in advisors:
         d = got.get(name) or {}
         t = (d.get("title") or "").strip()
-        if t and re.search(r"[\u0E00-\u0E7F]", t) and len(t) <= 60:
+        if t and re.search(r"[\u0E00-\u0E7F]", t) and len(t) <= maxlen:
             d["by"] = name
             return d
     for name in advisors:
@@ -126,28 +128,53 @@ def best_title(old: str, theme: str, advisors: list[str]) -> dict:
     return {"error": "no usable title", "raw": got}
 
 
-def fetch(name: str, token: str, limit: int, ids: list[str]) -> list[dict]:
+def fetch(name: str, token: str, limit: int, ids: list[str],
+          longform: bool = False) -> list[dict]:
     if ids:
-        vids = _get("videos", {"part": "snippet,statistics", "id": ",".join(ids)}, token)["items"]
+        vids = _get("videos", {"part": "snippet,statistics,contentDetails",
+                               "id": ",".join(ids)}, token)["items"]
     else:
         it = _get("channels", {"part": "contentDetails", "mine": "true"}, token)["items"][0]
         up = it["contentDetails"]["relatedPlaylists"]["uploads"]
-        pl = _get("playlistItems", {"part": "contentDetails", "playlistId": up,
-                                    "maxResults": str(limit)}, token)
-        vids = _get("videos", {"part": "snippet,statistics",
-                               "id": ",".join(x["contentDetails"]["videoId"] for x in pl["items"])},
-                    token)["items"]
+        # page through uploads so a long-form-only run sees the whole channel
+        all_ids, page = [], None
+        while True:
+            p = {"part": "contentDetails", "playlistId": up, "maxResults": "50"}
+            if page:
+                p["pageToken"] = page
+            r = _get("playlistItems", p, token)
+            all_ids += [x["contentDetails"]["videoId"] for x in r.get("items", [])]
+            page = r.get("nextPageToken")
+            if not page:
+                break
+        vids = []
+        for i in range(0, len(all_ids), 50):
+            vids += _get("videos", {"part": "snippet,statistics,contentDetails",
+                                    "id": ",".join(all_ids[i:i + 50])}, token)["items"]
     now = datetime.now(timezone.utc)
     out = []
     for v in vids:
         s = v["snippet"]
+        dur = _seconds(v.get("contentDetails", {}).get("duration", "PT0S"))
+        if longform and dur <= 180:
+            continue
         pub = datetime.fromisoformat(s["publishedAt"].replace("Z", "+00:00"))
         age_d = max((now - pub).total_seconds() / 86400, 0.04)
         views = int(v["statistics"].get("viewCount", 0))
         out.append({"id": v["id"], "title": s["title"], "categoryId": s.get("categoryId", "22"),
-                    "views": views, "age_d": round(age_d, 1),
+                    "views": views, "age_d": round(age_d, 1), "seconds": dur,
                     "views_per_day": round(views / age_d, 2)})
+    if limit:
+        out = out[:limit]
     return out
+
+
+def _seconds(iso: str) -> int:
+    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
+    if not m:
+        return 0
+    h, mi, s = (int(x) if x else 0 for x in m.groups())
+    return h * 3600 + mi * 60 + s
 
 
 def apply_title(vid: str, title: str, category: str, token: str) -> str:
@@ -165,18 +192,21 @@ def main() -> int:
     ap.add_argument("--channel", default="genx", choices=list(CHANNELS))
     ap.add_argument("--limit", type=int, default=8)
     ap.add_argument("--ids", default="")
+    ap.add_argument("--longform", action="store_true",
+                    help="only videos longer than 3 minutes (search is their discovery path)")
     ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
 
     token = access_token(CHANNELS[args.channel][0])
     ids = [x.strip() for x in args.ids.split(",") if x.strip()]
-    vids = fetch(args.channel, token, args.limit, ids)
+    vids = fetch(args.channel, token, args.limit, ids, longform=args.longform)
     theme = THEMES.get(args.channel, "")
 
     print(f"=== {args.channel}: {len(vids)} videos\n")
+    maxlen = 70 if args.longform else 60
     changes = []
     for v in vids:
-        prop = best_title(v["title"], theme, list(ADVISORS))
+        prop = best_title(v["title"], theme, list(ADVISORS), maxlen=maxlen)
         new = (prop.get("title") or "").strip()
         v["new_title"] = new
         v["keyword"] = prop.get("keyword", "")
