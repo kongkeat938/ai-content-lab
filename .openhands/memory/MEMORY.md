@@ -5,6 +5,23 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## ⭐ 2026-11-06 — Long-form rail is now a closed autopilot (release→manifest→publish)
+- The night rail built a verified 120-min compilation, put it on a Release, and **stopped**:
+  nothing wrote the manifest entry `content/ch2_publish.json`, so a person had to. That gap
+  was the real bottleneck (not the build). Fixed by `scripts/add_release_to_manifest.py`
+  (idempotent) + `night-compilation.yml` running it after the release and **dispatching
+  `publish-batch.yml` explicitly**. Advisor panel 2/3 camps agreed (gemini-3.5, gpt-oss-20b).
+- **⛔ A push made with the default `GITHUB_TOKEN` does NOT start another workflow**
+  (anti-recursion). Rely on a push trigger and it silently does nothing → dispatch explicitly
+  (`gh workflow run`, job needs `actions: write`).
+- **✅ `KONGKEAT_GH_TOKEN` CAN dispatch workflows from the pod** (the plain `GITHUB_TOKEN`
+  cannot → 403 "Resource not accessible by integration"). Use it for `gh workflow run`.
+- **Proven E2E 2026-11-06:** `night_01` → 124-min file → release → manifest `night_sleep_01`
+  → publish → **live** https://youtu.be/ZrjMi0pcDYo. **Farmmer long-form now 5.**
+  Flow + numbers: `docs/LONGFORM-AUTOPILOT-2026-11-06.md`.
+- The scheduled run now also **generates its own weekly content set** (`gen_night_scripts.py`,
+  ISO-week themed, reused within the week) and commits it before building.
+
 ## ⭐ 2026-11-06 — Long-form SEO pass done with the EXISTING token (no new consent)
 - The `youtube.upload` scope the tokens already hold covers **title, description,
   tags, category** writes (`videos.update`) AND **thumbnails** (`thumbnails.set`).
