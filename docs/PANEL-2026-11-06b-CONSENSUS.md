@@ -28,4 +28,7 @@
   เป็นการทวนสอบ. ไม่ได้อ้างว่าได้ 3 ค่าย.
 - **duck.ai (K แจ้ง):** `/duckchat/v1/models` เข้าถึงได้จาก pod (10 โมเดล 5 ค่าย: OpenAI, Anthropic,
   Mistral, Gemma, gpt-oss) **แต่ endpoint `/chat` ถูก anti-bot (ERR_CHALLENGE/ERR_BN_LIMIT)** —
-  แก้ challenge ได้แต่ server ยังปฏิเสธ. ต้องใช้ browser จริง (ตอนนี้ browser service ล่ม 503).
+  แก้ challenge ได้แต่ server ยังปฏิเสธ. **ลองผ่าน browser จริงแล้ว (2026-11-06):** โหลดหน้าได้,
+  เลือกโมเดลได้ (GPT-6 Luna / Claude Haiku 5.5), ส่งคำถามได้ — แต่ **ทุกครั้งได้ error `02f8`
+  "Duck.ai is temporarily unavailable"** แม้แต่คำถามจิ๋ว ("Say hi in one word") ⇒ เป็นปัญหาฝั่ง
+  DuckDuckGo ไม่ใช่ prompt/โมเดลของเรา. **สรุป: duck.ai ใช้จาก pod นี้ไม่ได้ในตอนนี้.**
