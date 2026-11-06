@@ -56,6 +56,30 @@
       "privacy": "public",
       "video_id": "BnUOckow0-Q",
       "url": "https://youtu.be/BnUOckow0-Q"
+    },
+    {
+      "key": "ch4_auto_202645_long",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-29b0708e056a-af6a96/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-29b0708e056a-af6a96/compilation.mp3",
+      "thumbnail": "assets/branding/thumbs/ch4_auto_202645_long.jpg",
+      "duration_sec": 2001.3,
+      "title": "เรื่องเล่าอบอุ่นใจ — ของเล่นเก่าและมือที่ซ่อมมัน รวมเรื่องครอบครัวฟังเพลินทั้งคืน",
+      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่อง 30 นาที ฟังเพลินได้ทั้งคืน\n\nแต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\nตอนในคลิปนี้: bike · kitchen · grandma · sibling · broken · rain · garden · homework · mistake · growup\n\nฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
+      "tags": [
+        "เรื่องเล่า",
+        "เรื่องเล่าอบอุ่นใจ",
+        "ครอบครัว",
+        "เรื่องสั้น",
+        "ฟังก่อนนอน",
+        "เรื่องเล่าภาษาไทย",
+        "นิทานผู้ใหญ่",
+        "คลิปกล่อมใจ",
+        "เรื่องเล่าตอนเดียวจบ",
+        "ฟังเพลิน ๆ"
+      ],
+      "category_id": 24,
+      "privacy": "public"
     }
   ]
 }
