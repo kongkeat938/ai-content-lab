@@ -42,7 +42,7 @@ Google ×1 (Gemma), OpenAI open-weights ×1 (gpt-oss-20b), DeepSeek ×1.
 2. **รูปแบบ long-form = 2-4 ชม. ฟังวนได้** ต่อจากของเดิม (`F4qFHoVpEyI`/`q6VXmPP57xY`),
    เสียง `th-NiwatNeural`, ภาพนิ่ง SVG — ตรงข้อจำกัด pod/CI.
 3. **เพิ่มรายได้ฟรี "ตอนนี้" ก่อนผ่าน YPP:** ใส่ affiliate + QR บริจาค ลง description/ปักหมุด
-   ของ long-form ทุกคลิป (ดู `docs/AFFILIATE-2026-11-05.md`).
+   ของ long-form ทุกคลิป (ดูหัวข้อ 'Income before the threshold' ใน `docs/REVENUE-PLAN.md`).
 4. **Shorts = ทางดึงคน ไม่ใช่ทางรายได้.** คง funnel ที่ซ่อมแล้ว (45 ลิงก์ Short → playlist),
    ไม่เพิ่มปริมาณเพื่อ "ปั๊มวิว".
 5. **ไม่ทำ:** ไม่ไล่เป้า 10M Shorts; ไม่อัป 3 ช่องพร้อมกัน; ไม่ทำ long-form <10 นาที;

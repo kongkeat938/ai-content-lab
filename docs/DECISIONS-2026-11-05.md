@@ -39,3 +39,15 @@ watch-time หมดประโยชน์ต่อเป้ารายได
 (4) ช่องที่ทุ่ม = **dharma** (โครง long-form + playlist 269 นาที พร้อมสุด) และ
 **kongkeat** ตามด้วย (retention ดีสุด avg% 103-115 แต่ยังไม่มี long-form).
 **ยังไม่ทำ:** เผยแพร่ long-form ใหม่เอง — K สงวนสิทธิ์อนุมัติก่อน publish ของใหม่.
+
+## มติที่ 6 — แผน 5 ที่ปรึกษา: ทุ่ม long-form dharma (2026-11-05)
+**ที่มา:** K สั่ง "วางแผนปรับปรุง/พัฒนาต่อ" → ปรึกษา 5 ช่อง 3 ค่าย
+(`docs/PANEL-2026-11-05b.md`, สรุป `docs/CONSULT-2026-11-05b-ANSWER.md`).
+**ตรงกันทั้ง 5:** คันโยก #1 = long-form **2-4 ชม. ฟังวนได้** บน **dharma**;
+#2 = หยุดเผาโควตาอัปโหลดกับ Shorts ปริมาณมาก; #3 = affiliate + QR บริจาค "ตอนนี้".
+**มติ:** (1) dharma = ช่องหลัก, เทโควตาให้ long-form; genx/kongkeat ลด Shorts เหลือ reach.
+(2) long-form 2-4 ชม. ฟังวนได้ ต่อจากของเดิม; เสียง `th-NiwatNeural`, ภาพนิ่ง SVG.
+(3) ใส่ affiliate + QR บริจาคใน long-form ทุกคลิป (หัวข้อ "Income before the threshold"
+ใน `docs/REVENUE-PLAN.md`). (4) **ไม่ทำ:** ไล่ 10M Shorts / อัป 3 ช่องพร้อมกัน /
+long-form <10 นาที / จ่าย AI รูป-เสียง.
+**ยังรอ K:** การ publish long-form ใหม่ (K สงวนสิทธิ์อนุมัติเหมือนเดิม).
