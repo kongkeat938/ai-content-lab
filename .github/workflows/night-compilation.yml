@@ -18,14 +18,17 @@ on:
         description: "Target length in minutes"
         default: "120"
       content:
-        description: "Content directory"
-        default: "content/night_dharma_01"
+        description: "Content directory (blank = pick/generate)"
+        default: ""
       key:
         description: "Manifest key (blank = the content dir name)"
         default: ""
       title:
         description: "Video title (blank = a generic dharma-before-sleep title)"
         default: ""
+      generate:
+        description: "true to generate a fresh content set with Gemini"
+        default: "false"
   schedule:
     # Weekly, Monday 02:17 UTC. A 2-hour file is not a daily post, and the
     # content set grows between runs.
@@ -60,13 +63,47 @@ jobs:
       - name: Guard the rail
         run: python3 scripts/test_night.py
 
+      - name: Resolve the content directory (and generate one on schedule)
+        id: pick
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set +e
+          CONTENT="${{ inputs.content }}"
+          GEN="${{ inputs.generate }}"
+          if [ -z "$CONTENT" ]; then
+            if [ "$GEN" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+              # One fresh set a week keeps the rail fed. The directory is dated
+              # per ISO week and reused if it already has pieces, so a re-run of
+              # the same week reuses the committed set instead of asking Gemini
+              # for a different one -- which would fingerprint differently and
+              # publish a near-duplicate.
+              CONTENT="content/night_auto_$(date -u +%Y%m%d)"
+              if ls "$CONTENT"/*.txt >/dev/null 2>&1; then
+                echo "$CONTENT already has pieces; reusing it"
+              else
+                THEMES=("ปล่อยวางความกังวลเรื่องเงิน" "ให้อภัยตัวเองและคนอื่น"
+                        "ความเหงาในตอนกลางคืน" "ปล่อยวางความโกรธและความน้อยใจ"
+                        "ความรักตัวเองและการยอมรับ" "ขอบคุณสิ่งเล็ก ๆ ในชีวิต"
+                        "ปล่อยวางความกลัวอนาคต" "ความสงบในความไม่แน่นอน")
+                wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
+                python3 scripts/gen_night_scripts.py \
+                  --theme "${THEMES[$wk]}" --out "$CONTENT" --count 8
+              fi
+            else
+              CONTENT="content/night_dharma_01"
+            fi
+          fi
+          echo "content=$CONTENT" >> "$GITHUB_OUTPUT"
+          echo "building from $CONTENT"
+
       - name: Skip if this exact build already exists
         id: fp
         run: |
           # A weekly rebuild of an unchanged 2-hour file is 40 minutes of CI for
           # nothing. Fingerprint the content and the rail; if that release tag
           # already exists, the same bytes have already been built and verified.
-          fp="$(cat "${{ inputs.content || 'content/night_dharma_01' }}"/*.txt \
+          fp="$(cat "${{ steps.pick.outputs.content }}"/*.txt \
                  scripts/make_compilation.py \
                  scripts/make_bed.py scripts/make_audio.py \
                  scripts/make_night_video.py scripts/make_poster.py \
@@ -85,6 +122,20 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
 
+      - name: Commit a freshly generated content set
+        if: steps.fp.outputs.skip != 'true'
+        run: |
+          git add "${{ steps.pick.outputs.content }}" 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no new content to commit"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git commit -m "night: add generated content set ${{ steps.pick.outputs.content }} [skip ci]"
+          git pull --rebase --autostash origin main
+          git push
+
       - name: Build and verify
         if: steps.fp.outputs.skip != 'true'
         env:
@@ -93,7 +144,7 @@ jobs:
           FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
         run: |
           python3 scripts/build_night.py \
-            --content "${{ inputs.content || 'content/night_dharma_01' }}" \
+            --content "${{ steps.pick.outputs.content }}" \
             --work work/night \
             --out work/night \
             --minutes "${{ inputs.minutes || '120' }}"
@@ -132,7 +183,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CONTENT="${{ inputs.content || 'content/night_dharma_01' }}"
+          CONTENT="${{ steps.pick.outputs.content }}"
           KEY="${{ inputs.key }}"; KEY="${KEY:-$(basename "$CONTENT")}"
           TITLE="${{ inputs.title }}"
           TITLE="${TITLE:-ธรรมะก่อนนอน 120 นาที หลับลึกถึงเช้า ปล่อยวางความเครียดทั้งวัน จิตสงบ}"
