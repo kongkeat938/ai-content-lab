@@ -23,7 +23,7 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 CHANNELS = {
     "genx": ("YT_CH1_REFRESH_TOKEN", "UCI6EfsgM1HNjrYarvigxyrQ"),
@@ -125,20 +125,29 @@ def main() -> int:
     ap.add_argument("--channel", choices=list(CHANNELS))
     ap.add_argument("--days", type=int, default=28)
     ap.add_argument("--videos", action="store_true", help="per-video breakdown")
+    ap.add_argument("--json", metavar="PATH", help="also write the totals to this file")
     args = ap.parse_args()
 
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=args.days)).isoformat()
     names = [args.channel] if args.channel else list(CHANNELS)
     total_h = 0.0
+    out = {"measured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+           "days": args.days, "start": start, "end": end, "channels": {}}
     for name in names:
         env, _cid = CHANNELS[name]
         try:
             r = report(name, access_token(env), start, end, args.videos)
             total_h += r["watch_hours"]
+            out["channels"][name] = r
         except urllib.error.HTTPError as exc:
             print(f"\n=== {name}: FAILED {exc.code} {exc.read().decode()[:160]}")
+    out["total_watch_hours"] = round(total_h, 2)
     print(f"\nTOTAL watch-hours across {len(names)} channel(s), {args.days} d: {total_h:,.1f}")
+    if args.json:
+        with open(args.json, "w", encoding="utf-8") as fh:
+            json.dump(out, fh, ensure_ascii=False, indent=2)
+        print(f"wrote {args.json}")
     return 0
 
 

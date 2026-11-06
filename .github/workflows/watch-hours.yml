@@ -1,0 +1,69 @@
+name: watch-hours
+
+# The one number the business is built on: watch-hours, the metric YPP requires
+# and the only one a view count cannot substitute for. The 120-min compilation
+# measured 0.0597 watch-hours per view against ~0.002 for a Short, so this is the
+# number the long-form rail is judged by.
+#
+# Reads the YouTube Analytics API, which has its OWN quota -- it works even on a
+# day the Data API (10,000 units) is spent, which is most days here. Writes the
+# history to docs/watch_hours.json so the trend is visible, not just the snapshot.
+#
+# GitHub's scheduler has never fired reliably for this repo, so a schedule is a
+# best-effort bonus; the watchdog can also dispatch it, and it runs by hand.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"   # Mondays 06:17 UTC, before the night build
+
+permissions:
+  contents: write
+
+concurrency:
+  group: watch-hours
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Measure watch-hours and append to the history
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: |
+          set +e
+          python3 scripts/analytics.py --days 28 --json /tmp/wh.json
+          test -f /tmp/wh.json || { echo "no measurement; nothing to record"; exit 0; }
+          python3 - <<'PY'
+          import json, os
+          new = json.load(open("/tmp/wh.json"))
+          path = "docs/watch_hours.json"
+          hist = json.load(open(path)) if os.path.exists(path) else {"samples": []}
+          hist.setdefault("samples", []).append(new)
+          # keep a year of weekly samples; the file stays small and readable
+          hist["samples"] = hist["samples"][-53:]
+          json.dump(hist, open(path, "w"), ensure_ascii=False, indent=2)
+          print(f"recorded {new['total_watch_hours']} h "
+                f"({len(hist['samples'])} samples)")
+          PY
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add docs/watch_hours.json
+          if git diff --cached --quiet; then
+            echo "no change"
+            exit 0
+          fi
+          git commit -m "watch-hours: record the weekly measurement [skip ci]"
+          git pull --rebase --autostash origin main
+          git push

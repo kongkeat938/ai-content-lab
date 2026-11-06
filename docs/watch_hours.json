@@ -1,0 +1,31 @@
+{
+  "samples": [
+    {
+      "measured_at": "2026-11-06T15:48:06+00:00",
+      "days": 28,
+      "start": "2026-10-09",
+      "end": "2026-11-06",
+      "channels": {
+        "genx": {
+          "views": 5743,
+          "watch_hours": 24.233333333333334,
+          "subs_gained": 20,
+          "subs_lost": 1
+        },
+        "dharma": {
+          "views": 7018,
+          "watch_hours": 39.4,
+          "subs_gained": 23,
+          "subs_lost": 1
+        },
+        "kongkeat": {
+          "views": 3695,
+          "watch_hours": 15.483333333333333,
+          "subs_gained": 8,
+          "subs_lost": 0
+        }
+      },
+      "total_watch_hours": 79.12
+    }
+  ]
+}
