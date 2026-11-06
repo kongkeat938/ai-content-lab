@@ -22,6 +22,12 @@ in `topics/*.md` and the daily logs.
 - **ch4 rail had the same leak AND a fixed release tag** (a rebuild clobbered the release).
   Fixed the same way; `add_release_to_manifest.py` is per-channel now (`--channel`). Proven:
   `ch4_family_long_02` → https://youtu.be/BnUOckow0-Q (public).
+- **ch4 rail now feeds itself** (K: "ทำให้ครบ" → "ก ทำไปเลย"). New
+  `scripts/gen_family_scripts.py` = ch4's twin of `gen_night_scripts.py`: 12-beat family arc,
+  warm first-person "ผม" memory (matches the ch4 voice). `ch4-longform.yml` mints its own
+  ISO-week set on schedule (Thu 03:37 UTC) + commits it, title follows the week's theme;
+  foreman dispatches it weekly with `generate=true`. **Proven E2E:** generated set
+  `ch4_auto_202645` → 33.4-min build → live https://youtu.be/6Vs7vTUTMN0 (**ch4 long-form now 3**).
 - **⛔ BIGGEST FINDING:** `polish-all` + `watch-hours` were **NOT in `foreman.py`'s plan**, so
   they relied on GitHub's `schedule` — which has **never fired for this repo**. The "change
   every title/thumbnail" job would have stalled at 94/221 titles + 0 thumbnails forever. foreman
