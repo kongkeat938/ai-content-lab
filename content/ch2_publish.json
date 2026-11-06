@@ -118,7 +118,7 @@
     },
     {
       "key": "night_sleep_01",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-eac9de443f2e-a74f6e/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-eac9de443f2e-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_sleep_01.jpg",
@@ -138,7 +138,9 @@
         "นอนหลับสบาย"
       ],
       "category_id": 22,
-      "privacy": "public"
+      "privacy": "public",
+      "video_id": "ZrjMi0pcDYo",
+      "url": "https://youtu.be/ZrjMi0pcDYo"
     }
   ]
 }
