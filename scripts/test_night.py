@@ -40,16 +40,23 @@ def make_voice(path: str) -> None:
 
     A continuous tone would make the bed-headroom gate meaningless (no quiet
     window to measure the bed in) and would not master to target, so the fixture
-    has to look like the thing the rail actually produces.
+    has to look like the thing the rail actually produces. It also has to be long
+    enough that the video mux's 4 s fade-in and 8 s fade-out are a small part of
+    it: on a fixture shorter than the fades, the tail fade drags the whole clip
+    under the loudness gate and the guard fails for a reason that never happens
+    on a real 120-minute file (measured 2026-11-06: a 6.5 s fixture read
+    -23.4 LUFS, while a 28.8 s one read -15.4 and a realistic bed headroom).
     """
-    burst = "sine=frequency=200:duration=1.5,volume=0.25"
-    quiet = "anullsrc=r=48000:cl=stereo:d=1.0"
+    burst = "sine=frequency=200:duration=3.0,volume=0.25"
+    quiet = "anullsrc=r=48000:cl=stereo:d=0.6"
+    seq = [part for _ in range(8) for part in (burst, quiet)]
     args = []
-    for f in (burst, quiet, burst, quiet, burst):
+    for f in seq:
         args += ["-f", "lavfi", "-i", f]
+    fc = "".join(f"[{i}:a]" for i in range(len(seq))) + f"concat=n={len(seq)}:v=0:a=1[o]"
     subprocess.run(
         ["ffmpeg", "-y", "-loglevel", "error", *args,
-         "-filter_complex", "[0:a][1:a][2:a][3:a][4:a]concat=n=5:v=0:a=1[o]",
+         "-filter_complex", fc,
          "-map", "[o]", "-ar", "48000", "-ac", "2", path], check=True)
     # Master to the YouTube target, exactly as the rail does.
     raw = path + ".raw.wav"
