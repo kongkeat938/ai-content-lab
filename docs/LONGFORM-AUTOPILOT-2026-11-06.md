@@ -51,8 +51,16 @@ release, commits the manifest, and **dispatches `publish-batch.yml` explicitly**
   (release `night-606f72d437a3-a74f6e`, 2026-11-06 02:37Z) — so a dispatch of it
   correctly skipped. The fingerprint guard works: identical content is not
   rebuilt.
-* Full loop under test: `night_01` (new fingerprint) dispatched 2026-11-06
-  15:23Z to build → release → manifest → publish.
+* Full loop **proven end to end** 2026-11-06: `night_01` dispatched 15:23Z →
+  built 124.1 min → release `night-eac9de443f2e-...` → manifest entry
+  `night_sleep_01` added (commit `e72c996`) → `publish-batch` dispatched
+  explicitly (run 42245195436) → **live** as
+  `https://youtu.be/ZrjMi0pcDYo` ("ธรรมะก่อนนอน 120 นาที ปล่อยวางทุกเรื่อง
+  หลับลึกถึงเช้า เสียงกล่อมจิตใจ", 124 min). No hand editing at any step.
+
+**Long-form live on Farmmer after this change: 5** — `night_120`
+`F4qFHoVpEyI`, `k_tone_01` `2PEjuEFpeY8`, `night_110` `q6VXmPP57xY`,
+`night_money_01` `V7E6OZZJ3xQ`, `night_sleep_01` `ZrjMi0pcDYo`.
 
 ## The flow now
 
