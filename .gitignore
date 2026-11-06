@@ -21,3 +21,4 @@ content/*/build/
 work/gemini_proof/
 work/ch2_branding/
 work/ch2_shorts/
+.aider*
