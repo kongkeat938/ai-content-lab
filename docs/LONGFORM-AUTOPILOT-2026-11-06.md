@@ -76,9 +76,32 @@ night-compilation.yml (Mon 02:17 UTC)
 publish-batch.yml -> videos.insert -> live on Farmmer, id recorded back
 ```
 
+## ch4 gets the same treatment
+
+`ch4-longform.yml` (the เรื่องเล่าการ์ตูน family-moment rail) had the same hole
+**and a worse one**: its release tag was a fixed `ch4-family-long-01`, so a
+rebuild of different content clobbered the release and the manifest could point
+at bytes that did not match the title. The tag is now a fingerprint of the
+content and the rail, the manifest entry is written automatically, and
+`publish-ch4` is dispatched explicitly.
+
+`add_release_to_manifest.py` is per-channel now: `--channel dharma|kongkeat`
+picks the tags, the category (22 for ch2, 24 for ch4), the cover directory and
+the description builder.
+
 ## Still manual (deliberately)
 
-* **Generating a new content set** is not on a schedule yet. `gen_night_scripts.py`
-  is run by hand with a theme. Wiring it to run before the weekly build is the
-  next step once the loop is proven.
-* **ch4 (kongkeat)** has its own manifest and workflow; this change is ch2 only.
+* **ch4 content sets** are not generated on a schedule yet — ch4-longform takes
+  an explicit `content` directory. `gen_night_scripts.py` writes dharma copy, so a
+  ch4 generator is the next piece if the family rail earns its own cadence.
+* **ch4 has no schedule trigger.** Its build is dispatched by hand or by foreman;
+  ch2's weekly night build is the one that runs itself.
+
+## Who dispatches what (no scheduler required)
+
+GitHub's `schedule` trigger has never fired for this repo, so nothing depends on
+it. Every push to `content/**` or `scripts/foreman.py` runs **foreman**, which
+dispatches only what is due; the **watchdog** re-dispatches itself every ~2 hours
+to keep the chain alive. foreman now also drives **polish-all** (daily, 08:00-12:00
+UTC) and **watch-hours** (weekly) — both were previously missing from its plan and
+so depended on a scheduler that never fired.
