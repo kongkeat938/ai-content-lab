@@ -123,7 +123,9 @@ jobs:
             --minutes "${{ inputs.minutes || '30' }}" \
             --title "เรื่องเล่าอบอุ่นใจ" \
             --subtitle "รวมเรื่องครอบครัว ฟังเพลินทั้งคืน" \
-            --voice th-TH-NiwatNeural
+            --voice th-TH-NiwatNeural \
+            --image-style family \
+            --image-prompt "warm Thai family home evening, soft golden lamp light, cozy"
 
       - name: Show the receipt
         if: always()

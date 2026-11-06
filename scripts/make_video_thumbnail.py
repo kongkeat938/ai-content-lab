@@ -21,6 +21,7 @@ by default it only writes the JPGs and prints the plan.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -136,10 +137,25 @@ def draw(im: Image.Image, lines: list[str]) -> Image.Image:
     return im
 
 
-def build(vid: str, title: str, keyword: str, out: str) -> str | None:
-    art = fetch_frame(vid)
-    if art is None:
-        return None
+def build(vid: str, title: str, keyword: str, out: str,
+          gen_art: bool = False, style: str = "dharma") -> str | None:
+    if gen_art:
+        # K's rule: no two videos share an image. Draw a fresh one seeded by the
+        # video id, so each video gets its own art and a re-run is stable.
+        sys.path.insert(0, HERE)
+        import gen_cover_image
+        seed = int(hashlib.sha256(vid.encode()).hexdigest()[:8], 16)
+        prompt = keyword.strip() or " ".join(words(title, keyword, 3))
+        data, src = gen_cover_image.generate(style, prompt, seed, W, H)
+        if not data:
+            return None
+        import io
+        art = Image.open(io.BytesIO(data)).convert("RGB")
+        print(f"    art from {src} (seed {seed})")
+    else:
+        art = fetch_frame(vid)
+        if art is None:
+            return None
     im = draw(cover(art), words(title, keyword))
     os.makedirs(os.path.dirname(out), exist_ok=True)
     im.save(out, quality=90)
@@ -175,6 +191,8 @@ def main() -> int:
                     help="every video on the channel, newest first")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--set", action="store_true", help="install through the Data API")
+    ap.add_argument("--gen-art", action="store_true",
+                    help="draw a fresh unique image per video instead of the frame")
     args = ap.parse_args()
 
     # title + keyword for each changed video come from the ledger
@@ -229,7 +247,8 @@ def main() -> int:
         title = c.get("new_title") or c.get("title") or ""
         kw = c.get("keyword", "")
         out = os.path.join(OUTDIR, f"{vid}.jpg")
-        path = build(vid, title, kw, out)
+        style = "family" if args.channel == "kongkeat" else "dharma"
+        path = build(vid, title, kw, out, gen_art=args.gen_art, style=style)
         if not path:
             print(f"  {vid}: no frame available")
             continue
