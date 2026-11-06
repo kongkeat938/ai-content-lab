@@ -73,7 +73,8 @@ jobs:
         run: |
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add docs/title_changes.json docs/thumbnail_changes.json assets/branding/thumbs 2>/dev/null
+          git add docs/title_changes.json docs/thumbnail_changes.json
+          git add assets/branding/thumbs 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing new this run"
             exit 0
