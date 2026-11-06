@@ -50,6 +50,14 @@ went live 2026-11-05/06, after it. Their contribution shows up in the next read.
 * Judge the metadata pass at **14 days** (`docs/EFFECT-READ-2026-11-06.md`), not
   from this 28-day window, which mixes in the surge.
 
+## The measurement is now automatic
+
+`scripts/analytics.py --json` writes the totals; `.github/workflows/watch-hours.yml`
+appends them to `docs/watch_hours.json` (a year of weekly samples) and commits the
+file. The `foreman` dispatches it weekly, and it reads the Analytics API — which
+has its own quota, so it works on days the Data API is spent. The first sample is
+the 79.12 h above; the trend is visible from the next week on.
+
 ## Fix applied
 
 `analytics.py --videos` used to fail entirely when the Data API quota was spent,
