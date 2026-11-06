@@ -59,7 +59,7 @@
     },
     {
       "key": "ch4_auto_202645_long",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-29b0708e056a-af6a96/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-29b0708e056a-af6a96/compilation.mp3",
       "thumbnail": "assets/branding/thumbs/ch4_auto_202645_long.jpg",
@@ -79,7 +79,9 @@
         "ฟังเพลิน ๆ"
       ],
       "category_id": 24,
-      "privacy": "public"
+      "privacy": "public",
+      "video_id": "6Vs7vTUTMN0",
+      "url": "https://youtu.be/6Vs7vTUTMN0"
     }
   ]
 }
