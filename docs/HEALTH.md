@@ -1,4 +1,4 @@
-# Channel health — 2026-11-06T21:29:39+00:00
+# Channel health — 2026-11-06T23:29:57+00:00
 
 - long videos live: **5** ['night_120', 'k_tone_01', 'night_110', 'night_money_01', 'night_sleep_01']
 - thumbnails queued: 7
@@ -9,12 +9,11 @@
 
 ## rails
 - foreman: last None 0 min ago; last success 2.0 h ago
-- grow-shorts-pool: last success 1165 min ago; last success 19.4 h ago
-- publish-batch: last success 285 min ago; last success 4.8 h ago
-- publish-shorts: last None 0 min ago; last success 1.4 h ago
-- set-thumbnails: last None 0 min ago; last success 3.4 h ago
+- grow-shorts-pool: last None 0 min ago; last success 21.4 h ago
+- publish-batch: last success 24 min ago; last success 0.4 h ago
+- publish-shorts: last None 0 min ago; last success 2.0 h ago
+- set-thumbnails: last success 13 min ago; last success 0.2 h ago
 
 ## STALE
-- set-thumbnails: last success 3.4 h ago (expected <= 3.0 h)
 - dharma: pool empty and not capped -- the rail has nothing to ship
 - genx: pool empty and not capped -- the rail has nothing to ship
