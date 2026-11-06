@@ -115,6 +115,30 @@
       "privacy": "public",
       "video_id": "V7E6OZZJ3xQ",
       "url": "https://youtu.be/V7E6OZZJ3xQ"
+    },
+    {
+      "key": "night_sleep_01",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-eac9de443f2e-a74f6e/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-eac9de443f2e-a74f6e/compilation.mp3",
+      "thumbnail": "assets/branding/farmmer/thumbs/night_sleep_01.jpg",
+      "duration_sec": 7446.2,
+      "title": "ธรรมะก่อนนอน 120 นาที ปล่อยวางทุกเรื่อง หลับลึกถึงเช้า เสียงกล่อมจิตใจ",
+      "description": "ฟังเสียงบรรยายธรรมะก่อนนอน 120 นาที ช่วยกล่อมจิตใจให้สงบ ปล่อยวางเรื่องกังวลและความเครียดสะสมทั้งวัน เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน\n\nเปิดทิ้งไว้ได้ทั้งคืน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ\n\nบทที่ผ่านมา: open · body · letgo · forgive · gratitude · sleep\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก\n\n— ช่องพี่น้อง —\nเรื่องเล่าการ์ตูน — เรื่องเล่าอบอุ่นใจ\nhttps://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ",
+      "tags": [
+        "ธรรมะก่อนนอน",
+        "ฟังธรรมะก่อนนอน",
+        "เสียงธรรมะนอนหลับ",
+        "ธรรมะผ่อนคลาย",
+        "แก้โรคนอนไม่หลับ",
+        "ลดความเครียด",
+        "นั่งสมาธิก่อนนอน",
+        "ปล่อยวาง",
+        "ทำใจให้สงบ",
+        "นอนหลับสบาย"
+      ],
+      "category_id": 22,
+      "privacy": "public"
     }
   ]
 }
