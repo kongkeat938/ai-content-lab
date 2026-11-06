@@ -49,7 +49,11 @@ CHANNELS = {
     "ch2": {
         "token": "YT_CH2_REFRESH_TOKEN", "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
         "home": "https://www.youtube.com/@farmmer-n9t",
-        "routes": [("ธรรมะก่อนนอน — Shorts", r".")],
+        # Point the door at the LONG-FORM playlist, not the Shorts playlist: only
+        # long-form watch time counts toward the 4,000-hour YPP threshold (measured
+        # 2026-11-06 -- dharma had 9.0 countable long-form hours vs 12.6 Shorts hours
+        # that do not count). The door exists to move reach into countable hours.
+        "routes": [("หลับลึกทั้งคืน — ฟังยาว", r".")],
     },
     "ch4": {
         "token": "YT_CH4_REFRESH_TOKEN", "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
