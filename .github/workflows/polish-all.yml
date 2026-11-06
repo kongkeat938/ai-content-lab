@@ -70,7 +70,11 @@ jobs:
           for ch in $CH; do
             echo "### $ch"
             python3 scripts/optimize_titles.py --channel "$ch" --all --apply --sleep 1.0
-            python3 scripts/make_video_thumbnail.py --channel "$ch" --all --set
+            # --gen-art draws a fresh unique image per video (K's rule: no repeats).
+            # --limit keeps one run inside the daily API quota; the ledger advances
+            # so the next tick continues where this one stopped.
+            python3 scripts/make_video_thumbnail.py --channel "$ch" --all --set \
+              --gen-art --limit "${THUMB_LIMIT:-25}"
           done
 
       - name: Commit the ledgers and any new thumbnails

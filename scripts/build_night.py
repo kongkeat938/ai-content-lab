@@ -39,8 +39,13 @@ def main() -> int:
     ap.add_argument("--work", required=True)
     ap.add_argument("--out", help="where the mp4/mp3 land (default: --work)")
     ap.add_argument("--minutes", type=float, default=120.0)
-    ap.add_argument("--image", default=os.path.join(ROOT, "assets", "images", "img00_00.jpg"),
-                    help="cover source image")
+    ap.add_argument("--image", default=None,
+                    help="cover source image; omit to generate a unique one")
+    ap.add_argument("--image-prompt", default="",
+                    help="subject for the generated cover (English, no text)")
+    ap.add_argument("--image-style", default="dharma",
+                    choices=["dharma", "family"],
+                    help="house style for the generated cover")
     ap.add_argument("--loop-seconds", type=float, default=24.0)
     ap.add_argument("--skip-video", action="store_true")
     ap.add_argument("--title", default="หลับถึงเช้า", help="poster title")
@@ -61,6 +66,24 @@ def main() -> int:
     mp4 = os.path.join(out, "video.mp4")
     cover = os.path.join(out, "cover.jpg")
 
+    # K's rule: no two videos share an image. Generate one per build unless the
+    # caller passed --image. The seed is derived from the content directory name,
+    # so a rebuild of the same set yields the same picture (the ledger stays
+    # meaningful) while a different set yields a different one.
+    image = a.image
+    if not image:
+        import hashlib as _h
+        seed = int(_h.sha256(os.path.basename(os.path.normpath(a.content))
+                             .encode()).hexdigest()[:8], 16)
+        image = os.path.join(a.work, "source.jpg")
+        rc, log = run([sys.executable, os.path.join(HERE, "gen_cover_image.py"),
+                       "--out", image, "--style", a.image_style,
+                       "--seed", str(seed), "--prompt", a.image_prompt])
+        sys.stdout.write(log)
+        if rc != 0:
+            print("could not generate a cover image", file=sys.stderr)
+            return 2
+
     steps = [
         ("audio", [sys.executable, os.path.join(HERE, "make_compilation.py"),
                    "--out", mp3, "--part",
@@ -72,10 +95,10 @@ def main() -> int:
         steps += [
             ("cover", [sys.executable, "-c",
                        f"import sys;sys.path.insert(0,{HERE!r});import make_poster;"
-                       f"make_poster.build({a.image!r},{cover!r},{a.title!r},"
+                       f"make_poster.build({image!r},{cover!r},{a.title!r},"
                        f"{a.subtitle!r},3)"]),
             ("video", [sys.executable, os.path.join(HERE, "make_night_video.py"),
-                       "--audio", mp3, "--image", a.image, "--cover", cover,
+                       "--audio", mp3, "--image", image, "--cover", cover,
                        "--out", mp4, "--loop-seconds", str(a.loop_seconds)]),
         ]
 

@@ -147,7 +147,9 @@ jobs:
             --content "${{ steps.pick.outputs.content }}" \
             --work work/night \
             --out work/night \
-            --minutes "${{ inputs.minutes || '120' }}"
+            --minutes "${{ inputs.minutes || '120' }}" \
+            --image-style dharma \
+            --image-prompt "serene Thai Buddhist night, soft moonlight, mist, calm"
 
       - name: Show the receipt
         if: always() && steps.fp.outputs.skip != 'true'
