@@ -190,16 +190,21 @@ def main() -> int:
         it = _get("channels", {"part": "contentDetails", "mine": "true"}, token)["items"][0]
         up = it["contentDetails"]["relatedPlaylists"]["uploads"]
         allids, page = [], None
-        while True:
-            p = {"part": "contentDetails", "playlistId": up, "maxResults": "50"}
-            if page:
-                p["pageToken"] = page
-            r = _get("playlistItems", p, token)
-            all_ids = [x["contentDetails"]["videoId"] for x in r.get("items", [])]
-            allids += all_ids
-            page = r.get("nextPageToken")
-            if not page:
-                break
+        try:
+            while True:
+                p = {"part": "contentDetails", "playlistId": up, "maxResults": "50"}
+                if page:
+                    p["pageToken"] = page
+                r = _get("playlistItems", p, token)
+                allids += [x["contentDetails"]["videoId"] for x in r.get("items", [])]
+                page = r.get("nextPageToken")
+                if not page:
+                    break
+        except urllib.error.HTTPError as exc:
+            if exc.code == 403 and "quotaExceeded" in exc.read().decode(errors="ignore"):
+                print("daily YouTube quota exhausted -- re-run after the 08:00 UTC reset")
+                return 0
+            raise
         if args.longform:
             ids = [v for v in allids if v in changes]
         else:

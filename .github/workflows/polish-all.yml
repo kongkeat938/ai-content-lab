@@ -16,10 +16,20 @@ on:
       channels:
         description: "Space-separated: genx dharma kongkeat"
         default: "genx dharma kongkeat"
+  push:
+    # GitHub's own scheduler has never fired in this repo, so a push is the
+    # dependable trigger: editing the scripts below runs the pass. The ledger
+    # commits this job makes do not touch these paths, so it cannot loop.
+    paths:
+      - "scripts/optimize_titles.py"
+      - "scripts/make_video_thumbnail.py"
+      - ".github/workflows/polish-all.yml"
   schedule:
     # The API quota resets at midnight Pacific (08:00 UTC). GitHub's scheduler is
     # unreliable in this repo, so take several morning ticks; the first one after
-    # the reset does the work and the rest no-op on the ledgers.
+    # the reset does the work and the rest no-op on the ledgers. Kept to a few
+    # ticks on purpose -- each run lists the channels (~30 quota units), so a
+    # 20-minute cron would waste a fifth of the daily budget.
     - cron: "11 8,9,10,11 * * *"
 
 permissions:
