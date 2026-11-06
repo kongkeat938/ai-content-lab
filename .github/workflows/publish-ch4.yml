@@ -3,9 +3,9 @@ name: publish-ch4
 # Uploads finished, verified ch4 (เรื่องเล่าการ์ตูน) long-form with the YouTube Data
 # API -- no browser, no human. Same rail as publish-batch, a different manifest.
 #
-# The first ch4 long-form lands private: K reviews a channel's first work before
-# it goes public. Flip `privacy` to public in content/ch4_publish.json once
-# approved, or dispatch with the privacy input.
+# Privacy comes from each entry in content/ch4_publish.json (ak sets it; the
+# HOLD that made the first long-form private was lifted 2026-11-06). Dispatch
+# with the privacy input to override for a single run.
 on:
   workflow_dispatch:
     inputs:

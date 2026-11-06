@@ -1,5 +1,5 @@
 {
-  "_comment": "Videos ready to publish to ch4 เรื่องเล่าการ์ตูน (@kongkeatpratumma), oldest first. Read by scripts/publish_batch.py --manifest content/ch4_publish.json. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post. `privacy` stays 'private' until K reviews the channel's first long-form, per the HOLD rules.",
+  "_comment": "Videos ready to publish to ch4 เรื่องเล่าการ์ตูน (@kongkeatpratumma), oldest first. Read by scripts/publish_batch.py --manifest content/ch4_publish.json. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post. `privacy` is set by ak; the HOLD was lifted 2026-11-06 (K: cancel the ask-K-first gate).",
   "channel_slug": "kongkeat-story",
   "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
   "videos": [
@@ -26,7 +26,7 @@
         "kongkeat pratumma"
       ],
       "category_id": "24",
-      "privacy": "private",
+      "privacy": "public",
       "playlist": "PLU4aztRNvt28"
     }
   ]
