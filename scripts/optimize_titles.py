@@ -216,8 +216,15 @@ def main() -> int:
 
     token = access_token(CHANNELS[args.channel][0])
     ids = [x.strip() for x in args.ids.split(",") if x.strip()]
-    limit = 0 if args.all else args.limit
-    vids = fetch(args.channel, token, limit, ids, longform=args.longform)
+    try:
+        vids = fetch(args.channel, token, 0 if args.all else args.limit, ids,
+                     longform=args.longform)
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode(errors="ignore")
+        if exc.code == 403 and "quotaExceeded" in body:
+            print("daily YouTube quota exhausted -- re-run after the 08:00 UTC reset")
+            return 0
+        raise
 
     # never re-change a title we already wrote -- the ledger is the record
     applied_ids = set()
