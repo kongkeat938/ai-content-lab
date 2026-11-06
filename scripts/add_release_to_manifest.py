@@ -57,10 +57,10 @@ def duration_of(receipt: dict, content: str, minutes: float) -> float:
     return float(minutes * 60)
 
 
-def make_cover(key: str, title: str, image: str) -> str:
+def make_cover(key: str, title: str, image: str, cover_dir: str) -> str:
     """Build a 1280x720 cover from a poster image so the upload has a real
     thumbnail. Best-effort: a missing Pillow is not fatal."""
-    out = os.path.join(ROOT, "assets", "branding", "farmmer", "thumbs", f"{key}.jpg")
+    out = os.path.join(ROOT, cover_dir, f"{key}.jpg")
     try:
         from PIL import Image
         sys.path.insert(0, HERE)
@@ -92,9 +92,41 @@ def description_for(title: str, minutes: int, content: str) -> str:
             f"https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ")
 
 
+def story_description(title: str, minutes: int, content: str) -> str:
+    names = []
+    if os.path.isdir(content):
+        for f in sorted(os.listdir(content)):
+            if f.endswith(".txt"):
+                names.append(re.sub(r"^\d+_", "", f[:-4]))
+    topics = " · ".join(names[:10])
+    return (f"รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ "
+            f"ต่อเนื่อง {minutes} นาที ฟังเพลินได้ทั้งคืน\n\n"
+            f"แต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\n"
+            f"ตอนในคลิปนี้: {topics}\n\n"
+            f"ฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n"
+            f"— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\n"
+            f"https://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w")
+
+
+# Per-channel publish shape: tags, category, description builder, cover directory.
+CHANNELS = {
+    "dharma": {
+        "tags": NIGHT_TAGS, "category_id": 22, "cover_dir": "assets/branding/farmmer/thumbs",
+        "desc": description_for,
+    },
+    "kongkeat": {
+        "tags": ["เรื่องเล่า", "เรื่องเล่าอบอุ่นใจ", "ครอบครัว", "เรื่องสั้น", "ฟังก่อนนอน",
+                 "เรื่องเล่าภาษาไทย", "นิทานผู้ใหญ่", "คลิปกล่อมใจ", "เรื่องเล่าตอนเดียวจบ",
+                 "ฟังเพลิน ๆ"],
+        "category_id": 24, "cover_dir": "assets/branding/thumbs", "desc": story_description,
+    },
+}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", default=os.path.join(ROOT, "content", "ch2_publish.json"))
+    ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
     ap.add_argument("--tag", required=True, help="the release tag holding video.mp4")
     ap.add_argument("--key", required=True, help="manifest key, e.g. night_theme_x")
     ap.add_argument("--content", required=True, help="content dir, for the description")
@@ -106,6 +138,7 @@ def main() -> int:
     ap.add_argument("--not-before", default="", help="ISO time to hold the upload until")
     args = ap.parse_args()
 
+    cfg = CHANNELS[args.channel]
     with open(args.manifest, encoding="utf-8") as fh:
         man = json.load(fh)
     vids = man.setdefault("videos", [])
@@ -116,12 +149,12 @@ def main() -> int:
         "state": "ready",
         "video_url": release_url(args.tag, "video.mp4"),
         "audio_url": release_url(args.tag, "compilation.mp3"),
-        "thumbnail": make_cover(args.key, args.title, args.image),
+        "thumbnail": make_cover(args.key, args.title, args.image, cfg["cover_dir"]),
         "duration_sec": round(duration_of(receipt, args.content, args.minutes), 1),
         "title": args.title,
-        "description": description_for(args.title, args.minutes, args.content),
-        "tags": NIGHT_TAGS,
-        "category_id": 22,
+        "description": cfg["desc"](args.title, args.minutes, args.content),
+        "tags": cfg["tags"],
+        "category_id": cfg["category_id"],
         "privacy": args.privacy,
     }
     if args.not_before:

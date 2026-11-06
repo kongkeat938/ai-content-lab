@@ -10,7 +10,8 @@ name: ch4-longform
 # verified dharma night rail (build_night.py), which is why the rail was given
 # --title/--subtitle/--voice.
 #
-# It does NOT upload to YouTube. The publish step is a separate, explicit run.
+# It queues the result in content/ch4_publish.json and dispatches publish-ch4,
+# so a build becomes a live video without a hand-written manifest entry.
 on:
   workflow_dispatch:
     inputs:
@@ -20,10 +21,17 @@ on:
       content:
         description: "Content directory"
         default: "content/ch4_family_01"
+      key:
+        description: "Manifest key (blank = content dir name + _long)"
+        default: ""
+      title:
+        description: "Video title (blank = a generic family-story title)"
+        default: ""
 
 permissions:
   contents: write
   issues: write
+  actions: write   # dispatch publish-ch4 after the manifest is updated
 
 concurrency:
   group: ch4-longform
@@ -61,11 +69,25 @@ jobs:
         if: always()
         run: test -f work/ch4_family_01/receipt.json && cat work/ch4_family_01/receipt.json || echo "no receipt"
 
+      - name: Fingerprint the build
+        id: fp
+        run: |
+          # A fixed tag meant a rebuild of different content clobbered the same
+          # release, so the manifest could point at bytes that no longer match the
+          # title. Fold the content, the rail and the voice into the tag instead.
+          CONTENT="${{ inputs.content || 'content/ch4_family_01' }}"
+          fp="$(cat "$CONTENT"/*.txt \
+                 scripts/make_compilation.py scripts/make_bed.py scripts/make_audio.py \
+                 scripts/make_night_video.py scripts/make_poster.py scripts/verify_night.py \
+                 | sha256sum | cut -c1-12)"
+          fp="${fp}-$(echo "NiwatNeural" | sha256sum | cut -c1-6)"
+          echo "fp=$fp" >> "$GITHUB_OUTPUT"
+
       - name: Publish the media to a Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="ch4-family-long-01"
+          tag="ch4-family-long-${{ steps.fp.outputs.fp }}"
           gh release create "$tag" \
             work/ch4_family_01/video.mp4 work/ch4_family_01/compilation.mp3 \
             --repo "${{ github.repository }}" \
@@ -73,6 +95,36 @@ jobs:
             --notes "ch4 family-moment long-form. Regenerable from content/ch4_family_01 + scripts/." \
             || gh release upload "$tag" work/ch4_family_01/video.mp4 work/ch4_family_01/compilation.mp3 \
                --repo "${{ github.repository }}" --clobber
+
+      - name: Add the release to the ch4 publish manifest and start the upload
+        # Same hand-off the ch2 rail was missing: without it the file sits on a
+        # Release and a person has to write the manifest entry by hand.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CONTENT="${{ inputs.content || 'content/ch4_family_01' }}"
+          KEY="${{ inputs.key }}"; KEY="${KEY:-$(basename "$CONTENT")_long}"
+          TITLE="${{ inputs.title }}"
+          TITLE="${TITLE:-เรื่องเล่าอบอุ่นใจ รวมเรื่องครอบครัว ฟังเพลินทั้งคืน}"
+          MIN="${{ inputs.minutes || '30' }}"
+          python3 scripts/add_release_to_manifest.py \
+            --manifest content/ch4_publish.json --channel kongkeat \
+            --tag "ch4-family-long-${{ steps.fp.outputs.fp }}" \
+            --key "$KEY" --content "$CONTENT" --minutes "$MIN" \
+            --title "$TITLE" --receipt work/ch4_family_01/receipt.json
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/ch4_publish.json
+          git add assets/branding/thumbs 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "manifest already current"
+            exit 0
+          fi
+          git commit -m "ch4: queue $KEY for publish [skip ci]"
+          git pull --rebase --autostash origin main
+          git push
+          # A push made with GITHUB_TOKEN does not start another workflow.
+          gh workflow run publish-ch4.yml --repo "${{ github.repository }}"
 
       - name: Alert on failure
         if: failure()
