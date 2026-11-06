@@ -24,6 +24,7 @@ import argparse
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -41,6 +42,7 @@ PANEL = [
     ("Google",     "gemma-4-31b-it",        "gemma-4-31b-it",        "gemini"),
     ("OpenAI-OSS", "gpt-oss-20b",           "openai-fast",           "pollinations"),
     ("DeepSeek",   "deepseek-v4-flash",     "DeepSeek-V4-Flash-0731", "llm7"),
+    ("Zhipu",      "glm-5.3-flash",         "GLM-5.3-Flash",         "llm7"),
 ]
 
 SYSTEM = ("You are a YouTube growth and monetisation consultant for a Thai content "
@@ -48,11 +50,31 @@ SYSTEM = ("You are a YouTube growth and monetisation consultant for a Thai conte
           "the numbers in the brief. State plainly what NOT to do and why. No generic advice.")
 
 
-def _post(url: str, body: dict, headers: dict, timeout: int = 240) -> str:
-    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
-                                 headers={"Content-Type": "application/json", **headers})
-    with urllib.request.urlopen(req, timeout=timeout) as fh:
-        return fh.read().decode()
+def _post(url: str, body: dict, headers: dict, timeout: int = 240, tries: int = 3) -> str:
+    """POST, retrying the transient 429/503 the free relays return.
+
+    llm7 sits behind a LiteLLM router: a busy model answers 429 with a
+    Retry-After (measured 2026-11-06: "Retry after 521 seconds", and a cooldown
+    message naming the model). Those are transient, so honour Retry-After and try
+    again rather than dropping the advisor. A 401 is a real misconfiguration and
+    is not retried.
+    """
+    last: Exception | None = None
+    for attempt in range(tries):
+        req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
+                                     headers={"Content-Type": "application/json", **headers})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as fh:
+                return fh.read().decode()
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (429, 503) or attempt == tries - 1:
+                raise
+            wait = exc.headers.get("Retry-After")
+            delay = min(int(wait), 30) if (wait or "").isdigit() else 10 * (attempt + 1)
+            print(f"  (HTTP {exc.code}, retrying in {delay}s)", file=sys.stderr, flush=True)
+            time.sleep(delay)
+            last = exc
+    raise last  # unreachable, the loop either returns or raises
 
 
 def ask_gemini(model: str, prompt: str) -> str:
