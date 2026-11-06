@@ -30,7 +30,8 @@ def body_for(r: dict) -> str:
     vi = r.get("video_info", {})
     return "\n".join([
         "A night compilation was built and passed the audio/picture gates.",
-        "Review it, then publish (ak does not upload on its own).",
+        "It has been queued in the publish manifest and the upload was dispatched;",
+        "watch the publish-batch run, then spot-check the video when it is live.",
         "",
         f"- pieces: {len(r.get('pieces', []))}",
         f"- length: {ai.get('minutes', '?')} min ({ai.get('cycles', '?')} cycles)",
