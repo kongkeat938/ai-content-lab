@@ -88,7 +88,7 @@
     },
     {
       "key": "night_money_01",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-606f72d437a3-a74f6e/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-606f72d437a3-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_money_01.jpg",
@@ -113,8 +113,8 @@
       ],
       "category_id": "22",
       "privacy": "public",
-      "video_id": null,
-      "url": null
+      "video_id": "V7E6OZZJ3xQ",
+      "url": "https://youtu.be/V7E6OZZJ3xQ"
     }
   ]
 }
