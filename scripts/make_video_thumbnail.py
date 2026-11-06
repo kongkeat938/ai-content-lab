@@ -27,6 +27,7 @@ import re
 import sys
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
@@ -65,6 +66,18 @@ def fetch_frame(vid: str) -> Image.Image | None:
 
 
 def cover(im: Image.Image) -> Image.Image:
+    """Fit the frame to 1280x720. A portrait (Short) frame is pillarboxed over a
+    blurred copy of itself, so the vertical subject is not cropped away."""
+    if im.height > im.width:
+        r = H / im.height
+        core = im.resize((int(im.width * r), H), Image.LANCZOS)
+        bg = im.resize((W, int(im.width * W / im.width)), Image.LANCZOS)
+        bg = bg.crop((0, max(0, (bg.height - H) // 2), W, max(0, (bg.height - H) // 2) + H))
+        bg = bg.filter(ImageFilter.GaussianBlur(24))
+        bg = ImageEnhance.Brightness(bg).enhance(0.5)
+        x = (W - core.width) // 2
+        bg.paste(core, (x, 0))
+        return bg
     r = max(W / im.width, H / im.height)
     im = im.resize((max(W, int(im.width * r)), max(H, int(im.height * r))), Image.LANCZOS)
     left = (im.width - W) // 2
@@ -79,12 +92,12 @@ def words(title: str, keyword: str, n: int = 3) -> list[str]:
     lines short -- a thumbnail is read at a glance, not scanned.
     """
     picks = []
-    if keyword:
+    if keyword and not keyword.startswith("#"):
         picks.append(keyword.strip())
     head = re.split(r"[:|—–\-]| ", title.strip())
     for part in head:
         part = part.strip(" ,.")
-        if part and part not in picks and len(part) <= 22:
+        if part and not part.startswith("#") and part not in picks and len(part) <= 22:
             picks.append(part)
         if len(picks) >= n:
             break
@@ -158,6 +171,8 @@ def main() -> int:
     ap.add_argument("--channel", default="genx", choices=list(CHANNELS))
     ap.add_argument("--ids", default="")
     ap.add_argument("--longform", action="store_true")
+    ap.add_argument("--all", action="store_true",
+                    help="every video on the channel, newest first")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--set", action="store_true", help="install through the Data API")
     args = ap.parse_args()
@@ -170,8 +185,8 @@ def main() -> int:
     token = access_token(CHANNELS[args.channel][0])
     ids = [x.strip() for x in args.ids.split(",") if x.strip()]
     if not ids:
-        if not args.longform:
-            sys.exit("give --ids or --longform")
+        if not (args.longform or args.all):
+            sys.exit("give --ids, --longform or --all")
         it = _get("channels", {"part": "contentDetails", "mine": "true"}, token)["items"][0]
         up = it["contentDetails"]["relatedPlaylists"]["uploads"]
         allids, page = [], None
@@ -185,15 +200,27 @@ def main() -> int:
             page = r.get("nextPageToken")
             if not page:
                 break
-        ids = [v for v in allids if v in changes]
+        if args.longform:
+            ids = [v for v in allids if v in changes]
+        else:
+            # --all: every video, but never one already given a thumbnail
+            done_path = os.path.join(ROOT, "docs", "thumbnail_changes.json")
+            already = set()
+            if os.path.exists(done_path):
+                with open(done_path, encoding="utf-8") as fh:
+                    already = {c["id"] for c in json.load(fh).get("changes", [])}
+            ids = [v for v in allids if v not in already]
+            print(f"(skipped {len(allids) - len(ids)} already-thumbnailed)")
 
     if args.limit:
         ids = ids[:args.limit]
     print(f"=== {args.channel}: {len(ids)} video(s)")
 
-    done = 0
+    applied = []
     for vid in ids:
         c = changes.get(vid, {})
+        # the live title is the ground truth for the card words; the ledger is a
+        # fallback for a video the title pass did not reach
         title = c.get("new_title") or c.get("title") or ""
         kw = c.get("keyword", "")
         out = os.path.join(OUTDIR, f"{vid}.jpg")
@@ -205,10 +232,25 @@ def main() -> int:
         if args.set:
             ok, msg = set_thumb(vid, path, token)
             line += f"  -> {msg}"
-            done += ok
+            if ok:
+                applied.append({"id": vid, "channel": args.channel,
+                                "at": datetime.now(timezone.utc).isoformat()})
+            elif "quotaExceeded" in msg or "403" in msg:
+                print(line + "\n   -> DAILY QUOTA REACHED -- stopping")
+                break
         print(line)
     if args.set:
-        print(f"set {done}/{len(ids)}")
+        print(f"set {len(applied)}/{len(ids)}")
+        if applied:
+            done_path = os.path.join(ROOT, "docs", "thumbnail_changes.json")
+            doc = {"changes": []}
+            if os.path.exists(done_path):
+                with open(done_path, encoding="utf-8") as fh:
+                    doc = json.load(fh)
+            doc.setdefault("changes", []).extend(applied)
+            with open(done_path, "w", encoding="utf-8") as fh:
+                json.dump(doc, fh, ensure_ascii=False, indent=2)
+            print("ledger", done_path)
     return 0
 
 
