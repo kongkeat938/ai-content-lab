@@ -19,6 +19,20 @@ in `topics/*.md` and the daily logs.
 - **Proven E2E 2026-11-06:** `night_01` → 124-min file → release → manifest `night_sleep_01`
   → publish → **live** https://youtu.be/ZrjMi0pcDYo. **Farmmer long-form now 5.**
   Flow + numbers: `docs/LONGFORM-AUTOPILOT-2026-11-06.md`.
+- **ch4 rail had the same leak AND a fixed release tag** (a rebuild clobbered the release).
+  Fixed the same way; `add_release_to_manifest.py` is per-channel now (`--channel`). Proven:
+  `ch4_family_long_02` → https://youtu.be/BnUOckow0-Q (public).
+- **⛔ BIGGEST FINDING:** `polish-all` + `watch-hours` were **NOT in `foreman.py`'s plan**, so
+  they relied on GitHub's `schedule` — which has **never fired for this repo**. The "change
+  every title/thumbnail" job would have stalled at 94/221 titles + 0 thumbnails forever. foreman
+  now dispatches polish-all daily 08-12 UTC (post quota-reset) + watch-hours weekly, and the
+  night dispatch passes `generate=true` (without it the weekly run rebuilt an existing set and
+  the fingerprint skip made it a **no-op that published nothing**).
+- **Watch-hours measured (Analytics API, own quota — works when the Data API is spent):**
+  28d total **79.1 h** (genx 24.2, dharma 39.4, kongkeat 15.5) vs **30.1 h on 2026-10-31 = ×2.6**.
+  The 120-min `F4qFHoVpEyI` = **8.72 h / 146 views = 0.0597 h/view**, the top video on dharma
+  (22% of its watch-hours alone). Auto-recorded weekly to `docs/watch_hours.json`.
+  Detail: `docs/WATCH-HOURS-2026-11-06.md`.
 - The scheduled run now also **generates its own weekly content set** (`gen_night_scripts.py`,
   ISO-week themed, reused within the week) and commits it before building.
 
