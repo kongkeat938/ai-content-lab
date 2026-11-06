@@ -5,6 +5,26 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## ⭐ 2026-11-06 — Long-form SEO pass done with the EXISTING token (no new consent)
+- The `youtube.upload` scope the tokens already hold covers **title, description,
+  tags, category** writes (`videos.update`) AND **thumbnails** (`thumbnails.set`).
+  Only **comments/replies** need `youtube.force-ssl`. Verified by round-trip.
+- **Applied to all 30 long-form videos:** titles rewritten (keyword-first),
+  36 thumbnails designed from the video's own frame, and description+tags written
+  (29 videos, ~230ch + 11-12 tags). Tools: `scripts/optimize_titles.py`,
+  `make_video_thumbnail.py`, `optimize_seo.py`. Ledgers: `docs/{title,seo}_changes.json`,
+  control `docs/views_snapshot.json`. Judge at 14 days.
+- **Shorts titles were a wasted lever, measured:** views are **93-97% Shorts feed**,
+  only **1.5-2.5% YouTube search** (`insightTrafficSourceType`). 10 of the first 11
+  "changed" videos were Shorts → a title cannot move feed views. Do NOT spend effort
+  on Short metadata; the testable surface is **long-form** (search is its path).
+- **Thumbnail-detection gotcha:** `maxres` presence or an `sqp=` URL marker does NOT
+  prove a custom thumbnail (an HD auto frame has maxres too). Only a **pixel compare**
+  of live `i.ytimg.com/vi/<id>/maxresdefault.jpg` vs the generated file is reliable.
+- `Pillow` is NOT in the pod by default — `pip install Pillow` before any poster/thumb script.
+- Advisor panel scorecard: **gemini 100/100, pollinations 100/100 = KEEP** (fast, ~1-2 s);
+  OpenHands advisors >10 min/probe = WATCH. `scripts/panel_scorecard.py`.
+
 ## ⭐ 2026-11-05 — Shorts watch-hours do NOT count toward YPP (measured)
 Verified on the official page (support.google.com/youtube/answer/72851): "any qualified
 watch hours from Shorts views in the **Shorts Feed** won't count towards the 4,000
