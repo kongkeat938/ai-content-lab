@@ -30,6 +30,30 @@
       "playlist": "PLU4aztRNvt28",
       "video_id": "8Xiq1ganmRs",
       "url": "https://youtu.be/8Xiq1ganmRs"
+    },
+    {
+      "key": "ch4_family_long_02",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-e7f2e6c36c3c-af6a96/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-e7f2e6c36c3c-af6a96/compilation.mp3",
+      "thumbnail": "assets/branding/thumbs/ch4_family_long_02.jpg",
+      "duration_sec": 2070.1,
+      "title": "เรื่องเล่าอบอุ่นใจ รวมเรื่องครอบครัว ฟังเพลินทั้งคืน 2",
+      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่อง 30 นาที ฟังเพลินได้ทั้งคืน\n\nแต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\nตอนในคลิปนี้: bike · lunchbox · grandma · brother · repair · rain · grandpa_garden · homework · stars · kiss\n\nฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
+      "tags": [
+        "เรื่องเล่า",
+        "เรื่องเล่าอบอุ่นใจ",
+        "ครอบครัว",
+        "เรื่องสั้น",
+        "ฟังก่อนนอน",
+        "เรื่องเล่าภาษาไทย",
+        "นิทานผู้ใหญ่",
+        "คลิปกล่อมใจ",
+        "เรื่องเล่าตอนเดียวจบ",
+        "ฟังเพลิน ๆ"
+      ],
+      "category_id": 24,
+      "privacy": "public"
     }
   ]
 }
