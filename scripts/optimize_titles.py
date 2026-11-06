@@ -27,6 +27,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -73,6 +74,24 @@ def _json_of(text: str) -> dict:
         return {}
 
 
+def _post_json(url: str, body: dict, headers: dict, timeout: int = 90,
+               tries: int = 4) -> dict:
+    """POST JSON with backoff. The free advisor tiers answer 429 under load, and
+    a burst of titles trips that immediately, so a retry turns a lost title into
+    a slow one instead of a silent skip."""
+    for attempt in range(tries):
+        req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as fh:
+                return json.load(fh)
+        except urllib.error.HTTPError as exc:
+            if exc.code in (429, 500, 503) and attempt < tries - 1:
+                time.sleep(2 ** attempt * 3)
+                continue
+            raise
+    raise RuntimeError("unreachable")
+
+
 def ask_gemini(prompt: str) -> dict:
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
@@ -81,20 +100,14 @@ def ask_gemini(prompt: str) -> dict:
            f"gemini-3.5-flash-lite:generateContent?key={key}")
     body = {"contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"temperature": 0.7}}
-    req = urllib.request.Request(url, data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=90) as fh:
-        d = json.load(fh)
+    d = _post_json(url, body, {"Content-Type": "application/json"})
     return _json_of(d["candidates"][0]["content"]["parts"][0]["text"])
 
 
 def ask_pollinations(prompt: str) -> dict:
     body = {"model": "openai-fast", "messages": [{"role": "user", "content": prompt}]}
-    req = urllib.request.Request("https://text.pollinations.ai/openai",
-                                 data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as fh:
-        d = json.load(fh)
+    d = _post_json("https://text.pollinations.ai/openai", body,
+                   {"Content-Type": "application/json"}, timeout=120)
     return _json_of(d["choices"][0]["message"].get("content") or "")
 
 
@@ -194,12 +207,27 @@ def main() -> int:
     ap.add_argument("--ids", default="")
     ap.add_argument("--longform", action="store_true",
                     help="only videos longer than 3 minutes (search is their discovery path)")
+    ap.add_argument("--all", action="store_true",
+                    help="every video on the channel, newest first, no limit")
+    ap.add_argument("--sleep", type=float, default=1.5,
+                    help="seconds between videos, to stay under the advisor rate limit")
     ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
 
     token = access_token(CHANNELS[args.channel][0])
     ids = [x.strip() for x in args.ids.split(",") if x.strip()]
-    vids = fetch(args.channel, token, args.limit, ids, longform=args.longform)
+    limit = 0 if args.all else args.limit
+    vids = fetch(args.channel, token, limit, ids, longform=args.longform)
+
+    # never re-change a title we already wrote -- the ledger is the record
+    applied_ids = set()
+    if os.path.exists(LEDGER):
+        with open(LEDGER, encoding="utf-8") as fh:
+            applied_ids = {c["id"] for c in json.load(fh).get("changes", [])}
+    before = len(vids)
+    vids = [v for v in vids if v["id"] not in applied_ids]
+    if before != len(vids):
+        print(f"(skipped {before - len(vids)} already-changed)")
     theme = THEMES.get(args.channel, "")
 
     print(f"=== {args.channel}: {len(vids)} videos\n")
@@ -208,6 +236,10 @@ def main() -> int:
     for v in vids:
         prop = best_title(v["title"], theme, list(ADVISORS), maxlen=maxlen)
         new = (prop.get("title") or "").strip()
+        # keep the #Shorts signal the original title carried -- it costs a few
+        # characters and helps YouTube keep classifying the clip as a Short
+        if new and v.get("seconds", 0) <= 180 and "#Shorts" not in new:
+            new = f"{new} #Shorts"
         v["new_title"] = new
         v["keyword"] = prop.get("keyword", "")
         v["by"] = prop.get("by", "?")
@@ -224,7 +256,13 @@ def main() -> int:
                 changes.append(v)
                 print(f"   -> applied: {done[:50]}\n")
             except urllib.error.HTTPError as exc:
-                print(f"   -> FAILED HTTP {exc.code}: {exc.read().decode()[:120]}\n")
+                body = exc.read().decode()
+                if exc.code == 403 and "quotaExceeded" in body:
+                    print("   -> DAILY QUOTA REACHED -- stopping; re-run tomorrow, "
+                          "the ledger skips what is done\n")
+                    break
+                print(f"   -> FAILED HTTP {exc.code}: {body[:120]}\n")
+        time.sleep(args.sleep)
 
     if changes:
         os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
