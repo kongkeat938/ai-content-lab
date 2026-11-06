@@ -19,6 +19,11 @@ available for that, measured, so the effort is honest.
   panel (measured KEEP: gemini 100/100, pollinations 100/100) can rewrite a title
   for search and click-through, and the effect is measurable in views-per-day via
   `scripts/report_reach.py`.
+  **Done 2026-11-06:** `scripts/optimize_titles.py` rewrote **11 titles** across
+  all three channels (genx 3, dharma 4, kongkeat 4). Writing a title needs only
+  the `youtube.upload` scope the tokens already hold (round-trip verified), so no
+  new consent was required. Every change is logged to `docs/title_changes.json`
+  with its views-per-day baseline at change time.
 - **Description + tags** — `scripts/set_channel_seo.py` already writes them; the
   advisors can propose better keyword sets from the channel's own winning videos.
 - **Upload cadence** — the rail already posts; consistency is itself a discovery
