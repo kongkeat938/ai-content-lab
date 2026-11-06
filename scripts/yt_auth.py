@@ -46,6 +46,13 @@ SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube.readonly",
 ]
+# Comment read + reply needs `force-ssl`, which the default grant does not carry.
+# `--scopes force-ssl` re-consents once and writes a token that covers upload,
+# read and comments together, so the same token keeps working everywhere.
+SCOPE_SETS = {
+    "default": SCOPES,
+    "force-ssl": SCOPES + ["https://www.googleapis.com/auth/youtube.force-ssl"],
+}
 TOKEN_PATH = os.environ.get(
     "YT_TOKEN_PATH", os.path.expanduser("~/.config/content-lab/yt_token.json"))
 # A loopback redirect is registered once and never changes, unlike a sandbox
@@ -449,6 +456,9 @@ def main() -> int:
                     help="read the code from stdin instead of waiting for a callback")
     ap.add_argument("--check", action="store_true",
                     help="verify the saved token against the API and exit")
+    ap.add_argument("--scopes", choices=list(SCOPE_SETS), default="default",
+                    help="which scopes to request; use 'force-ssl' to add comment "
+                         "read/reply (owner re-consents once)")
     ap.add_argument("--print-redirects", action="store_true",
                     help="print the redirect URIs to register, then exit")
     ap.add_argument("--expected-channel", metavar="CHANNEL_ID",
@@ -532,7 +542,7 @@ def main() -> int:
         if not args.loopback:
             print("Tip: omit --redirect-uri to fall back to the registered one.\n")
 
-    flow = Flow.from_client_config({"web": client}, scopes=SCOPES,
+    flow = Flow.from_client_config({"web": client}, scopes=SCOPE_SETS[args.scopes],
                                    redirect_uri=args.redirect_uri)
 
     # PKCE: the verifier that hashes into this URL's code_challenge must be the
