@@ -67,6 +67,26 @@ def status(name: str, token: str) -> dict:
             "videos": st.get("videoCount"), "views": st.get("viewCount")}
 
 
+def latest(name: str, limit: int, token: str) -> list:
+    it = _get("channels", {"part": "snippet,contentDetails", "mine": "true"}, token)["items"][0]
+    up = it["contentDetails"]["relatedPlaylists"]["uploads"]
+    pl = _get("playlistItems", {"part": "contentDetails", "playlistId": up,
+                                "maxResults": str(limit)}, token)
+    ids = [x["contentDetails"]["videoId"] for x in pl.get("items", [])]
+    if not ids:
+        print(f"\n=== {name}: no uploads")
+        return []
+    vids = _get("videos", {"part": "snippet,statistics", "id": ",".join(ids)}, token)["items"]
+    print(f"\n=== {name}: newest {len(vids)} uploads")
+    out = []
+    for v in vids:
+        s = v["snippet"]
+        out.append({"id": v["id"], "date": s["publishedAt"][:10],
+                    "views": int(v["statistics"].get("viewCount", 0)), "title": s["title"]})
+        print(f"  {out[-1]['date']}  {out[-1]['views']:>7,}  {s['title'][:52]}")
+    return out
+
+
 def comments(name: str, token: str) -> list:
     it = _get("channels", {"part": "id", "mine": "true"}, token)["items"][0]
     try:
@@ -109,16 +129,21 @@ def reply(comment_id: str, text: str, token: str) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["status", "comments", "draft", "reply"])
+    ap.add_argument("cmd", choices=["status", "latest", "comments", "draft", "reply"])
     ap.add_argument("arg1", nargs="?")
     ap.add_argument("arg2", nargs="?")
     ap.add_argument("--channel", choices=list(CHANNELS))
+    ap.add_argument("--limit", type=int, default=10, help="rows for the latest command")
     args = ap.parse_args()
 
     names = [args.channel] if args.channel else list(CHANNELS)
     if args.cmd == "status":
         for n in names:
             status(n, access_token(CHANNELS[n][0]))
+        return 0
+    if args.cmd == "latest":
+        for n in names:
+            latest(n, args.limit, access_token(CHANNELS[n][0]))
         return 0
     if args.cmd == "comments":
         for n in names:
