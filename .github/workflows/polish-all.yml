@@ -63,7 +63,11 @@ jobs:
           YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
         run: |
           set +e
-          for ch in ${{ github.event.inputs.channels }}; do
+          # inputs only exist for workflow_dispatch; a push/schedule run must
+          # still have the channel list
+          CH="${{ github.event.inputs.channels }}"
+          CH="${CH:-genx dharma kongkeat}"
+          for ch in $CH; do
             echo "### $ch"
             python3 scripts/optimize_titles.py --channel "$ch" --all --apply --sleep 1.0
             python3 scripts/make_video_thumbnail.py --channel "$ch" --all --set
