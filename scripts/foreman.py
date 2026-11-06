@@ -171,12 +171,29 @@ def main() -> int:
     if l_age is None or l_age > 6 * 60:
         plan.append(("link-shorts", {}))
 
-    # 5. Keep the long rail fed: a weekly 2-hour build if the newest one is over
-    #    6 days old. night-compilation fingerprints its own content, so a repeat
-    #    on unchanged material is a cheap skip, not a 40-minute render.
+    # 5. Keep the long rail fed: a weekly build if the newest one is over 6 days
+    #    old. generate=true so the scheduled path mints a fresh content set --
+    #    without it the dispatch rebuilds an existing set and the fingerprint
+    #    guard turns the whole run into a no-op. night-compilation fingerprints
+    #    its own content, so a repeat on unchanged material is a cheap skip.
     n_age = last_success_min("night-compilation", ids)
     if n_age is None or n_age > 6 * 24 * 60:
-        plan.append(("night-compilation", {}))
+        plan.append(("night-compilation", {"generate": "true"}))
+
+    # 5b. Titles and thumbnails: the pass that changes every title and every ugly
+    #     thumbnail. It spends the shared Data API quota, so it is due once a day
+    #     in the window right after the 08:00 UTC reset, before the day's uploads
+    #     need the budget. A pass that stops on quota simply resumes the next day;
+    #     the ledgers make it incremental.
+    p_age = last_success_min("polish-all", ids)
+    if 8 <= now().hour < 12 and (p_age is None or p_age > 12 * 60):
+        plan.append(("polish-all", {}))
+
+    # 5c. Watch-hours: the weekly measurement of the one number the business runs
+    #     on. Reads the Analytics API, which has its own quota.
+    wh_age = last_success_min("watch-hours", ids)
+    if wh_age is None or wh_age > 6 * 24 * 60:
+        plan.append(("watch-hours", {}))
 
     # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
     #    any push runs the foreman, so a broken chain repairs itself on the next
