@@ -52,12 +52,13 @@ So the engine is **Shorts for reach, long videos for hours** — not one or the 
 
 - **Affiliate links** in long-video descriptions: sleep/health products, dharma books
   (Shopee/Lazada affiliate). Works at any subscriber count.
-- **Donations**: a PromptPay QR in the description of the long videos, for people who
-  play them all night.
 - **Digital product**: a wallpaper / chant PDF, sold cheap via a Line OA link.
 
 These are honest, low-effort, and legal. They are *secondary*: the threshold is the
 prize, and everything above is worth little until the channel is monetised.
+
+> **Donations are off the table (K, 2026-11-06).** No PromptPay/QR/wallet ask anywhere.
+> K decided this twice (2026-11-04 and again 2026-11-06) — do not re-propose it.
 
 ## What I am NOT doing, and why
 
