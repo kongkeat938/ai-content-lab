@@ -100,11 +100,17 @@ def report(name: str, token: str, start: str, end: str, show_videos: bool) -> di
     print(f"\n=== {name}  ({start} .. {end})")
     print(f"  views={views:,.0f}   watch-hours={hours:,.1f}   subs +{sg:.0f}/-{sl:.0f}")
     if show_videos:
+        # The Analytics endpoint has its own quota, so the per-video rows usually
+        # come back even when the Data API (needed only for the titles) is spent.
         rows = analytics(token, start, end,
                          "views,estimatedMinutesWatched,averageViewDuration,"
                          "averageViewPercentage,subscribersGained",
                          dims="video", sort="-estimatedMinutesWatched", max_results=30)
-        tmap = titles(token, [r[0] for r in rows]) if rows else {}
+        try:
+            tmap = titles(token, [r[0] for r in rows]) if rows else {}
+        except urllib.error.HTTPError as exc:
+            print(f"  (titles skipped: {exc.code} — the Data API quota is spent)")
+            tmap = {}
         print(f"  {'video_id':12s} {'views':>7s} {'watch-h':>8s} {'avg%':>7s} {'subs+':>6s}  title")
         for r in rows:
             vid, v, m, _d, pct, s = r
