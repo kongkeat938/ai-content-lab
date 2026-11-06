@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""Turn a finished night-compilation release into a publish-manifest entry.
+
+The gap this closes: the night rail built a verified 120-minute file, attached it
+to a GitHub Release, and stopped. Making it live needed a hand-written entry in
+content/ch2_publish.json, so the watch-hour lever sat idle between builds. This
+writes that entry automatically, right after the release is created, so the
+existing publish-batch job (which triggers on a manifest push) uploads it.
+
+Idempotent: an existing key keeps its video_id and state; only the URLs, duration
+and cover are refreshed. That means a weekly rebuild of the same content updates
+the entry instead of duplicating it, and a re-run never re-uploads.
+
+    python3 scripts/add_release_to_manifest.py \
+        --tag night-abc123 --key night_theme_x \
+        --content content/night_dharma_02 --minutes 120 \
+        --title "ธรรมะก่อนนอน 120 นาที ..." --receipt work/night/receipt.json
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+from datetime import datetime, timezone
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+REPO = "kongkeat938/ai-content-lab"
+NIGHT_TAGS = ["ธรรมะก่อนนอน", "ฟังธรรมะก่อนนอน", "เสียงธรรมะนอนหลับ", "ธรรมะผ่อนคลาย",
+              "แก้โรคนอนไม่หลับ", "ลดความเครียด", "นั่งสมาธิก่อนนอน", "ปล่อยวาง",
+              "ทำใจให้สงบ", "นอนหลับสบาย"]
+
+
+def release_url(tag: str, asset: str) -> str:
+    return f"https://github.com/{REPO}/releases/download/{tag}/{asset}"
+
+
+def read_receipt(path: str) -> dict:
+    """Prefer the local receipt (exact numbers); fall back to the .info.json the
+    compilation writes beside the audio."""
+    if path and os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    return {}
+
+
+def duration_of(receipt: dict, content: str, minutes: float) -> float:
+    ai = receipt.get("audio_info") or {}
+    if ai.get("duration_sec"):
+        return float(ai["duration_sec"])
+    info = os.path.join(ROOT, "work", "night", "compilation.mp3.info.json")
+    if os.path.exists(info):
+        with open(info, encoding="utf-8") as fh:
+            return float(json.load(fh).get("duration_sec", minutes * 60))
+    return float(minutes * 60)
+
+
+def make_cover(key: str, title: str, image: str) -> str:
+    """Build a 1280x720 cover from a poster image so the upload has a real
+    thumbnail. Best-effort: a missing Pillow is not fatal."""
+    out = os.path.join(ROOT, "assets", "branding", "farmmer", "thumbs", f"{key}.jpg")
+    try:
+        from PIL import Image
+        sys.path.insert(0, HERE)
+        import make_poster  # noqa: E402
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            big = os.path.join(tmp, "big.jpg")
+            make_poster.build(image, big, title, "", 6, "", "")
+            Image.open(big).convert("RGB").resize((1280, 720), Image.LANCZOS).save(out, quality=88)
+        return os.path.relpath(out, ROOT)
+    except Exception as exc:  # noqa: BLE001
+        print(f"  cover not built ({exc}); the upload will use the channel default")
+        return ""
+
+
+def description_for(title: str, minutes: int, content: str) -> str:
+    names = []
+    if os.path.isdir(content):
+        for f in sorted(os.listdir(content)):
+            if f.endswith(".txt"):
+                names.append(re.sub(r"^\d+_", "", f[:-4]))
+    topics = " · ".join(names[:10])
+    return (f"ฟังเสียงบรรยายธรรมะก่อนนอน {minutes} นาที ช่วยกล่อมจิตใจให้สงบ "
+            f"ปล่อยวางเรื่องกังวลและความเครียดสะสมทั้งวัน เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน\n\n"
+            f"เปิดทิ้งไว้ได้ทั้งคืน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ\n\n"
+            f"บทที่ผ่านมา: {topics}\n\n"
+            f"ฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก\n\n"
+            f"— ช่องพี่น้อง —\nเรื่องเล่าการ์ตูน — เรื่องเล่าอบอุ่นใจ\n"
+            f"https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--manifest", default=os.path.join(ROOT, "content", "ch2_publish.json"))
+    ap.add_argument("--tag", required=True, help="the release tag holding video.mp4")
+    ap.add_argument("--key", required=True, help="manifest key, e.g. night_theme_x")
+    ap.add_argument("--content", required=True, help="content dir, for the description")
+    ap.add_argument("--minutes", type=int, default=120)
+    ap.add_argument("--title", required=True)
+    ap.add_argument("--receipt", default="")
+    ap.add_argument("--image", default="assets/images/img00_00.jpg")
+    ap.add_argument("--privacy", default="public", choices=["private", "unlisted", "public"])
+    ap.add_argument("--not-before", default="", help="ISO time to hold the upload until")
+    args = ap.parse_args()
+
+    with open(args.manifest, encoding="utf-8") as fh:
+        man = json.load(fh)
+    vids = man.setdefault("videos", [])
+
+    receipt = read_receipt(args.receipt)
+    entry = {
+        "key": args.key,
+        "state": "ready",
+        "video_url": release_url(args.tag, "video.mp4"),
+        "audio_url": release_url(args.tag, "compilation.mp3"),
+        "thumbnail": make_cover(args.key, args.title, args.image),
+        "duration_sec": round(duration_of(receipt, args.content, args.minutes), 1),
+        "title": args.title,
+        "description": description_for(args.title, args.minutes, args.content),
+        "tags": NIGHT_TAGS,
+        "category_id": 22,
+        "privacy": args.privacy,
+    }
+    if args.not_before:
+        entry["not_before"] = args.not_before
+
+    hit = next((v for v in vids if v.get("key") == args.key), None)
+    if hit:
+        # keep the upload record; refresh only the pointers and the copy
+        for f in ("video_id", "url", "state"):
+            if f in hit:
+                entry[f] = hit[f]
+        hit.update(entry)
+        action = "updated"
+    else:
+        vids.append(entry)
+        action = "added"
+
+    with open(args.manifest, "w", encoding="utf-8") as fh:
+        json.dump(man, fh, ensure_ascii=False, indent=2)
+    live = entry.get("video_id", "")
+    print(f"{action} {args.key} in {os.path.relpath(args.manifest, ROOT)} "
+          f"({entry['duration_sec']}s, privacy={entry['privacy']}"
+          f"{', already live ' + live if live else ''})")
+    print(f"  created {datetime.now(timezone.utc).isoformat(timespec='seconds')}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
