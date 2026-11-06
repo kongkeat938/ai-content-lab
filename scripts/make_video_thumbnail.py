@@ -187,10 +187,10 @@ def main() -> int:
     if not ids:
         if not (args.longform or args.all):
             sys.exit("give --ids, --longform or --all")
-        it = _get("channels", {"part": "contentDetails", "mine": "true"}, token)["items"][0]
-        up = it["contentDetails"]["relatedPlaylists"]["uploads"]
-        allids, page = [], None
         try:
+            it = _get("channels", {"part": "contentDetails", "mine": "true"}, token)["items"][0]
+            up = it["contentDetails"]["relatedPlaylists"]["uploads"]
+            allids, page = [], None
             while True:
                 p = {"part": "contentDetails", "playlistId": up, "maxResults": "50"}
                 if page:
