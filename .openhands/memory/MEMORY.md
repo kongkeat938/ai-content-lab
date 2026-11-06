@@ -28,6 +28,15 @@ in `topics/*.md` and the daily logs.
   ISO-week set on schedule (Thu 03:37 UTC) + commits it, title follows the week's theme;
   foreman dispatches it weekly with `generate=true`. **Proven E2E:** generated set
   `ch4_auto_202645` → 33.4-min build → live https://youtu.be/6Vs7vTUTMN0 (**ch4 long-form now 3**).
+- **🖼️ K: "ภาพห้ามซ้ำ ทุกคลิป gen ภาพใหม่"** (2026-11-06). Root cause: `build_night.py`
+  used ONE default image for every build and thumbnails drew the video's own frame →
+  repeats (proof: `k_tone_01` = `night_sleep_01` byte-identical). Fix = new
+  `scripts/gen_cover_image.py`: **Pollinations → Wikimedia → procedural PIL** (never fails);
+  strips the `pollinations.ai` watermark (crop bottom 6%); 2 styles dharma/family.
+  `build_night.py` now mints a per-set cover; `make_video_thumbnail.py --gen-art` draws a
+  unique image per video (seeded by id); polish-all uses `--gen-art --limit 25`.
+  **K's rule for text: AI draws ONLY pattern/scene, WE draw the Thai text** with our fonts —
+  AI-written text is always garbled (vision-verified). Gemini image API still 429 quota 0.
 - **⛔ BIGGEST FINDING:** `polish-all` + `watch-hours` were **NOT in `foreman.py`'s plan**, so
   they relied on GitHub's `schedule` — which has **never fired for this repo**. The "change
   every title/thumbnail" job would have stalled at 94/221 titles + 0 thumbnails forever. foreman
