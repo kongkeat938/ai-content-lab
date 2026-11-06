@@ -215,7 +215,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--per-run", type=int, default=0, help="upload at most N per run (0 = all)")
+    # Default to a small drip, never "all". Measured 2026-11-05: a pool-grow commit
+    # triggered this on push with per_run=0 and uploaded 89 Shorts in one day; that
+    # day's median views collapsed to 1 (vs 206-1007 on drip days), because the
+    # Shorts feed throttles a channel that floods. A missing cap is how that happens,
+    # so the safe number is the default and "all" must be asked for explicitly.
+    ap.add_argument("--per-run", type=int, default=2,
+                    help="upload at most N per run (0 = all due; default 2)")
     ap.add_argument("--privacy", default="public", choices=["private", "unlisted", "public"])
     ap.add_argument("--work", help="override the build dir (default: per channel)")
     args = ap.parse_args()
