@@ -78,7 +78,7 @@ jobs:
               # the same week reuses the committed set instead of asking Gemini
               # for a different one -- which would fingerprint differently and
               # publish a near-duplicate.
-              CONTENT="content/night_auto_$(date -u +%Y%m%d)"
+              CONTENT="content/night_auto_$(date -u +%G%V)"
               if ls "$CONTENT"/*.txt >/dev/null 2>&1; then
                 echo "$CONTENT already has pieces; reusing it"
               else
