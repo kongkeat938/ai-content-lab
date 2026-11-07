@@ -603,3 +603,11 @@ being the account owner. Do not hunt for one; remove the step from the critical 
   จับคู่สคริปต์ผ่าน manifest `content/<ch>_shorts.json` (video_id→script id). Analytics quota
   แยกจาก Data API.
 - workflow `studio-ai.yml` มี step "Grade the videos already on the channel" (if: always()).
+
+## 🚦 เพดานอัปโหลด (2026-11-07)
+- **ต้นเหตุวิว 0 ที่แท้จริง:** `publish-shorts.yml` trigger `on: push` เมื่อ `scripts.json` เปลี่ยน →
+  pool grow ทุกครั้งยิง publish อีก. วัด 24 ชม.: dharma 23 · genx 20 · kongkeat 27 คลิป →
+  45 คลิป ch4 วิว 0 (คลิปที่ปล่อยช้าได้ถึง 1,088).
+- **แก้:** `DAILY_CAP=3` + `uploads_in_last_24h()` (นับจาก git log ของ manifest — state ข้าม run).
+  พิสูจน์: "daily cap reached (27/3 ...)". K แก้เพดานได้ที่ `DAILY_CAP`.
+- เอกสาร: `docs/QUALITY-FINDINGS-2026-11-07.md`.
