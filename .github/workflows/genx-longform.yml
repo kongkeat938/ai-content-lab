@@ -1,0 +1,201 @@
+name: genx-longform
+
+# Builds a genx (ตาต้า GenX — ปรัชญาชีวิต) long-form and puts the media on a
+# Release, so the Shorts funnel has an on-niche destination.
+#
+# Why: measured 2026-11-07, genx has the most Shorts (52) and the highest Shorts
+# reach (14,566 views, +78 subs in 28 days) but ZERO long-form -- so every genx
+# Short pointed its funnel at an empty playlist (PLXEV3B3DcgsU). The advisor
+# panel (2026-11-07) agreed this is the biggest gap: Shorts reach does not count
+# toward the YPP watch-hour threshold, and watch-hours only come from long-form.
+#
+# The panel disagreed on length (Google: 120 min+, OSS: 10-15 min, DeepSeek:
+# fix AVD first). ak's call: start at 30 minutes -- the length the ch4 rail
+# already proved end-to-end -- as the AVD measurement that decides the next
+# length with data, not opinion. Reuses the verified dharma night rail
+# (build_night.py).
+#
+# It queues the result in content/ch1_publish.json and dispatches publish-ch1,
+# so a build becomes a live video without a hand-written manifest entry.
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "Target length in minutes"
+        default: "30"
+      content:
+        description: "Content directory (blank = pick/generate)"
+        default: ""
+      key:
+        description: "Manifest key (blank = content dir name)"
+        default: ""
+      title:
+        description: "Video title (blank = a generic philosophy title)"
+        default: ""
+      generate:
+        description: "true to generate a fresh content set with Gemini"
+        default: "false"
+  schedule:
+    - cron: "47 4 * * 2"   # Tuesdays 04:47 UTC -- dharma owns Mon, ch4 owns Thu
+
+permissions:
+  contents: write
+  issues: write
+  actions: write   # dispatch publish-ch1 after the manifest is updated
+
+concurrency:
+  group: genx-longform
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ffmpeg + Thai fonts + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-tlwg-garuda fonts-tlwg-kinnari fonts-tlwg-norasi
+          pip install --quiet -r requirements.txt
+
+      - name: Resolve the content directory (and generate one on schedule)
+        id: pick
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set +e
+          CONTENT="${{ inputs.content }}"
+          GEN="${{ inputs.generate }}"
+          THEME="${{ inputs.title }}"
+          if [ -z "$CONTENT" ]; then
+            if [ "$GEN" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+              # One fresh set a week keeps the rail fed. The directory is dated per
+              # ISO week and reused if it already has pieces, so a re-run of the
+              # same week reuses the committed set instead of asking Gemini for a
+              # different one -- which would fingerprint differently and publish a
+              # near-duplicate.
+              CONTENT="content/ch1_auto_$(date -u +%G%V)"
+              if ls "$CONTENT"/*.txt >/dev/null 2>&1; then
+                echo "$CONTENT already has pieces; reusing it"
+              else
+                THEMES=("ให้สิทธิ์ตัวเองได้พัก" "พอแล้วกับสิ่งที่ทำมาทั้งชีวิต"
+                        "ปล่อยความคาดหวังของคนอื่น" "เลิกเปรียบเทียบตัวเองกับคนอื่น"
+                        "ให้อภัยตัวเองในอดีต" "วางความโกรธที่เก็บไว้นาน"
+                        "อยู่คนเดียวอย่างสงบ" "กลับมาอยู่กับปัจจุบัน")
+                wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
+                THEME="${THEMES[$wk]}"
+                python3 scripts/gen_philosophy_scripts.py \
+                  --theme "$THEME" --out "$CONTENT" --count 10
+              fi
+            else
+              CONTENT="content/ch1_long_01"
+            fi
+          fi
+          echo "content=$CONTENT" >> "$GITHUB_OUTPUT"
+          echo "theme=$THEME" >> "$GITHUB_OUTPUT"
+          echo "building from $CONTENT"
+
+      - name: Commit a freshly generated content set
+        if: github.event_name == 'schedule' || inputs.generate == 'true'
+        run: |
+          git add "${{ steps.pick.outputs.content }}" 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no new content to commit"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git commit -m "genx: add generated content set ${{ steps.pick.outputs.content }} [skip ci]"
+          git pull --rebase --autostash origin main
+          git push
+
+      - name: Build and verify
+        run: |
+          python3 scripts/build_night.py \
+            --content "${{ steps.pick.outputs.content }}" \
+            --work work/ch1_long \
+            --out work/ch1_long \
+            --minutes "${{ inputs.minutes || '30' }}" \
+            --title "ปรัชญาชีวิต" \
+            --subtitle "รวมข้อคิดให้ใจเบาลง ฟังเพลิน ๆ" \
+            --voice th-TH-NiwatNeural \
+            --image-style dharma \
+            --image-prompt "serene calm Thai evening, soft warm light, quiet reflection, minimal"
+
+      - name: Show the receipt
+        if: always()
+        run: test -f work/ch1_long/receipt.json && cat work/ch1_long/receipt.json || echo "no receipt"
+
+      - name: Fingerprint the build
+        id: fp
+        run: |
+          CONTENT="${{ steps.pick.outputs.content }}"
+          fp="$(cat "$CONTENT"/*.txt \
+                 scripts/make_compilation.py scripts/make_bed.py scripts/make_audio.py \
+                 scripts/make_night_video.py scripts/make_poster.py scripts/verify_night.py \
+                 | sha256sum | cut -c1-12)"
+          fp="${fp}-$(echo "NiwatNeural" | sha256sum | cut -c1-6)"
+          echo "fp=$fp" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the media to a Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="genx-long-${{ steps.fp.outputs.fp }}"
+          gh release create "$tag" \
+            work/ch1_long/video.mp4 work/ch1_long/compilation.mp3 \
+            --repo "${{ github.repository }}" \
+            --title "$tag" \
+            --notes "genx life-philosophy long-form. Regenerable from the content dir + scripts/." \
+            || gh release upload "$tag" work/ch1_long/video.mp4 work/ch1_long/compilation.mp3 \
+               --repo "${{ github.repository }}" --clobber
+
+      - name: Add the release to the genx publish manifest and start the upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CONTENT="${{ steps.pick.outputs.content }}"
+          KEY="${{ inputs.key }}"; KEY="${KEY:-$(basename "$CONTENT")}"
+          TITLE="${{ inputs.title }}"
+          THEME="${{ steps.pick.outputs.theme }}"
+          if [ -z "$TITLE" ]; then
+            if [ -n "$THEME" ]; then
+              TITLE="ปรัชญาชีวิต — $THEME รวมข้อคิดให้ใจเบาลง ฟังเพลิน ๆ"
+            else
+              TITLE="ปรัชญาชีวิต รวมข้อคิดให้ใจเบาลง ฟังเพลิน ๆ ทั้งวัน"
+            fi
+          fi
+          MIN="${{ inputs.minutes || '30' }}"
+          python3 scripts/add_release_to_manifest.py \
+            --manifest content/ch1_publish.json --channel genx \
+            --tag "genx-long-${{ steps.fp.outputs.fp }}" \
+            --key "$KEY" --content "$CONTENT" --minutes "$MIN" \
+            --title "$TITLE" --receipt work/ch1_long/receipt.json
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/ch1_publish.json
+          git add assets/branding/genx/thumbs 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "manifest already current"
+            exit 0
+          fi
+          git commit -m "genx: queue $KEY for publish [skip ci]"
+          git pull --rebase --autostash origin main
+          git push
+          # A push made with GITHUB_TOKEN does not start another workflow.
+          gh workflow run publish-ch1.yml --repo "${{ github.repository }}"
+
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "genx-longform run failed" \
+            --body "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

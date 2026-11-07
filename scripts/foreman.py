@@ -186,6 +186,13 @@ def main() -> int:
     if c4_age is None or c4_age > 6 * 24 * 60:
         plan.append(("ch4-longform", {"generate": "true"}))
 
+    # 5b-ii. Keep the genx rail fed: genx had the most Shorts and no long-form at
+    #        all (measured 2026-11-07), so its funnel pointed at an empty playlist.
+    #        A weekly build if the newest is over 6 days old.
+    gx_age = last_success_min("genx-longform", ids)
+    if gx_age is None or gx_age > 6 * 24 * 60:
+        plan.append(("genx-longform", {"generate": "true"}))
+
     # 5c. Titles and thumbnails: the pass that changes every title and every ugly
     #     thumbnail. It spends the shared Data API quota, so it is due once a day
     #     in the window right after the 08:00 UTC reset, before the day's uploads
