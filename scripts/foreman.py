@@ -28,6 +28,9 @@ from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)
+
+import publish_shorts as ps  # noqa: E402 -- read the rail's own cap ledger
 REPO = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("KONGKEAT_GH_TOKEN")
 API = "https://api.github.com"
@@ -268,6 +271,35 @@ def main() -> int:
     sd_age = last_success_min("short doors", ids)
     if sd_age is None or sd_age > 6 * 24 * 60:
         plan.append(("short doors", {}))
+
+    # 5f. Remake the live Shorts in the current format. The owner asked for this on
+    #     2026-11-07 and the remake rail carries only a schedule, which GitHub's
+    #     cron fires unreliably here (measured 2026-11-07: 2 schedule runs against
+    #     155 dispatches). Drive it from the chain instead. A channel is due when it
+    #     still has a live Short with no remake AND the rail's own cap has a free
+    #     slot AND the 2-hour spacing has passed -- the same numbers the rail checks,
+    #     so a tick with no room dispatches nothing. One channel per tick; the next
+    #     tick takes the next one.
+    r_age = last_success_min("remake shorts", ids)
+    if ids.get("remake shorts") and (r_age is None or r_age > 12 * 60):
+        for slug, man_rel, pool_rel, cid in channels:
+            man = load(man_rel, {"shorts": {}})
+            rem = load(man_rel.replace("_shorts.json", "_shorts_remakes.json"), {"shorts": {}})
+            left = [s["id"] for s in load(pool_rel, [])
+                    if man["shorts"].get(s["id"], {}).get("video_id")
+                    and not rem["shorts"].get(s["id"], {}).get("video_id")]
+            if not left:
+                continue
+            man_path = os.path.join(ROOT, man_rel)
+            if ps.uploads_in_last_24h(cid, man_path) >= ps.DAILY_CAP:
+                print(f"  {slug}: {len(left)} remake(s) queued but the daily cap is full")
+                continue
+            since = ps.hours_since_last_upload(cid, man_path)
+            if since is not None and since < ps.MIN_GAP_HOURS:
+                print(f"  {slug}: {len(left)} remake(s) queued but last upload {since:.1f}h ago")
+                continue
+            plan.append(("remake shorts", {"channel": slug, "per_run": "1"}))
+            break
 
     # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
     #    any push runs the foreman, so a broken chain repairs itself on the next
