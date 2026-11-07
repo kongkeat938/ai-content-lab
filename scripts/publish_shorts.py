@@ -38,6 +38,9 @@ MANIFEST = os.path.join(ROOT, "content", "ch2_shorts.json")
 CHANNEL_ID = "UCM3QO5L_pmj34n1JVlbhh-w"
 TOKEN_ENV = "YT_CH2_REFRESH_TOKEN"
 LONG_URL = "https://youtu.be/F4qFHoVpEyI"
+# The AERIS pack asks for credit, not a licence condition (CC0). One line is
+# cheap and keeps the ask honoured.
+MUSIC_CREDIT = "\n\n🎵 ดนตรีประกอบ: AERIS Music (youtube.com/@aerismusicth)"
 LONG_PLAYLIST = "PLBpZCGnd7Q5Y"   # "หลับลึกทั้งคืน — ฟังยาว"
 
 # One rail, several channels. The body below reads these rather than the module
@@ -455,7 +458,8 @@ def main() -> int:
             continue
 
         description = (f"{s['hook']}\n\n" + "\n".join(s["lines"]) +
-                       f"\n\n{s['cta']}" + spec["tail"])
+                       f"\n\n{s['cta']}" + spec["tail"] +
+                       (MUSIC_CREDIT if spec.get("music_dir") else ""))
         body = {
             "snippet": {
                 "title": (s["hook"][:95] + " #Shorts")[:100],
