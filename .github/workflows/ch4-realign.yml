@@ -1,0 +1,74 @@
+name: ch4-realign
+
+# Applies the ch4 realignment through the YouTube Data API -- no browser, no
+# Studio, no one at a machine. It does the whole rework the panel approved:
+#
+#   1. rename the channel to เรื่องเล่าอบอุ่นใจ (brandingSettings.channel.title
+#      + localizations.th.title -- the fields the live name reads from)
+#   2. rename its two playlists in place (channel_overhaul --rename_from, so the
+#      ids and their videos survive; a plain create would make a second, empty set)
+#   3. scrub the old name out of the live video descriptions (scrub_channel_name)
+#
+# Why a rail: the team had all three tools but none was wired to CI, so each
+# waited on a manual run and then on quota. The API quota resets at midnight
+# Pacific (08:00 UTC); a tick before that defers. Every step is idempotent (the
+# rename skips a channel already named, the playlist rename finds an existing
+# title, the scrub rewrites only a description still holding an old token), so a
+# tick that lands after the reset just finishes the job.
+#
+# GitHub's scheduler is unreliable in this repo, so foreman drives it daily too.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true to only print what would change"
+        default: "false"
+  schedule:
+    - cron: "5 8 * * *"
+  push:
+    paths:
+      - "scripts/set_channel_name.py"
+      - "scripts/channel_overhaul.py"
+      - "scripts/scrub_channel_name.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ch4-realign
+  cancel-in-progress: false
+
+jobs:
+  realign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+      YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+      YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rename the channel
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python3 scripts/set_channel_name.py
+          else
+            python3 scripts/set_channel_name.py --apply
+          fi
+
+      - name: Rename the playlists in place
+        run: |
+          ARGS="--channel ch4 --only playlists"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          python3 scripts/channel_overhaul.py $ARGS
+
+      - name: Scrub the old name from live descriptions
+        run: |
+          ARGS="--channel ch4"
+          if [ "${{ github.event.inputs.dry_run }}" != "true" ]; then ARGS="$ARGS --apply"; fi
+          python3 scripts/scrub_channel_name.py $ARGS

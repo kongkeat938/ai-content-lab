@@ -105,8 +105,16 @@ def main() -> int:
 
     import json
     var, cid = CHANNELS[args.channel]
-    head = {"Authorization": f"Bearer {token(var)}", "Content-Type": "application/json"}
-    ids = uploads(head)
+    try:
+        head = {"Authorization": f"Bearer {token(var)}", "Content-Type": "application/json"}
+        ids = uploads(head)
+    except urllib.error.HTTPError as exc:
+        # A spent quota (403) is a deferral, not a failure -- the rail retries
+        # after the 08:00 UTC reset.
+        if exc.code == 403:
+            print(f"{args.channel}: quota exhausted -- deferring to after the 08:00 UTC reset")
+            return 0
+        raise
     changed = 0
     for vid in ids:
         r = json_load(f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={vid}",
