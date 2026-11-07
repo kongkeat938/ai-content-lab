@@ -1,0 +1,41 @@
+name: fetch music
+
+# The Shorts had no bed, and the owner asked for real music. Our own music
+# channel cannot supply it without a human: yt-dlp is refused by YouTube on every
+# runner measured (pod, ubuntu, windows, macos; every player client -- 2026-11-07)
+# because the download now needs an account cookie. The owner then supplied the
+# AERIS Music pack directly (CC0-1.0) with a GitHub-hosted index, so the beds come
+# from there: real instrumental recordings, no vocals, readable from CI, and
+# committed back with their provenance.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 4 * * 0"     # Sundays 04:40 UTC, top up the bed library
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: fetch real beds
+        run: python3 scripts/fetch_music.py --out-dir assets/music --seconds 45
+      - name: commit the beds back
+        run: |
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add assets/music
+          if git diff --cached --quiet; then
+            echo "no new beds"
+          else
+            git commit -m "music: stock the bed library from the AERIS pack"
+            git push
+          fi

@@ -1,0 +1,55 @@
+{
+  "pack": "AERIS Music",
+  "license": "CC0-1.0",
+  "credit": "AERIS Music (youtube.com/@aerismusicth)",
+  "beds": [
+    {
+      "file": "calm-bed-calm.mp3",
+      "id": "bed-calm",
+      "mood": "calm",
+      "license": "CC0-1.0",
+      "credit": "AERIS Music (youtube.com/@aerismusicth)",
+      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/calm.mp3"
+    },
+    {
+      "file": "warm-bed-warm.mp3",
+      "id": "bed-warm",
+      "mood": "warm",
+      "license": "CC0-1.0",
+      "credit": "AERIS Music (youtube.com/@aerismusicth)",
+      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/warm.mp3"
+    },
+    {
+      "file": "sad-bed-sad.mp3",
+      "id": "bed-sad",
+      "mood": "sad",
+      "license": "CC0-1.0",
+      "credit": "AERIS Music (youtube.com/@aerismusicth)",
+      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/sad.mp3"
+    },
+    {
+      "file": "hopeful-bed-hopeful.mp3",
+      "id": "bed-hopeful",
+      "mood": "hopeful",
+      "license": "CC0-1.0",
+      "credit": "AERIS Music (youtube.com/@aerismusicth)",
+      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/hopeful.mp3"
+    },
+    {
+      "file": "mystic-bed-mystic.mp3",
+      "id": "bed-mystic",
+      "mood": "mystic",
+      "license": "CC0-1.0",
+      "credit": "AERIS Music (youtube.com/@aerismusicth)",
+      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/mystic.mp3"
+    },
+    {
+      "file": "epic-bed-epic.mp3",
+      "id": "bed-epic",
+      "mood": "epic",
+      "license": "CC0-1.0",
+      "credit": "AERIS Music (youtube.com/@aerismusicth)",
+      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/epic.mp3"
+    }
+  ]
+}

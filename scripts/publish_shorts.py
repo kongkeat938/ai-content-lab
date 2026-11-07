@@ -48,6 +48,7 @@ CHANNELS = {
         "token": TOKEN_ENV, "work": os.path.join(ROOT, "work", "ch2_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch2"),
         "music_dir": os.path.join(ROOT, "assets", "music"),
+        "mood": "calm",
         "tags": ["ธรรมะก่อนนอน", "นอนไม่หลับ", "ปล่อยวาง", "ธรรมะ", "สมาธิ",
                  "คลายเครียด", "ฟังก่อนนอน", "Farmmer", "Shorts"],
         "category": "22",
@@ -72,6 +73,7 @@ CHANNELS = {
         "work": os.path.join(ROOT, "work", "ch1_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch1"),
         "music_dir": os.path.join(ROOT, "assets", "music"),
+        "mood": "hopeful",
         "tags": ["ปรัชญาชีวิต", "ข้อคิด", "แง่คิด", "กำลังใจ", "ชีวิต", "GenX",
                  "ตาต้าGenX", "Shorts"],
         "category": "22",
@@ -91,6 +93,7 @@ CHANNELS = {
         "work": os.path.join(ROOT, "work", "ch4_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch4"),
         "music_dir": os.path.join(ROOT, "assets", "music"),
+        "mood": "warm",
         "tags": ["เรื่องเล่า", "อบอุ่นใจ", "ครอบครัว", "ความทรงจำ", "เรื่องเล่าอบอุ่นใจ",
                  "คิดถึงบ้าน", "พ่อแม่", "Shorts"],
         "category": "24",
@@ -314,10 +317,28 @@ def winning_first(todo: list, cues) -> list:
     return sorted(todo, key=lambda s: 0 if any(c in s["hook"] for c in cues) else 1)
 
 
-def pick_bed(music_dir: str | None, sid: str) -> str | None:
-    """One bed per short, stable across rebuilds, same idea as pick_art."""
+def pick_bed(music_dir: str | None, sid: str, mood: str | None = None) -> str | None:
+    """Choose a bed for a short, preferring one that matches the channel's mood.
+
+    The AERIS pack tags each bed with a mood and records it in provenance.json, so
+    a dharma Short gets the calm bed and a family Short the warm one. If there is
+    no provenance, fall back to a stable hash pick -- the same short must keep the
+    same bed across rebuilds, or a published video stops matching its own file.
+    """
     if not music_dir or not os.path.isdir(music_dir):
         return None
+    prov = os.path.join(music_dir, "provenance.json")
+    if mood and os.path.exists(prov):
+        try:
+            with open(prov, encoding="utf-8") as fh:
+                beds = json.load(fh).get("beds", [])
+            for b in beds:
+                if b.get("mood") == mood:
+                    p = os.path.join(music_dir, b["file"])
+                    if os.path.exists(p):
+                        return p
+        except (OSError, ValueError):
+            pass
     pool = sorted(f for f in os.listdir(music_dir)
                   if f.lower().endswith((".mp3", ".wav", ".m4a")))
     if not pool:
@@ -420,7 +441,7 @@ def main() -> int:
                    "--out-dir", work]
             if spec.get("art") and os.path.isdir(spec["art"]):
                 cmd += ["--art-dir", spec["art"]]
-            bed = pick_bed(spec.get("music_dir"), sid)
+            bed = pick_bed(spec.get("music_dir"), sid, spec.get("mood"))
             if bed:
                 cmd += ["--music", bed]
             r = subprocess.run(cmd, capture_output=True, text=True)
