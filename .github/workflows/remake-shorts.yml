@@ -72,15 +72,25 @@ jobs:
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
           YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
         run: |
-          CH="${{ github.event.inputs.channel }}"
-          PER="${{ github.event.inputs.per_run }}"
-          OLD="${{ github.event.inputs.old }}"
-          DRY="${{ github.event.inputs.dry_run }}"
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            CH="${{ matrix.slug }}"; PER="1"; OLD="unlist-low"; DRY="false"
+          # On a schedule the matrix gives each job its own channel. On a manual
+          # dispatch the operator names one channel, so the jobs for the other two
+          # must stand down -- otherwise all three jobs would act on the same
+          # channel and publish three remakes to it in one run.
+          CH="${{ matrix.slug }}"
+          PER="1"; OLD="unlist-low"; DRY="false"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            WANT="${{ github.event.inputs.channel }}"
+            if [ -n "$WANT" ] && [ "$WANT" != "all" ] && [ "$WANT" != "${{ matrix.slug }}" ]; then
+              echo "dispatch asked for '$WANT'; this job is ${{ matrix.slug }} -- standing down"
+              exit 0
+            fi
+            PER="${{ github.event.inputs.per_run }}"
+            OLD="${{ github.event.inputs.old }}"
+            DRY="${{ github.event.inputs.dry_run }}"
           fi
           ARGS="--channel $CH --per-run $PER --old $OLD"
           if [ "$DRY" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          echo "remake: $ARGS"
           python3 scripts/remake_shorts.py $ARGS
       - name: Record the new video ids
         if: always()
