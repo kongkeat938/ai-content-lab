@@ -1,0 +1,77 @@
+name: studio-ai
+
+# The learning brain. It reads each channel's real Analytics (views, watch time,
+# completion), asks the advisor panel what to make next, and writes
+# content/insights/<channel>.json. gen_short_scripts.py then builds the next
+# scripts from those learned subjects, so the pool follows what actually worked
+# instead of a fixed list. Nothing here needs a human.
+#
+# Why this is not the Studio UI: studio.youtube.com redirects to the Google login
+# on every path (measured 2026-11-07, pod and cloud browser alike) and the
+# Inspiration tab has no API. The Analytics API does answer from the cloud with
+# the channel's own refresh token, so this job reaches the same numbers.
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "which channel (blank = all)"
+        default: ""
+  schedule:
+    - cron: "45 21 * * *"   # 04:45 Thai, just before grow-shorts-pool (05:00)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: studio-ai
+  cancel-in-progress: false
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: ch2
+            gen: dharma
+          - channel: ch1
+            gen: genx
+          - channel: ch4
+            gen: kongkeat-story
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read Analytics and learn the next subjects
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 scripts/studio_ai.py --channel "${{ matrix.channel }}" --days 28 \
+            --panel --out "docs/STUDIO-AI-${{ matrix.channel }}.md"
+
+      - name: Feed the generator (insights for its channel)
+        run: |
+          ls -1 content/insights/ 2>/dev/null || echo "(no insights yet)"
+
+      - name: Commit what was learned
+        run: |
+          if git diff --quiet content/insights docs/STUDIO-AI-*.md 2>/dev/null; then
+            echo "nothing new to learn"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/insights "docs/STUDIO-AI-${{ matrix.channel }}.md"
+          git commit -m "studio-ai(${{ matrix.channel }}): learn next subjects from analytics"
+          git pull --rebase --autostash origin main
+          git push

@@ -261,7 +261,22 @@ def main() -> int:
     # came back every call (measured 2026-11-03: five of the dharma hooks were the
     # work-tomorrow angle). Thai has no word spaces, so compare character bigrams.
     seen = " ".join(done)
-    angles = [a for a in cfg["angles"] if not _overlaps(a, seen)]
+    # Close the loop: topics that the Analytics-driven panel proposed are used
+    # first, so new scripts follow what actually worked on the channel. They are
+    # subjects, not hooks, so the overlap floor is high (8) -- a loose 3-char
+    # floor rejected every learned subject on a channel whose pool is already
+    # full of family stories (measured 2026-11-07: 0 of 8 survived).
+    ins_path = os.path.join(ROOT, "content", "insights", f"{args.channel}.json")
+    learned: list[str] = []
+    if os.path.exists(ins_path):
+        try:
+            with open(ins_path, encoding="utf-8") as fh:
+                learned = [t for t in json.load(fh).get("topics", []) if not _overlaps(t, seen, 8)]
+        except (json.JSONDecodeError, OSError):
+            learned = []
+    angles = learned + [a for a in cfg["angles"] if not _overlaps(a, seen)]
+    if learned:
+        print(f"  using {len(learned)} topics learned from the channel's own analytics")
     if not angles:
         # Every curated subject is used; ask for more rather than repeat them.
         angles = ask_angles(key, args.channel, seen, max(args.count, 8))
