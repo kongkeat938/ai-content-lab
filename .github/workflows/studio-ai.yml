@@ -72,20 +72,32 @@ jobs:
           python3 scripts/video_review.py --channel "${{ matrix.channel }}" --days 90 \
             --top 5 --panel --out "docs/REVIEW-${{ matrix.channel }}.md" || true
 
+      - name: Diagnose the videos that are not being distributed
+        if: always()
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 scripts/diagnose_videos.py --channel "${{ matrix.channel }}" --panel || true
+
       - name: Feed the generator (insights for its channel)
         run: |
           ls -1 content/insights/ 2>/dev/null || echo "(no insights yet)"
 
       - name: Commit what was learned
         run: |
-          if git diff --quiet content/insights content/reviews docs/STUDIO-AI-*.md docs/REVIEW-*.md 2>/dev/null; then
+          if git diff --quiet content/insights content/reviews content/diagnosis docs/STUDIO-AI-*.md docs/REVIEW-*.md docs/DIAGNOSIS-*.md 2>/dev/null; then
             echo "nothing new to learn"
             exit 0
           fi
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/insights content/reviews "docs/STUDIO-AI-${{ matrix.channel }}.md" \
-                  "docs/REVIEW-${{ matrix.channel }}.md"
-          git commit -m "studio-ai(${{ matrix.channel }}): learn subjects and grade the videos"
+          git add content/insights content/reviews content/diagnosis "docs/STUDIO-AI-${{ matrix.channel }}.md" \
+                  "docs/REVIEW-${{ matrix.channel }}.md" "docs/DIAGNOSIS-${{ matrix.channel }}.md"
+          git commit -m "studio-ai(${{ matrix.channel }}): learn subjects, grade and diagnose the videos"
           git pull --rebase --autostash origin main
           git push
