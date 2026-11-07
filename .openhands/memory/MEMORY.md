@@ -608,6 +608,8 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 - **ต้นเหตุวิว 0 ที่แท้จริง:** `publish-shorts.yml` trigger `on: push` เมื่อ `scripts.json` เปลี่ยน →
   pool grow ทุกครั้งยิง publish อีก. วัด 24 ชม.: dharma 23 · genx 20 · kongkeat 27 คลิป →
   45 คลิป ch4 วิว 0 (คลิปที่ปล่อยช้าได้ถึง 1,088).
-- **แก้:** `DAILY_CAP=3` + `uploads_in_last_24h()` (นับจาก git log ของ manifest — state ข้าม run).
-  พิสูจน์: "daily cap reached (27/3 ...)". K แก้เพดานได้ที่ `DAILY_CAP`.
+- **แก้:** `DAILY_CAP=3` + **ledger ที่ commit เอง** (`content/upload_log.json`, `note_upload()`).
+  ⚠️ รอบแรกนับจาก git log **ไม่ทำงานใน CI** เพราะ checkout เป็น shallow (fetch-depth 1).
+  พิสูจน์ใน CI จริง: "daily cap reached (29/3 ...)". K แก้เพดานที่ `DAILY_CAP`.
+- **token dispatch workflow ไม่ได้ (403)** — ระบบเดินด้วย schedule + push เท่านั้น.
 - เอกสาร: `docs/QUALITY-FINDINGS-2026-11-07.md`.
