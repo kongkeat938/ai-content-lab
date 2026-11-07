@@ -564,3 +564,8 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 - **API ตั้งชื่อช่อง/แฮนเดิลไม่ได้ (วัด 2026-11-07):** PUT `part=localizations` (key **`th_TH`** ไม่ใช่ `th`)
   คืน 200, `description` ติด, แต่ `title` กลับมาเดิม → ต้องเปลี่ยนชื่อ+แฮนเดิลใน **Studio** เท่านั้น.
   แฮนเดิลเปลี่ยนได้ **2 ครั้ง/14 วัน**. สคริปต์: `scripts/set_channel_name.py`.
+- **แบนเนอร์ช่องติดตั้งผ่าน API ได้ · อวตารไม่ได้ (วัด 2026-11-07):** `channelBanners.insert`
+  (uploadType=media) → URL → ผูกด้วย `channels.update?part=brandingSettings` +
+  `brandingSettings.image.bannerExternalUrl` (**echo `brandingSettings.channel` เดิมกลับทั้งก้อน**
+  ไม่งั้น description/keywords หาย). **อวตารไม่มี API** → Studio เท่านั้น. สคริปต์ `scripts/set_channel_art.py`.
+  สร้างภาพ: `scripts/make_branding.py --style lavish` (safe zone: ข้อความต้องอยู่ในโซน desktop 1235×338).
