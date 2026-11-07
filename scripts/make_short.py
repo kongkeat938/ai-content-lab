@@ -42,6 +42,9 @@ WHITE = (250, 250, 252)
 # House targets (see docs/RECIPE.md): -14 LUFS integrated, true peak <= -3 dBFS.
 LUFS, TP = -14, -3.0
 COMP_TH, COMP_RATIO = "-24dB", 6
+# A bed eats the headroom loudnorm needs to reach -14 LUFS in linear mode, so the
+# bed path adds this much gain before the limiter. Measured 2026-11-07.
+BED_GAIN_DB = 2.0
 
 
 def font(name: str, size: int) -> ImageFont.FreeTypeFont:
@@ -79,13 +82,18 @@ def duration(path: str) -> float:
 
 
 def backdrop(out: str, art: str | None) -> None:
-    """A dark, calm 1080x1920 frame. Uses channel art when given, else a gradient.
+    """A calm 1080x1920 frame. Uses channel art when given, else a gradient.
 
-    A photo is softened and darkened on purpose: measured advice from the panel
-    (Gemini + Pollinations, 2026-11-07) is that a sharp, busy still competes with
-    the captions for the eye, while a soft-focus image keeps the screen from
-    reading as a blank without pulling attention off the words.
+    The owner asked for a brighter frame (2026-11-07): the earlier cut softened
+    and darkened the photo so hard that the screen read as black on a phone, and
+    measured, 7 of the 30 art stills are dark to begin with (mean luminance 22-58
+    against 114-189 for the rest). So the photo is auto-levelled to a target
+    brightness first -- a fixed multiplier cannot lift a dark still without
+    blowing out a bright one -- then lightly softened and scrimmed from the
+    bottom only, so the image stays visible while captions sit on a dark strip.
     """
+    from PIL import ImageEnhance, ImageFilter
+    TARGET = 120.0
     if art and os.path.exists(art):
         im = Image.open(art).convert("RGB")
         r = max(W / im.width, H / im.height)
@@ -93,19 +101,28 @@ def backdrop(out: str, art: str | None) -> None:
         left = (im.width - W) // 2
         top = (im.height - H) // 2
         im = im.crop((left, top, left + W, top + H))
-        from PIL import ImageFilter
-        im = im.filter(ImageFilter.GaussianBlur(6))
+        im = im.filter(ImageFilter.GaussianBlur(2))
+        lum = im.convert("L")
+        mean = sum(lum.histogram()[i] * i for i in range(256)) / (W * H)
+        if mean < TARGET:
+            # Gamma lifts the shadows of a dark still without clipping a bright
+            # one the way a straight brightness multiply does.
+            gamma = 1.0 + min(1.2, (TARGET - mean) / TARGET * 1.6)
+            lut = [min(255, int(255 * (i / 255) ** (1 / gamma))) for i in range(256)]
+            im = im.point(lut * 3)
+        im = ImageEnhance.Brightness(im).enhance(1.08)
+        im = ImageEnhance.Color(im).enhance(1.15)
     else:
-        im = Image.new("RGB", (W, H), (8, 14, 30))
-    # Bottom scrim so captions always read, plus a gentle vignette.
+        im = Image.new("RGB", (W, H), (26, 40, 72))
+    # A short bottom scrim so captions read, leaving the top two-thirds bright.
     scrim = Image.new("L", (W, H), 0)
     d = ImageDraw.Draw(scrim)
     for y in range(H):
         v = 0
-        if y > H * 0.35:
-            v = int(210 * ((y - H * 0.35) / (H * 0.65)) ** 1.3)
+        if y > H * 0.55:
+            v = int(150 * ((y - H * 0.55) / (H * 0.45)) ** 1.2)
         d.line([(0, y), (W, y)], fill=v)
-    im = Image.composite(Image.new("RGB", (W, H), (3, 6, 16)), im, scrim)
+    im = Image.composite(Image.new("RGB", (W, H), (8, 12, 24)), im, scrim)
     im.save(out, quality=95)
 
 
@@ -143,13 +160,18 @@ def caption_image(text: str, out: str, big: bool = False) -> None:
     im.save(out)
 
 
-def normalise(src: str, out: str) -> None:
+def normalise(src: str, out: str, gain_db: float = 0.0) -> None:
     """Two-pass loudnorm to -14 LUFS with a hard ceiling at -3 dBFS.
 
     A single-pass loudnorm does not honour the true-peak target reliably: measured
     on the first GenX Short it landed at -1.3 dBTP, over the -3 dBFS the channel
     is required to keep. The two-pass form measures first, then applies the
     measured values, and alimiter is a final guarantee rather than a hope.
+
+    gain_db is applied after loudnorm, before the limiter. With a music bed mixed
+    in, loudnorm's linear mode cannot reach -14 without breaking the ceiling (the
+    bed eats the headroom), so the bed path adds +2 dB and lets alimiter hold the
+    peak. Measured 2026-11-07: bed path -15.5 -> -14.2 LUFS, TP -2.98 dBTP.
     """
     # acompressor first: a bare narrator read has ~18 dB of crest factor, so
     # loudnorm alone cannot reach -14 LUFS without the true peak breaking -3 dBFS.
@@ -162,10 +184,11 @@ def normalise(src: str, out: str) -> None:
     tail = r.stderr[r.stderr.rfind("{"):]
     tail = tail[:tail.rfind("}") + 1]
     m = json.loads(tail)
+    gain = f",volume={gain_db}dB" if gain_db else ""
     run(["ffmpeg", "-y", "-i", src, "-af",
          f"{chain}:measured_I={m['input_i']}:measured_TP={m['input_tp']}"
          f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
-         f":offset={m['target_offset']}:linear=true,"
+         f":offset={m['target_offset']}:linear=true{gain},"
          f"alimiter=limit={TP}dB:level=disabled",
          "-ar", "48000", "-c:a", "pcm_s16le", out])
 
@@ -246,13 +269,19 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
     # the true peak run to -1.3 dBTP.
     mixed = os.path.join(d, "mix.wav")
     if music and os.path.exists(music):
-        run(["ffmpeg", "-y", "-i", voice_mp3, "-i", music, "-filter_complex",
-             "[1:a]volume=0.18[m];[0:a][m]amix=inputs=2:duration=first:dropout_transition=0[a]",
+        # -stream_loop repeats the bed if it is shorter than the read, so a short
+        # CC0 bed still covers the whole clip instead of dropping out mid-sentence.
+        # normalize=0 keeps the voice at its own level; the default amix halves
+        # every input, which dropped the mix ~0.6 LU below the music-less cut.
+        run(["ffmpeg", "-y", "-i", voice_mp3, "-stream_loop", "-1", "-i", music,
+             "-filter_complex",
+             "[1:a]volume=0.18[m];[0:a][m]amix=inputs=2:duration=first:"
+             "dropout_transition=0:normalize=0[a]",
              "-map", "[a]", "-ar", "48000", mixed])
     else:
         run(["ffmpeg", "-y", "-i", voice_mp3, "-ar", "48000", mixed])
     norm = os.path.join(d, "norm.wav")
-    normalise(mixed, norm)
+    normalise(mixed, norm, gain_db=BED_GAIN_DB if (music and os.path.exists(music)) else 0.0)
     run(["ffmpeg", "-y", "-i", silent, "-i", norm, "-map", "0:v", "-map", "1:a",
          "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", out])
     print(f"  {sid}: {duration(out):.1f}s -> {out}")

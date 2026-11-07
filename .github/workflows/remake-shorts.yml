@@ -99,12 +99,25 @@ jobs:
       - name: Record the new video ids
         if: always()
         run: |
+          # Two channel jobs run at once and both push, so a plain `git push` can be
+          # rejected and the id -- already live on YouTube -- would be lost, which
+          # makes the next run upload the same Short a second time. Measured
+          # 2026-11-07: kongkeat's remake uploaded (cuKNEAJn-6A) but its commit was
+          # rejected by the racing job, the step then saw no staged change and
+          # reported "nothing to record", and the id was never recorded. Rebase onto
+          # whatever landed first and retry, so both jobs' records survive.
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
           git add content/*_shorts_remakes.json content/upload_log.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing to record"
-          else
-            git commit -m "remake(${{ matrix.slug }}): record the new Short versions"
-            git push
+            exit 0
           fi
+          git commit -m "remake(${{ matrix.slug }}): record the new Short versions"
+          for i in 1 2 3 4 5; do
+            if git push; then echo "pushed"; exit 0; fi
+            echo "push rejected (attempt $i); rebasing onto origin/main"
+            git pull --rebase --autostash origin main || true
+          done
+          echo "::error::could not push the record after 5 attempts"
+          exit 1
