@@ -76,6 +76,17 @@ def main() -> int:
     if not TOKEN:
         sys.exit("no GitHub token in the environment")
 
+    chaining = not (args.once or args.no_chain)
+    if chaining and not stopped():
+        # Queue the successor before any work. If this link dies mid-run -- a
+        # cancel, a lost runner, a timeout -- the successor is already waiting, so
+        # the chain cannot break and no one has to restart it by hand. The
+        # workflow's concurrency group keeps it to one running link plus one
+        # queued, so this cannot fan out into many chains.
+        print("queuing the next link before work")
+        dispatch("watchdog", {"cycles": str(args.cycles),
+                              "interval": str(args.interval), "chain": "true"})
+
     for i in range(args.cycles):
         if stopped():
             print("STOP file present -- chain halted")
@@ -95,9 +106,9 @@ def main() -> int:
     if stopped():
         print("STOP file present -- not re-dispatching")
         return 0
-    # Chain: start a fresh watchdog before this job ends, so the timer never stops.
-    print("re-dispatching the chain")
-    dispatch("watchdog")
+    # The successor was already queued at the top of this run, so there is nothing
+    # to start here. This link just ends and the queued one takes over.
+    print("link finished; the successor queued at the start takes over")
     return 0
 
 
