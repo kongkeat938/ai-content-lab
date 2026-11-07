@@ -220,7 +220,13 @@ def main() -> int:
     for slug in slugs:
         spec = CHANNELS[slug]
         tok = token(spec["token"])
-        ch = api("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true", tok)["items"][0]
+        ch = api("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true", tok)
+        if "items" not in ch:
+            # A spent quota (403) or a transient burst -- defer, do not crash the
+            # rail. The reset is 08:00 UTC and the rail retries after it.
+            print(f"\n=== {slug} {spec['name']} — API said {ch.get('error')}; deferring")
+            continue
+        ch = ch["items"][0]
         vids = uploads(tok, ch["id"])
         shorts = [v for v in vids if v["secs"] <= 60]
         best = max(shorts, key=lambda v: v["views"]) if shorts else None

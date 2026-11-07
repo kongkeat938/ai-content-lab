@@ -109,13 +109,13 @@ def main() -> int:
     if thumbs.get("thumbnails") and (t_age is None or t_age > 180):
         plan.append(("set-thumbnails", {}))
 
-    # 1b. Channel rename: the API quota resets 08:00 UTC, so a tick before that
-    #     only defers. Dispatch once a day after the reset; set_channel_name is
-    #     idempotent (it skips a channel already carrying the target name).
-    if ids.get("set-channel-name") and utc_hour() >= 8:
-        n_age = last_success_min("set-channel-name", ids)
+    # 1b. ch4 realign (rename + playlists + description scrub): the API quota
+    #     resets 08:00 UTC, so a tick before that only defers. Dispatch once a day
+    #     after the reset; every step is idempotent.
+    if ids.get("ch4-realign") and utc_hour() >= 8:
+        n_age = last_success_min("ch4-realign", ids)
         if n_age is None or n_age > 20 * 60:
-            plan.append(("set-channel-name", {}))
+            plan.append(("ch4-realign", {}))
 
     # 2. Long videos: due whenever an entry has no id and its hold has passed.
     pub = load("content/ch2_publish.json", {"videos": []})
