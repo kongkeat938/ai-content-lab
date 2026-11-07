@@ -278,10 +278,11 @@ def main() -> int:
     #     155 dispatches). Drive it from the chain instead. A channel is due when it
     #     still has a live Short with no remake AND the rail's own cap has a free
     #     slot AND the 2-hour spacing has passed -- the same numbers the rail checks,
-    #     so a tick with no room dispatches nothing. One channel per tick; the next
-    #     tick takes the next one.
-    r_age = last_success_min("remake shorts", ids)
-    if ids.get("remake shorts") and (r_age is None or r_age > 12 * 60):
+    #     so a tick with no room dispatches nothing and no separate age gate is
+    #     needed (an age gate here would throttle the whole batch to one remake a
+    #     day, which is the slow drip the cap already prevents). One channel per
+    #     tick; the next tick takes the next one.
+    if ids.get("remake shorts"):
         for slug, man_rel, pool_rel, cid in channels:
             man = load(man_rel, {"shorts": {}})
             rem = load(man_rel.replace("_shorts.json", "_shorts_remakes.json"), {"shorts": {}})
