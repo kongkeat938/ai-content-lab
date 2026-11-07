@@ -1,10 +1,10 @@
 name: watchdog
 
-# A self-chaining timer. GitHub's scheduler never fired for this repo (measured
-# 2026-11-03: `event=schedule` total 0), so a job that only `schedule` starts may
-# never start. This job instead starts itself again before it ends, which does
-# not depend on the scheduler at all. Each tick it dispatches the foreman, which
-# dispatches only the rails that are actually due.
+# A self-chaining timer. (The old note here said the scheduler never fires; that
+# was wrong -- measured 2026-11-07, `event=schedule` has 42 green runs.) This job
+# still starts itself again before it ends, so a gap between cron ticks cannot
+# stall the chain. Each tick it dispatches the foreman, which dispatches only the
+# rails that are actually due.
 #
 # The repo is public, so Actions minutes are free. One `concurrency` group keeps
 # two chains from coexisting. To stop the chain: create content/STOP.
