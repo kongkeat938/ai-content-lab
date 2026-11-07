@@ -105,23 +105,43 @@ def route(title: str, routes: list[tuple[str, str]]) -> str | None:
     return None
 
 
+def is_quota(e: Exception) -> bool:
+    """A 403 that means 'out of quota', not 'forbidden'.
+
+    The Data API returns 403 for both, so the message is the only way to tell them
+    apart. Quota is a deferral -- the rail retries when the budget resets at 08:00
+    UTC -- so it must not fail the run.
+    """
+    s = str(e).lower()
+    return "quota" in s or "rateLimitExceeded".lower() in s or "dailyLimitExceeded".lower() in s
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", choices=list(CHANNELS))
     ap.add_argument("--apply", action="store_true", help="write the blocks (default: dry run)")
     args = ap.parse_args()
 
+    from googleapiclient.errors import HttpError
     slugs = [args.channel] if args.channel else list(CHANNELS)
+    deferred = False
     for slug in slugs:
         spec = CHANNELS[slug]
-        yt = yt_for(slug)
-        got = (yt.channels().list(part="id", mine=True).execute().get("items") or [{}])[0].get("id")
-        if got != spec["channel_id"]:
-            print(f"  !! {slug}: token answered as {got}; skipped")
-            continue
-        vids = uploads(yt)
-        shorts = [v for v in vids if secs(v["contentDetails"]["duration"]) <= 60]
-        pls = playlists(yt)
+        try:
+            yt = yt_for(slug)
+            got = (yt.channels().list(part="id", mine=True).execute().get("items") or [{}])[0].get("id")
+            if got != spec["channel_id"]:
+                print(f"  !! {slug}: token answered as {got}; skipped")
+                continue
+            vids = uploads(yt)
+            shorts = [v for v in vids if secs(v["contentDetails"]["duration"]) <= 60]
+            pls = playlists(yt)
+        except HttpError as e:
+            if is_quota(e):
+                print(f"== {slug}: quota spent, deferring to the next tick")
+                deferred = True
+                continue
+            raise
         # A Short already has a door if its description points anywhere inside the
         # channel -- the marker block, a youtu.be link, or a playlist link.
         def has_door(v):
@@ -166,8 +186,13 @@ def main() -> int:
                     break
                 time.sleep(1)
         print(f"     wrote {wrote}, skipped {skipped} (too long), failed {failed}")
+        if failed:
+            deferred = True
     if not args.apply:
         print("\n(dry run — nothing was changed)")
+    if deferred:
+        print("\nsome work was deferred (quota or a write that failed); "
+              "the next tick picks it up")
     return 0
 
 
