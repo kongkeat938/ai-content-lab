@@ -400,11 +400,15 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **Auto-publisher ledger = 4** (`docs/published.json` in ax-workspace): ch2 `wIpNM1gqPYc`,
   ch2 `oIsloIKa0J4`, ch1 `CaVSO74wFms`, and **ch4's first auto-Short `Wr5N-NfhGMM`**
   (2026-10-31T14:38Z, public, 25 s). Rotation across all three channels is now proven live.
-- **⚠️ The GitHub Actions cron is NOT reliable.** `runs?event=schedule` → **total_count = 1**
-  for the whole repo; the `*/30` monitor cron gave 1 tick in ~8.6 h, auto-shorts' crons never
-  fired. Posts happen by **manual dispatch** today. Do not claim the channels update 24/7.
+- **✅ GitHub Actions cron DOES fire here** (corrected 2026-11-07; the old note said total=1
+  and "manual dispatch only" — wrong). `runs?event=schedule` = **42 runs**, latest
+  2026-11-07T02:56Z, all green (set-thumbnails / grow-shorts-pool / publish-ch4 /
+  publish-batch / publish-shorts / link-shorts). Root cause of the old belief: `foreman.yml`
+  had **no `schedule` of its own** (push + dispatch only), so the driver looked dead between
+  pushes. Fixed: foreman now carries `*/30 * * * *`. `watchdog.yml` also self-chains every
+  ~2 h. Treat the pipeline as **autonomous — nothing waits on a person**.
   Safe failure mode: `--slot-hours` + the ledger mean a dropped tick costs a post, never a
-  double-post. Detail: `ax-workspace/docs/AUTOMATION.md` (last section) + its `2026-10-31.md`.
+  double-post. Detail: `ax-workspace/docs/AUTOMATION.md` + `2026-11-07.md`.
 - **edge-tts female voice re-measured** (6 lines × 3 tries): `th-TH-PremwadeeNeural` 3 ok /
   3 fail, `th-TH-NiwatNeural` 6 ok / 0 fail → ch1's female-voice re-render is still blocked.
 - **Real bottleneck is content, not the rail:** per-channel `scripts/` on PC1 are empty; the
