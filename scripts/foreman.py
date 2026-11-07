@@ -112,11 +112,17 @@ def main() -> int:
         plan.append(("set-thumbnails", {}))
 
     # 1b. ch4 realign (rename + playlists + description scrub): the API quota
-    #     resets 08:00 UTC, so a tick before that only defers. Dispatch once a day
-    #     after the reset; every step is idempotent.
+    #     resets 08:00 UTC, so a tick before that only defers. Every step is
+    #     idempotent, so retrying is cheap when the work is already done.
+    #
+    #     The guard used to be 20 h, which was a bug: a pre-reset tick that
+    #     deferred still exits 0, so it counted as a success and blocked the next
+    #     real attempt for 20 h -- the rename waited a full day for nothing.
+    #     A 5 h window lets the post-reset tick actually try, and a no-op tick
+    #     afterwards costs a few seconds.
     if ids.get("ch4-realign") and utc_hour() >= 8:
         n_age = last_success_min("ch4-realign", ids)
-        if n_age is None or n_age > 20 * 60:
+        if n_age is None or n_age > 5 * 60:
             plan.append(("ch4-realign", {}))
 
     # 1c. Account watch: K's ask (2026-11-03) -- a mail nobody reads can quietly
