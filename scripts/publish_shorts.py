@@ -85,8 +85,8 @@ CHANNELS = {
         "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
         "token": "YT_CH4_REFRESH_TOKEN",
         "work": os.path.join(ROOT, "work", "ch4_shorts"),
-        "tags": ["เรื่องเล่า", "นิทาน", "ครอบครัว", "เรื่องสั้น", "อบอุ่นใจ",
-                 "การ์ตูน", "เรื่องเล่าการ์ตูน", "kongkeat", "Shorts"],
+        "tags": ["เรื่องเล่า", "อบอุ่นใจ", "ครอบครัว", "ความทรงจำ", "เรื่องเล่าอบอุ่นใจ",
+                 "คิดถึงบ้าน", "พ่อแม่", "Shorts"],
         "category": "24",
         # The channel pivoted to family moments (docs/STORY-CHANNEL-PIVOT.md):
         # a specific relationship plus a physical act measured 460-1,083 views
