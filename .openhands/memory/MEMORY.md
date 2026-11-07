@@ -543,5 +543,21 @@ says "ห้ามสลับบัญชี เด็ดขาด"). **No acco
 - **Wikimedia Commons API** → real images + licence (for ch4 story videos). Openverse times
   out from the pod. Piper Thai is unusable (`tltk`→scikit-learn build fails on py3.13).
 
+## 🔑 Standing principle (K, 2026-11-07): everything is an algorithm
+"มันแค่อัลกอริทึม แค่รู้และเข้าใจก็เจาะเข้าไปแก้ได้ทุกปัญหา ทุกเป้าหมาย" — a wall is
+almost always a rule I have not read yet, not an impossibility. When a paid tool dies,
+a free one does the job (proved 2026-11-07: Tavily → Gemini free API + r.jina.ai +
+Wikipedia + gTTS; image gen blocked on Gemini/Pollinations → **Wikimedia Commons** works).
+Two duties follow, both non-negotiable:
+1. **Read the vendor's own rule** before declaring anything impossible. The rename
+   "wall" was `part` taking one value + `brandingSettings.channel.title` being
+   non-writable (`channelTitleUpdateForbidden`) + `localizations.(key).title` being the
+   writable field, needing `defaultLanguage` first. Seven days were lost to guessing.
+2. **An LLM is not a primary source.** Gemini confidently said the API cannot rename a
+   channel; the official reference says otherwise. Confirm against vendor docs or a live
+   measurement, never against a model's opinion.
+**The one genuine boundary:** identity/account ownership. No free tool substitutes for
+being the account owner. Do not hunt for one; remove the step from the critical path.
+
 ## Authority (2026-10-31)
 **ak** holds K's grant to administer and decide ("อนุมัติให้บริหารงาน และตัดสินใจแทน k ได้เลย"). ak acts alone on reversible/internal work; still asks K before publishing, enabling automations, deleting history, or renaming. Charter + log: `ax-workspace/.openhands/memory/DECISIONS.md`.
