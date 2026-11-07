@@ -7,8 +7,8 @@
       "detail": "<HttpError 429 when requesting None returned \"Quota exceeded for quota metric 'Video Uploads' and limit 'Video Uploads per day' of service 'youtube.googleapis.com' for consumer 'project_number:8880234"
     },
     "UCM3QO5L_pmj34n1JVlbhh-w": {
-      "hit_at": "2026-11-06T05:59:33+00:00",
-      "reset_at": "2026-11-06T08:00:00+00:00",
+      "hit_at": "2026-11-07T02:26:53+00:00",
+      "reset_at": "2026-11-07T05:26:53+00:00",
       "probe_hours": 3,
       "detail": "<HttpError 429 when requesting None returned \"Quota exceeded for quota metric 'Video Uploads' and limit 'Video Uploads per day' of service 'youtube.googleapis.com' for consumer 'project_number:8880234"
     },
