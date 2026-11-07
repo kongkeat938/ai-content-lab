@@ -153,13 +153,19 @@ def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
         return out
 
     im = warm_grade(im)
-    im = ImageEnhance.Brightness(im).enhance(1.16)
+    im = ImageEnhance.Brightness(im).enhance(1.04)
     # bright centre with softly darker edges -- K chose this bright look, so the
     # type is dark on purpose rather than the background being dimmed.
-    glow = ImageEnhance.Brightness(im).enhance(1.75)
+    glow = ImageEnhance.Brightness(im).enhance(1.30)
     im = Image.composite(glow, im, radial_mask(BANNER_W, BANNER_H))
     inv = Image.fromarray(255 - np.asarray(radial_mask(BANNER_W, BANNER_H, power=1.7)))
-    im = Image.composite(ImageEnhance.Brightness(im).enhance(0.50), im, inv)
+    im = Image.composite(ImageEnhance.Brightness(im).enhance(0.62), im, inv)
+    # a soft cream plate behind the copy: the background stays bright (K's rule)
+    # while the dark type always reads, even over busy AI art.
+    plate = Image.new("L", (BANNER_W, BANNER_H), 0)
+    ImageDraw.Draw(plate).rounded_rectangle([556, 466, 2004, 988], radius=96, fill=178)
+    plate = plate.filter(ImageFilter.GaussianBlur(64))
+    im = Image.composite(Image.new("RGB", im.size, CREAM), im, plate)
     im = im.convert("RGBA")
 
     cx = BANNER_W // 2
