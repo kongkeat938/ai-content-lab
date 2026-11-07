@@ -268,10 +268,13 @@ def main() -> int:
     # full of family stories (measured 2026-11-07: 0 of 8 survived).
     ins_path = os.path.join(ROOT, "content", "insights", f"{args.channel}.json")
     learned: list[str] = []
+    rules: list[str] = []
     if os.path.exists(ins_path):
         try:
             with open(ins_path, encoding="utf-8") as fh:
-                learned = [t for t in json.load(fh).get("topics", []) if not _overlaps(t, seen, 8)]
+                blob = json.load(fh)
+            learned = [t for t in blob.get("topics", []) if not _overlaps(t, seen, 8)]
+            rules = [r for r in blob.get("rules", []) if isinstance(r, str)][:3]
         except (json.JSONDecodeError, OSError):
             learned = []
     angles = learned + [a for a in cfg["angles"] if not _overlaps(a, seen)]
@@ -287,6 +290,10 @@ def main() -> int:
     cues = cfg.get("cues", ())
     prompt = cfg["prompt"].format(count=args.count, angles=", ".join(angles[:args.count + 4]),
                                   done="; ".join(done[-12:]) or "ไม่มี")
+    if rules:
+        prompt += ("\n\nกฎที่เรียนรู้จากคลิปที่ทำได้ดี/แย่ของช่องนี้ (ต้องทำตาม):\n- "
+                   + "\n- ".join(rules))
+        print(f"  applying {len(rules)} rules learned from the video review")
     fresh = [s for s in ask(key, prompt) if valid(s, cues)]
     # Gemini sometimes ignores the hook rule; ask once more before giving up, so
     # a thin batch does not silently leave the pool short.
