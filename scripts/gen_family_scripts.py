@@ -2,7 +2,7 @@
 """Generate a fresh family-story content set for the ch4 long-form rail.
 
 The dharma rail has `gen_night_scripts.py` to feed it; the ch4 rail
-(`ch4-longform.yml`, the เรื่องเล่าการ์ตูน family-moment channel) had none, so its
+(`ch4-longform.yml`, the เรื่องเล่าอบอุ่นใจ family-moment channel) had none, so its
 content was written by hand and the rail only ran when someone remembered. This
 writes a set in the shape the channel's audience actually watches -- measured
 2026-11-05: the family-moment Shorts did 460-1,083 views while the classical
@@ -58,7 +58,7 @@ _FOREIGN = re.compile(
 
 
 def prompt_for(theme: str, beat: str, want: str) -> str:
-    return f"""คุณคือนักเขียนเรื่องเล่าสั้นภาษาไทย ให้ช่อง "เรื่องเล่าการ์ตูน"
+    return f"""คุณคือนักเขียนเรื่องเล่าสั้นภาษาไทย ให้ช่อง "เรื่องเล่าอบอุ่นใจ"
 กลุ่มเป้าหมาย: คนไทยวัยทำงาน ที่คิดถึงบ้านและครอบครัว
 
 ธีมของชุดนี้: "{theme}"

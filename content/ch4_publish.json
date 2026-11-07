@@ -1,5 +1,5 @@
 {
-  "_comment": "Videos ready to publish to ch4 เรื่องเล่าการ์ตูน (@kongkeatpratumma), oldest first. Read by scripts/publish_batch.py --manifest content/ch4_publish.json. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post. `privacy` is set by ak; the HOLD was lifted 2026-11-06 (K: cancel the ask-K-first gate).",
+  "_comment": "Videos ready to publish to ch4 เรื่องเล่าอบอุ่นใจ (@kongkeatpratumma), oldest first. Read by scripts/publish_batch.py --manifest content/ch4_publish.json. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post. `privacy` is set by ak; the HOLD was lifted 2026-11-06 (K: cancel the ask-K-first gate).",
   "channel_slug": "kongkeat-story",
   "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
   "videos": [
@@ -10,7 +10,7 @@
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-01/compilation.mp3",
       "duration_sec": 3600,
       "title": "เรื่องเล่าอบอุ่นใจ รวมเรื่องครอบครัว ฟังเพลินทั้งคืน",
-      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่องเป็นชั่วโมง เหมาะเปิดฟังตอนพักผ่อน ทำงานบ้าน หรือก่อนนอน\n\nทุกเรื่องคือช่วงเวลาธรรมดาที่เราหลงลืมไปแล้ว: พ่อสอนขี่จักรยาน กล่องข้าวที่แม่ทำก่อนฟ้าสว่าง นิทานของยายคืนที่ไฟดับ\n\nฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจทุกตอน ขอบคุณที่รับฟังครับ\n\nรวมทุกตอนไว้ในช่องเดียว: https://www.youtube.com/@kongkeatpratumma\n\nฟังเรื่องเล่าต่อเนื่อง (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLU4aztRNvt28",
+      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่องเป็นชั่วโมง เหมาะเปิดฟังตอนพักผ่อน ทำงานบ้าน หรือก่อนนอน\n\nทุกเรื่องคือช่วงเวลาธรรมดาที่เราหลงลืมไปแล้ว: พ่อสอนขี่จักรยาน กล่องข้าวที่แม่ทำก่อนฟ้าสว่าง นิทานของยายคืนที่ไฟดับ\n\nฝากกดติดตามช่อง เรื่องเล่าอบอุ่นใจ เพื่อรับเรื่องเล่าอบอุ่นใจทุกตอน ขอบคุณที่รับฟังครับ\n\nรวมทุกตอนไว้ในช่องเดียว: https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ\n\nฟังเรื่องเล่าต่อเนื่อง (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLU4aztRNvt28",
       "tags": [
         "เรื่องเล่า",
         "เรื่องเล่าอบอุ่นใจ",
@@ -22,7 +22,7 @@
         "กำลังใจ",
         "เรื่องเล่าไทย",
         "ฟังเพลิน",
-        "เรื่องเล่าการ์ตูน",
+        "เรื่องเล่าอบอุ่นใจ",
         "kongkeat pratumma"
       ],
       "category_id": "24",
@@ -39,7 +39,7 @@
       "thumbnail": "assets/branding/thumbs/ch4_family_long_02.jpg",
       "duration_sec": 2070.1,
       "title": "เรื่องเล่าอบอุ่นใจ รวมเรื่องครอบครัว ฟังเพลินทั้งคืน 2",
-      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่อง 30 นาที ฟังเพลินได้ทั้งคืน\n\nแต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\nตอนในคลิปนี้: bike · lunchbox · grandma · brother · repair · rain · grandpa_garden · homework · stars · kiss\n\nฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
+      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่อง 30 นาที ฟังเพลินได้ทั้งคืน\n\nแต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\nตอนในคลิปนี้: bike · lunchbox · grandma · brother · repair · rain · grandpa_garden · homework · stars · kiss\n\nฝากกดติดตามช่อง เรื่องเล่าอบอุ่นใจ เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
       "tags": [
         "เรื่องเล่า",
         "เรื่องเล่าอบอุ่นใจ",
@@ -65,7 +65,7 @@
       "thumbnail": "assets/branding/thumbs/ch4_auto_202645_long.jpg",
       "duration_sec": 2001.3,
       "title": "เรื่องเล่าอบอุ่นใจ — ของเล่นเก่าและมือที่ซ่อมมัน รวมเรื่องครอบครัวฟังเพลินทั้งคืน",
-      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่อง 30 นาที ฟังเพลินได้ทั้งคืน\n\nแต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\nตอนในคลิปนี้: bike · kitchen · grandma · sibling · broken · rain · garden · homework · mistake · growup\n\nฝากกดติดตามช่อง เรื่องเล่าการ์ตูน เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
+      "description": "รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ ต่อเนื่อง 30 นาที ฟังเพลินได้ทั้งคืน\n\nแต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\nตอนในคลิปนี้: bike · kitchen · grandma · sibling · broken · rain · garden · homework · mistake · growup\n\nฝากกดติดตามช่อง เรื่องเล่าอบอุ่นใจ เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
       "tags": [
         "เรื่องเล่า",
         "เรื่องเล่าอบอุ่นใจ",

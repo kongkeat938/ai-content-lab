@@ -38,7 +38,7 @@ ROOT = os.path.dirname(HERE)
 CHANNELS = {
     "ch1": {"token": "YT_CH1_REFRESH_TOKEN", "name": "ตาต้า GenX"},
     "ch2": {"token": "YT_CH2_REFRESH_TOKEN", "name": "Farmmer"},
-    "ch4": {"token": "YT_CH4_REFRESH_TOKEN", "name": "เรื่องเล่าการ์ตูน"},
+    "ch4": {"token": "YT_CH4_REFRESH_TOKEN", "name": "เรื่องเล่าอบอุ่นใจ"},
 }
 
 # How each channel should be shelved. A rule is either `by` (shorts/long, i.e.
@@ -68,10 +68,12 @@ PLAN = {
     },
     "ch4": {
         "playlists": [
-            {"title": "เรื่องเล่าการ์ตูน — Shorts", "by": "shorts", "keep": True,
-             "desc": "เรื่องเล่าการ์ตูนสั้น ๆ ได้ข้อคิดทุกตอน"},
-            {"title": "เรื่องเล่าการ์ตูน — ตอน", "by": "long", "keep": True,
-             "desc": "เรื่องเล่าการ์ตูนฉบับเต็มตอน"},
+            {"title": "เรื่องเล่าอบอุ่นใจ — Shorts", "by": "shorts", "keep": True,
+             "rename_from": "เรื่องเล่าการ์ตูน — Shorts",
+             "desc": "ช่วงเวลาครอบครัวอบอุ่น สั้น ๆ ได้ข้อคิดทุกตอน"},
+            {"title": "เรื่องเล่าอบอุ่นใจ — ตอน", "by": "long", "keep": True,
+             "rename_from": "เรื่องเล่าการ์ตูน — ตอน",
+             "desc": "เรื่องเล่าอบอุ่นใจฉบับเต็มตอน ฟังเพลินทั้งคืน"},
         ],
     },
 }
@@ -168,6 +170,22 @@ def organise(tok: str, ch_id: str, vids: list[dict], plan: list[dict], dry: bool
             rx = re.compile(spec["match"], re.I)
             members = [v for v in vids if rx.search(v["title"])]
         pl_id = have.get(spec["title"])
+        # A channel that is being renamed has playlists under the OLD title. Left
+        # alone, the new spec would create a second, empty playlist beside the old
+        # one and split the videos. `rename_from` finds the existing playlist and
+        # re-titles it in place, so the id (and its videos) survive the rename.
+        old_id = have.get(spec.get("rename_from", "")) if spec.get("rename_from") else None
+        if old_id and not pl_id:
+            print(f"  playlist \"{spec['rename_from']}\" -> \"{spec['title']}\" [rename in place]")
+            if not dry:
+                r = api(f"https://www.googleapis.com/youtube/v3/playlists?part=snippet,status",
+                        tok, "PUT", {"id": old_id, "snippet": {"title": spec["title"],
+                                                              "description": spec["desc"]},
+                                     "status": {"privacyStatus": "public"}})
+                if "error" in r:
+                    print(f"           rename FAILED {r}")
+                else:
+                    pl_id = old_id
         print(f"  playlist \"{spec['title']}\": {len(members)} video(s)"
               f"{' [exists]' if pl_id else ' [new]'}")
         if dry or not members:

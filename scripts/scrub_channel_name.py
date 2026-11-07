@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
-"""Strip a channel's old personal name/handle from the descriptions of its live videos.
+"""Rewrite a channel's old name/handle out of the descriptions of its live videos.
 
-The channel title is เรื่องเล่าการ์ตูน, but every clip published before 2026-11-05
-carried `@kongkeatpratumma` (a personal name) in its description tail. This
-replaces that handle with the name-free channel URL, idempotently -- a video that
-already reads the new URL is skipped. Only the description changes; title and
-tags are untouched.
+Two renames landed on ch4. First the channel dropped the owner's personal name
+(`@kongkeatpratumma`, `kongkeat pratumma`) and every clip published before
+2026-11-05 still carried it. Then, on 2026-11-07, the channel itself was renamed
+from "เรื่องเล่าการ์ตูน" (cartoon) to "เรื่องเล่าอบอุ่นใจ" -- the cartoon promise
+never matched the warm, adult, no-animation narration the channel actually
+publishes, and the advisor panel traced the weakest reach of the three channels
+to that mismatch (docs/PANEL-2026-11-07-ch4-CONSENSUS.md). Clips on the *other*
+channels also name ch4 in their "ช่องพี่น้อง" block, so they carry the old title
+too.
+
+This replaces each old token with the new one, idempotently (a description with
+no old token is skipped). Only the description changes; title and tags are
+untouched.
 
     python3 scripts/scrub_channel_name.py --channel ch4          # show changes
     python3 scripts/scrub_channel_name.py --channel ch4 --apply
 
 videos.update costs 50 quota units, so the 10,000-unit day covers 200 clips and
-this only touches clips that actually carry the old string.
+this only touches clips that actually carry an old string.
 """
 from __future__ import annotations
 
@@ -29,6 +37,22 @@ sys.path.insert(0, HERE)
 OLD_HANDLE = "@kongkeatpratumma"
 NEW_URL = "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ"
 OLD_NAME = "kongkeat pratumma"
+NEW_NAME = "เรื่องเล่าอบอุ่นใจ"
+OLD_TITLE = "เรื่องเล่าการ์ตูน"
+SIBLING_OLD = "เรื่องเล่าการ์ตูน — เรื่องเล่าอบอุ่นใจ"
+SIBLING_NEW = "เรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว"
+
+# Ordered: the longest strings first, so a later short replacement can never
+# leave a half-renamed sentence behind.
+REPLACEMENTS = [
+    ("https://www.youtube.com/" + OLD_HANDLE, NEW_URL),
+    (OLD_HANDLE, NEW_URL),
+    (OLD_NAME, NEW_NAME),
+    (SIBLING_OLD, SIBLING_NEW),
+    (OLD_TITLE, NEW_NAME),
+    ("https://www.youtube.com/" + NEW_URL, NEW_URL),
+]
+OLD_TOKENS = (OLD_HANDLE, OLD_NAME, OLD_TITLE)
 
 CHANNELS = {
     "ch1": ("YT_CH1_REFRESH_TOKEN", "UCI6EfsgM1HNjrYarvigxyrQ"),
@@ -91,15 +115,13 @@ def main() -> int:
             continue   # deleted or private upload still listed in the playlist
         sn = r["items"][0]["snippet"]
         desc = sn.get("description", "")
-        doubled = "https://www.youtube.com/" + NEW_URL
-        if OLD_HANDLE not in desc and OLD_NAME not in desc and doubled not in desc:
+        if not any(t in desc for t in OLD_TOKENS):
             continue
-        # Drop the whole old URL (not just the handle), then repair any doubling
-        # a previous pass may have left behind.
-        new = (desc.replace("https://www.youtube.com/" + OLD_HANDLE, NEW_URL)
-                   .replace(OLD_HANDLE, NEW_URL)
-                   .replace(OLD_NAME, "เรื่องเล่าการ์ตูน")
-                   .replace("https://www.youtube.com/" + NEW_URL, NEW_URL))
+        new = desc
+        for old, repl in REPLACEMENTS:
+            new = new.replace(old, repl)
+        if new == desc:
+            continue
         print(f"  {vid}: {sn['title'][:48]}")
         if args.apply:
             body = json.dumps({"id": vid, "snippet": {

@@ -36,10 +36,10 @@
     },
     {
       "slug": "kongkeat-story",
-      "name": "เรื่องเล่าการ์ตูน",
+      "name": "เรื่องเล่าอบอุ่นใจ",
       "handle": "@kongkeatpratumma (K to change in Studio — API cannot rename a handle)",
       "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
-      "angle": "เรื่องเล่าการ์ตูน — ซีรี่ส์การ์ตูน/ละครที่ติดตามตอนต่อตอน",
+      "angle": "เรื่องเล่าอบอุ่นใจ — เรื่องเล่าความทรงจำครอบครัวอบอุ่นใจ",
       "videos_seen": 8,
       "account": "kongkeat.p3@gmail.com",
       "token_path": "~/.config/content-lab/yt_token_kongkeat-story.json",
