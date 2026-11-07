@@ -32,6 +32,13 @@ in `topics/*.md` and the daily logs.
 - **Pod render works:** `sudo apt-get install -y ffmpeg fonts-tlwg-*` + `pip install edge-tts
   Pillow numpy`; edge-tts reaches the network. `verify_night.py` takes a **positional** path,
   not `--video`.
+- **genx long-form is LIVE: https://youtu.be/l5hkDGVIYXE** (32.4 min, public, CI-built).
+- **⚠️ Funnel leak found + fixed:** a playlist insert that hits the shared quota 403 at upload
+  time left the video live but **out of the playlist**, and `state=published` meant it was never
+  retried → the funnel stayed dead. `publish_batch.py` now records `playlist_added` and runs a
+  **repair pass** each tick; `foreman.py` dispatches `publish-ch1` while a repair is pending
+  (GitHub's `schedule` never fires here). Verify `playlist_added: true` after the 08:00 UTC
+  quota reset.
 
 ## ⭐ 2026-11-06 — Long-form rail is now a closed autopilot (release→manifest→publish)
 - The night rail built a verified 120-min compilation, put it on a Release, and **stopped**:
