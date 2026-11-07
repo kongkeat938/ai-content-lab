@@ -234,11 +234,17 @@ def main() -> int:
             print(f"      thumb   {v.get('thumbnail','-')}")
         return 0
     if not todo:
-        print("nothing to do")
-        return 0
+        # Still worth running when nothing new is due: a previously-live video
+        # may be waiting on its playlist insert (see the repair pass).
+        needs_repair = any(v.get("video_id") and v.get("playlist")
+                           and not v.get("playlist_added") for v in man["videos"])
+        if not needs_repair:
+            print("nothing to do")
+            return 0
+        print("nothing new to upload; checking playlist repair")
 
     capped = _upload_capped(man["channel_id"])
-    if capped:
+    if capped and todo:
         print(f"channel {man['channel_id']} is upload-capped until {capped}; "
               f"deferring (the scheduled tick will retry after the reset)")
         return 0
@@ -369,9 +375,34 @@ def main() -> int:
             try:
                 yt.playlistItems().insert(part="snippet", body={"snippet": {
                     "playlistId": pl, "resourceId": {"kind": "youtube#video", "videoId": vid}}}).execute()
+                v["playlist_added"] = True
+                save(man, args.manifest)
                 print(f"  added to playlist {pl}")
             except HttpError as exc:
-                print(f"  playlist insert deferred ({exc.status_code})", file=sys.stderr)
+                # Not fatal: the repair pass below retries every run until it
+                # lands. A quota 403 here is the common case, and without the
+                # retry the video would be live forever with the funnel still
+                # pointing at an empty playlist.
+                print(f"  playlist insert deferred ({exc.status_code}); "
+                      f"the repair pass will retry", file=sys.stderr)
+
+    # Repair pass: an entry can be live with its playlist insert missing -- a
+    # quota 403 at upload time leaves it that way, and `state=published` means
+    # the main loop never touches it again. Re-attempt every run; the flag makes
+    # a success permanent, so this costs one call per not-yet-added video.
+    pending = [v for v in man["videos"]
+               if v.get("video_id") and v.get("playlist") and not v.get("playlist_added")]
+    for v in pending:
+        try:
+            yt.playlistItems().insert(part="snippet", body={"snippet": {
+                "playlistId": v["playlist"],
+                "resourceId": {"kind": "youtube#video", "videoId": v["video_id"]}}}).execute()
+            v["playlist_added"] = True
+            save(man, args.manifest)
+            print(f"repaired: {v['key']} -> playlist {v['playlist']}")
+        except HttpError as exc:
+            print(f"  playlist repair deferred for {v['key']} ({exc.status_code})",
+                  file=sys.stderr)
 
     live = [v for v in man["videos"] if v.get("video_id")]
     print(f"\n{len(live)}/{len(man['videos'])} live: " +

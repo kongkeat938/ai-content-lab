@@ -63,6 +63,7 @@ def make_cover(key: str, title: str, image: str, cover_dir: str) -> str:
     out = os.path.join(ROOT, cover_dir, f"{key}.jpg")
     try:
         from PIL import Image
+        os.makedirs(os.path.dirname(out), exist_ok=True)
         sys.path.insert(0, HERE)
         import make_poster  # noqa: E402
         import tempfile
