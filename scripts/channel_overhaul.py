@@ -110,14 +110,23 @@ def secs(iso: str) -> int:
 
 
 def uploads(tok: str, ch_id: str) -> list[dict]:
-    """Every video on the channel: id, title, seconds, views."""
-    ch = api(f"https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true", tok)["items"][0]
+    """Every video on the channel: id, title, seconds, views.
+
+    Raises QuotaDeferred when the API answers 403, so the caller can defer
+    instead of crashing the rail (the reset is 08:00 UTC).
+    """
+    r0 = api(f"https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true", tok)
+    if "items" not in r0:
+        raise QuotaDeferred(r0.get("error"))
+    ch = r0["items"][0]
     pid = ch["contentDetails"]["relatedPlaylists"]["uploads"]
     ids, page = [], None
     while True:
         u = (f"https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={pid}"
              f"&maxResults=50" + (f"&pageToken={page}" if page else ""))
         r = api(u, tok)
+        if "items" not in r:
+            raise QuotaDeferred(r.get("error"))
         ids += [i["contentDetails"]["videoId"] for i in r["items"]]
         page = r.get("nextPageToken")
         if not page:
@@ -126,6 +135,8 @@ def uploads(tok: str, ch_id: str) -> list[dict]:
     for i in range(0, len(ids), 50):
         v = api("https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id="
                 + ",".join(ids[i:i + 50]), tok)
+        if "items" not in v:
+            raise QuotaDeferred(v.get("error"))
         for x in v["items"]:
             out.append({"id": x["id"], "title": x["snippet"]["title"], "secs": secs(x["contentDetails"]["duration"]),
                         "views": int(x["statistics"].get("viewCount", 0))})
@@ -141,9 +152,19 @@ def set_trailer(tok: str, ch_id: str, video_id: str, title: str, dry: bool) -> N
     print(f"           {'ok' if 'error' not in r else 'FAILED ' + str(r)}")
 
 
+class QuotaDeferred(RuntimeError):
+    """The API answered 403 (spent daily quota). The rail retries after 08:00 UTC.
+
+    Raised rather than returning an empty list, because an empty playlist list
+    would make organise() create a second playlist beside the real one.
+    """
+
+
 def existing_playlists(tok: str, ch_id: str) -> dict[str, str]:
     r = api(f"https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId={ch_id}&maxResults=50", tok)
-    return {p["snippet"]["title"]: p["id"] for p in r.get("items", [])}
+    if "items" not in r:
+        raise QuotaDeferred(r.get("error"))
+    return {p["snippet"]["title"]: p["id"] for p in r["items"]}
 
 
 def playlist_items(tok: str, pl_id: str) -> set[str]:
@@ -152,7 +173,9 @@ def playlist_items(tok: str, pl_id: str) -> set[str]:
         u = (f"https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={pl_id}"
              f"&maxResults=50" + (f"&pageToken={page}" if page else ""))
         r = api(u, tok)
-        ids |= {i["contentDetails"]["videoId"] for i in r.get("items", [])}
+        if "items" not in r:
+            raise QuotaDeferred(r.get("error"))
+        ids |= {i["contentDetails"]["videoId"] for i in r["items"]}
         page = r.get("nextPageToken")
         if not page:
             break
@@ -220,14 +243,17 @@ def main() -> int:
     for slug in slugs:
         spec = CHANNELS[slug]
         tok = token(spec["token"])
-        ch = api("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true", tok)
-        if "items" not in ch:
+        try:
+            ch = api("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true", tok)
+            if "items" not in ch:
+                raise QuotaDeferred(ch.get("error"))
+            ch = ch["items"][0]
+            vids = uploads(tok, ch["id"])
+        except QuotaDeferred as exc:
             # A spent quota (403) or a transient burst -- defer, do not crash the
             # rail. The reset is 08:00 UTC and the rail retries after it.
-            print(f"\n=== {slug} {spec['name']} — API said {ch.get('error')}; deferring")
+            print(f"\n=== {slug} {spec['name']} — API said {exc}; deferring")
             continue
-        ch = ch["items"][0]
-        vids = uploads(tok, ch["id"])
         shorts = [v for v in vids if v["secs"] <= 60]
         best = max(shorts, key=lambda v: v["views"]) if shorts else None
         print(f"\n=== {slug} {spec['name']} — {len(vids)} videos ({len(shorts)} Shorts) "
@@ -238,7 +264,10 @@ def main() -> int:
             else:
                 print("  trailer  -> no Short to use")
         if not args.only or args.only == "playlists":
-            organise(tok, ch["id"], vids, PLAN[slug]["playlists"], args.dry_run)
+            try:
+                organise(tok, ch["id"], vids, PLAN[slug]["playlists"], args.dry_run)
+            except QuotaDeferred as exc:
+                print(f"  playlists -> deferring (API said {exc})")
     if args.dry_run:
         print("\n(dry run — nothing was changed)")
     return 0
