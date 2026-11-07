@@ -1,12 +1,17 @@
 name: foreman
 
-# The driver. GitHub's own scheduler never fired for this repo (measured
-# 2026-11-03: `event=schedule` total 0), so nothing here relies on `schedule`
-# alone -- the foreman runs on every push, and is meant to be started from
-# outside as well (see docs/MONITORING.md). It reads the ledgers and dispatches
-# only what is due; running it twice in a row dispatches nothing the second time.
+# The driver. It reads the ledgers and dispatches only what is due; running it
+# twice in a row dispatches nothing the second time.
+#
+# Earlier notes here claimed GitHub's scheduler never fires for this repo. That
+# was wrong, and it mattered: measured 2026-11-07, `event=schedule` has 42 runs,
+# the latest the same morning, all successful. The real gap was that THIS
+# workflow had no `schedule` of its own -- it only ran on push -- so the driver
+# was idle whenever nothing was pushed. The cron below makes it the heartbeat.
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
   push:
     branches: [main]
     paths:
