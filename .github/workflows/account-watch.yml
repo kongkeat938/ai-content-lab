@@ -10,9 +10,12 @@ name: account-watch
 #   IMAP_USER + IMAP_APP_PASSWORD  (a Google app password, not the login password)
 # Without them the job says the inbox is BLIND instead of pretending all is well.
 #
-# Started by hand, or by the watchdog. GitHub's scheduler has never fired for
-# this repo, so there is no `schedule:` trigger to rely on.
+# Started by the foreman (daily, after the 08:00 UTC reset), by the watchdog, or by
+# hand. It also carries its own cron as a backstop -- measured 2026-11-07, the
+# scheduler does fire here, so the cron is a real second path, not a decoration.
 on:
+  schedule:
+    - cron: "42 8 * * *"   # daily, 08:42 UTC -- after the quota reset
   workflow_dispatch:
     inputs:
       days:

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""The foreman: one job that drives every rail, so the channel runs without cron.
+"""The foreman: one job that drives every rail, so the channel runs without a person.
 
-GitHub's own scheduler never fired for this repo -- measured 2026-11-03, `event=schedule`
-total_count 0 while every push ran -- so nothing may depend on a cron expression. A job
-that is *started* can start the others. That is all this does: look at what is due, and
-dispatch the workflow that does it. It decides nothing about content; the rails own their
-own ledgers and their own double-post guards.
+The old note here claimed GitHub's scheduler never fires for this repo. Measured
+2026-11-07, that is wrong: `event=schedule` has 42 runs and the latest is the same
+morning, all green. The real gap was that the foreman itself had no schedule, so the
+driver was idle between pushes. It now carries a `*/30` cron and still runs on push.
+
+It looks at what is due and dispatches the workflow that does it. It decides nothing
+about content; the rails own their own ledgers and their own double-post guards.
 
     python3 scripts/foreman.py --dry-run     # say what it would dispatch
     python3 scripts/foreman.py               # dispatch what is due
@@ -116,6 +118,16 @@ def main() -> int:
         n_age = last_success_min("ch4-realign", ids)
         if n_age is None or n_age > 20 * 60:
             plan.append(("ch4-realign", {}))
+
+    # 1c. Account watch: K's ask (2026-11-03) -- a mail nobody reads can quietly
+    #     hurt the business (a copyright claim, a payment problem). It was
+    #     manual-only and the foreman never dispatched it, so in practice it
+    #     never ran. Daily, after the 08:00 UTC Data API reset so layer 1 (channel
+    #     health) can actually read the channels.
+    if ids.get("account-watch") and utc_hour() >= 8:
+        a_age = last_success_min("account-watch", ids)
+        if a_age is None or a_age > 20 * 60:
+            plan.append(("account-watch", {}))
 
     # 2. Long videos: due whenever an entry has no id and its hold has passed.
     pub = load("content/ch2_publish.json", {"videos": []})
