@@ -130,7 +130,13 @@ def main() -> int:
     try:
         return run(args.channel, dry=not args.apply, verify_only=args.verify)
     except urllib.error.HTTPError as exc:
-        print(f"HTTP {exc.code}: {exc.read()[:300].decode('utf-8', 'replace')}")
+        body = exc.read().decode("utf-8", "replace")
+        # A spent daily quota is a deferral, not a failure: the reset is 08:00 UTC
+        # and the rail (and the foreman) retry after it. Only a real error is red.
+        if exc.code == 403 and "quota" in body.lower():
+            print("quota exhausted -- deferring to after the 08:00 UTC reset")
+            return 0
+        print(f"HTTP {exc.code}: {body[:300]}")
         return 1
 
 
