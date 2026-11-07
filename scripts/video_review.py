@@ -134,17 +134,24 @@ def load_manifest(rel: str) -> dict[str, str]:
 
 
 def match_script(title: str, scripts: list[dict]) -> dict | None:
-    """Find the script whose hook best matches a video title (Thai: char bigrams)."""
+    """Find the script whose hook matches a video title (Thai: char bigrams).
+
+    The winner must beat the runner-up by a margin. A bare argmax picks the wrong
+    script on a tie, which made two unrelated videos look like they shared a
+    script and produced a false "duplicate content" critique (measured 2026-11-07:
+    a 59-bigram title tied 12-12 between two hooks).
+    """
     def bg(s: str) -> set[str]:
         s = "".join(ch for ch in s if not ch.isspace())
         return {s[i:i + 2] for i in range(len(s) - 1)}
     tb = bg(title)
-    best, best_overlap = None, 0
-    for s in scripts:
-        ov = len(tb & bg(s.get("hook", "")))
-        if ov > best_overlap:
-            best, best_overlap = s, ov
-    return best if best_overlap >= 4 else None
+    scored = sorted(((len(tb & bg(s.get("hook", ""))), s) for s in scripts),
+                    key=lambda x: -x[0])
+    if not scored or scored[0][0] < 8:
+        return None
+    if len(scored) > 1 and scored[0][0] - scored[1][0] < 3:
+        return None
+    return scored[0][1]
 
 
 def ask_panel(items: list[dict]) -> dict[str, str]:

@@ -184,6 +184,13 @@ def ask(key: str, prompt: str) -> list:
 _FOREIGN = re.compile(
     r"[^\u0e00-\u0e7fA-Za-z0-9\s.,!?%\-–—:;()\u2018\u2019\u201c\u201d\u2026/&']")
 
+# Sermon phrasing the panel flagged: a Short must tell the story, not lecture.
+# Measured 2026-11-07: the graded-D video's weak line was "หนึ่งสิ่งที่ทำได้จริงคือ...",
+# and a scan found the pattern in 58 of 215 scripts across the three channels.
+_PREACHY = re.compile(
+    r"หนึ่งสิ่งที่ทำได้|สิ่งที่ทำได้คือ|ข้อคิด|จำไว้ว่า|จง |อย่าลืมว่า|สอนให้รู้ว่า|"
+    r"สิ่งสำคัญคือ|บทเรียนที่ได้|ข้อเตือนใจ")
+
 
 def valid(s: dict, cues=()) -> bool:
     if not isinstance(s, dict):
@@ -197,6 +204,8 @@ def valid(s: dict, cues=()) -> bool:
     if re.search(r"[0-9๐-๙]", joined):
         return False
     if _FOREIGN.search(joined):
+        return False
+    if _PREACHY.search(joined):
         return False
     # The measured winning hook shape must be present, or the pool drifts back to
     # the shape that got 74-173 views/day. See docs/HOOKS-MEASURED.md.
