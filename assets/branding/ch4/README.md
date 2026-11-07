@@ -43,3 +43,20 @@ python3 scripts/make_branding.py \
   --title "..." --kicker "..." --subtitle "..." --style lavish
 python3 scripts/set_channel_art.py --channel <ch1|ch2|ch4>
 ```
+
+## ดาวน์โหลดอวตารไปที่เครื่อง Windows (ลิงก์ตรง)
+
+ไฟล์อยู่ใน pod ไม่ได้อยู่ในเครื่อง K — ดาวน์โหลดจากลิงก์นี้ได้เลย:
+
+- **อวตาร 800×800:** https://raw.githubusercontent.com/kongkeat938/ai-content-lab/main/assets/branding/ch4/avatar_800x800.jpg
+- แบนเนอร์ (ติดตั้งบนช่องแล้ว): https://raw.githubusercontent.com/kongkeat938/ai-content-lab/main/assets/branding/ch4/banner_2560x1440.jpg
+
+เปิดลิงก์อวตารในเบราว์เซอร์ → คลิกขวา → **Save image as…** (หรือกด Ctrl+S)
+
+## ทำไมอวตารต้องทำใน Studio (พิสูจน์แล้ว)
+
+ดึง discovery document ทางการ (`googleapis.com/discovery/v1/apis/youtube/v3/rest`) แล้ว:
+เมธอดอัปโหลดรูปมีแค่ `channelBanners` · `thumbnails` · `playlistImages` เท่านั้น
+ส่วน `ChannelProfileDetails.profileImageUrl` เป็น **read-only** → **ไม่มีเมธอดใดตั้งอวตารได้**.
+ทางอื่น: ขับเบราว์เซอร์ PC1 (ที่ล็อกอิน) ก็ลองแล้ว — ปลายทางตอบ **502** (ออฟไลน์).
+→ **เหลือทางเดียว = Studio** (ตรงกับที่ YouTube Help ระบุไว้).
