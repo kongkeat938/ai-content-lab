@@ -30,6 +30,9 @@ on:
       dry_run:
         description: "true to only list what would be remade"
         default: "false"
+      force:
+        description: "true to ignore the daily cap for this one run"
+        default: "false"
   schedule:
     # One remake a day per channel, offset from the publish rail's own runs
     # (01:30/09:30/17:30 UTC) so the two never race for the same channel slot.
@@ -87,8 +90,9 @@ jobs:
             PER="${{ github.event.inputs.per_run }}"
             OLD="${{ github.event.inputs.old }}"
             DRY="${{ github.event.inputs.dry_run }}"
+            if [ "${{ github.event.inputs.force }}" = "true" ]; then ARGS_FORCE="--force"; fi
           fi
-          ARGS="--channel $CH --per-run $PER --old $OLD"
+          ARGS="--channel $CH --per-run $PER --old $OLD $ARGS_FORCE"
           if [ "$DRY" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           echo "remake: $ARGS"
           python3 scripts/remake_shorts.py $ARGS

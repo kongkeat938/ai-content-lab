@@ -81,6 +81,9 @@ def main() -> int:
                     help="what to do with the old clip once the new one is live")
     ap.add_argument("--old-view-threshold", type=int, default=100,
                     help="with --old unlist-low, leave clips at or above this many views alone")
+    ap.add_argument("--force", action="store_true",
+                    help="ignore the daily cap and the spacing for ONE deliberate remake "
+                         "(a one-off the owner asked for); never for a batch")
     ap.add_argument("--work", help="override the build dir (default: per channel)")
     args = ap.parse_args()
 
@@ -111,6 +114,12 @@ def main() -> int:
     already = ps.uploads_in_last_24h(args.channel, spec["manifest"])
     room = max(ps.DAILY_CAP - already, 0)
     since = ps.hours_since_last_upload(args.channel, spec["manifest"])
+    if args.force:
+        # A deliberate one-off the owner asked for: this run publishes, and the
+        # ledger still records it, so the cap counts it from here on.
+        room = max(room, args.per_run)
+        since = None
+        print(f"--force: ignoring the cap ({already}/{ps.DAILY_CAP}) for this one run")
 
     # A dry run is a look at the plan, so it shows the queue even on a day the cap
     # would park a real run -- otherwise the only day the owner wants to check the
