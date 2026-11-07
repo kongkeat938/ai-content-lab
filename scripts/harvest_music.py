@@ -46,11 +46,16 @@ def rss_ids(channel_id: str) -> list[tuple[str, str]]:
 
 def grab(vid: str, out_base: str) -> str | None:
     """Download one track's audio. Returns the wav path, or None on refusal."""
-    r = subprocess.run([sys.executable, "-m", "yt_dlp",
-                        "-f", "bestaudio/best", "-x", "--audio-format", "wav",
-                        "-o", out_base + ".%(ext)s",
-                        f"https://www.youtube.com/watch?v={vid}"],
-                       capture_output=True, text=True)
+    import shutil
+    cmd = [sys.executable, "-m", "yt_dlp"]
+    # yt-dlp needs a JS runtime to solve YouTube's challenge; without one it is
+    # refused with "confirm you're not a bot" (measured on a clean CI runner too).
+    if shutil.which("deno"):
+        cmd += ["--js-runtimes", "deno"]
+    cmd += ["-f", "bestaudio/best", "-x", "--audio-format", "wav",
+            "-o", out_base + ".%(ext)s",
+            f"https://www.youtube.com/watch?v={vid}"]
+    r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         print(f"    skip {vid}: {r.stderr.strip().splitlines()[-1][:90] if r.stderr else 'failed'}",
               file=sys.stderr)
