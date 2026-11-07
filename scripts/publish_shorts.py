@@ -133,6 +133,30 @@ LIMIT_FILE = os.path.join(ROOT, "content", "upload_limit.json")
 # Shorter than the daily reset, because the reset clock is unreliable.
 PROBE_HOURS = 3
 
+# A ceiling of our own, on top of YouTube's. Measured 2026-11-07: ch4 published 37
+# Shorts in about two days (the workflow is triggered on every scripts.json push,
+# so each pool grow fired the rail again) and 45 of its videos now sit at zero
+# views while the 17 that got a slow drip reached up to 1,088. The push trigger is
+# what let the flood through, so the cap lives here where no trigger can bypass it.
+DAILY_CAP = 3
+
+
+def uploads_in_last_24h(manifest_path: str) -> int:
+    """Count Shorts recorded in this manifest over the last 24 hours (via git).
+
+    The manifest is committed the moment each id is known, so its git history is
+    the upload log. Counting it here means the cap holds across runs, across
+    triggers and across the ephemeral CI runner -- state no single run owns.
+    """
+    rel = os.path.relpath(manifest_path, ROOT)
+    try:
+        out = subprocess.run(["git", "-C", ROOT, "log", "--since=24 hours ago",
+                              "--format=%ct", "--", rel],
+                             capture_output=True, text=True, timeout=30).stdout
+    except (OSError, subprocess.SubprocessError):
+        return 0
+    return len([ln for ln in out.splitlines() if ln.strip()])
+
 
 def note_upload_limit(channel_id: str, detail: str = "") -> None:
     """Park the rail for a short probe window after a real ceiling refusal.
@@ -246,10 +270,18 @@ def main() -> int:
 
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
     todo = winning_first(todo, spec.get("cues"))
+    # Hold the channel to a slow drip regardless of how often this was triggered.
+    already = uploads_in_last_24h(spec["manifest"])
+    room = max(DAILY_CAP - already, 0)
+    if room == 0:
+        print(f"daily cap reached ({already}/{DAILY_CAP} in the last 24h) -- "
+              "waiting, a steady drip beats a flood")
+        return 0
     if args.per_run:
-        todo = todo[:args.per_run]
+        todo = todo[:min(args.per_run, room)]
     done = [s["id"] for s in scripts if man["shorts"].get(s["id"], {}).get("video_id")]
-    print(f"{len(todo)} to publish, {len(done)} already live {done}")
+    print(f"{len(todo)} to publish, {len(done)} already live, "
+          f"{already}/{DAILY_CAP} published in the last 24h")
 
     if args.dry_run:
         for s in todo:
