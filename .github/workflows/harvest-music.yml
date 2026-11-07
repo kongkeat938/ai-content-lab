@@ -30,6 +30,23 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           pip install -q yt-dlp
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: probe which client can fetch our own audio
+        run: |
+          python3 - <<'PY'
+          import subprocess, sys
+          vid = "A3jr9T148Q8"
+          for client in ("web", "web_safari", "mweb", "tv", "ios", "android_vr"):
+              r = subprocess.run([sys.executable, "-m", "yt_dlp", "--js-runtimes", "deno",
+                                  "--extractor-args", f"youtube:player_client={client}",
+                                  "-f", "bestaudio", "-g",
+                                  f"https://www.youtube.com/watch?v={vid}"],
+                                 capture_output=True, text=True)
+              err = (r.stderr.strip().splitlines() or [""])[-1]
+              print(f"  {client:12} rc={r.returncode} {'OK' if r.returncode == 0 else err[-90:]}")
+          PY
       - name: harvest beds from our own channel
         run: |
           python3 scripts/harvest_music.py \
