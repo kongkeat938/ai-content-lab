@@ -1,55 +1,62 @@
 {
-  "pack": "AERIS Music",
+  "pack": "Openverse / Freesound CC0",
   "license": "CC0-1.0",
-  "credit": "AERIS Music (youtube.com/@aerismusicth)",
+  "note": "Replaced the AERIS pack on 2026-11-07: every AERIS file measured as a single test tone (one partial, no melody), not music. Each bed below was measured before use -- see scripts/test_music_beds.py.",
+  "credit": "See each bed's creator (CC0-1.0, Openverse/Freesound)",
   "beds": [
     {
-      "file": "calm-bed-calm.mp3",
+      "file": "bed-calm.mp3",
       "id": "bed-calm",
       "mood": "calm",
-      "license": "CC0-1.0",
-      "credit": "AERIS Music (youtube.com/@aerismusicth)",
-      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/calm.mp3"
+      "title": "Curious Ambience.wav",
+      "creator": "Reg1n0ld",
+      "source": "https://freesound.org/people/Reg1n0ld/sounds/503244",
+      "license": "CC0-1.0"
     },
     {
-      "file": "warm-bed-warm.mp3",
+      "file": "bed-warm.mp3",
       "id": "bed-warm",
       "mood": "warm",
-      "license": "CC0-1.0",
-      "credit": "AERIS Music (youtube.com/@aerismusicth)",
-      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/warm.mp3"
+      "title": "Japan_Koto_Improv_Amateur_Session_3.wav",
+      "creator": "RutgerMuller",
+      "source": "https://freesound.org/people/RutgerMuller/sounds/365242",
+      "license": "CC0-1.0"
     },
     {
-      "file": "sad-bed-sad.mp3",
+      "file": "bed-sad.mp3",
       "id": "bed-sad",
       "mood": "sad",
-      "license": "CC0-1.0",
-      "credit": "AERIS Music (youtube.com/@aerismusicth)",
-      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/sad.mp3"
+      "title": "Road In The Forest",
+      "creator": "Andrewkn",
+      "source": "https://freesound.org/people/Andrewkn/sounds/439553",
+      "license": "CC0-1.0"
     },
     {
-      "file": "hopeful-bed-hopeful.mp3",
+      "file": "bed-hopeful.mp3",
       "id": "bed-hopeful",
       "mood": "hopeful",
-      "license": "CC0-1.0",
-      "credit": "AERIS Music (youtube.com/@aerismusicth)",
-      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/hopeful.mp3"
+      "title": "April Showers",
+      "creator": "kjartan_abel",
+      "source": "https://freesound.org/people/kjartan_abel/sounds/608392",
+      "license": "CC0-1.0"
     },
     {
-      "file": "mystic-bed-mystic.mp3",
+      "file": "bed-mystic.mp3",
       "id": "bed-mystic",
       "mood": "mystic",
-      "license": "CC0-1.0",
-      "credit": "AERIS Music (youtube.com/@aerismusicth)",
-      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/mystic.mp3"
+      "title": "Mystical Music",
+      "creator": "rhinctus",
+      "source": "https://freesound.org/people/rhinctus/sounds/368710",
+      "license": "CC0-1.0"
     },
     {
-      "file": "epic-bed-epic.mp3",
+      "file": "bed-epic.mp3",
       "id": "bed-epic",
       "mood": "epic",
-      "license": "CC0-1.0",
-      "credit": "AERIS Music (youtube.com/@aerismusicth)",
-      "source": "https://raw.githubusercontent.com/aerismusic8-alt/aeris-drive-automation/main/share/aeris-music/beds/epic.mp3"
+      "title": "Atmosphere Entry.wav",
+      "creator": "MichaelMalong",
+      "source": "https://freesound.org/people/MichaelMalong/sounds/360740",
+      "license": "CC0-1.0"
     }
   ]
 }

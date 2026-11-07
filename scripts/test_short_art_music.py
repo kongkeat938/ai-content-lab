@@ -12,6 +12,7 @@ regression here costs a run, and the symptom is a flat-colour, silent video.
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import sys
 
@@ -48,12 +49,16 @@ def main() -> int:
 
     # 3. the bed matches the channel's mood, and is stable for one id.
     md = os.path.join(ROOT, "assets", "music")
-    if os.path.exists(os.path.join(md, "provenance.json")):
+    prov = os.path.join(md, "provenance.json")
+    if os.path.exists(prov):
+        with open(prov) as fh:
+            beds = json.load(fh).get("beds", [])
+        by_file = {b["file"]: b.get("mood") for b in beds}
         for slug, spec in ps.CHANNELS.items():
             bed = ps.pick_bed(md, "01", spec["mood"])
             if not bed:
                 fails.append(f"{slug}: no bed for mood {spec['mood']}")
-            elif f"/{spec['mood']}-" not in bed.replace(os.sep, "/"):
+            elif by_file.get(os.path.basename(bed)) != spec["mood"]:
                 fails.append(f"{slug}: bed {os.path.basename(bed)} is not mood {spec['mood']}")
             elif bed != ps.pick_bed(md, "01", spec["mood"]):
                 fails.append(f"{slug}: pick_bed is not stable")

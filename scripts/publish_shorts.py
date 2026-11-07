@@ -38,9 +38,10 @@ MANIFEST = os.path.join(ROOT, "content", "ch2_shorts.json")
 CHANNEL_ID = "UCM3QO5L_pmj34n1JVlbhh-w"
 TOKEN_ENV = "YT_CH2_REFRESH_TOKEN"
 LONG_URL = "https://youtu.be/F4qFHoVpEyI"
-# The AERIS pack asks for credit, not a licence condition (CC0). One line is
-# cheap and keeps the ask honoured.
-MUSIC_CREDIT = "\n\n🎵 ดนตรีประกอบ: AERIS Music (youtube.com/@aerismusicth)"
+# The beds are CC0 (Openverse/Freesound), so credit is an ask, not a condition.
+# The AERIS pack that stood here first was replaced on 2026-11-07: it measured as
+# test tones, not music (see scripts/test_music_beds.py).
+MUSIC_CREDIT = "\n\n🎵 ดนตรีประกอบ: CC0 (Openverse / Freesound)"
 LONG_PLAYLIST = "PLBpZCGnd7Q5Y"   # "หลับลึกทั้งคืน — ฟังยาว"
 
 # One rail, several channels. The body below reads these rather than the module
