@@ -299,7 +299,7 @@ def main() -> int:
             v["url"] = f"https://youtu.be/{vid}"
             v["state"] = "published"
             save(man, args.manifest)
-            commit(args.manifest, f"publish(ch2): {key} already live as {vid} — not re-uploaded")
+            commit(args.manifest, f"publish({slug}): {key} already live as {vid} — not re-uploaded")
             continue
         local = os.path.join(args.cache, f"{key}.mp4")
         if not (os.path.exists(local) and os.path.getsize(local) > 0):
@@ -357,7 +357,7 @@ def main() -> int:
         v["url"] = url
         v["state"] = "published"
         save(man, args.manifest)   # record BEFORE anything else can fail
-        commit(args.manifest, f"publish(ch2): record {key}")
+        commit(args.manifest, f"publish({slug}): record {key}")
         print(f"  live: {url} ({response['status']['privacyStatus']}) — recorded")
 
         thumb = v.get("thumbnail")

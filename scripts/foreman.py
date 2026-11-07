@@ -125,6 +125,22 @@ def main() -> int:
     elif due4:
         print(f"  ch4: long-form due but upload-capped until {lim4['reset_at']}")
 
+    # 2c. genx long-form: due when an entry has no id, or is live but still
+    #     missing its playlist insert (the repair pass). publish-ch1 is
+    #     idempotent -- a video_id is never re-uploaded and a set playlist_added
+    #     is never re-added -- so a tick with nothing to do is cheap.
+    pub1 = load("content/ch1_publish.json", {"videos": []})
+    due1 = [v for v in pub1["videos"]
+            if (not v.get("video_id")
+                and (not v.get("not_before") or parse(v["not_before"]) <= now()))
+            or (v.get("video_id") and v.get("playlist") and not v.get("playlist_added"))]
+    lim1 = load("content/upload_limit.json", {}).get("channels", {}).get(pub1.get("channel_id"), {})
+    capped1 = bool(lim1.get("reset_at")) and parse(lim1["reset_at"]) > now()
+    if due1 and not capped1:
+        plan.append(("publish-ch1", {}))
+    elif due1:
+        print(f"  genx: long-form due but upload-capped until {lim1['reset_at']}")
+
     # 3. Shorts: drip a couple per dispatch, but only for a channel that still
     #    has material and has not exhausted its daily upload slots. The workflow
     #    is a matrix over the channels, so one dispatch covers both; a capped
