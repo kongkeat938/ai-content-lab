@@ -591,3 +591,15 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 - **กับดัก:** overlap filter สำหรับหัวข้อที่เรียนรู้ต้องใช้ floor 8 ตัวอักษร (floor 3 กรองทิ้ง 8/8
   บนช่องที่ pool เต็มไปด้วยเรื่องครอบครัว); ใช้ vendor แรกที่ให้หัวข้อใช้ได้ (Gemini สะอาด,
   Pollinations เพี้ยน).
+
+## 🔍 ประเมินคุณภาพรายคลิป (2026-11-07)
+- `studio_ai` เดิมแค่จัดอันดับด้วยวิว **ไม่ประเมินคุณภาพ** → สร้าง `scripts/video_review.py`:
+  เกรด A–D จาก retention (`averageViewPercentage`) + engagement (likes+comments+shares+subs ต่อ 1k
+  views) เทียบค่ากลางช่อง → panel วิจารณ์ hook/lines/cta จริง → `content/reviews/<ch>.json`
+  + `docs/REVIEW-<ch>.md` + สกัด **RULES 3 ข้อ** เข้า `content/insights/<ch>.json`.
+- `gen_short_scripts.py` ฉีด rules เข้า prompt → คลิปใหม่ปรับตามคำวิจารณ์ (พิสูจน์แล้ว
+  "applying 3 rules learned from the video review").
+- **กับดัก:** Data API quota หมดกลางวันได้ (403, รีเซ็ต 08:00 UTC) → ชื่อคลิปหายแต่เกรดยังได้;
+  จับคู่สคริปต์ผ่าน manifest `content/<ch>_shorts.json` (video_id→script id). Analytics quota
+  แยกจาก Data API.
+- workflow `studio-ai.yml` มี step "Grade the videos already on the channel" (if: always()).
