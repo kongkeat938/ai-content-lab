@@ -59,6 +59,10 @@ def parse(iso: str) -> datetime:
     return datetime.fromisoformat(iso.replace("Z", "+00:00"))
 
 
+def utc_hour() -> int:
+    return now().hour
+
+
 def workflow_ids() -> dict:
     return {w["name"]: w["id"] for w in gh(f"/repos/{REPO}/actions/workflows")["workflows"]}
 
@@ -104,6 +108,14 @@ def main() -> int:
     t_age = last_success_min("set-thumbnails", ids)
     if thumbs.get("thumbnails") and (t_age is None or t_age > 180):
         plan.append(("set-thumbnails", {}))
+
+    # 1b. Channel rename: the API quota resets 08:00 UTC, so a tick before that
+    #     only defers. Dispatch once a day after the reset; set_channel_name is
+    #     idempotent (it skips a channel already carrying the target name).
+    if ids.get("set-channel-name") and utc_hour() >= 8:
+        n_age = last_success_min("set-channel-name", ids)
+        if n_age is None or n_age > 20 * 60:
+            plan.append(("set-channel-name", {}))
 
     # 2. Long videos: due whenever an entry has no id and its hold has passed.
     pub = load("content/ch2_publish.json", {"videos": []})
