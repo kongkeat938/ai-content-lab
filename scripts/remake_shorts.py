@@ -68,6 +68,43 @@ def set_privacy(yt, video_id: str, privacy: str) -> None:
                        body={"id": video_id, "status": {"privacyStatus": privacy}}).execute()
 
 
+def fix_old(yt, rem: dict, rpath: str, mode: str, threshold: int, channel: str) -> int:
+    """Retry the old-clip moves that a quota-exhausted run could not finish.
+
+    The Data API shares one quota across every call, so an upload that runs the
+    budget to zero leaves its own clip's unlist as a 403 -- measured 2026-11-07 on
+    dharma. The upload is the part that matters and it is already recorded, so the
+    move is left pending and swept up here on a later run, when the quota has
+    reset. Nothing is uploaded by this pass.
+    """
+    pending = [(sid, v) for sid, v in rem["shorts"].items() if v.get("old_privacy_pending")]
+    print(f"{len(pending)} old clip(s) pending a privacy move")
+    rc = 0
+    for sid, v in pending:
+        old_id = v.get("old_video_id")
+        if not old_id:
+            v.pop("old_privacy_pending", None)
+            continue
+        try:
+            n = views_of(yt, old_id)
+            if mode == "unlist-low" and n >= threshold:
+                v["old_privacy"] = "public"
+                v.pop("old_privacy_pending", None)
+                print(f"  {sid}: old {old_id} kept public ({n} views)")
+                continue
+            privacy = "private" if mode == "private" else "unlisted"
+            set_privacy(yt, old_id, privacy)
+            v["old_privacy"] = privacy
+            v.pop("old_privacy_pending", None)
+            print(f"  {sid}: old {old_id} -> {privacy} ({n} views)")
+        except Exception as exc:  # noqa: BLE001 -- quota, retry on a later run
+            print(f"  {sid}: still pending ({exc})")
+            rc = 1
+    ps.save(rem, rpath)
+    ps.commit(rpath, f"remake({channel}): sweep the old clips that were left public")
+    return rc
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", default="dharma", choices=list(ps.CHANNELS))
@@ -137,17 +174,15 @@ def main() -> int:
             print(f"      old {old} -> new version ({args.privacy}); old clip: {args.old}")
         return 0
 
-    if room == 0:
-        print(f"daily cap reached ({already}/{ps.DAILY_CAP} in the last 24h) -- waiting")
-        return 0
-    if since is not None and since < ps.MIN_GAP_HOURS:
-        print(f"last upload {since:.1f}h ago, under the {ps.MIN_GAP_HOURS}h gap -- waiting")
-        return 0
-    todo = todo[:min(args.per_run, room)]
-    print(f"{len(todo)} to remake, {len(rem['shorts'])} already remade, "
-          f"{already}/{ps.DAILY_CAP} published in the last 24h")
-    if not todo:
-        print("nothing to do")
+    planned = todo[:min(args.per_run, room)] if room else []
+    pending = [v for v in rem["shorts"].values() if v.get("old_privacy_pending")]
+    if not planned and not pending:
+        if room == 0:
+            print(f"daily cap reached ({already}/{ps.DAILY_CAP} in the last 24h) -- waiting")
+        elif since is not None and since < ps.MIN_GAP_HOURS:
+            print(f"last upload {since:.1f}h ago, under the {ps.MIN_GAP_HOURS}h gap -- waiting")
+        else:
+            print("nothing to do")
         return 0
 
     from googleapiclient.discovery import build
@@ -169,8 +204,19 @@ def main() -> int:
     except HttpError as exc:
         print(f"  channel check skipped ({exc.status_code})", file=sys.stderr)
 
+    # Sweep any old-clip move an earlier run could not finish, before this run
+    # spends the shared Data API quota on an upload. Cheap, and it is the only
+    # thing that puts a stuck old clip to unlisted.
+    fix_old(yt, rem, rpath, args.old, args.old_view_threshold, args.channel)
+
+    if not planned:
+        print("nothing to upload this run; swept the old clips")
+        return 0
+    print(f"{len(planned)} to remake, {len(rem['shorts'])} already remade, "
+          f"{already}/{ps.DAILY_CAP} published in the last 24h")
+
     rc = 0
-    for s in todo:
+    for s in planned:
         sid = s["id"]
         old_id = man["shorts"][sid]["video_id"]
         out = os.path.join(work, sid, f"short_{sid}.mp4")
@@ -243,15 +289,22 @@ def main() -> int:
         if args.old != "keep":
             v = views_of(yt, old_id)
             if args.old == "unlist-low" and v >= args.old_view_threshold:
+                rem["shorts"][sid]["old_privacy"] = "public"
                 print(f"  old {old_id} kept public ({v} views >= {args.old_view_threshold})")
             else:
                 privacy = "private" if args.old == "private" else "unlisted"
                 try:
                     set_privacy(yt, old_id, privacy)
+                    rem["shorts"][sid]["old_privacy"] = privacy
                     print(f"  old {old_id} -> {privacy} ({v} views); reversible")
                 except HttpError as exc:
-                    print(f"  old clip not moved ({exc.status_code}); left as it was",
-                          file=sys.stderr)
+                    # Usually the shared Data API quota: the upload above spent it.
+                    # Leave it pending so a later run finishes the move.
+                    rem["shorts"][sid]["old_privacy_pending"] = privacy
+                    print(f"  old clip not moved ({exc.status_code}); left as it was, "
+                          f"pending a later run", file=sys.stderr)
+            ps.save(rem, rpath)
+            ps.commit(rpath, f"remake({args.channel}): record the old clip's privacy")
 
     print(f"\n{len([v for v in rem['shorts'].values() if v.get('video_id')])}"
           f"/{len(scripts)} shorts remade")
