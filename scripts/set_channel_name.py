@@ -46,7 +46,8 @@ TOKEN_URL = "https://oauth2.googleapis.com/token"
 TARGET = {
     "kongkeat-story": {
         "token": "YT_CH4_REFRESH_TOKEN",
-        "lang": "th",
+        "lang": "th",        # defaultLanguage value
+        "loc": "th_TH",      # localizations key (the API stores th_TH, not th)
         "title": "เรื่องเล่าอบอุ่นใจ",
         "description": "เรื่องเล่าความทรงจำครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ "
                        "ฟังเพลินทั้งคืน เหมาะเปิดฟังตอนพักผ่อน ทำงานบ้าน หรือก่อนนอน",
@@ -84,12 +85,13 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
     chb = item.get("brandingSettings", {}).get("channel", {})
     live_title = chb.get("title") or item["snippet"]["title"]
     default_lang = chb.get("defaultLanguage") or item["snippet"].get("defaultLanguage") or ""
-    loc_th = (item.get("localizations") or {}).get("th", {}).get("title")
+    loc_key = t.get("loc", t["lang"])
+    loc_th = (item.get("localizations") or {}).get(loc_key, {}).get("title")
     print(f"== {slug}  id={item['id']}")
     print(f"   live title (brandingSettings.channel.title): {live_title}")
     print(f"   snippet.title                              : {item['snippet']['title']}")
     print(f"   defaultLanguage                            : {default_lang!r}")
-    print(f"   localizations.th.title                     : {loc_th!r}")
+    print(f"   localizations.{loc_key}.title              : {loc_th!r}")
     if verify_only:
         ok = loc_th == t["title"]
         print(f"   target {t['title']!r} -> {'OK' if ok else 'NOT YET'}")
@@ -107,7 +109,7 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
     #     viewer in that language sees, i.e. the rename for a Thai audience.
     #   * localizations is refused unless defaultLanguage is set.
     # So the rename is two calls: set defaultLanguage first, then the title.
-    print(f"   plan: defaultLanguage -> {t['lang']!r}, then localizations.{t['lang']}.title -> {t['title']!r}")
+    print(f"   plan: defaultLanguage -> {t['lang']!r}, then localizations.{loc_key}.title -> {t['title']!r}")
     if dry:
         print("   dry-run: not writing")
         return 0
@@ -133,16 +135,19 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
     # Call 2: part=localizations. This is the actual rename.
     res = api(tok, "PUT", f"{CH_URL}?part=localizations",
               {"id": item["id"],
-               "localizations": {t["lang"]: {"title": t["title"], "description": t["description"]}}})
-    got = (res.get("localizations") or {}).get(t["lang"], {}).get("title")
-    print(f"   set localizations.{t['lang']}.title -> {got!r}")
+               "localizations": {loc_key: {"title": t["title"], "description": t["description"]}}})
+    got = (res.get("localizations") or {}).get(loc_key, {}).get("title")
+    print(f"   set localizations.{loc_key}.title -> {got!r}")
     if got == t["title"]:
         print("   OK -- renamed via the API (localizations)")
         return 0
-    print("   DID NOT STICK.")
-    print(f"   Response: {str(res)[:300]}")
-    print("   If the error is defaultLanguageNotSetError, the brandingSettings call did not")
-    print("   land. If it is forbidden, the channel may need YouTube Studio.")
+    # Measured 2026-11-07: the call returns 200, the description in the same body
+    # DOES land, but the title comes back unchanged. So the title is not settable
+    # through the API for this channel; the name must be changed in Studio.
+    print("   TITLE NOT SETTABLE VIA THE API (measured 2026-11-07: the description")
+    print("   in the same request lands, the title does not). Change the channel")
+    print("   name in YouTube Studio > Customization > Basic info. The description,")
+    print("   language and playlists are already applied by this rail.")
     return 0
 
 
