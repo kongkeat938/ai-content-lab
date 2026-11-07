@@ -140,22 +140,80 @@ PROBE_HOURS = 3
 # what let the flood through, so the cap lives here where no trigger can bypass it.
 DAILY_CAP = 3
 
+# The upload ledger the cap counts. Kept separate from upload_limit.json, which
+# records a ceiling refusal, not a normal upload.
+UPLOAD_LOG = os.path.join(ROOT, "content", "upload_log.json")
 
-def uploads_in_last_24h(manifest_path: str) -> int:
-    """Count Shorts recorded in this manifest over the last 24 hours (via git).
 
-    The manifest is committed the moment each id is known, so its git history is
-    the upload log. Counting it here means the cap holds across runs, across
-    triggers and across the ephemeral CI runner -- state no single run owns.
+def _load_upload_log() -> dict:
+    d = load(UPLOAD_LOG, {})
+    if not isinstance(d, dict) or "channels" not in d:
+        return {"channels": {}}
+    return d
+
+
+def _prune(stamps: list[str]) -> list[str]:
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    out = []
+    for ts in stamps:
+        try:
+            if datetime.fromisoformat(str(ts).replace("Z", "+00:00")) > cutoff:
+                out.append(ts)
+        except ValueError:
+            continue
+    return out
+
+
+def _seed_ledger(channel_id: str, manifest_path: str) -> None:
+    """One-time seed of the ledger from the manifest's own commit history.
+
+    Only runs when the ledger has no entry for the channel, so a fresh ledger
+    (first run after this code lands) starts from the real recent uploads rather
+    than zero -- which would otherwise let a full day's worth through at once.
     """
+    log = _load_upload_log()
+    if log["channels"].get(channel_id):
+        return
     rel = os.path.relpath(manifest_path, ROOT)
     try:
         out = subprocess.run(["git", "-C", ROOT, "log", "--since=24 hours ago",
-                              "--format=%ct", "--", rel],
+                              "--format=%cI", "--", rel],
                              capture_output=True, text=True, timeout=30).stdout
     except (OSError, subprocess.SubprocessError):
-        return 0
-    return len([ln for ln in out.splitlines() if ln.strip()])
+        return
+    stamps = _prune([ln.strip() for ln in out.splitlines() if ln.strip()])
+    if not stamps:
+        return
+    log["channels"][channel_id] = stamps
+    _write_upload_log(log)
+
+
+def _write_upload_log(log: dict) -> None:
+    with open(UPLOAD_LOG, "w", encoding="utf-8") as fh:
+        json.dump(log, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+
+
+def uploads_in_last_24h(channel_id: str, manifest_path: str) -> int:
+    """Uploads in the last 24 hours, from the committed ledger.
+
+    The ledger, not the manifest's git history, is the source of truth: CI checks
+    out a single commit (fetch-depth 1), so counting commits saw one upload and the
+    cap silently never tripped -- measured 2026-11-07, when the first capped run
+    still published four Shorts. The script writes and commits the ledger itself,
+    so it survives that shallow checkout.
+    """
+    _seed_ledger(channel_id, manifest_path)
+    return len(_prune(_load_upload_log()["channels"].get(channel_id, [])))
+
+
+def note_upload(channel_id: str) -> None:
+    """Record one upload in the ledger so the cap counts it on the next run."""
+    log = _load_upload_log()
+    keep = _prune(log["channels"].get(channel_id, []))
+    keep.append(datetime.now(timezone.utc).isoformat(timespec="seconds"))
+    log["channels"][channel_id] = keep
+    _write_upload_log(log)
 
 
 def note_upload_limit(channel_id: str, detail: str = "") -> None:
@@ -271,7 +329,7 @@ def main() -> int:
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
     todo = winning_first(todo, spec.get("cues"))
     # Hold the channel to a slow drip regardless of how often this was triggered.
-    already = uploads_in_last_24h(spec["manifest"])
+    already = uploads_in_last_24h(args.channel, spec["manifest"])
     room = max(DAILY_CAP - already, 0)
     if room == 0:
         print(f"daily cap reached ({already}/{DAILY_CAP} in the last 24h) -- "
@@ -369,7 +427,9 @@ def main() -> int:
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
                               "title": body["snippet"]["title"]}
         save(man, spec["manifest"])   # record before anything else can fail
+        note_upload(args.channel)     # the cap counts this on the next run
         commit(spec["manifest"], f"publish({args.channel}): record Short {sid}")
+        commit(UPLOAD_LOG, f"publish({args.channel}): count Short {sid} toward the daily cap")
         print(f"  live: https://youtu.be/{vid}")
 
     print(f"\n{len([v for v in man['shorts'].values() if v.get('video_id')])}"
