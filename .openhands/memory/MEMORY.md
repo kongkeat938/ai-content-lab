@@ -393,6 +393,13 @@ different ways) — use F0-contour correlation + MFCC distance.
   ch2 long rail are the working channels for volume today.
 
 
+## 🔒 ตัด K ออก 100% — ตัวตั้งเวลา self-healing (2026-11-07)
+- **อย่าพึ่ง GitHub cron**: วัดแล้ว foreman `*/30` ยิงแค่ **1/30 runs**. ตัวตั้งเวลาหลักคือ
+  **watchdog chain** (dispatch ตัวเองต่อ) — แก้ให้ **ต่อคิวตัวถัดไป 'ก่อน' ทำงาน** กัน link ตายกลางทาง.
+- foreman ชุบ watchdog เมื่อเงียบ + ขับ `check-duplicates`/`progress`/`short doors` เอง; guard = `scripts/test_watchdog.py`.
+- pod PAT dispatch = **403** (fine-grained); CI ใช้ `GITHUB_TOKEN` ของตัวเอง (actions:write) ได้.
+- เหลือข้อจำกัดเดียว: repo เงียบ 60 วัน → GitHub ปิด cron (แต่ chain ไม่พึ่ง cron).
+
 ## 🔍 คลิปวิว 0 — ต้นเหตุจริงคือ burst ไม่ใช่คุณภาพ (2026-11-07)
 - **Analytics รายงานคลิปใหม่ช้า** — คลิปที่ขึ้น '0 วิว' ใน Analytics จริง ๆ มี 154/107/75
   (Data API). **อย่าใช้ Analytics ตัดสินคลิปใหม่** ใช้ Data API `statistics.viewCount`.
