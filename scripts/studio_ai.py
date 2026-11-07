@@ -40,6 +40,10 @@ CHANNELS = {
     "ch4": "YT_CH4_REFRESH_TOKEN",
 }
 
+# The generator names its channels differently; map them so one insights file
+# serves both.
+GEN_ALIAS = {"ch1": "genx", "ch2": "dharma", "ch4": "kongkeat-story"}
+
 
 def access_token(env: str) -> str:
     data = urllib.parse.urlencode({
@@ -123,11 +127,53 @@ def ask_panel(question: str, extra: str) -> dict[str, str]:
 
 
 QUESTION = (
-    "จากตัวเลขจริงของช่องข้างบน จงตอบ 4 ข้อสั้น ๆ เป็นภาษาไทย:\n"
+    "จากตัวเลขจริงของช่องข้างบน จงตอบ 3 ข้อสั้น ๆ เป็นภาษาไทย:\n"
     "1) คลิปแบบไหนทำผลงานดีที่สุด (ดูจากชื่อ+ตัวเลข) และเพราะอะไร\n"
     "2) 3 ธีมที่ควรทำต่อ เรียงตามโอกาส\n"
     "3) hook 3 วินาทีแรกควรพูดอะไร\n"
-    "4) แผน 14 วันถัดไป (จำนวนคลิป/สัปดาห์ รูปแบบ) พร้อมเป้ายอดวิว")
+    "จากนั้นบรรทัดสุดท้าย ให้เขียนหัวข้อ Shorts ใหม่ 8 หัวข้อ ที่ต่อยอดจากคลิปที่ทำได้ดี "
+    "ในรูปบรรทัดเดียว ขึ้นต้นด้วย 'TOPICS:' แล้วคั่นแต่ละหัวข้อด้วย ' | '")
+
+
+def parse_topics(text: str) -> list[str]:
+    """Pull the generator's next subjects out of a panel answer."""
+    for line in reversed(text.splitlines()):
+        if "TOPICS:" in line:
+            blob = line.split("TOPICS:", 1)[1]
+            items = [t.strip(" -*\t") for t in blob.replace("|", "\n").splitlines()]
+            return [t for t in items if 4 <= len(t) <= 80][:8]
+    return []
+
+
+def write_insights(channel: str, per_video: list[dict], answers: dict[str, str]) -> str:
+    """Feed the generator: the winning hooks plus the panel's next subjects."""
+    top = [r for r in per_video[:6]]
+    winners = [r["title"] for r in top]
+    topics: list[str] = []
+    for ans in answers.values():
+        for t in parse_topics(ans):
+            if t not in topics:
+                topics.append(t)
+        if topics:
+            # First vendor that yields usable subjects wins. Later vendors only
+            # pad the list if the first returned nothing usable (measured
+            # 2026-11-07: Gemini gave clean subjects, Pollinations was garbled).
+            break
+    if not topics:
+        topics = winners[:5]
+    blob = {"generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "winners": winners, "topics": topics}
+    # Write under the channel id and under the generator's own name, so
+    # gen_short_scripts.py finds it without a copy step.
+    names = {channel, GEN_ALIAS.get(channel, channel)}
+    out = ""
+    for name in names:
+        path = os.path.join(ROOT, "content", "insights", f"{name}.json")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(blob, fh, ensure_ascii=False, indent=1)
+        out = path
+    return out
 
 
 def main() -> int:
@@ -144,11 +190,15 @@ def main() -> int:
     text = brief(data)
     print(text)
 
+    answers: dict[str, str] = {}
     if a.panel:
         print("\n== panel ==")
-        for name, ans in ask_panel(QUESTION, "ข้อมูลจริง:\n" + text).items():
+        answers = ask_panel(QUESTION, "ข้อมูลจริง:\n" + text)
+        for name, ans in answers.items():
             print(f"\n### {name}\n{ans}")
             text += f"\n\n### {name}\n{ans}"
+        ins = write_insights(a.channel, data["per_video"], answers)
+        print(f"\nwrote {ins}")
 
     if a.out:
         path = a.out if os.path.isabs(a.out) else os.path.join(ROOT, a.out)
