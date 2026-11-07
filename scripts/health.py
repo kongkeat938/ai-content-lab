@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -30,12 +31,27 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("KONGKEAT_GH_TOKEN")
 
 # workflow name -> (how often it should succeed, in minutes)
+# Intervals are ~2.5x the cron period, so ordinary scheduler jitter does not cry
+# wolf. A weekly rail gets 8 days. Silence is the bug: a rail that has never
+# succeeded is stale, not fine.
 EXPECTED = {
-    "set-thumbnails": 180,
-    "publish-shorts": 300,
-    "publish-batch": 400,
-    "grow-shorts-pool": 1600,
-    "foreman": 400,          # the driver itself must not die
+    "foreman": 90,               # the driver; */30, so 90 min is already late
+    "set-thumbnails": 90,        # */20
+    "publish-shorts": 420,       # 01:30 + 13:30 + the chain
+    "publish-batch": 400,        # */3h, but only counts when a long video is due
+    "link-shorts": 420,          # daily 09:00 + the chain every 6 h
+    "grow-shorts-pool": 1700,    # daily 22:00 + the chain
+    "ch4-realign": 1700,         # daily 08:05 + the chain
+    "polish-all": 1700,          # daily 08-11 + the chain
+    "progress": 1700,            # daily 07:12
+    "account-watch": 1700,       # daily 08:42
+    "publish-ch1": 1700,
+    "publish-ch4": 1700,
+    "watch-hours": 11520,        # weekly
+    "check-duplicates": 11520,   # weekly Monday
+    "night-compilation": 11520,  # weekly Monday
+    "genx-longform": 11520,      # weekly Tuesday
+    "ch4-longform": 11520,       # weekly Thursday
 }
 
 
@@ -89,10 +105,53 @@ def age_min(iso: str | None) -> float | None:
     return (datetime.now(timezone.utc) - when).total_seconds() / 60
 
 
+ALERT_TITLE = "rail health: an automation has gone quiet"
+
+
+def upsert_alert(stale: list, generated: str) -> None:
+    """Open an issue when a rail goes quiet, and close it when all are fresh.
+
+    Writing docs/HEALTH.md is not enough: the foreman runs health with `|| true`,
+    so a STALE section sat in a file nobody opened. The alert has to arrive where
+    it will be seen -- a GitHub issue -- and it must clear itself, or the channel
+    is trained to ignore it.
+    """
+    repo = os.environ.get("GITHUB_REPOSITORY", REPO)
+    try:
+        listed = subprocess.run(["gh", "issue", "list", "--repo", repo, "--state", "open",
+                                 "--search", ALERT_TITLE, "--json", "number,title"],
+                                capture_output=True, text=True, check=True)
+        existing = next((i for i in json.loads(listed.stdout or "[]")
+                         if i["title"] == ALERT_TITLE), None)
+        if stale:
+            body = "\n".join(
+                [f"Measured {generated}. These automations are not behaving:", ""]
+                + [f"- {s}" for s in stale] + ["",
+                   "_Opened/updated by scripts/health.py; it closes itself when every rail is fresh._"])
+            if existing:
+                subprocess.run(["gh", "issue", "comment", str(existing["number"]),
+                                "--repo", repo, "--body", body], check=True)
+                print(f"alert updated on issue #{existing['number']}")
+            else:
+                subprocess.run(["gh", "issue", "create", "--repo", repo,
+                                "--title", ALERT_TITLE, "--body", body], check=True)
+                print("alert issue opened")
+        elif existing:
+            subprocess.run(["gh", "issue", "comment", str(existing["number"]), "--repo", repo,
+                            "--body", f"All rails fresh again as of {generated}. Closing."], check=True)
+            subprocess.run(["gh", "issue", "close", str(existing["number"]),
+                            "--repo", repo], check=True)
+            print(f"alert cleared; closed issue #{existing['number']}")
+    except Exception as exc:  # a report must never fail the rail
+        print(f"alert step skipped: {exc}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--alert", action="store_true",
+                    help="open/update (or clear) the health issue from the stale list")
     args = ap.parse_args()
 
     runs = last_runs()
@@ -199,6 +258,8 @@ def main() -> int:
     if args.write:
         with open(os.path.join(ROOT, "docs", "HEALTH.md"), "w", encoding="utf-8") as fh:
             fh.write(text)
+    if args.alert:
+        upsert_alert(stale, report["generated"])
     return 1 if stale else 0
 
 

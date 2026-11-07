@@ -21,6 +21,7 @@ on:
 permissions:
   actions: write   # dispatch other workflows
   contents: write  # the health report
+  issues: write    # open/clear the rail-health alert
 
 concurrency:
   group: foreman
@@ -46,7 +47,7 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 scripts/health.py --write || true
+        run: python3 scripts/health.py --write --alert || true
 
       - name: Commit the health report
         if: always()
