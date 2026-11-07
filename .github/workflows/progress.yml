@@ -1,0 +1,53 @@
+name: progress
+
+# K's ask (2026-11-07): show the work is being done at full effort -- watched and
+# improved continuously. This rail is the watching. Once a day it reads the
+# committed watch-hour history and the public subscriber counts, writes
+# docs/PROGRESS.md (the distance to YPP and to $500/month), and updates one
+# GitHub issue, so the number arrives without anyone opening a file.
+#
+# It does not need the Data API, so it keeps reporting on a day that quota is
+# spent. No secrets beyond the automatic token.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "12 7 * * *"   # daily, 07:12 UTC -- after the 08:00Z-ish quota resets settle
+
+permissions:
+  contents: write   # commit PROGRESS.md + docs/subs.json
+  issues: write     # open/update the progress issue
+
+concurrency:
+  group: progress
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Write the progress report and update the issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python3 scripts/progress.py --write --issue
+
+      - name: Commit the report
+        run: |
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add docs/PROGRESS.md docs/subs.json
+          if git diff --cached --quiet; then
+            echo "no change to report"
+            exit 0
+          fi
+          git commit -m "progress: refresh the distance-to-goal report [skip ci]"
+          if git push; then exit 0; fi
+          git pull --rebase --autostash origin main || { git rebase --abort || true; exit 0; }
+          git push || echo "push rejected -- next tick refreshes it"
