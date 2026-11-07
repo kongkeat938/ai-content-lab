@@ -641,3 +641,11 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 - ต่อเข้า `publish_shorts.py` แล้ว (`--art-dir`+`--music`); test `scripts/test_short_art_music.py`;
   CI `fetch-music.yml`. วัด: 3 ช่อง -15.9…-16.6 LUFS, TP ≤ -2.87.
 - **env:** pod recycle ล้าง ffmpeg + pip deps → ติดตั้งใหม่ได้ทุกครั้ง.
+
+## 🔑 Durable: "แยกไม่ได้" ≠ "ผิด" (quota-safe identity)
+ตัวตรวจที่พิสูจน์ตัวตนด้วย **Data API** (`channels.list`) จะ **ตายเงียบเมื่อโควตาหมด**
+(403 ทุก token) แล้วอ่านผลเป็น "ไม่ใช่ของเรา". ทางแก้ที่ repo ใช้: **per-channel secret
+คือตัวตน** (`YT_CH1/2/4_REFRESH_TOKEN` = ช่องนั้นโดยโครงสร้าง) — fallback เมื่อ API แยกไม่ได้,
+แต่ token ที่ยืนยันได้ว่าเป็นช่องอื่นยัง abort. ใช้ใน `yt_auth.CHANNEL_ENV` +
+`env_token_for_channel`; เทสต์ `scripts/test_channel_identity.py`. **cron ที่รัน
+ก่อน 08:00 UTC จะอยู่ในหน้าต่างโควตาหมดเสมอ** (Data API รีเซ็ต 08:00 UTC; Analytics แยกโควตา).
