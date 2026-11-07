@@ -254,6 +254,21 @@ def main() -> int:
     if wh_age is None or wh_age > 6 * 24 * 60:
         plan.append(("watch-hours", {}))
 
+    # 5e. The three rails that were only reachable through GitHub's cron. That cron
+    #     is unreliable here (measured 2026-11-07: the */30 foreman cron fired once
+    #     in 30 runs), so a rail that only has a `schedule` can be missed for days.
+    #     Driving them from the chain -- which runs reliably -- is what makes them
+    #     actually happen. Each keeps its own cadence and is idempotent.
+    d_age = last_success_min("check-duplicates", ids)
+    if d_age is None or d_age > 6 * 24 * 60:
+        plan.append(("check-duplicates", {}))
+    pr_age = last_success_min("progress", ids)
+    if pr_age is None or pr_age > 20 * 60:
+        plan.append(("progress", {}))
+    sd_age = last_success_min("short doors", ids)
+    if sd_age is None or sd_age > 6 * 24 * 60:
+        plan.append(("short doors", {}))
+
     # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
     #    any push runs the foreman, so a broken chain repairs itself on the next
     #    commit instead of staying dead until someone notices.

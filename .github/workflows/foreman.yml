@@ -43,6 +43,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/foreman.py
 
+      - name: Guard the self-timer
+        run: python3 scripts/test_watchdog.py
+
       - name: Health report (never fails the run)
         if: always()
         env:

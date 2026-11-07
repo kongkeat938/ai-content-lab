@@ -9,7 +9,10 @@ name: watchdog
 # The repo is public, so Actions minutes are free. One `concurrency` group keeps
 # two chains from coexisting. To stop the chain: create content/STOP.
 #
-# It is still started by hand once (or by any push), and then runs itself.
+# It queues its successor before it does any work, so a link that dies mid-run
+# cannot break the chain. It no longer needs a hand to start it either: the
+# foreman dispatches it whenever the chain goes quiet, and a backup schedule here
+# catches the case where both the chain and the foreman's own tick are missed.
 on:
   workflow_dispatch:
     inputs:
@@ -22,6 +25,12 @@ on:
       chain:
         description: "true to re-dispatch the chain (false = single test run)"
         default: "true"
+  # A second way in. The chain below is the primary timer, but GitHub's cron is
+  # unreliable here (measured 2026-11-07: the */30 foreman cron fired once in 30
+  # runs), so a scheduled tick is only a backup -- the chain, plus the foreman's
+  # own self-heal, are what actually keep the timer alive.
+  schedule:
+    - cron: "45 */4 * * *"
 
 permissions:
   actions: write
