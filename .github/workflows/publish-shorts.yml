@@ -16,7 +16,10 @@ on:
         description: "true to only list what would be posted"
         default: "false"
   schedule:
-    - cron: "30 1,13 * * *"   # twice a day (08:30 / 20:30 Thai) -- a steady drip
+    # Three runs, eight hours apart (08:30 / 16:30 / 00:30 Thai), one Short each.
+    # Measured 2026-11-07: the zero-view cluster was published in bursts, so the
+    # gap between posts is the fix -- not just the count per day.
+    - cron: "30 1,9,17 * * *"
   push:
     paths:
       # Inputs only. The manifests (content/ch*_shorts.json) are OUTPUTS this

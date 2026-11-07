@@ -1,8 +1,10 @@
 {
   "channel": "ch2",
-  "generated": "2026-11-07T16:14:57+00:00",
+  "generated": "2026-11-07T16:21:53+00:00",
   "distribution_hours": 48,
   "working_views": 50,
+  "burst_window_min": 10,
+  "burst_min": 5,
   "counts": {
     "dead": 29,
     "under-distributed": 16,
@@ -18,8 +20,9 @@
       "privacy": "public",
       "duration": "PT46S",
       "uploaded": "2026-11-04T21:45:33Z",
-      "age_hours": 66.5,
-      "state": "dead"
+      "age_hours": 66.6,
+      "state": "dead",
+      "burst": 0
     },
     {
       "short": "43",
@@ -29,8 +32,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-04T23:45:20Z",
-      "age_hours": 64.5,
-      "state": "dead"
+      "age_hours": 64.6,
+      "state": "dead",
+      "burst": 0
     },
     {
       "short": "44",
@@ -40,8 +44,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-04T23:45:53Z",
-      "age_hours": 64.5,
-      "state": "dead"
+      "age_hours": 64.6,
+      "state": "dead",
+      "burst": 0
     },
     {
       "short": "55",
@@ -51,8 +56,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-05T13:29:39Z",
-      "age_hours": 50.8,
-      "state": "dead"
+      "age_hours": 50.9,
+      "state": "dead",
+      "burst": 6
     },
     {
       "short": "58",
@@ -62,8 +68,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-05T13:31:13Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "09",
@@ -73,8 +80,9 @@
       "privacy": "public",
       "duration": "PT23S",
       "uploaded": "2026-11-05T13:31:55Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "10",
@@ -84,8 +92,9 @@
       "privacy": "public",
       "duration": "PT21S",
       "uploaded": "2026-11-05T13:32:58Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "11",
@@ -95,8 +104,9 @@
       "privacy": "public",
       "duration": "PT21S",
       "uploaded": "2026-11-05T13:32:34Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "12",
@@ -106,8 +116,9 @@
       "privacy": "public",
       "duration": "PT19S",
       "uploaded": "2026-11-05T13:32:55Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "13",
@@ -117,8 +128,9 @@
       "privacy": "public",
       "duration": "PT21S",
       "uploaded": "2026-11-05T13:33:06Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "14",
@@ -128,8 +140,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-05T13:33:24Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "15",
@@ -139,8 +152,9 @@
       "privacy": "public",
       "duration": "PT21S",
       "uploaded": "2026-11-05T13:33:45Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "16",
@@ -150,8 +164,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-05T13:33:56Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "17",
@@ -161,8 +176,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-05T13:34:16Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "18",
@@ -172,8 +188,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-05T13:34:29Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "19",
@@ -183,8 +200,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-05T13:34:48Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "21",
@@ -194,8 +212,9 @@
       "privacy": "public",
       "duration": "PT33S",
       "uploaded": "2026-11-05T13:35:29Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "22",
@@ -205,8 +224,9 @@
       "privacy": "public",
       "duration": "PT34S",
       "uploaded": "2026-11-05T13:35:53Z",
-      "age_hours": 50.7,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "23",
@@ -216,8 +236,9 @@
       "privacy": "public",
       "duration": "PT33S",
       "uploaded": "2026-11-05T13:36:21Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "24",
@@ -227,8 +248,9 @@
       "privacy": "public",
       "duration": "PT35S",
       "uploaded": "2026-11-05T13:36:52Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.8,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "25",
@@ -238,8 +260,9 @@
       "privacy": "public",
       "duration": "PT34S",
       "uploaded": "2026-11-05T13:37:26Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.7,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "26",
@@ -249,8 +272,9 @@
       "privacy": "public",
       "duration": "PT34S",
       "uploaded": "2026-11-05T13:37:52Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.7,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "27",
@@ -260,8 +284,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-05T13:38:22Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.7,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "28",
@@ -271,8 +296,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-05T13:39:05Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.7,
+      "state": "dead",
+      "burst": 25
     },
     {
       "short": "31",
@@ -282,8 +308,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-05T13:41:51Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.7,
+      "state": "dead",
+      "burst": 0
     },
     {
       "short": "39",
@@ -293,8 +320,9 @@
       "privacy": "public",
       "duration": "PT40S",
       "uploaded": "2026-11-05T13:41:46Z",
-      "age_hours": 50.6,
-      "state": "dead"
+      "age_hours": 50.7,
+      "state": "dead",
+      "burst": 0
     },
     {
       "short": "59",
@@ -304,8 +332,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-05T15:35:17Z",
-      "age_hours": 48.7,
-      "state": "dead"
+      "age_hours": 48.8,
+      "state": "dead",
+      "burst": 5
     },
     {
       "short": "60",
@@ -315,8 +344,9 @@
       "privacy": "public",
       "duration": "PT56S",
       "uploaded": "2026-11-05T15:35:42Z",
-      "age_hours": 48.7,
-      "state": "dead"
+      "age_hours": 48.8,
+      "state": "dead",
+      "burst": 5
     },
     {
       "short": "62",
@@ -326,8 +356,9 @@
       "privacy": "public",
       "duration": "PT59S",
       "uploaded": "2026-11-05T15:37:16Z",
-      "age_hours": 48.6,
-      "state": "dead"
+      "age_hours": 48.7,
+      "state": "dead",
+      "burst": 5
     },
     {
       "short": "56",
@@ -337,8 +368,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-05T13:30:21Z",
-      "age_hours": 50.7,
-      "state": "under-distributed"
+      "age_hours": 50.9,
+      "state": "under-distributed",
+      "burst": 25
     },
     {
       "short": "57",
@@ -348,8 +380,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-05T13:30:49Z",
-      "age_hours": 50.7,
-      "state": "under-distributed"
+      "age_hours": 50.9,
+      "state": "under-distributed",
+      "burst": 25
     },
     {
       "short": "08",
@@ -359,8 +392,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-05T13:31:26Z",
-      "age_hours": 50.7,
-      "state": "under-distributed"
+      "age_hours": 50.8,
+      "state": "under-distributed",
+      "burst": 25
     },
     {
       "short": "29",
@@ -370,8 +404,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-05T13:39:51Z",
-      "age_hours": 50.6,
-      "state": "under-distributed"
+      "age_hours": 50.7,
+      "state": "under-distributed",
+      "burst": 25
     },
     {
       "short": "30",
@@ -381,8 +416,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-05T13:40:44Z",
-      "age_hours": 50.6,
-      "state": "under-distributed"
+      "age_hours": 50.7,
+      "state": "under-distributed",
+      "burst": 0
     },
     {
       "short": "61",
@@ -392,8 +428,9 @@
       "privacy": "public",
       "duration": "PT58S",
       "uploaded": "2026-11-05T15:36:38Z",
-      "age_hours": 48.6,
-      "state": "under-distributed"
+      "age_hours": 48.8,
+      "state": "under-distributed",
+      "burst": 5
     },
     {
       "short": "64",
@@ -403,8 +440,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-05T15:38:37Z",
-      "age_hours": 48.6,
-      "state": "under-distributed"
+      "age_hours": 48.7,
+      "state": "under-distributed",
+      "burst": 5
     },
     {
       "short": "63",
@@ -414,8 +452,9 @@
       "privacy": "public",
       "duration": "PT50S",
       "uploaded": "2026-11-05T15:44:15Z",
-      "age_hours": 48.5,
-      "state": "under-distributed"
+      "age_hours": 48.6,
+      "state": "under-distributed",
+      "burst": 0
     },
     {
       "short": "20",
@@ -425,8 +464,9 @@
       "privacy": "public",
       "duration": "PT19S",
       "uploaded": "2026-11-05T13:35:07Z",
-      "age_hours": 50.7,
-      "state": "under-distributed"
+      "age_hours": 50.8,
+      "state": "under-distributed",
+      "burst": 25
     },
     {
       "short": "40",
@@ -436,8 +476,9 @@
       "privacy": "public",
       "duration": "PT38S",
       "uploaded": "2026-11-04T04:54:53Z",
-      "age_hours": 83.3,
-      "state": "under-distributed"
+      "age_hours": 83.5,
+      "state": "under-distributed",
+      "burst": 0
     },
     {
       "short": "32",
@@ -447,8 +488,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-04T04:42:18Z",
-      "age_hours": 83.5,
-      "state": "under-distributed"
+      "age_hours": 83.7,
+      "state": "under-distributed",
+      "burst": 7
     },
     {
       "short": "35",
@@ -458,8 +500,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-04T04:46:37Z",
-      "age_hours": 83.5,
-      "state": "under-distributed"
+      "age_hours": 83.6,
+      "state": "under-distributed",
+      "burst": 7
     },
     {
       "short": "38",
@@ -469,8 +512,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-04T04:47:45Z",
-      "age_hours": 83.5,
-      "state": "under-distributed"
+      "age_hours": 83.6,
+      "state": "under-distributed",
+      "burst": 7
     },
     {
       "short": "34",
@@ -480,8 +524,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-04T04:46:15Z",
-      "age_hours": 83.5,
-      "state": "under-distributed"
+      "age_hours": 83.6,
+      "state": "under-distributed",
+      "burst": 7
     },
     {
       "short": "48",
@@ -491,8 +536,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-05T03:46:20Z",
-      "age_hours": 60.5,
-      "state": "under-distributed"
+      "age_hours": 60.6,
+      "state": "under-distributed",
+      "burst": 0
     },
     {
       "short": "33",
@@ -502,8 +548,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-04T04:45:48Z",
-      "age_hours": 83.5,
-      "state": "under-distributed"
+      "age_hours": 83.6,
+      "state": "under-distributed",
+      "burst": 7
     },
     {
       "short": "65",
@@ -513,8 +560,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-05T19:19:45Z",
-      "age_hours": 44.9,
-      "state": "too-new"
+      "age_hours": 45.0,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "66",
@@ -524,8 +572,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-05T19:20:16Z",
-      "age_hours": 44.9,
-      "state": "too-new"
+      "age_hours": 45.0,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "84",
@@ -535,8 +584,9 @@
       "privacy": "public",
       "duration": "PT38S",
       "uploaded": "2026-11-06T19:31:02Z",
-      "age_hours": 20.7,
-      "state": "too-new"
+      "age_hours": 20.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "85",
@@ -546,8 +596,9 @@
       "privacy": "public",
       "duration": "PT41S",
       "uploaded": "2026-11-06T19:31:56Z",
-      "age_hours": 20.7,
-      "state": "too-new"
+      "age_hours": 20.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "101",
@@ -557,8 +608,9 @@
       "privacy": "public",
       "duration": "PT40S",
       "uploaded": "2026-11-07T15:50:10Z",
-      "age_hours": 0.4,
-      "state": "too-new"
+      "age_hours": 0.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "102",
@@ -568,8 +620,9 @@
       "privacy": "public",
       "duration": "PT35S",
       "uploaded": "2026-11-07T15:50:52Z",
-      "age_hours": 0.4,
-      "state": "too-new"
+      "age_hours": 0.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "67",
@@ -579,8 +632,9 @@
       "privacy": "public",
       "duration": "PT51S",
       "uploaded": "2026-11-05T19:20:59Z",
-      "age_hours": 44.9,
-      "state": "too-new"
+      "age_hours": 45.0,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "68",
@@ -590,8 +644,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-05T23:28:20Z",
-      "age_hours": 40.8,
-      "state": "too-new"
+      "age_hours": 40.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "69",
@@ -601,8 +656,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-06T05:59:12Z",
-      "age_hours": 34.3,
-      "state": "too-new"
+      "age_hours": 34.4,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "78",
@@ -612,8 +668,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-06T16:01:38Z",
-      "age_hours": 24.2,
-      "state": "too-new"
+      "age_hours": 24.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "79",
@@ -623,8 +680,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-06T16:01:59Z",
-      "age_hours": 24.2,
-      "state": "too-new"
+      "age_hours": 24.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "80",
@@ -634,8 +692,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-06T16:06:39Z",
-      "age_hours": 24.1,
-      "state": "too-new"
+      "age_hours": 24.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "83",
@@ -645,8 +704,9 @@
       "privacy": "public",
       "duration": "PT39S",
       "uploaded": "2026-11-06T18:07:13Z",
-      "age_hours": 22.1,
-      "state": "too-new"
+      "age_hours": 22.2,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "86",
@@ -656,8 +716,9 @@
       "privacy": "public",
       "duration": "PT36S",
       "uploaded": "2026-11-06T20:05:35Z",
-      "age_hours": 20.2,
-      "state": "too-new"
+      "age_hours": 20.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "82",
@@ -667,8 +728,9 @@
       "privacy": "public",
       "duration": "PT38S",
       "uploaded": "2026-11-06T18:06:22Z",
-      "age_hours": 22.1,
-      "state": "too-new"
+      "age_hours": 22.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "97",
@@ -678,8 +740,9 @@
       "privacy": "public",
       "duration": "PT37S",
       "uploaded": "2026-11-07T12:38:40Z",
-      "age_hours": 3.6,
-      "state": "too-new"
+      "age_hours": 3.7,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "98",
@@ -689,8 +752,21 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-07T12:39:17Z",
-      "age_hours": 3.6,
-      "state": "too-new"
+      "age_hours": 3.7,
+      "state": "too-new",
+      "burst": 0
+    },
+    {
+      "short": "99",
+      "video": "dSmGzb3hUq0",
+      "title": "คืนนี้ลองวางมือบนอกแล้วหายใจลึกช้า #Shorts",
+      "views": 3,
+      "privacy": "public",
+      "duration": "PT39S",
+      "uploaded": "2026-11-07T12:52:44Z",
+      "age_hours": 3.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "96",
@@ -700,8 +776,9 @@
       "privacy": "public",
       "duration": "PT38S",
       "uploaded": "2026-11-07T11:33:07Z",
-      "age_hours": 4.7,
-      "state": "too-new"
+      "age_hours": 4.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "100",
@@ -711,19 +788,9 @@
       "privacy": "public",
       "duration": "PT39S",
       "uploaded": "2026-11-07T12:53:16Z",
-      "age_hours": 3.4,
-      "state": "too-new"
-    },
-    {
-      "short": "99",
-      "video": "dSmGzb3hUq0",
-      "title": "คืนนี้ลองวางมือบนอกแล้วหายใจลึกช้า #Shorts",
-      "views": 5,
-      "privacy": "public",
-      "duration": "PT39S",
-      "uploaded": "2026-11-07T12:52:44Z",
-      "age_hours": 3.4,
-      "state": "too-new"
+      "age_hours": 3.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "81",
@@ -733,8 +800,9 @@
       "privacy": "public",
       "duration": "PT33S",
       "uploaded": "2026-11-06T16:07:34Z",
-      "age_hours": 24.1,
-      "state": "too-new"
+      "age_hours": 24.2,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "91",
@@ -744,8 +812,9 @@
       "privacy": "public",
       "duration": "PT37S",
       "uploaded": "2026-11-07T02:26:43Z",
-      "age_hours": 13.8,
-      "state": "too-new"
+      "age_hours": 13.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "76",
@@ -755,8 +824,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T13:29:52Z",
-      "age_hours": 26.8,
-      "state": "too-new"
+      "age_hours": 26.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "47",
@@ -766,8 +836,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-05T03:46:00Z",
-      "age_hours": 60.5,
-      "state": "performing"
+      "age_hours": 60.6,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "90",
@@ -777,8 +848,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-07T02:15:04Z",
-      "age_hours": 14.0,
-      "state": "performing"
+      "age_hours": 14.1,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "46",
@@ -788,8 +860,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-05T01:45:50Z",
-      "age_hours": 62.5,
-      "state": "performing"
+      "age_hours": 62.6,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "36",
@@ -799,8 +872,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-04T04:47:13Z",
-      "age_hours": 83.5,
-      "state": "performing"
+      "age_hours": 83.6,
+      "state": "performing",
+      "burst": 7
     },
     {
       "short": "37",
@@ -810,8 +884,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-04T04:47:36Z",
-      "age_hours": 83.5,
-      "state": "performing"
+      "age_hours": 83.6,
+      "state": "performing",
+      "burst": 7
     },
     {
       "short": "92",
@@ -821,8 +896,9 @@
       "privacy": "public",
       "duration": "PT50S",
       "uploaded": "2026-11-07T05:31:57Z",
-      "age_hours": 10.7,
-      "state": "performing"
+      "age_hours": 10.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "49",
@@ -832,8 +908,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-05T07:37:52Z",
-      "age_hours": 56.6,
-      "state": "performing"
+      "age_hours": 56.7,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "89",
@@ -843,8 +920,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-07T02:14:35Z",
-      "age_hours": 14.0,
-      "state": "performing"
+      "age_hours": 14.1,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "52",
@@ -854,8 +932,9 @@
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-05T13:27:37Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "54",
@@ -865,8 +944,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-05T13:29:03Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "51",
@@ -876,8 +956,9 @@
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-05T13:27:37Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "50",
@@ -887,8 +968,21 @@
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-05T13:26:47Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
+    },
+    {
+      "short": "73",
+      "video": "vsh6jv3cV5g",
+      "title": "คืนนี้ลองกำหนดลมหายใจเข้าออกช้าๆเพื่อล้างความคิด #Shorts",
+      "views": 183,
+      "privacy": "public",
+      "duration": "PT44S",
+      "uploaded": "2026-11-06T09:30:08Z",
+      "age_hours": 30.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "06",
@@ -898,8 +992,9 @@
       "privacy": "public",
       "duration": "PT19S",
       "uploaded": "2026-11-03T06:50:00Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "94",
@@ -909,8 +1004,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-07T09:32:56Z",
-      "age_hours": 6.7,
-      "state": "performing"
+      "age_hours": 6.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "07",
@@ -920,8 +1016,9 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-03T06:50:17Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "53",
@@ -931,19 +1028,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-05T13:28:24Z",
-      "age_hours": 50.8,
-      "state": "performing"
-    },
-    {
-      "short": "73",
-      "video": "vsh6jv3cV5g",
-      "title": "คืนนี้ลองกำหนดลมหายใจเข้าออกช้าๆเพื่อล้างความคิด #Shorts",
-      "views": 209,
-      "privacy": "public",
-      "duration": "PT44S",
-      "uploaded": "2026-11-06T09:30:08Z",
-      "age_hours": 30.7,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "45",
@@ -953,8 +1040,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-05T01:45:19Z",
-      "age_hours": 62.5,
-      "state": "performing"
+      "age_hours": 62.6,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "03",
@@ -964,8 +1052,9 @@
       "privacy": "public",
       "duration": "PT19S",
       "uploaded": "2026-11-03T06:49:44Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 5
     },
     {
       "short": "88",
@@ -975,8 +1064,9 @@
       "privacy": "public",
       "duration": "PT36S",
       "uploaded": "2026-11-07T01:32:04Z",
-      "age_hours": 14.7,
-      "state": "performing"
+      "age_hours": 14.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "41",
@@ -986,8 +1076,9 @@
       "privacy": "public",
       "duration": "PT46S",
       "uploaded": "2026-11-04T21:44:57Z",
-      "age_hours": 66.5,
-      "state": "performing"
+      "age_hours": 66.6,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "01",
@@ -997,8 +1088,9 @@
       "privacy": "public",
       "duration": "PT19S",
       "uploaded": "2026-11-03T06:48:54Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 5
     },
     {
       "short": "05",
@@ -1008,30 +1100,33 @@
       "privacy": "public",
       "duration": "PT19S",
       "uploaded": "2026-11-03T06:49:47Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 5
     },
     {
       "short": "77",
       "video": "dJ_0SdC9HXE",
       "title": "คืนนี้ลองวางมือบนท้องแล้วหายใจลึกๆ เพื่อหยุดคิดมาก #Shorts",
-      "views": 399,
+      "views": 385,
       "privacy": "public",
       "duration": "PT39S",
       "uploaded": "2026-11-06T13:30:20Z",
-      "age_hours": 26.7,
-      "state": "performing"
+      "age_hours": 26.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "93",
       "video": "4wYyJz2M5ic",
       "title": "คืนนี้ลองทำสิ่งนี้ก่อนหลับเพื่อตัดวงจรความคิดฟุ้งซ่าน #Shorts",
-      "views": 429,
+      "views": 438,
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-07T09:32:33Z",
-      "age_hours": 6.7,
-      "state": "performing"
+      "age_hours": 6.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "04",
@@ -1041,19 +1136,21 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-03T06:49:36Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 5
     },
     {
       "short": "74",
       "video": "IZCnSGwqXGY",
       "title": "คืนนี้ลองกำหนดลมหายใจเข้าออกแล้วปล่อยความเครียดทั้งหมดทิ้งไป #Shorts",
-      "views": 542,
+      "views": 543,
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-06T12:04:47Z",
-      "age_hours": 28.2,
-      "state": "performing"
+      "age_hours": 28.3,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "02",
@@ -1063,41 +1160,45 @@
       "privacy": "public",
       "duration": "PT20S",
       "uploaded": "2026-11-03T06:49:08Z",
-      "age_hours": 105.4,
-      "state": "performing"
+      "age_hours": 105.5,
+      "state": "performing",
+      "burst": 5
     },
     {
       "short": "75",
       "video": "k4YWsVDhV3c",
       "title": "คืนนี้ลองทำตามนี้เพื่อสลัดความคิดวุ่นวายให้หายไปทันที #Shorts",
-      "views": 639,
+      "views": 622,
       "privacy": "public",
       "duration": "PT51S",
       "uploaded": "2026-11-06T12:05:36Z",
-      "age_hours": 28.2,
-      "state": "performing"
+      "age_hours": 28.3,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "87",
       "video": "pl-el1XyeXc",
       "title": "คืนนี้ลองวางมือบนท้องแล้วหายใจลึกสามครั้ง #Shorts",
-      "views": 651,
+      "views": 648,
       "privacy": "public",
       "duration": "PT38S",
       "uploaded": "2026-11-07T01:31:33Z",
-      "age_hours": 14.7,
-      "state": "performing"
+      "age_hours": 14.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "71",
       "video": "7-4m2Kop9w4",
       "title": "คืนนี้ลองทำสิ่งนี้เพื่อหยุดความคิดฟุ้งซ่านให้หลับสบาย #Shorts",
-      "views": 689,
+      "views": 710,
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-06T08:28:33Z",
-      "age_hours": 31.8,
-      "state": "performing"
+      "age_hours": 31.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "72",
@@ -1107,8 +1208,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T09:29:33Z",
-      "age_hours": 30.8,
-      "state": "performing"
+      "age_hours": 30.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "70",
@@ -1118,8 +1220,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T08:28:08Z",
-      "age_hours": 31.8,
-      "state": "performing"
+      "age_hours": 31.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "95",
@@ -1129,12 +1232,13 @@
       "privacy": "public",
       "duration": "PT41S",
       "uploaded": "2026-11-07T11:32:41Z",
-      "age_hours": 4.7,
-      "state": "performing"
+      "age_hours": 4.8,
+      "state": "performing",
+      "burst": 0
     }
   ],
   "panel": {
-    "gemini": "1) **สาเหตุที่เป็นไปได้ที่สุด:** Algorithm เมินเฉย (Dead) เพราะทุกคลิปได้ **0 views** แม้จะเกิน 48 ชม. ไปแล้ว สะท้อนว่า Hook ช่วง 1-3 วินาทีแรกไม่ดึงดูดพอจนผู้ชมปัดหนีทันที ทำให้ระบบไม่นำส่งต่อ\n\n2) **สิ่งที่ต้องทำกับแต่ละกลุ่ม:**\n   * **Dead (0 views เกิน 48 ชม.):** แก้ไข Metadata (เปลี่ยนชื่อคลิป/Hashtag ใหม่ให้กระตุ้นความอยากรู้) แล้วปล่อยทิ้งไว้เผื่อ Algorithm กลับมาหยิบ\n   * **Under-distributed:** รอและสังเกตการณ์ (ระบบอาจทยอยนำส่ง)\n   * **Too-new:** ปล่อยไว้ตามธรรมชาติ (ยังอยู่ในหน้าต่างประเมิน)\n   * **Performing:** ปล่อยไว้และศึกษาความสำเร็จเพื่อทำซ้ำ\n   * **ห้ามทำ:** ห้ามลบคลิปเด็ดขาด\n\n3) **RULES: กฎ 3 ข้อสำหรับสคริปต์ใหม่:**\n   * **ข้อ 1 (Hook ใน 2 วินาทีแรก):** เปิดด้วยคำถามขยี้ปัญหาคาใจคนนอนไม่หลับทันที ห้ามเกริ่นนำ\n   * **ข้อ 2 (ความยาวกระชับ):** คุมความยาวคลิปให้อยู่ในช่วง 15-30 วินาที เพื่อดันอัตราการดูจบ (Retention) ให้สูง\n   * **ข้อ 3 (Call to Action ชัดเจน):** จบด้วยประโยคชวนผ่อนคลายที่ทำให้คนดูวนกลับมาดูซ้ำ (Loop) ได้ง่าย",
-    "pollinations": "**สาเหตุหลักที่คลิปกลุ่มนี้ยังไม่ถูกแจกจ่าย (อ้างจากตัวเลข)**  \n- 14 ของ 16 คลิปในกลุ่ม “under‑distributed” มี"
+    "gemini": "ในฐานะผู้จัดการช่อง นี่คือสรุปและแนวทางแก้ปัญหาแบบกระชับครับ:\n\n**1) สาเหตุที่คลิปไม่ถูกแจกจ่าย:**\n* เกิดจากการอัปโหลดแบบ **'คลื่น' (Burst ≥ 5 คลิปใน 10 นาที)** ทำให้ระบบ AI ของ YouTube มองว่าเป็นสแปมหรือบอท จึงปิดการมองเห็นและไม่นำส่งคลิป (ยอดวิวเลยเป็น 0 ทั้งที่ผ่านไปกว่า 48 ชม.)\n\n**2) สิ่งที่ต้องทำกับแต่ละกลุ่ม (ห้ามลบ):**\n* **กลุ่ม Dead & Under-distributed (รวมถึงคลิป 0 วิวเหล่านี้):** **'ปล่อยไว้'** ไม่ต้องทำอะไรเพิ่ม ระบบอาจกลับมานำส่งช้า (Long-tail) หรือปล่อยทิ้งไว้เป็นฐานข้อมูลช่อง\n* **กลุ่ม Too-new:** **'รอ'** ให้ครบ 48 ชม. เพื่อดูผลลัพธ์ตามธรรมชาติ\n* **กลุ่ม Performing:** **'หยุดทำต่อ'** ในรูปแบบเดิม แต่ให้ศึกษาจุดเด่นแล้วนำมาพัฒนาต่อยอด\n* **ภาพรวมการลงคลิป:** **'หยุดทำต่อ'** การอัปโหลดแบบรัวเป็นคลื่นเด็ดขาด\n\n**3) RULES: กฎ 3 ข้อสำหรับสคริปต์ใหม่:**\n1. **ห้ามลงแบบรัว (Spacing):** เว้นระยะเวลาอัปโหลดอย่างน้อย 2-4 ชั่วโมงต่อคลิป หรือวันละ 1-2 คลิปพอ\n2. **Hook 3 วิแรกต้องแรง:** เปิดด้วยประโยคคำถามขยี้ปัญหาคนนอนไม่หลับทันที (เช่น \"ทำไมยิ่งดึก สมองยิ่งคิดเรื่องเงิน?\")\n3. **ความยาวกระชับ:** สคริปต์ต้องสั้นจบใน 15-30 วินาที เพื่อดันอัตราการดูจบ (Retention) ให้สูงที่สุด",
+    "pollinations": "**1) สาเหตุที่มากที่สุดที่ทำให้คลิปเหล่านี้ไม่ถูกแจกจ่าย (อ้างจากตัวเลข burst)**  \n- **Burst = 0** → ไม่ได้รวมอยู่ใน “คลื่น” ของ YouTube จึงมีโอกาสดูน้อยที่สุด  \n- **Burst ต่ำ (6–25)** → คอมพิวเตอร์ยอมรับว่าคลิปอาจไม่เป็นที่นิยมและลดการแนะนำ  \n- **เวลาอัปโหลดในช่วงพีค** → การอัปโหลดหลายคลิปพร้อมกันทำให้แต่ละคลิปถูกตัดสัดส่วนลง  \n\n**2) สิ่งที่ต้องทำกับแต่ละกลุ่ม (ปล่อยไว้ / รอ / แก้ชื่อ‑ปก‑คำอธิบาย / หยุดทำต่อ)**  \n\n| กลุ่ม | Burst | ขั้นตอน | เหตุผล |\n|-------|-------|---------|--------|\n| 0 — 6 | **burst = 0** | **รอ** 48 ชม. แล้วทดสอบผลหาเพิ่มเสียงหรือให้タイトルฯ ที่ดึงดูด | ยังไม่ถูกแจกจ่ายหรือตัวเลือกที่เย็น ๆ พอใช้ให้สักครู่ |\n| 6 — 25 | **burst = 6** (ข้าง 55) / **burst = 25** (ข้าง 58–15) | **แก้ชื่อ‑ปก‑คำอธิบาย** คัดกรองไปเจาะกลุ่มเป้าหมายที่ชัดเจนขึ้น | มีข้อมูล 0 วิว แต่มีการยิงพร้อมบ้างรุ่นอาจครอบคลุม |\n| 6 | 55 | **รอ** อาจจำเป็นค่าตอบอเดไมติกสูงขึ้น | ให้เวลากระบวนการแจกจ่ายสมบูรณ์ก่อนกระทำขั้นตอนต่อไป |\n| 20–25 | **burst = 25** หรือ **= 6** | **ปรับ title‑description** เพิ่ม “shorts” คำหลัก ควรใส่ “10‑second rule” | ช่วยให้เริ่มต้นกระเจิงใหม่ใน “คลื่น” ใหม่ |\n| 10–20 | **burst = 25** | **ปล่อยไว้** อีก 24 ชม. ตรวจสอบว่ามีการแนะนำขึ้นมาแล้วหรือยัง | หากยังแนะนำไม่มีก็อาจทำให้ drop further |\n| **ทั้งหมด** | – | **ไม่มีการลบ** – อย่าออกแบบว่า “หยุดทำต่อ” เว้นแต่จะทดสอบการแก้ไขหลายครั้ง | การซ้ำโจมตีเข้าแบบต่าง ๆ ยังมีโอกาสเพิ่มความน่าสนใจ |\n\n> **ข้อสรุป**: สำหรับคลิปครบ 48 ชม. แต่ยังไม่มีวิว ให้รอหรือแก้ไข meta‑data (title, cover, description) เพื่อเพิ่มการจับคู่กับระบบอัลกอริทึมก่อนที่จะพิจารณา “หยุดทำต่อ”.\n\n**3) RULES: 3 กฎสำหรับสคริปต์ใหม่ (สั้น, กระชับ, ใช้ได้จริง)**\n\n1. **Hook เป๊ะใน 3–5 วินาที** – คำหรือภาพที่ดึงดูดเข้าห้องทันที (ยกตัวอย่าง “ทำไมวันนี้พรุ่งนี้มึงอย่าตื่นหน้าไม่ดี?”).  \n2. **ให้สั้นลง 60 วินาที** – จัดเนื้อหาให้ไม่เกิน 1 ข้อ หรือ 2 ข้อใหญ่ พร้อม CTA อย่าง “แชร์ให้มอง“.  \n3. **ใช้เนื้อหาที่ไม่ซ้ำใน 24 ชม.** – หากอัปโหลดหรือต่อยอดคลิปที่มี “burst > 5” ให้ทำให้ title/thumbnail แตกต่างอย่างน้อย 30 % เพื่อหลีกเลี่ยงการถูกจัดเป็นคลื่นเดียวกับคลิปก่อนหน้า."
   }
 }

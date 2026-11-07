@@ -1,8 +1,10 @@
 {
   "channel": "ch4",
-  "generated": "2026-11-07T16:17:04+00:00",
+  "generated": "2026-11-07T16:23:08+00:00",
   "distribution_hours": 48,
   "working_views": 50,
+  "burst_window_min": 10,
+  "burst_min": 5,
   "counts": {
     "under-distributed": 1,
     "too-new": 36,
@@ -17,8 +19,9 @@
       "privacy": "public",
       "duration": "PT57S",
       "uploaded": "2026-11-05T13:28:59Z",
-      "age_hours": 50.8,
-      "state": "under-distributed"
+      "age_hours": 50.9,
+      "state": "under-distributed",
+      "burst": 6
     },
     {
       "short": "16",
@@ -28,8 +31,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-06T13:30:45Z",
-      "age_hours": 26.8,
-      "state": "too-new"
+      "age_hours": 26.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "17",
@@ -39,8 +43,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-06T15:28:59Z",
-      "age_hours": 24.8,
-      "state": "too-new"
+      "age_hours": 24.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "18",
@@ -50,8 +55,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-06T15:29:37Z",
-      "age_hours": 24.8,
-      "state": "too-new"
+      "age_hours": 24.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "19",
@@ -61,8 +67,9 @@
       "privacy": "public",
       "duration": "PT51S",
       "uploaded": "2026-11-06T16:06:41Z",
-      "age_hours": 24.2,
-      "state": "too-new"
+      "age_hours": 24.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "20",
@@ -72,8 +79,9 @@
       "privacy": "public",
       "duration": "PT40S",
       "uploaded": "2026-11-06T16:07:35Z",
-      "age_hours": 24.2,
-      "state": "too-new"
+      "age_hours": 24.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "21",
@@ -83,8 +91,9 @@
       "privacy": "public",
       "duration": "PT46S",
       "uploaded": "2026-11-06T17:30:27Z",
-      "age_hours": 22.8,
-      "state": "too-new"
+      "age_hours": 22.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "22",
@@ -94,8 +103,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-06T17:31:02Z",
-      "age_hours": 22.8,
-      "state": "too-new"
+      "age_hours": 22.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "23",
@@ -105,8 +115,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-06T19:30:58Z",
-      "age_hours": 20.8,
-      "state": "too-new"
+      "age_hours": 20.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "24",
@@ -116,8 +127,9 @@
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-06T19:31:43Z",
-      "age_hours": 20.8,
-      "state": "too-new"
+      "age_hours": 20.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "25",
@@ -127,8 +139,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T20:04:46Z",
-      "age_hours": 20.2,
-      "state": "too-new"
+      "age_hours": 20.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "26",
@@ -138,8 +151,9 @@
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-06T20:05:09Z",
-      "age_hours": 20.2,
-      "state": "too-new"
+      "age_hours": 20.3,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "27",
@@ -149,8 +163,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-06T21:31:03Z",
-      "age_hours": 18.8,
-      "state": "too-new"
+      "age_hours": 18.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "28",
@@ -160,8 +175,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T21:31:18Z",
-      "age_hours": 18.8,
-      "state": "too-new"
+      "age_hours": 18.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "29",
@@ -171,8 +187,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-06T23:31:21Z",
-      "age_hours": 16.8,
-      "state": "too-new"
+      "age_hours": 16.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "30",
@@ -182,8 +199,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-06T23:31:40Z",
-      "age_hours": 16.8,
-      "state": "too-new"
+      "age_hours": 16.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "31",
@@ -193,8 +211,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-07T01:31:39Z",
-      "age_hours": 14.8,
-      "state": "too-new"
+      "age_hours": 14.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "32",
@@ -204,8 +223,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-07T01:32:10Z",
-      "age_hours": 14.7,
-      "state": "too-new"
+      "age_hours": 14.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "33",
@@ -215,8 +235,9 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-07T02:14:34Z",
-      "age_hours": 14.0,
-      "state": "too-new"
+      "age_hours": 14.1,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "34",
@@ -226,8 +247,9 @@
       "privacy": "public",
       "duration": "PT41S",
       "uploaded": "2026-11-07T05:19:21Z",
-      "age_hours": 11.0,
-      "state": "too-new"
+      "age_hours": 11.1,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "35",
@@ -237,8 +259,9 @@
       "privacy": "public",
       "duration": "PT34S",
       "uploaded": "2026-11-07T05:19:45Z",
-      "age_hours": 11.0,
-      "state": "too-new"
+      "age_hours": 11.1,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "36",
@@ -248,8 +271,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-07T05:26:42Z",
-      "age_hours": 10.8,
-      "state": "too-new"
+      "age_hours": 10.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "37",
@@ -259,8 +283,9 @@
       "privacy": "public",
       "duration": "PT42S",
       "uploaded": "2026-11-07T09:32:31Z",
-      "age_hours": 6.7,
-      "state": "too-new"
+      "age_hours": 6.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "38",
@@ -270,8 +295,9 @@
       "privacy": "public",
       "duration": "PT39S",
       "uploaded": "2026-11-07T11:32:41Z",
-      "age_hours": 4.7,
-      "state": "too-new"
+      "age_hours": 4.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "39",
@@ -281,8 +307,9 @@
       "privacy": "public",
       "duration": "PT40S",
       "uploaded": "2026-11-07T11:33:11Z",
-      "age_hours": 4.7,
-      "state": "too-new"
+      "age_hours": 4.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "40",
@@ -292,8 +319,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-07T12:39:06Z",
-      "age_hours": 3.6,
-      "state": "too-new"
+      "age_hours": 3.7,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "41",
@@ -303,8 +331,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-07T12:39:41Z",
-      "age_hours": 3.6,
-      "state": "too-new"
+      "age_hours": 3.7,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "42",
@@ -314,8 +343,9 @@
       "privacy": "public",
       "duration": "PT51S",
       "uploaded": "2026-11-07T12:53:05Z",
-      "age_hours": 3.4,
-      "state": "too-new"
+      "age_hours": 3.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "43",
@@ -325,8 +355,9 @@
       "privacy": "public",
       "duration": "PT39S",
       "uploaded": "2026-11-07T12:53:38Z",
-      "age_hours": 3.4,
-      "state": "too-new"
+      "age_hours": 3.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "44",
@@ -336,8 +367,9 @@
       "privacy": "public",
       "duration": "PT36S",
       "uploaded": "2026-11-07T13:32:53Z",
-      "age_hours": 2.7,
-      "state": "too-new"
+      "age_hours": 2.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "45",
@@ -347,8 +379,9 @@
       "privacy": "public",
       "duration": "PT37S",
       "uploaded": "2026-11-07T13:33:19Z",
-      "age_hours": 2.7,
-      "state": "too-new"
+      "age_hours": 2.8,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "46",
@@ -358,8 +391,9 @@
       "privacy": "public",
       "duration": "PT44S",
       "uploaded": "2026-11-07T15:50:09Z",
-      "age_hours": 0.4,
-      "state": "too-new"
+      "age_hours": 0.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "47",
@@ -369,8 +403,9 @@
       "privacy": "public",
       "duration": "PT43S",
       "uploaded": "2026-11-07T15:50:47Z",
-      "age_hours": 0.4,
-      "state": "too-new"
+      "age_hours": 0.5,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "15",
@@ -380,8 +415,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T13:29:57Z",
-      "age_hours": 26.8,
-      "state": "too-new"
+      "age_hours": 26.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "14",
@@ -391,8 +427,9 @@
       "privacy": "public",
       "duration": "PT48S",
       "uploaded": "2026-11-06T11:30:23Z",
-      "age_hours": 28.8,
-      "state": "too-new"
+      "age_hours": 28.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "13",
@@ -402,8 +439,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T11:29:59Z",
-      "age_hours": 28.8,
-      "state": "too-new"
+      "age_hours": 28.9,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "11",
@@ -413,8 +451,9 @@
       "privacy": "public",
       "duration": "PT54S",
       "uploaded": "2026-11-06T10:00:35Z",
-      "age_hours": 30.3,
-      "state": "too-new"
+      "age_hours": 30.4,
+      "state": "too-new",
+      "burst": 0
     },
     {
       "short": "04",
@@ -424,8 +463,9 @@
       "privacy": "public",
       "duration": "PT53S",
       "uploaded": "2026-11-05T13:28:36Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "09",
@@ -435,8 +475,9 @@
       "privacy": "public",
       "duration": "PT50S",
       "uploaded": "2026-11-06T08:28:22Z",
-      "age_hours": 31.8,
-      "state": "performing"
+      "age_hours": 31.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "03",
@@ -446,8 +487,9 @@
       "privacy": "public",
       "duration": "PT58S",
       "uploaded": "2026-11-05T13:27:53Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "08",
@@ -457,8 +499,9 @@
       "privacy": "public",
       "duration": "PT57S",
       "uploaded": "2026-11-05T15:36:12Z",
-      "age_hours": 48.7,
-      "state": "performing"
+      "age_hours": 48.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "02",
@@ -468,8 +511,9 @@
       "privacy": "public",
       "duration": "PT55S",
       "uploaded": "2026-11-05T13:27:27Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "12",
@@ -479,8 +523,9 @@
       "privacy": "public",
       "duration": "PT47S",
       "uploaded": "2026-11-06T10:00:56Z",
-      "age_hours": 30.3,
-      "state": "performing"
+      "age_hours": 30.4,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "01",
@@ -490,8 +535,9 @@
       "privacy": "public",
       "duration": "PT55S",
       "uploaded": "2026-11-05T13:26:57Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     },
     {
       "short": "07",
@@ -501,8 +547,9 @@
       "privacy": "public",
       "duration": "PT52S",
       "uploaded": "2026-11-05T15:35:09Z",
-      "age_hours": 48.7,
-      "state": "performing"
+      "age_hours": 48.8,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "10",
@@ -512,8 +559,9 @@
       "privacy": "public",
       "duration": "PT45S",
       "uploaded": "2026-11-06T08:29:36Z",
-      "age_hours": 31.8,
-      "state": "performing"
+      "age_hours": 31.9,
+      "state": "performing",
+      "burst": 0
     },
     {
       "short": "06",
@@ -523,12 +571,13 @@
       "privacy": "public",
       "duration": "PT49S",
       "uploaded": "2026-11-05T13:29:19Z",
-      "age_hours": 50.8,
-      "state": "performing"
+      "age_hours": 50.9,
+      "state": "performing",
+      "burst": 6
     }
   ],
   "panel": {
-    "gemini": "ในฐานะผู้จัดการช่อง YouTube นี่คือสรุปแผนงานแบบสั้นและกระชับ:\n\n**1) สาเหตุที่คลิปไม่ถูกแจกจ่าย (จากตัวเลข):**\n*   ผ่านไป 50.8 ชม. แต่มีแค่ 41 views และเป็น Shorts ความยาว 57 วินาที แสดงว่า **\"อัตราการปัดผ่าน (Swipe Away Rate) สูงเกินไปในชั่วโมงแรก\"** ทำให้ YouTube หยุด",
-    "pollinations": "1. **สาเหตุที่เป็นไปได้ที่สุดที่กลุ่มนี้ไม่ถูกแจกจ่าย**  \n   - ควรดู “under‑distributed” 1 คลิปคือ 05 ที่เปิด 50 .8 ชม. ยังคงมีแค่ 41 views → มีปัจจัยหลักสองอย่าง  \n     1) **การตั้งชื่อ‑ปก‑แท็ก**: ชื่อยาว‑ซับซ้อนหรือต้องการคีย์เวิร์ดย่อยที่ไม่มีการแข่งขันต่ำ (ทำให้กลไกค้นหาจำตำแหน่งไม่เด่น)  \n     2) **ความยาวเล็กน้อย** (57 s) เป็น Shorts → กลไกอาจจำเป็นต้อง “ตรวจสอบ” ผ่าน Personalized Feed ก่อนที่มันจะ “spring” ทั้งสตรีม ทำให้ต้องรอเวลาเพิ่ม (อาจใช้ 48–72 ชม. เพื่อให้ระบบ “เรียนรู้” คอนเทนต์แบบปกติ)  \n\n2. **สิ่งที่ต้องทำกับแต่ละกลุ่ม**  \n   - **under‑distributed** (1 คลิป) – ปล่อยไว้ -> ช่วยให้กลไกได้ทำ “warm‑up” อย่างต่อเนื่อง (ไม่แนะนำให้ทำลบ)  \n   - **too‑new** (36 คลิป) – รอ 48–72 ชม. ก่อนทำประเมินใหม่; หากหลังจาก 7 วันดูแลเปิดมี 20 %+ การเพิ่ม tag, title/thumbnail, ต้องแก้ไขเล็กน้อย (ไม่หยุดทำต่อ)  \n   - **performing** (10 คลิป) – ดำเนินการต่อ, เพิ่มไอเดีย “follow‑up” (ช่วง 10‑15 วินาทีเพื่อคง “engagement”) และทำซ้ำสูตรตัวเดียว  \n\n3. **RULES 3 ข้อสำหรับสคริปต์ใหม่**  \n   1. **จับ hook ใน 5 วินาทีแรก** – ทำให้ผู้ชมรู้ว่ามีอะไรน่าสนใจมองต่อไป  \n   2. **ใช้คีย์เวิร์ดหลัก 3–4 รายการ** ในชื่อ, คำอธิบาย, และแท็ก (ไม่ควรหยาบหรืออวดขนาดใหญ่)  \n   3. **เพิ่ม CTA งั้น “พิเศษ”—½ ความยาว** (เช่น “กดชอบถ้าคุณชอบสูตรนี้!”) ให้ stay‑rate สูง และอย่าลืมใส่ subtitles เบื้องต้นเพื่อ cover view แบบ “mute” ปัจจุบัน."
+    "gemini": "ในฐานะผู้จัดการช่อง นี่คือสรุปและแนวทางแก้ปัญหาแบบสั้น:\n\n**1) สาเหตุที่เป็นไปได้ที่สุด:**\n*   ระบบ AI ของ YouTube มองว่าช่องส่อ \"พฤติกรรมสแปม\" (Spam/Bot-like behavior) จากการอัปโหลดแบบกระหน่ำ (Burst ≥ 5 คลิป/10 นาที) ทำให้ระบบระงับการกระจายการมองเห็น (Under-distributed) ทันที\n\n**2) สิ่งที่ต้องทำกับแต่ละกลุ่ม:**\n*   **กลุ่ม Too-new (36 คลิป) & Under-distributed (1 คลิป เช่น คลิปยาย 41 วิว):** *หยุดทำต่อ* (หยุดอัปโหลดแบบคลื่นทันที) และ **ปล่อยไว้/รอ** อย่างน้อย 3-7 วัน เพื่อให้ระบบรีเซ็ตสถานะสแปม ห้ามแก้ตอนนี้เพราะจะยิ่งกระตุ้นระบบ\n*   **กลุ่ม Performing (10 คลิป):** *ปล่อยไว้* และดูผลระยะยาว เนื่องจากกลุ่มนี้รอดตัวมาได้เพราะปล่อยทิ้งช่วงปกติ (1-2 คลิป)\n\n**3) RULES: กฎ 3 ข้อสำหรับสคริปต์ใหม่:**\n1.  **เว้นระยะเวลา:** ห้ามลงถี่เด็ดขาด ให้เว้นช่วงอย่างน้อย 2-4 ชั่วโมงต่อคลิป (ห้ามทำ Burst อีก)\n2.  **Hook 3 วิแรก:** เปิดเรื่องด้วยภาพและเสียงที่กระชากอารมณ์ทันที (เช่น ภาพมือสาก ๆ ใกล้ ๆ + เสียงตำครกดังชัด) ห้ามมีเกริ่นนำ\n3.  **ความยาวกระชับ:** ตัดให้จบไวภายใน 15-30 วินาที เพื่อดันอัตราการดูจบ (AVD) ให้สูงที่สุด",
+    "pollinations": "**1) สาเหตุหลักที่คลิปไม่ได้รับการแจกจ่าย (ตามจำนวน burst = 6)**  \n- **จำนวนคลิปในคลื่น**: 6 คลิปอัปโหลดมาพร้อมกัน > 5 คลิป/10 นาที ทำให้ YouTube “บีบ” (burst) ไม่ได้เพิ่มโอกาสในอัลกอริธึม  \n- **ขาดตัวช่วยดึงดูด**: ปกและคำอธิบายเร็ว ๆ (short‑circuit) ไม่ชวนให้คนคลิกหรือแชร์ => กล่องจูนท์ใต้ความสนใจของอัลกอริธึม  \n- **คิวไม่ลื่น**:  คิวอัปโหลดเต็มตายจาก burst ทำให้คลิปใหม่ถูกเก็บไว้ใน “queue” ช้า (นานเกิน 24‑48 h)  \n\n**2) การจัดการแต่ละกลุ่ม**  \n\n| กลุ่ม | สถานะปัจจุบัน | แนวทางจัดการ | เหตุผล |\n|-------|----------------|--------------|--------|\n| **under‑distributed** | 1 คลิป | **รอ 24‑48 h** ปรับชื่อ‑ปก‑คำอธิบายต่อไป | ให้ระบบเลื่อนมุมมองความสำคัญก่อนจะมีผู้ชม |\n| **too‑new** | 36 คลิป | **จุดอัปโหลดเป็นชุด** (1–2 คลิป ต่อ 12‑15 นาที) ต่อเนื่อง | ลด burst, ปรับมุมมองของ YouTube ให้ม่วน |\n| **performing** | 10 คลิป | **ทดลองอัปโหลดเพิ่ม** (ขยายหัวข้อ, explode CTA) + maintain 1–2 คลิป/วัน | เน้นแฮปปี้‑อินเกจ, สร้าง momentum เพิ่มอัลกอริธึม |\n| **“ยังไม่ perform (50 h+”** | – 1 คลิป | **รีทอม**: ยกชื่อ–ปก–คำอธิบายใหม่ เพิ่ม H1‑keyword & thumbnails | ให้ข้อมูล fresh แต่ไม่ลบออก |\n\n> **ไม่แนะนำให้ลบ** คลิปไหนเลย – มันอาจเป็น “seed” ในอนาคต ใช้เป็น base เพื่อฝึกงานต่อ.\n\n**3) กฎ 3 ข้อสำหรับสคริปต์ใหม่**  \n\n1. **หัวข้อ (Title) ≤ 60 อักขระ** – เปิดใจทันที ใช้ keyword ชัดเจน + ค่าคำอธิบายสั้นในคำแรกเพื่อดึงดูด “shorts” บาเซส.  \n2. **คีย์เวิร์ด + CTA พื้นฐาน** – ใส่ 2–3 คีย์หลักในคำอธิบายและ feature‑URL‑tag แล้วบอกผู้ชมว่าต้องกด “ติดตาม” หรือ “แชร์” ภายใน 30‑s.  \n3. **รูปปก** – สี่สีกระจาย, จำนวนตัวอักษร ≤ 15 (สะดวกอ่านบนมือถือ), ชี้เฉพาะ “พลัง + emotion” เพื่อกดปัจจัยดึงดูด.  \n\nบันทึก: แค่ตัวระบุ 3 กฎนี้ในการดำเนินงาน วางไว้ในตารางกด‑เข้าชุดสคริปต์."
   }
 }

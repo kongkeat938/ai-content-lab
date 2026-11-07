@@ -140,6 +140,11 @@ PROBE_HOURS = 3
 # what let the flood through, so the cap lives here where no trigger can bypass it.
 DAILY_CAP = 3
 
+# Minimum hours between two uploads on one channel. The daily cap alone still let a
+# run post its two or three back to back; the burst is what the zero-view clusters
+# have in common (measured 2026-11-07), so the spacing is enforced separately.
+MIN_GAP_HOURS = 2.0
+
 # The upload ledger the cap counts. Kept separate from upload_limit.json, which
 # records a ceiling refusal, not a normal upload.
 UPLOAD_LOG = os.path.join(ROOT, "content", "upload_log.json")
@@ -205,6 +210,16 @@ def uploads_in_last_24h(channel_id: str, manifest_path: str) -> int:
     """
     _seed_ledger(channel_id, manifest_path)
     return len(_prune(_load_upload_log()["channels"].get(channel_id, [])))
+
+
+def hours_since_last_upload(channel_id: str, manifest_path: str) -> float | None:
+    """Hours since the most recent upload, or None if there is no record yet."""
+    _seed_ledger(channel_id, manifest_path)
+    stamps = _prune(_load_upload_log()["channels"].get(channel_id, []))
+    if not stamps:
+        return None
+    newest = max(datetime.fromisoformat(str(s).replace("Z", "+00:00")) for s in stamps)
+    return (datetime.now(timezone.utc) - newest).total_seconds() / 3600
 
 
 def note_upload(channel_id: str) -> None:
@@ -302,8 +317,8 @@ def main() -> int:
     # day's median views collapsed to 1 (vs 206-1007 on drip days), because the
     # Shorts feed throttles a channel that floods. A missing cap is how that happens,
     # so the safe number is the default and "all" must be asked for explicitly.
-    ap.add_argument("--per-run", type=int, default=2,
-                    help="upload at most N per run (0 = all due; default 2)")
+    ap.add_argument("--per-run", type=int, default=1,
+                    help="upload at most N per run (0 = all due; default 1)")
     ap.add_argument("--privacy", default="public", choices=["private", "unlisted", "public"])
     ap.add_argument("--work", help="override the build dir (default: per channel)")
     args = ap.parse_args()
@@ -334,6 +349,11 @@ def main() -> int:
     if room == 0:
         print(f"daily cap reached ({already}/{DAILY_CAP} in the last 24h) -- "
               "waiting, a steady drip beats a flood")
+        return 0
+    since = hours_since_last_upload(args.channel, spec["manifest"])
+    if since is not None and since < MIN_GAP_HOURS:
+        print(f"only {since:.1f}h since the last upload (need {MIN_GAP_HOURS}h) -- "
+              "spacing the posts out, that is what keeps the feed showing them")
         return 0
     if args.per_run:
         todo = todo[:min(args.per_run, room)]

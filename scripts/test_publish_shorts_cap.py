@@ -41,6 +41,13 @@ def main() -> int:
     if default > MAX_DEFAULT:
         fail(f"--per-run default {default} exceeds the safe drip ({MAX_DEFAULT})")
 
+    m = re.search(r"MIN_GAP_HOURS\s*=\s*([\d.]+)", src)
+    if not m:
+        fail("publish_shorts.py has no MIN_GAP_HOURS; posts could go out back to back")
+    gap = float(m.group(1))
+    if gap < 1.0:
+        fail(f"MIN_GAP_HOURS {gap} is too small to space posts apart")
+
     wf = open(WORKFLOW, encoding="utf-8").read()
     push = wf.split("push:", 1)[1].split("permissions:", 1)[0] if "push:" in wf else ""
     for line in push.splitlines():
@@ -50,7 +57,7 @@ def main() -> int:
             fail(f"push.paths lists the workflow's own output manifest: {stripped} "
                  "(each publish would re-trigger the next)")
 
-    print(f"OK: per-run default {default}, no self-triggering manifest in push.paths")
+    print(f"OK: per-run default {default}, min gap {gap}h, no self-triggering manifest")
     return 0
 
 
