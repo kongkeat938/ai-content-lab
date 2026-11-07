@@ -1,0 +1,78 @@
+name: publish-ch1
+
+# Uploads finished, verified genx (ตาต้า GenX — ปรัชญาชีวิต) long-form with the
+# YouTube Data API -- no browser, no human. Same rail as publish-batch, a
+# different manifest (content/ch1_publish.json).
+#
+# Privacy comes from each entry in content/ch1_publish.json (ak sets it). The
+# 2026-11-06 grant lifted the ask-K-first gate for publishing.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Space-separated keys (blank = every ready entry)"
+        default: ""
+      privacy:
+        description: "private | unlisted | public (blank = each entry's own)"
+        default: ""
+      dry_run:
+        description: "true to only list what would be posted"
+        default: "false"
+  push:
+    paths:
+      - "content/ch1_publish.json"
+  schedule:
+    # The upload quota is shared across every channel on the project and resets
+    # 08:00 UTC. The first tick after the reset grabs a slot before the Shorts
+    # rail. An entry with a video_id is never re-uploaded, so extra ticks are free.
+    - cron: "7 8 * * *"
+    - cron: "33 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-ch1
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        run: pip install --quiet -r requirements.txt
+
+      - name: Publish
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+        run: |
+          ARGS="--manifest content/ch1_publish.json"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ -n "${{ github.event.inputs.privacy }}" ]; then ARGS="$ARGS --privacy ${{ github.event.inputs.privacy }}"; fi
+          for k in ${{ github.event.inputs.only }}; do ARGS="$ARGS --only $k"; done
+          python3 scripts/publish_batch.py $ARGS
+
+      - name: Record the new video ids
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet content/ch1_publish.json content/upload_limit.json; then
+            echo "no change to the manifest"
+            exit 0
+          fi
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add content/ch1_publish.json content/upload_limit.json
+          git commit -m "publish(ch1): record live video ids / upload-cap reset"
+          git pull --rebase --autostash origin main
+          git push

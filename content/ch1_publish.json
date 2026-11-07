@@ -1,0 +1,6 @@
+{
+  "_comment": "Videos ready to publish to genx (ตาต้า GenX — ปรัชญาชีวิต, UCI6EfsgM1HNjrYarvigxyrQ), oldest first. Read by scripts/publish_batch.py --manifest content/ch1_publish.json. Each entry names a GitHub Release asset (video_url) so a CI runner downloads it instead of needing the 700 MB file in git. `state` flips to 'published' with a video_id once the upload succeeds; a run never uploads an entry that already has a video_id, so a re-run cannot double-post. Why this rail exists: genx had 52 Shorts and zero long-form (measured 2026-11-07), so every Short pointed its funnel at an empty playlist. The advisor panel (2026-11-07) named this the biggest gap -- Shorts reach does not count toward the YPP watch-hour threshold.",
+  "channel_slug": "genx",
+  "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "videos": []
+}

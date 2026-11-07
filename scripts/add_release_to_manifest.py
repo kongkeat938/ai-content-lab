@@ -108,17 +108,45 @@ def story_description(title: str, minutes: int, content: str) -> str:
             f"https://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w")
 
 
-# Per-channel publish shape: tags, category, description builder, cover directory.
+def philosophy_description(title: str, minutes: int, content: str) -> str:
+    names = []
+    if os.path.isdir(content):
+        for f in sorted(os.listdir(content)):
+            if f.endswith(".txt"):
+                names.append(re.sub(r"^\d+_", "", f[:-4]))
+    topics = " · ".join(names[:10])
+    return (f"รวมข้อคิดและปรัชญาชีวิตสำหรับคนวัยทำงาน {minutes} นาที "
+            f"ฟังเพลิน ๆ ช่วยให้ใจสงบ ได้มุมมองใหม่กับเรื่องที่แบกมาทั้งวัน\n\n"
+            f"เปิดฟังได้ทุกเวลา ทั้งตอนพัก ตอนขับรถ หรือก่อนนอน "
+            f"ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่ฟังเสียงนุ่ม ๆ ไปเรื่อย ๆ\n\n"
+            f"ตอนในคลิปนี้: {topics}\n\n"
+            f"ฝากกดติดตามช่อง ตาต้า GenX — ปรัชญาชีวิต เพื่อรับข้อคิดใหม่ ๆ ที่ช่วยให้ใจเบาลง\n\n"
+            f"— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\n"
+            f"https://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w")
+
+
+# Per-channel publish shape: tags, category, description builder, cover directory,
+# and the long-form playlist a Short funnels to. Writing `playlist` here is what
+# actually closes the funnel: publish_batch inserts the uploaded video into it, so
+# the Shorts' tail link lands on a playlist that holds the video.
 CHANNELS = {
     "dharma": {
         "tags": NIGHT_TAGS, "category_id": 22, "cover_dir": "assets/branding/farmmer/thumbs",
-        "desc": description_for,
+        "desc": description_for, "playlist": "PLBpZCGnd7Q5Y",
+    },
+    "genx": {
+        "tags": ["ปรัชญาชีวิต", "ข้อคิดชีวิต", "แง่คิด", "กำลังใจ", "คนวัยทำงาน",
+                 "ปล่อยวาง", "ความสุข", "รักตัวเอง", "คิดมาก", "จิตสงบ",
+                 "ฟังเพลิน", "GenX", "ให้กำลังใจตัวเอง"],
+        "category_id": 22, "cover_dir": "assets/branding/genx/thumbs",
+        "desc": philosophy_description, "playlist": "PLXEV3B3DcgsU",
     },
     "kongkeat": {
         "tags": ["เรื่องเล่า", "เรื่องเล่าอบอุ่นใจ", "ครอบครัว", "เรื่องสั้น", "ฟังก่อนนอน",
                  "เรื่องเล่าภาษาไทย", "นิทานผู้ใหญ่", "คลิปกล่อมใจ", "เรื่องเล่าตอนเดียวจบ",
                  "ฟังเพลิน ๆ"],
         "category_id": 24, "cover_dir": "assets/branding/thumbs", "desc": story_description,
+        "playlist": "PLU4aztRNvt28",
     },
 }
 
@@ -157,6 +185,8 @@ def main() -> int:
         "category_id": cfg["category_id"],
         "privacy": args.privacy,
     }
+    if cfg.get("playlist"):
+        entry["playlist"] = cfg["playlist"]
     if args.not_before:
         entry["not_before"] = args.not_before
 
