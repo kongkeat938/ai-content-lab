@@ -49,6 +49,12 @@ import video_review as vr  # noqa: E402
 DISTRIBUTION_HOURS = 48
 # At or above this many views the video is doing the channel's ordinary work.
 WORKING_VIEWS = 50
+# More than this many uploads inside one ten-minute window is a burst. Measured
+# 2026-11-07: ch2 published 25 Shorts in the 13:3x window on 2026-11-05 and 20 of
+# them sat at zero views, while the ones published one or two at a time reached
+# hundreds. The burst, not the script, is what the numbers point at.
+BURST_WINDOW_MIN = 10
+BURST_MIN = 5
 
 
 def stats_for(tok: str, ids: list[str]) -> dict[str, dict]:
@@ -143,6 +149,12 @@ def diagnose(channel: str, use_panel: bool) -> dict:
         })
     rows.sort(key=lambda r: (r["state"] != "dead", r["state"] != "under-distributed", r["views"]))
 
+    # Mark the upload bursts: a burst is the one condition that measurably tracks a
+    # zero-view cluster, so each video needs to carry it into the report.
+    bursts = detect_bursts([r for r in rows if r["uploaded"]])
+    for r in rows:
+        r["burst"] = bursts.get(r["video"], 0)
+
     counts: dict[str, int] = {}
     for r in rows:
         counts[r["state"]] = counts.get(r["state"], 0) + 1
@@ -150,11 +162,35 @@ def diagnose(channel: str, use_panel: bool) -> dict:
     diagnosis = {
         "channel": channel, "generated": now.isoformat(timespec="seconds"),
         "distribution_hours": DISTRIBUTION_HOURS, "working_views": WORKING_VIEWS,
+        "burst_window_min": BURST_WINDOW_MIN, "burst_min": BURST_MIN,
         "counts": counts, "videos": rows,
     }
     if use_panel:
         diagnosis["panel"] = ask_panel(channel, rows, counts)
     return diagnosis
+
+
+def detect_bursts(rows: list[dict]) -> dict[str, int]:
+    """video id -> how many videos share its ten-minute upload window.
+
+    Only windows at or above BURST_MIN are returned, so a zero means "published on
+    its own". The window is aligned to the clock (13:30-13:39), not to the first
+    upload in it, so the same burst is one bucket no matter which run sees it.
+    """
+    buckets: dict[str, list[str]] = {}
+    for r in rows:
+        try:
+            when = dt.datetime.fromisoformat(r["uploaded"].replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        key = when.strftime("%Y-%m-%dT%H:") + f"{when.minute // BURST_WINDOW_MIN * BURST_WINDOW_MIN:02d}"
+        buckets.setdefault(key, []).append(r["video"])
+    out: dict[str, int] = {}
+    for key, vids in buckets.items():
+        if len(vids) >= BURST_MIN:
+            for vid in vids:
+                out[vid] = len(vids)
+    return out
 
 
 def ask_panel(channel: str, rows: list[dict], counts: dict) -> dict:
@@ -167,13 +203,16 @@ def ask_panel(channel: str, rows: list[dict], counts: dict) -> dict:
     if not weak:
         return {}
     table = "\n".join(
-        f"- {r['short']} | {r['views']} views | {r['age_hours']}h old | {r['duration']} | {r['title']}"
+        f"- {r['short']} | {r['views']} views | {r['age_hours']}h old | burst={r.get('burst') or 0} | {r['title']}"
         for r in weak)
+    burst_n = sum(1 for r in rows if r.get("burst"))
     q = (
         f"ช่อง {channel}: สรุปสถานะคลิป = {counts}\n"
-        "คลิปที่ยังไม่ perform (เลยหน้าต่าง 48 ชม.แล้ว):\n" + table + "\n\n"
+        f"พบว่า {burst_n} คลิปถูกอัปโหลดเป็น 'คลื่น' (≥5 คลิปใน 10 นาที) และคลิปในคลื่น\n"
+        "ส่วนใหญ่ได้ 0 วิว ขณะที่คลิปที่ปล่อยทีละ 1-2 ได้ 100-1,000 วิว\n"
+        "คลิปที่ยังไม่ perform (เลย 48 ชม.):\n" + table + "\n\n"
         "คุณคือผู้จัดการช่อง YouTube. ตอบสั้น ๆ เป็นข้อ:\n"
-        "1) สาเหตุที่เป็นไปได้ที่สุดที่คลิปกลุ่มนี้ไม่ถูกแจกจ่าย (อ้างจากตัวเลข)\n"
+        "1) สาเหตุที่เป็นไปได้ที่สุดที่คลิปกลุ่มนี้ไม่ถูกแจกจ่าย (อ้างจากตัวเลข burst)\n"
         "2) สิ่งที่ต้องทำกับ 'แต่ละกลุ่ม' (ปล่อยไว้/รอ/แก้ชื่อ-ปก-คำอธิบาย/หยุดทำต่อ) — ห้ามแนะนำให้ลบ\n"
         "3) RULES: กฎ 3 ข้อสำหรับสคริปต์ใหม่ (สั้น กระชับ ใช้ได้จริง)\n"
     )
@@ -204,11 +243,15 @@ def _with_timeout(fn, args, seconds: int):
 
 
 def report_md(d: dict) -> str:
+    burst_n = sum(1 for r in d["videos"] if r.get("burst"))
     lines = [f"# วินิจฉัยคลิป — {d['channel']}", f"", f"สร้างเมื่อ {d['generated']}",
              f"", f"**สรุปสถานะ:** " + ", ".join(f"{k} {v}" for k, v in d["counts"].items()),
-             f"", "| Short | วิว | อายุ(ชม.) | สถานะ | ชื่อ |", "|---|---|---|---|---|"]
+             f"**คลิปที่อยู่ในคลื่นถล่ม (อัป ≥{d.get('burst_min', 5)} คลิปใน "
+             f"{d.get('burst_window_min', 10)} นาที):** {burst_n}",
+             f"", "| Short | วิว | อายุ(ชม.) | สถานะ | คลื่น | ชื่อ |", "|---|---|---|---|---|---|"]
     for r in d["videos"]:
-        lines.append(f"| {r['short']} | {r['views']} | {r['age_hours']} | {r['state']} | {r['title'][:40]} |")
+        lines.append(f"| {r['short']} | {r['views']} | {r['age_hours']} | {r['state']} | "
+                     f"{r.get('burst') or '-'} | {r['title'][:34]} |")
     for name, text in d.get("panel", {}).items():
         lines += ["", f"## ความเห็นจาก {name}", "", text]
     rules = parse_rules(d.get("panel", {}))
