@@ -58,6 +58,13 @@ C (แยกช่อง — ช่องเล็กเกินไป ไม�
 → **`snippet.title` และ handle เปลี่ยนผ่าน API ไม่ได้** ส่วน `brandingSettings.channel.title`
    และ `localizations.th.title` นั้น PUT ผ่าน (200) แต่จะ**ติดจริงหรือไม่ ต้องวัด** (ดูด้านล่าง)
 
+**❌ ผลวัดจริง (2026-11-07 12:45Z) — API ตั้งชื่อช่องไม่ได้:**
+- `PUT part=localizations` (key `th_TH`) คืน **200** · `description` ใน body เดียวกัน **ติดจริง** ·
+  แต่ `title` **กลับมาเหมือนเดิม** ทั้งที่ key ถูกต้อง → **title ไม่รับการเขียนผ่าน API**
+- `brandingSettings.channel.title` ต้อง echo ค่าเดิม (ไม่เปลี่ยน) → ทางตันทั้งคู่
+- **ทางเดียว = YouTube Studio > Customization > Basic info** (K ทำ)
+- handle ก็ Studio เท่านั้น และ **เปลี่ยนได้ 2 ครั้ง/14 วัน** (มี hold 14 วัน)
+
 **✅ อัลกอริทึมที่ถูก (อ่านจาก `channels.update` reference ทางการ, 2026-11-07):**
 - `part` รับได้ **ทีละตัวเดียว** จาก `brandingSettings` | `invideoPromotion` | `localizations`
   (ส่ง 2 ตัวพร้อมกัน = **400**)
@@ -85,9 +92,9 @@ panel ผ่าน 3 ค่ายแล้ว → **ak ลงมือเอง�
 | 0 | **Baseline + ติดป้าย bucket** (บันทึกตัวเลขเดิม, แยก Shorts ครอบครัว vs นิทาน) | ak | ✅ อ่าน |
 | 1 | **วินัยเนื้อหา** — เลิกผลิตนิทาน/คลาสสิก ผลิตเฉพาะ "ช่วงเวลาครอบครัวเจาะจง" (แก้ `gen_family_scripts.py` arc) | ak | ✅ code |
 | 2 | **Realign metadata** — keywords/tags/คำอธิบาย/เพลย์ลิสต์ ถอด "การ์ตูน/เด็ก/นิทาน" ใส่ "ความทรงจำ/อบอุ่นใจ/ครอบครัว" | ak | ✅ API |
-| 3 | **ตั้งชื่อ localized (th)** = เรื่องเล่าอบอุ่นใจ (path ไม่ต้องรอ K) | ak | ✅ API |
-| 4 | **เปลี่ยนชื่อช่อง** = เรื่องเล่าอบอุ่นใจ (panel ผ่านมติ → ak ทำเอง) | ak | ✅ API (brandingSettings/localizations) |
-| 4b | handle `@kongkeatpratumma` → ชื่อที่ตรง (ถ้าต้องการ) | K | ❌ Studio (API เปลี่ยน handle ไม่ได้) |
+| 3 | **ตั้งชื่อ localized (th)** = เรื่องเล่าอบอุ่นใจ | ak | ❌ **API ไม่รับ title** (วัด 2026-11-07: PUT 200 แต่ title กลับมาเดิม) — ต้อง Studio |
+| 4 | **เปลี่ยนชื่อช่อง** = เรื่องเล่าอบอุ่นใจ | **K** | ❌ **Studio เท่านั้น** (Customization > Basic info). API เขียนได้แค่ description/language/playlists |
+| 4b | handle `@kongkeatpratumma` → ชื่อที่ตรง | **K** | ❌ **Studio เท่านั้น** + เปลี่ยนได้ **2 ครั้ง/14 วัน** (มี hold 14 วัน) |
 | 5 | Thumbnail/การ์ดไตเติลใหม่ ให้ตรง promise ใหม่ (ไม่ใช่สไตล์การ์ตูน) | ak | ✅ code |
 | 6 | ดัน Shorts ที่ชนะซ้ำภายใต้ promise ใหม่ | ak | ✅ API |
 | 7 | **ห้ามลบคลิปเก่า** — วัดต่อ | — | — |
