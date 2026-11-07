@@ -572,3 +572,22 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 - **⚠️ กฎภาพช่องจาก K (2026-11-07): พื้นหลังต้องสว่าง + ตัวหนังสือสีเข้มเสมอ ห้ามพื้นหลังมืด ทุกช่อง.**
   ตัวหนังสือต้อง contrast ≥ 4.5 กับพิกเซลหลังมัน (วัดจริง ไม่เดา). **อวตาร = ลายอบอุ่น ไม่ใช่รูปคน**
   (K: "รูปผู้หญิง ผู้ชาย ไม่เอา"). สร้าง: `scripts/make_branding.py --style lavish` (สว่างทั้ง lavish+classic).
+
+## 🤖 ระบบออโต้ 100% (2026-11-07) — K ไม่อยู่ในวงจร
+- **คอขวดเดิม = ขาด "สมอง" ไม่ใช่ขาด rail.** rail มีอยู่แล้ว: 20 workflow, foreman heartbeat
+  (ทุก 30 นาที), watchdog self-chaining, publish-shorts/batch/ch1/ch4, grow-shorts-pool.
+  **ไม่มี approval gate เลย** และ **secrets ครบใน GitHub** (YT_CH1-4 + client + Gemini).
+- **ของใหม่ที่ปิดวงจร:** `scripts/studio_ai.py` (YouTube **Analytics API** → panel → เขียน
+  `content/insights/<ch>.json`) + `.github/workflows/studio-ai.yml` (cron 21:45 UTC, matrix
+  ch1/ch2/ch4). `gen_short_scripts.py` อ่าน insights ก่อน → คลิปใหม่ตามสิ่งที่ได้ผลจริง.
+- **YouTube Studio UI ใช้บนคลาวด์ไม่ได้** (302 → accounts.google.com; pod/cloud browser/curl
+  เจอหมด) และ Inspiration tab ไม่มี API → `studio_ai.py` คือตัวแทน (Analytics API ตอบ 200
+  ด้วย refresh token ของช่อง).
+- **ตัวเลข 28 วัน (2026-11-07):** ch1 14,558 · ch2 9,605 · ch4 4,131 · ch3 1,039 views.
+  ch4: Shorts ครอบครัวอารมณ์แรง ดูจบ 103-115% vs นิทานยาว 6 วิว 10.8%.
+- **K เหลือเกี่ยวแค่:** เพิ่มช่องใหม่ (OAuth) + อัปโหลดอวตาร (ครั้งเดียว). แบนเนอร์ = API ทำเอง.
+- Pages: https://kongkeat938.github.io/ai-content-lab/ (source `/docs`, branch main).
+- เอกสาร: `docs/AUTONOMY-2026-11-07.md`, `docs/CONTENT-IDEAS-2026-11-07.md`.
+- **กับดัก:** overlap filter สำหรับหัวข้อที่เรียนรู้ต้องใช้ floor 8 ตัวอักษร (floor 3 กรองทิ้ง 8/8
+  บนช่องที่ pool เต็มไปด้วยเรื่องครอบครัว); ใช้ vendor แรกที่ให้หัวข้อใช้ได้ (Gemini สะอาด,
+  Pollinations เพี้ยน).
