@@ -46,6 +46,8 @@ CHANNELS = {
     "dharma": {
         "scripts": SCRIPTS, "manifest": MANIFEST, "channel_id": CHANNEL_ID,
         "token": TOKEN_ENV, "work": os.path.join(ROOT, "work", "ch2_shorts"),
+        "art": os.path.join(ROOT, "assets", "art", "ch2"),
+        "music_dir": os.path.join(ROOT, "assets", "music"),
         "tags": ["ธรรมะก่อนนอน", "นอนไม่หลับ", "ปล่อยวาง", "ธรรมะ", "สมาธิ",
                  "คลายเครียด", "ฟังก่อนนอน", "Farmmer", "Shorts"],
         "category": "22",
@@ -68,6 +70,8 @@ CHANNELS = {
         "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
         "token": "YT_CH1_REFRESH_TOKEN",
         "work": os.path.join(ROOT, "work", "ch1_shorts"),
+        "art": os.path.join(ROOT, "assets", "art", "ch1"),
+        "music_dir": os.path.join(ROOT, "assets", "music"),
         "tags": ["ปรัชญาชีวิต", "ข้อคิด", "แง่คิด", "กำลังใจ", "ชีวิต", "GenX",
                  "ตาต้าGenX", "Shorts"],
         "category": "22",
@@ -85,6 +89,8 @@ CHANNELS = {
         "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
         "token": "YT_CH4_REFRESH_TOKEN",
         "work": os.path.join(ROOT, "work", "ch4_shorts"),
+        "art": os.path.join(ROOT, "assets", "art", "ch4"),
+        "music_dir": os.path.join(ROOT, "assets", "music"),
         "tags": ["เรื่องเล่า", "อบอุ่นใจ", "ครอบครัว", "ความทรงจำ", "เรื่องเล่าอบอุ่นใจ",
                  "คิดถึงบ้าน", "พ่อแม่", "Shorts"],
         "category": "24",
@@ -308,6 +314,20 @@ def winning_first(todo: list, cues) -> list:
     return sorted(todo, key=lambda s: 0 if any(c in s["hook"] for c in cues) else 1)
 
 
+def pick_bed(music_dir: str | None, sid: str) -> str | None:
+    """One bed per short, stable across rebuilds, same idea as pick_art."""
+    if not music_dir or not os.path.isdir(music_dir):
+        return None
+    pool = sorted(f for f in os.listdir(music_dir)
+                  if f.lower().endswith((".mp3", ".wav", ".m4a")))
+    if not pool:
+        return None
+    h = 0
+    for ch in sid:
+        h = (h * 31 + ord(ch)) & 0xFFFFFFFF
+    return os.path.join(music_dir, pool[h % len(pool)])
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
@@ -395,9 +415,15 @@ def main() -> int:
         out = os.path.join(work, sid, f"short_{sid}.mp4")
         if not os.path.exists(out):
             print(f"building {sid} ...")
-            r = subprocess.run([sys.executable, os.path.join(HERE, "make_short.py"),
-                                "--scripts", spec["scripts"], "--index", sid,
-                                "--out-dir", work], capture_output=True, text=True)
+            cmd = [sys.executable, os.path.join(HERE, "make_short.py"),
+                   "--scripts", spec["scripts"], "--index", sid,
+                   "--out-dir", work]
+            if spec.get("art") and os.path.isdir(spec["art"]):
+                cmd += ["--art-dir", spec["art"]]
+            bed = pick_bed(spec.get("music_dir"), sid)
+            if bed:
+                cmd += ["--music", bed]
+            r = subprocess.run(cmd, capture_output=True, text=True)
             if r.returncode != 0:
                 print(f"  build failed: {r.stderr[-400:]}", file=sys.stderr)
                 rc = 1
