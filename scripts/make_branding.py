@@ -5,12 +5,14 @@ YouTube shows only the middle 1546x423 of a banner on TV, 1235x338 on desktop
 and 423x423 on mobile, so all text goes inside a centred safe box. The avatar is
 cropped to a circle by YouTube, so the subject stays centred.
 
-Two looks:
-  * `--style lavish` (default) -- a cinematic poster: warm colour grade, a
-    spotlight that brightens the centre and sinks the edges, a gold ornamental
-    frame with corner flourishes, the title in gold with a soft glow and a dark
-    stroke, a gold diamond divider, and a light film grain.
-  * `--style classic` -- the original flat composition, kept for compatibility.
+Every banner is a BRIGHT background with DARK type -- a dark background is never
+used on any channel (K, 2026-11-07: "do not make dark backgrounds again"). Two
+compositions:
+  * `--style lavish` (default) -- a cinematic poster: warm colour grade, a bright
+    centre that falls off to the edges, a bronze ornamental frame with corner
+    flourishes, the title in espresso with a cream halo, a bronze diamond
+    divider, and a light film grain.
+  * `--style classic` -- the original flat composition, also bright with dark type.
 
 Everything is Pillow + numpy; no paid tool and no generative model.
 
@@ -37,6 +39,9 @@ GOLD_DEEP = (196, 150, 58)
 WHITE = (247, 248, 252)
 SOFT = (222, 228, 240)
 INK = (18, 11, 4)
+INK_DARK = (14, 9, 3)      # espresso type, for a bright background
+CREAM = (252, 243, 220)     # light halo/stroke behind dark type
+BRONZE = (122, 86, 26)      # ornament that reads on a bright background
 
 
 def font(name: str, size: int) -> ImageFont.FreeTypeFont:
@@ -106,7 +111,7 @@ def glow_text(base: Image.Image, cx, y, txt, f, fill, stroke_w, glow=GOLD) -> No
            stroke_width=stroke_w, stroke_fill=INK)
 
 
-def ornament(d: ImageDraw.ImageDraw, box) -> None:
+def ornament(d: ImageDraw.ImageDraw, box, col=GOLD) -> None:
     """A double gold rule with corner flourishes, drawn on a box.
 
     The box is the TV-visible band (1546x423 centred), not the canvas edge: on a
@@ -115,55 +120,46 @@ def ornament(d: ImageDraw.ImageDraw, box) -> None:
     clipped only as decoration on desktop and mobile.
     """
     x0, y0, x1, y1 = box
-    for off, col, wid in ((0, GOLD_DEEP, 6), (18, GOLD, 3)):
-        d.rectangle([x0 + off, y0 + off, x1 - off, y1 - off], outline=col, width=wid)
+    for off, c, wid in ((0, col, 6), (18, col, 3)):
+        d.rectangle([x0 + off, y0 + off, x1 - off, y1 - off], outline=c, width=wid)
     L = 120
     for x, y, sx, sy in ((x0, y0, 1, 1), (x1, y0, -1, 1),
                          (x0, y1, 1, -1), (x1, y1, -1, -1)):
-        d.line([x, y, x + sx * L, y], fill=GOLD, width=8)
-        d.line([x, y, x, y + sy * L], fill=GOLD, width=8)
-        d.ellipse([x - 10, y - 10, x + 10, y + 10], fill=GOLD)
+        d.line([x, y, x + sx * L, y], fill=col, width=8)
+        d.line([x, y, x, y + sy * L], fill=col, width=8)
+        d.ellipse([x - 10, y - 10, x + 10, y + 10], fill=col)
     mx, my = (x0 + x1) // 2, (y0 + y1) // 2
     for x, y in ((mx, y0), (mx, y1), (x0, my), (x1, my)):
-        d.polygon([(x, y - 14), (x + 14, y), (x, y + 14), (x - 14, y)], fill=GOLD)
+        d.polygon([(x, y - 14), (x + 14, y), (x, y + 14), (x - 14, y)], fill=col)
 
 
 def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
            style: str = "lavish") -> str:
     im = cover(Image.open(art).convert("RGB"), BANNER_W, BANNER_H)
     if style == "classic":
-        im = ImageEnhance.Brightness(im).enhance(0.6)
-        vig = Image.new("L", (BANNER_W, BANNER_H), 0)
-        ImageDraw.Draw(vig).ellipse(
-            [-BANNER_W // 3, -BANNER_H // 3, BANNER_W + BANNER_W // 3,
-             BANNER_H + BANNER_H // 3], fill=255)
-        vig = vig.filter(ImageFilter.GaussianBlur(180))
-        im = Image.composite(im, Image.new("RGB", im.size, (6, 10, 24)), vig)
+        # Bright background, dark type. A dark background is never used on any
+        # channel (K, 2026-11-07: "do not make dark backgrounds again").
+        im = ImageEnhance.Brightness(im).enhance(1.15)
         d = ImageDraw.Draw(im)
         cx = BANNER_W // 2
         ft, fs, fg = font("Kanit-Bold.ttf", 150), font("Prompt-SemiBold.ttf", 72), font("Prompt-Regular.ttf", 50)
-        tw = d.textlength(title, font=ft)
-        sw = d.textlength(subtitle, font=fs)
-        gw = d.textlength(kicker, font=fg)
+        tw, sw, gw = (d.textlength(t, font=f) for t, f in ((title, ft), (subtitle, fs), (kicker, fg)))
         y = BANNER_H // 2 - 150
-        d.text((cx - tw / 2, y), title, font=ft, fill=GOLD)
-        d.text((cx - sw / 2, y + 200), subtitle, font=fs, fill=WHITE)
-        d.rectangle([cx - 150, y + 320, cx + 150, y + 326], fill=GOLD)
-        d.text((cx - gw / 2, y + 380), kicker, font=fg, fill=SOFT)
+        d.text((cx - tw / 2, y), title, font=ft, fill=INK_DARK, stroke_width=4, stroke_fill=CREAM)
+        d.text((cx - sw / 2, y + 200), subtitle, font=fs, fill=INK_DARK, stroke_width=3, stroke_fill=CREAM)
+        d.rectangle([cx - 150, y + 320, cx + 150, y + 326], fill=INK_DARK)
+        d.text((cx - gw / 2, y + 380), kicker, font=fg, fill=INK_DARK, stroke_width=2, stroke_fill=CREAM)
         im.save(out, quality=92)
         return out
 
     im = warm_grade(im)
-    im = ImageEnhance.Brightness(im).enhance(0.58)
-    # vignette: sink the edges so the eye lands in the centre
-    inv = Image.fromarray(255 - np.asarray(radial_mask(BANNER_W, BANNER_H, power=1.5)))
-    im = Image.composite(ImageEnhance.Brightness(im).enhance(0.34), im, inv)
-    # scrim: a soft dark band behind the copy. Without it the centre stayed at
-    # 127-170 luminance and the light type was hard to read (K, 2026-11-07).
-    scrim = Image.new("L", (BANNER_W, BANNER_H), 0)
-    ImageDraw.Draw(scrim).rounded_rectangle([540, 455, 2020, 1000], radius=110, fill=158)
-    scrim = scrim.filter(ImageFilter.GaussianBlur(80))
-    im = Image.composite(Image.new("RGB", im.size, (13, 10, 7)), im, scrim)
+    im = ImageEnhance.Brightness(im).enhance(1.16)
+    # bright centre with softly darker edges -- K chose this bright look, so the
+    # type is dark on purpose rather than the background being dimmed.
+    glow = ImageEnhance.Brightness(im).enhance(1.75)
+    im = Image.composite(glow, im, radial_mask(BANNER_W, BANNER_H))
+    inv = Image.fromarray(255 - np.asarray(radial_mask(BANNER_W, BANNER_H, power=1.7)))
+    im = Image.composite(ImageEnhance.Brightness(im).enhance(0.50), im, inv)
     im = im.convert("RGBA")
 
     cx = BANNER_W // 2
@@ -181,20 +177,20 @@ def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
     block = kh + g1 + th + g2 + 12 + g3 + sh
     y = (BANNER_H - block) // 2
 
-    draw_centered_ls(ImageDraw.Draw(im), cx, y, f"\u2726 {kicker} \u2726", f_kick, GOLD, 8, 2)
+    draw_centered_ls(ImageDraw.Draw(im), cx, y, f"\u2726 {kicker} \u2726", f_kick, INK_DARK, 8, 2, CREAM)
     y += kh + g1
-    glow_text(im, cx, y, title, f_title, GOLD, 6)
+    glow_text(im, cx, y, title, f_title, INK_DARK, 4, glow=CREAM)
     y += th + g2
     d = ImageDraw.Draw(im)
-    d.line([cx - 210, y + 6, cx - 28, y + 6], fill=GOLD, width=4)
-    d.line([cx + 28, y + 6, cx + 210, y + 6], fill=GOLD, width=4)
-    d.polygon([(cx, y - 5), (cx + 13, y + 6), (cx, y + 17), (cx - 13, y + 6)], fill=GOLD)
+    d.line([cx - 210, y + 6, cx - 28, y + 6], fill=BRONZE, width=5)
+    d.line([cx + 28, y + 6, cx + 210, y + 6], fill=BRONZE, width=5)
+    d.polygon([(cx, y - 5), (cx + 13, y + 6), (cx, y + 17), (cx - 13, y + 6)], fill=BRONZE)
     y += 12 + g3
-    d.text((cx - d.textlength(subtitle, font=f_sub) / 2, y), subtitle, font=f_sub, fill=WHITE,
-           stroke_width=3, stroke_fill=INK)
+    d.text((cx - d.textlength(subtitle, font=f_sub) / 2, y), subtitle, font=f_sub, fill=INK_DARK,
+           stroke_width=3, stroke_fill=CREAM)
 
     # ornament on the TV-visible band, so it is actually seen
-    ornament(d, (500, 500, 2060, 940))
+    ornament(d, (500, 500, 2060, 940), col=BRONZE)
     film_grain(im.convert("RGB")).save(out, quality=94)
     return out
 
@@ -225,7 +221,8 @@ def main() -> int:
     ap.add_argument("--subtitle", required=True)
     ap.add_argument("--kicker", default="")
     ap.add_argument("--tagline", default="", help="alias for --kicker (classic look)")
-    ap.add_argument("--style", choices=("lavish", "classic"), default="lavish")
+    ap.add_argument("--style", choices=("lavish", "classic"), default="lavish",
+                    help="lavish (default) or classic -- both bright, dark type")
     a = ap.parse_args()
     os.makedirs(a.out_dir, exist_ok=True)
     kicker = a.kicker or a.tagline

@@ -212,6 +212,11 @@ An earlier spec had ch3/ch4 the other way round; the live channels contradict it
   length. Retry with backoff; one failure never means a broken voice.
 * **Poster grade:** raise saturation about 1.35x *then* darken. Vignetting first
   drains the colour and the result looks grey.
+* **Channel art never uses a dark background** (K, 2026-11-07). Banner and avatar
+  are a bright background with dark type; the type must clear a WCAG contrast of
+  4.5 against the pixels behind it. Avatars are warm motifs, never a photo of a
+  person. `scripts/make_branding.py` builds both (`--style lavish`), and
+  `scripts/set_channel_art.py` installs the banner — the avatar has no API.
 
 ## Verification, before saying it is done
 

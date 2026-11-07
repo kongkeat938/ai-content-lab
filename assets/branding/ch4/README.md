@@ -10,7 +10,7 @@
 | ไฟล์ | ขนาด | ใช้ที่ไหน | สถานะ |
 |---|---|---|---|
 | `banner_2560x1440.jpg` | 2560×1440 | ภาพแบนเนอร์ช่อง | ✅ **ติดตั้งผ่าน API แล้ว** |
-| `avatar_800x800.jpg` | 800×800 | รูปโปรไฟล์ | ⏳ ต้องอัปโหลดเองใน Studio (API ไม่มี) |
+| `avatar_800x800.jpg` | 800×800 | รูปโปรไฟล์ (แสงไฟอบอุ่น ไม่มีคน) | ⏳ ต้องอัปโหลดเองใน Studio (API ไม่มี) |
 
 ## แบนเนอร์ติดตั้งผ่าน API ได้ — อวตารไม่ได้
 
@@ -33,7 +33,7 @@
 | ไฟล์ที่ใช้ | ชื่อภาพ | ผู้สร้าง | ใบอนุญาต | แหล่ง |
 |---|---|---|---|---|
 | `img00_00.jpg` (แบนเนอร์) | Chanukah: First Candle | Flavio~ | CC BY 2.0 | https://www.flickr.com/photos/37873897@N06/4177957143 |
-| `img02_01.jpg` (อวตาร) | Richmond Lock and Weir (Apr 2011) | Gareth1953 All Right Now | CC BY 2.0 | https://www.flickr.com/photos/40837632@N05/5637639901 |
+| `img04_00.jpg` (อวตาร) | Christmas Tree Lights Bokeh | Sprogz | CC BY 2.0 | https://www.flickr.com/photos/14341815@N00/4174879359 |
 
 ## ทำซ้ำ / ทำช่องอื่น
 
