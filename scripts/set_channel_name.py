@@ -1,25 +1,31 @@
 #!/usr/bin/env python3
-"""Rename a channel the way that actually works -- brandingSettings, not snippet.
+"""Rename a channel the way the API actually allows -- via localizations, not the title.
 
-Background, because the first conclusion here was wrong and it cost time. On
-2026-10-31 a rename attempt tried `channels.update` with `part=snippet`, got HTTP
-400 `ERROR_PART_UNEXPECTED`, and the team concluded "the Data API cannot rename a
-channel". That conclusion was too broad: it is only `snippet.title` that is not
-writable. The field that *is* writable is `brandingSettings.channel.title`, and
-it is the field the live name comes from -- ops/yt_branding.py wrote it on
-2026-11-01 and the channel has displayed "เรื่องเล่าการ์ตูน" ever since (measured
-live via the channel page, 2026-11-07). So a rename IS an API action.
+The team spent time on the wrong field twice. First (2026-10-31) it tried
+`part=snippet`, got 400 `ERROR_PART_UNEXPECTED`, and concluded "the API cannot
+rename a channel". Then it tried `brandingSettings.channel.title`, which also
+cannot work: the reference (read 2026-11-07) documents error
+`channelTitleUpdateForbidden` -- that title must be sent back unchanged.
 
-`channels.update` replaces the whole `brandingSettings` part, so this reads the
-current settings first and writes the COMPLETE object back with only the title
-(and, optionally, description/keywords) changed -- a partial write would clear
-the banner and description.
+The field that DOES rename is `localizations.(key).title`, and the reference
+lists it as writable. Two rules come with it:
+  * `part` accepts exactly ONE of brandingSettings | invideoPromotion |
+    localizations per request -- sending two is a 400, so the title cannot ride
+    along with a brandingSettings call.
+  * `localizations` is refused (400 defaultLanguageNotSetError) unless the channel
+    already has a `defaultLanguage`.
 
-    python3 scripts/set_channel_name.py                 # show what would change
-    python3 scripts/set_channel_name.py --verify        # read the live name only
-    python3 scripts/set_channel_name.py --apply         # write it
+So the rename is two calls:
+  1. PUT ?part=brandingSettings  -- set defaultLanguage (title echoed unchanged),
+     and set description/keywords, which are writable on this part.
+  2. PUT ?part=localizations     -- set localizations.th.title = the new name.
 
-Quota: channels.update costs 50 units. This is safe to run on a schedule.
+    python3 scripts/set_channel_name.py            # show what would change
+    python3 scripts/set_channel_name.py --verify   # read the live name only
+    python3 scripts/set_channel_name.py --apply    # write it
+
+Quota: each channels.update costs 50 units. Idempotent -- it skips a channel whose
+localized title already matches.
 """
 from __future__ import annotations
 
@@ -40,6 +46,7 @@ TOKEN_URL = "https://oauth2.googleapis.com/token"
 TARGET = {
     "kongkeat-story": {
         "token": "YT_CH4_REFRESH_TOKEN",
+        "lang": "th",
         "title": "เรื่องเล่าอบอุ่นใจ",
         "description": "เรื่องเล่าความทรงจำครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ "
                        "ฟังเพลินทั้งคืน เหมาะเปิดฟังตอนพักผ่อน ทำงานบ้าน หรือก่อนนอน",
@@ -76,47 +83,66 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
     item = current(tok)
     chb = item.get("brandingSettings", {}).get("channel", {})
     live_title = chb.get("title") or item["snippet"]["title"]
+    default_lang = chb.get("defaultLanguage") or item["snippet"].get("defaultLanguage") or ""
+    loc_th = (item.get("localizations") or {}).get("th", {}).get("title")
     print(f"== {slug}  id={item['id']}")
     print(f"   live title (brandingSettings.channel.title): {live_title}")
     print(f"   snippet.title                              : {item['snippet']['title']}")
+    print(f"   defaultLanguage                            : {default_lang!r}")
+    print(f"   localizations.th.title                     : {loc_th!r}")
     if verify_only:
-        ok = live_title == t["title"]
+        ok = loc_th == t["title"]
         print(f"   target {t['title']!r} -> {'OK' if ok else 'NOT YET'}")
         return 0 if ok else 2
-    if live_title == t["title"]:
+    if loc_th == t["title"]:
         print("   already renamed -- skip")
         return 0
-    # Carry the whole branding object back so banner/description/keywords survive.
-    new_channel = dict(chb)
-    new_channel["title"] = t["title"]
-    new_channel["description"] = t["description"]
-    new_channel["keywords"] = t["keywords"]
-    payload = {"id": item["id"],
-               "brandingSettings": {"channel": new_channel},
-               # The Thai localized title is what a Thai viewer actually reads, and
-               # it is a documented writable field. Set it too, so a rename lands
-               # even on the path where brandingSettings.title is ignored.
-               "localizations": {"th": {"title": t["title"], "description": t["description"]}}}
-    if "image" in item.get("brandingSettings", {}):
-        payload["brandingSettings"]["image"] = item["brandingSettings"]["image"]
-    print(f"   {live_title!r} -> {t['title']!r}")
+
+    # The API's own rules, read from the channels.update reference (2026-11-07):
+    #   * `part` accepts exactly ONE of brandingSettings | invideoPromotion |
+    #     localizations per request. Sending two returns 400.
+    #   * brandingSettings.channel.title is NOT writable: change it and the API
+    #     answers 400 channelTitleUpdateForbidden. So the rename cannot go there.
+    #   * localizations.(key).title IS writable -- that is the channel name a
+    #     viewer in that language sees, i.e. the rename for a Thai audience.
+    #   * localizations is refused unless defaultLanguage is set.
+    # So the rename is two calls: set defaultLanguage first, then the title.
+    print(f"   plan: defaultLanguage -> {t['lang']!r}, then localizations.{t['lang']}.title -> {t['title']!r}")
     if dry:
         print("   dry-run: not writing")
         return 0
-    res = api(tok, "PUT", f"{CH_URL}?part=brandingSettings,localizations", payload)
-    got_b = res.get("brandingSettings", {}).get("channel", {}).get("title")
-    got_l = (res.get("localizations") or {}).get("th", {}).get("title")
-    print(f"   wrote brandingSettings.title -> {got_b!r}")
-    print(f"   wrote localizations.th.title -> {got_l!r}")
-    ok = t["title"] in (got_b, got_l)
-    if ok:
-        print("   OK -- renamed via the API")
+
+    if default_lang != t["lang"]:
+        # Call 1: part=brandingSettings. The channel title MUST be echoed back
+        # unchanged (channelTitleUpdateForbidden otherwise), so we carry the whole
+        # object and change only defaultLanguage -- this keeps banner/desc/keywords.
+        new_channel = dict(chb)
+        new_channel["title"] = live_title
+        new_channel["defaultLanguage"] = t["lang"]
+        new_channel["description"] = t["description"]
+        new_channel["keywords"] = t["keywords"]
+        payload = {"id": item["id"], "brandingSettings": {"channel": new_channel}}
+        if "image" in item.get("brandingSettings", {}):
+            payload["brandingSettings"]["image"] = item["brandingSettings"]["image"]
+        res = api(tok, "PUT", f"{CH_URL}?part=brandingSettings", payload)
+        got = res.get("brandingSettings", {}).get("channel", {}).get("defaultLanguage")
+        print(f"   set defaultLanguage -> {got!r}  {'OK' if got == t['lang'] else 'FAILED'}")
+        if got != t["lang"]:
+            return 1
+
+    # Call 2: part=localizations. This is the actual rename.
+    res = api(tok, "PUT", f"{CH_URL}?part=localizations",
+              {"id": item["id"],
+               "localizations": {t["lang"]: {"title": t["title"], "description": t["description"]}}})
+    got = (res.get("localizations") or {}).get(t["lang"], {}).get("title")
+    print(f"   set localizations.{t['lang']}.title -> {got!r}")
+    if got == t["title"]:
+        print("   OK -- renamed via the API (localizations)")
         return 0
-    print("   DID NOT STICK on either path.")
-    print("   Evidence (2026-10-31): brandingSettings.title answers HTTP 200 but echoes the")
-    print("   old name back for a channel on a personal Google account. The 2026-11-05 name")
-    print("   'เรื่องเล่าการ์ตูน' was most likely set in YouTube Studio. Do not treat this as")
-    print("   a CI failure; the tool has done all the API can do.")
+    print("   DID NOT STICK.")
+    print(f"   Response: {str(res)[:300]}")
+    print("   If the error is defaultLanguageNotSetError, the brandingSettings call did not")
+    print("   land. If it is forbidden, the channel may need YouTube Studio.")
     return 0
 
 

@@ -58,13 +58,19 @@ C (แยกช่อง — ช่องเล็กเกินไป ไม�
 → **`snippet.title` และ handle เปลี่ยนผ่าน API ไม่ได้** ส่วน `brandingSettings.channel.title`
    และ `localizations.th.title` นั้น PUT ผ่าน (200) แต่จะ**ติดจริงหรือไม่ ต้องวัด** (ดูด้านล่าง)
 
-**มี 2 ช่องทาง API ที่ลองเขียนชื่อได้ — และหลักฐานที่วัดได้:**
-1. `brandingSettings.channel.title` — ทดสอบ 2026-10-31: PUT → **HTTP 200 แต่ชื่อที่แสดง echo
-   กลับชื่อเดิม** (Google docs ก็ **ไม่** ระบุ `title` ในรายการฟิลด์ที่เขียนได้ ข้างบน)
-2. `localizations.th.title` — ชื่อ localized ตามภาษา (docs ระบุว่าเขียนได้)
+**✅ อัลกอริทึมที่ถูก (อ่านจาก `channels.update` reference ทางการ, 2026-11-07):**
+- `part` รับได้ **ทีละตัวเดียว** จาก `brandingSettings` | `invideoPromotion` | `localizations`
+  (ส่ง 2 ตัวพร้อมกัน = **400**)
+- `brandingSettings.channel.title` **เขียนไม่ได้** — error `channelTitleUpdateForbidden`
+  (ต้องส่งค่าเดิมกลับหรือละไว้) → นี่คือเหตุที่ 10-31 ได้ 200 แต่ชื่อไม่เปลี่ยน
+- **`localizations.(key).title` เขียนได้** = ชื่อช่องที่ผู้ชมภาษานั้นเห็น ← **นี่คือทาง rename**
+- `localizations` จะถูกปฏิเสธ (`400 defaultLanguageNotSetError`) ถ้ายังไม่ตั้ง `defaultLanguage`
 
-ชื่อที่แสดงวันนี้ = "เรื่องเล่าการ์ตูน" ≠ ชื่อบัญชี → **มีคนเปลี่ยนสำเร็จ** (หมายเหตุ 11-06: "rename is DONE")
-น่าจะทำใน Studio แต่ยังไม่ได้ทดสอบ `localizations.th.title` กับ quota จริง (quota หมด 403)
+**ลำดับที่ถูก = 2 call:**
+1. `PUT ?part=brandingSettings` → ตั้ง `defaultLanguage=th` (ส่ง title เดิมกลับ) + description/keywords
+2. `PUT ?part=localizations` → `localizations.th.title = "เรื่องเล่าอบอุ่นใจ"`
+
+รันโดย `scripts/set_channel_name.py` (CI `ch4-realign.yml` หลัง quota รีเซ็ต 08:00Z)
 
 **⚠️ gate "รอ K" ถูกยกเลิกไปแล้ว (มติที่ 7, 2026-11-06):** K สั่ง *"ยกเลิกคำสั่งรอ K ทั้งหมด ให้ ak
 ตัดสินใจบริหารงานได้เลย ถ้าผ่านมติที่ประชุมทีมที่ปรึกษา"* → **gate คือ "หลักฐาน" ไม่ใช่ "คน"**
