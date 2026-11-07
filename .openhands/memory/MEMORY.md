@@ -393,6 +393,14 @@ different ways) — use F0-contour correlation + MFCC distance.
   ch2 long rail are the working channels for volume today.
 
 
+## 🔍 คลิปวิว 0 — ต้นเหตุจริงคือ burst ไม่ใช่คุณภาพ (2026-11-07)
+- **Analytics รายงานคลิปใหม่ช้า** — คลิปที่ขึ้น '0 วิว' ใน Analytics จริง ๆ มี 154/107/75
+  (Data API). **อย่าใช้ Analytics ตัดสินคลิปใหม่** ใช้ Data API `statistics.viewCount`.
+- **ต้นเหตุวิว 0 = อัปโหลดรัว**: ch2 ยิง 25 คลิปใน 10 นาที → 20 วิว 0. คลิปที่ปล่อยทีละ 1-2 = 100-1,000 วิว.
+- แก้: `publish_shorts.py` per-run=1, `MIN_GAP_HOURS=2`, workflow 3 รอบ/วัน ห่าง 8 ชม. +
+  `scripts/diagnose_videos.py` (วินิจฉัย+burst→RULES→insights) รันใน studio-ai ทุกวัน.
+- เอกสาร: `docs/ZERO-VIEW-DIAGNOSIS-2026-11-07.md`.
+
 ## yt938-1 status — measured live 2026-10-31 14:45Z
 - **ch1** ตาต้า GenX Shop 33 vids / 6 subs · **ch2** Farmmer 10 vids / 7 subs · **ch4**
   kongkeat pratumma 8 vids / 6 subs. ch1 ep01 `E1gxiblSUo0` is **still private** (K has not
