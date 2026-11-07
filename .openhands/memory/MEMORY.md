@@ -5,6 +5,34 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## ⭐ 2026-11-07 — genx long-form rail: the channel had Shorts reach and zero destination
+- **Advisor panel closed (3 camps, satisfies ≥3-distinct-camps rule):** Google ×3 models
+  (`gemini-3.5-flash-lite`/`3.6-flash`/`gemma-4-31b-it`), **OpenAI-OSS** (gpt-oss-20b via
+  Pollinations text), **OpenHands default agent** (DeepSeek via OH Cloud). Verdict + dissent:
+  `docs/PANEL-2026-11-07-CONSENSUS.md`. All 3 agreed: **genx is the biggest gap** — 52 Shorts
+  and the highest Shorts reach (14,566 views, +78 subs/28d) but **ZERO long-form**, so every
+  genx Short funneled to an **empty playlist** `PLXEV3B3DcgsU`. Shorts reach never counts
+  toward YPP watch-hours. Panel split on length (Google 120min+, OSS 10-15min, DeepSeek
+  20-40min+"fix AVD 4% first"); **ak's call: start at 30 min** (the length ch4 proved) as the
+  AVD measurement that decides the next length.
+- **Built the genx rail** (mirror of the proven dharma/ch4 rail): `scripts/gen_philosophy_scripts.py`
+  (GenX "permission" arc, Thai-only/no-digit gates), `genx-longform.yml` (30-min build, Tue
+  04:47 UTC), `publish-ch1.yml` (Data API upload, `YT_CH1_REFRESH_TOKEN`), `content/ch1_publish.json`,
+  a `genx` channel in `add_release_to_manifest.py`, and `foreman.py` feeds it weekly.
+- **🔑 The funnel fix:** `add_release_to_manifest.py` now writes the channel's **playlist id into
+  every manifest entry** (config `"playlist"`), so `publish_batch.py` inserts each uploaded
+  long-form into the exact playlist the Shorts point at. Writing the entry is not enough —
+  the playlist insert is what closes the funnel.
+- **Proven E2E in the pod:** `content/ch1_long_01` (10 pieces, 305 lines) → 970.9s video →
+  `verify_night.py` **verdict pass**: -14.6 LUFS, true peak -3.1 dBFS, 1920x1080 color_range=tv,
+  bed headroom 20.6 dB. Commit `3c23289`.
+- **OH Cloud advisor gotcha:** leave `llm_model` at default (DeepSeek answers). Setting
+  `openhands/claude-sonnet-4-5` or `openhands/gpt-5` → APIError "model not available" for this
+  key. OH Cloud is slow (~10-15 min/answer); read `llm_message.content` from `events/search`.
+- **Pod render works:** `sudo apt-get install -y ffmpeg fonts-tlwg-*` + `pip install edge-tts
+  Pillow numpy`; edge-tts reaches the network. `verify_night.py` takes a **positional** path,
+  not `--video`.
+
 ## ⭐ 2026-11-06 — Long-form rail is now a closed autopilot (release→manifest→publish)
 - The night rail built a verified 120-min compilation, put it on a Release, and **stopped**:
   nothing wrote the manifest entry `content/ch2_publish.json`, so a person had to. That gap
