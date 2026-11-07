@@ -561,3 +561,6 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 
 ## Authority (2026-10-31)
 **ak** holds K's grant to administer and decide ("อนุมัติให้บริหารงาน และตัดสินใจแทน k ได้เลย"). ak acts alone on reversible/internal work; still asks K before publishing, enabling automations, deleting history, or renaming. Charter + log: `ax-workspace/.openhands/memory/DECISIONS.md`.
+- **API ตั้งชื่อช่อง/แฮนเดิลไม่ได้ (วัด 2026-11-07):** PUT `part=localizations` (key **`th_TH`** ไม่ใช่ `th`)
+  คืน 200, `description` ติด, แต่ `title` กลับมาเดิม → ต้องเปลี่ยนชื่อ+แฮนเดิลใน **Studio** เท่านั้น.
+  แฮนเดิลเปลี่ยนได้ **2 ครั้ง/14 วัน**. สคริปต์: `scripts/set_channel_name.py`.
