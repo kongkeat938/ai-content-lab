@@ -628,3 +628,16 @@ being the account owner. Do not hunt for one; remove the step from the critical 
   พิสูจน์ใน CI จริง: "daily cap reached (29/3 ...)". K แก้เพดานที่ `DAILY_CAP`.
 - **token dispatch workflow ไม่ได้ (403)** — ระบบเดินด้วย schedule + push เท่านั้น.
 - เอกสาร: `docs/QUALITY-FINDINGS-2026-11-07.md`.
+
+## 🎨 Shorts มีภาพ+เพลงจริงทุกช่อง (2026-11-07) — รายละเอียด `2026-11-07.md`
+- **ภาพ:** `assets/art/ch1|ch2|ch4/` (Openverse, licence gate, `credits.json`); `make_short.py
+  --art-dir` + `pick_art()` = hash(id) → รูปคงที่ต่อคลิป; ภาพ blur 6px ใต้ scrim.
+- **เพลง:** **AERIS pack (CC0-1.0)** จาก K: `raw.githubusercontent.com/aerismusic8-alt/
+  aeris-drive-automation/main/share/aeris-music/catalog.json` → `beds/` 6 อัน **บรรเลงล้วน**.
+  `scripts/fetch_music.py` → `assets/music/<mood>-bed-<mood>.mp3` (-22.6 LUFS).
+  mood: dharma=calm · genx=hopeful · kongkeat=warm → `pick_bed()` จับคู่.
+- **❌ yt-dlp ดึง YouTube ไม่ได้เลย (4 runner × ทุก client)** — ต้องมี account cookie.
+  ดึงเพลงจากช่องตัวเองแบบไร้คน = ทำไม่ได้; ใช้ไฟล์ที่เจ้าของให้แทน.
+- ต่อเข้า `publish_shorts.py` แล้ว (`--art-dir`+`--music`); test `scripts/test_short_art_music.py`;
+  CI `fetch-music.yml`. วัด: 3 ช่อง -15.9…-16.6 LUFS, TP ≤ -2.87.
+- **env:** pod recycle ล้าง ffmpeg + pip deps → ติดตั้งใหม่ได้ทุกครั้ง.
