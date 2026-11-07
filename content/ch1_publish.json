@@ -5,7 +5,7 @@
   "videos": [
     {
       "key": "ch1_long_01",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/genx-long-54056eb530a4-af6a96/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/genx-long-54056eb530a4-af6a96/compilation.mp3",
       "thumbnail": "",
@@ -29,7 +29,9 @@
       ],
       "category_id": 22,
       "privacy": "public",
-      "playlist": "PLXEV3B3DcgsU"
+      "playlist": "PLXEV3B3DcgsU",
+      "video_id": "l5hkDGVIYXE",
+      "url": "https://youtu.be/l5hkDGVIYXE"
     }
   ]
 }
