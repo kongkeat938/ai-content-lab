@@ -79,7 +79,13 @@ def duration(path: str) -> float:
 
 
 def backdrop(out: str, art: str | None) -> None:
-    """A dark, calm 1080x1920 frame. Uses channel art when given, else a gradient."""
+    """A dark, calm 1080x1920 frame. Uses channel art when given, else a gradient.
+
+    A photo is softened and darkened on purpose: measured advice from the panel
+    (Gemini + Pollinations, 2026-11-07) is that a sharp, busy still competes with
+    the captions for the eye, while a soft-focus image keeps the screen from
+    reading as a blank without pulling attention off the words.
+    """
     if art and os.path.exists(art):
         im = Image.open(art).convert("RGB")
         r = max(W / im.width, H / im.height)
@@ -87,6 +93,8 @@ def backdrop(out: str, art: str | None) -> None:
         left = (im.width - W) // 2
         top = (im.height - H) // 2
         im = im.crop((left, top, left + W, top + H))
+        from PIL import ImageFilter
+        im = im.filter(ImageFilter.GaussianBlur(6))
     else:
         im = Image.new("RGB", (W, H), (8, 14, 30))
     # Bottom scrim so captions always read, plus a gentle vignette.
@@ -251,11 +259,31 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
     return out
 
 
+def pick_art(art_dir: str, sid: str) -> str | None:
+    """Choose one still for a short, stable across rebuilds.
+
+    Indexed by a hash of the id, not by list position, so adding an image or
+    rebuilding does not reshuffle which clip shows which picture -- the published
+    video keeps matching the file a reviewer already saw.
+    """
+    if not art_dir or not os.path.isdir(art_dir):
+        return None
+    pool = sorted(f for f in os.listdir(art_dir)
+                  if f.lower().endswith((".jpg", ".jpeg", ".png")))
+    if not pool:
+        return None
+    h = 0
+    for ch in sid:
+        h = (h * 31 + ord(ch)) & 0xFFFFFFFF
+    return os.path.join(art_dir, pool[h % len(pool)])
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--scripts", default=os.path.join(ROOT, "content", "ch2_shorts", "scripts.json"))
     ap.add_argument("--out-dir", default=os.path.join(ROOT, "work", "ch2_shorts"))
     ap.add_argument("--art", help="background image (default: a dark gradient)")
+    ap.add_argument("--art-dir", help="directory of stills; one is picked per short")
     ap.add_argument("--music", help="optional bed to mix under the voice")
     ap.add_argument("--index", action="append", help="build only these ids")
     args = ap.parse_args()
@@ -266,7 +294,8 @@ def main() -> int:
         scripts = [s for s in scripts if s["id"] in args.index]
     os.makedirs(args.out_dir, exist_ok=True)
     for s in scripts:
-        build(s, args.out_dir, args.art, args.music)
+        art = args.art or pick_art(args.art_dir, s["id"])
+        build(s, args.out_dir, art, args.music)
     print(f"built {len(scripts)} short(s) in {args.out_dir}")
     return 0
 
