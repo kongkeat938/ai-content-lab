@@ -53,6 +53,12 @@ work is pushed to `kongkeat938/ai-content-lab` and served from a link.
 * Narration scripts are the director's instrument: one clause per line, blank
   line between beats, `[speaker]` tag to switch voice. See the skill.
 * Numbers are spelled as Thai words in scripts, never left as digits.
+* **Channel art is always a bright background with dark, high-contrast type.**
+  Never a dark background on any channel (K, 2026-11-07). Type must clear a
+  WCAG contrast of 4.5 against the pixels behind it; measure, do not eyeball.
+  Avatars are warm motifs, never a photo of a person. Build with
+  `scripts/make_branding.py --style lavish`; install a banner with
+  `scripts/set_channel_art.py` (there is no API for the avatar — Studio only).
 * Audio targets **-14 LUFS** with true peak at or below **-3 dBFS**.
 * Video is **1920x1080, `yuv420p`, `color_range=tv`**.
 * Media blobs (mp4, mp3) are gitignored — they are regenerable from the scripts.
