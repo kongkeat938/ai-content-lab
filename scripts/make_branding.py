@@ -84,10 +84,11 @@ def letterspaced(draw: ImageDraw.ImageDraw, txt: str, f, sp: int) -> int:
     return int(sum(draw.textlength(ch, font=f) for ch in txt) + sp * (len(txt) - 1))
 
 
-def draw_centered_ls(draw, cx, y, txt, f, fill, sp):
+def draw_centered_ls(draw, cx, y, txt, f, fill, sp, stroke_w=0, stroke_fill=INK):
     x = cx - letterspaced(draw, txt, f, sp) / 2
     for ch in txt:
-        draw.text((x, y), ch, font=f, fill=fill)
+        draw.text((x, y), ch, font=f, fill=fill,
+                  stroke_width=stroke_w, stroke_fill=stroke_fill)
         x += draw.textlength(ch, font=f) + sp
 
 
@@ -153,13 +154,16 @@ def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
         return out
 
     im = warm_grade(im)
-    im = ImageEnhance.Brightness(im).enhance(0.80)
-    # spotlight: brighten the centre, then sink the edges into a warm dark
-    glow = ImageEnhance.Brightness(im).enhance(1.55)
-    im = Image.composite(glow, im, radial_mask(BANNER_W, BANNER_H))
-    dark = ImageEnhance.Brightness(im).enhance(0.32)
-    inv = Image.fromarray(255 - np.asarray(radial_mask(BANNER_W, BANNER_H, power=1.7)))
-    im = Image.composite(dark, im, inv)
+    im = ImageEnhance.Brightness(im).enhance(0.58)
+    # vignette: sink the edges so the eye lands in the centre
+    inv = Image.fromarray(255 - np.asarray(radial_mask(BANNER_W, BANNER_H, power=1.5)))
+    im = Image.composite(ImageEnhance.Brightness(im).enhance(0.34), im, inv)
+    # scrim: a soft dark band behind the copy. Without it the centre stayed at
+    # 127-170 luminance and the light type was hard to read (K, 2026-11-07).
+    scrim = Image.new("L", (BANNER_W, BANNER_H), 0)
+    ImageDraw.Draw(scrim).rounded_rectangle([540, 455, 2020, 1000], radius=110, fill=158)
+    scrim = scrim.filter(ImageFilter.GaussianBlur(80))
+    im = Image.composite(Image.new("RGB", im.size, (13, 10, 7)), im, scrim)
     im = im.convert("RGBA")
 
     cx = BANNER_W // 2
@@ -177,7 +181,7 @@ def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
     block = kh + g1 + th + g2 + 12 + g3 + sh
     y = (BANNER_H - block) // 2
 
-    draw_centered_ls(ImageDraw.Draw(im), cx, y, f"\u2726 {kicker} \u2726", f_kick, GOLD, 8)
+    draw_centered_ls(ImageDraw.Draw(im), cx, y, f"\u2726 {kicker} \u2726", f_kick, GOLD, 8, 2)
     y += kh + g1
     glow_text(im, cx, y, title, f_title, GOLD, 6)
     y += th + g2
@@ -186,7 +190,8 @@ def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
     d.line([cx + 28, y + 6, cx + 210, y + 6], fill=GOLD, width=4)
     d.polygon([(cx, y - 5), (cx + 13, y + 6), (cx, y + 17), (cx - 13, y + 6)], fill=GOLD)
     y += 12 + g3
-    d.text((cx - d.textlength(subtitle, font=f_sub) / 2, y), subtitle, font=f_sub, fill=WHITE)
+    d.text((cx - d.textlength(subtitle, font=f_sub) / 2, y), subtitle, font=f_sub, fill=WHITE,
+           stroke_width=3, stroke_fill=INK)
 
     # ornament on the TV-visible band, so it is actually seen
     ornament(d, (500, 500, 2060, 940))
