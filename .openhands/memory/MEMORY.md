@@ -569,3 +569,6 @@ being the account owner. Do not hunt for one; remove the step from the critical 
   `brandingSettings.image.bannerExternalUrl` (**echo `brandingSettings.channel` เดิมกลับทั้งก้อน**
   ไม่งั้น description/keywords หาย). **อวตารไม่มี API** → Studio เท่านั้น. สคริปต์ `scripts/set_channel_art.py`.
   สร้างภาพ: `scripts/make_branding.py --style lavish` (safe zone: ข้อความต้องอยู่ในโซน desktop 1235×338).
+- **⚠️ กฎภาพช่องจาก K (2026-11-07): พื้นหลังต้องสว่าง + ตัวหนังสือสีเข้มเสมอ ห้ามพื้นหลังมืด ทุกช่อง.**
+  ตัวหนังสือต้อง contrast ≥ 4.5 กับพิกเซลหลังมัน (วัดจริง ไม่เดา). **อวตาร = ลายอบอุ่น ไม่ใช่รูปคน**
+  (K: "รูปผู้หญิง ผู้ชาย ไม่เอา"). สร้าง: `scripts/make_branding.py --style lavish` (สว่างทั้ง lavish+classic).
