@@ -36,14 +36,14 @@
     },
     {
       "slug": "kongkeat-story",
-      "name": "เรื่องเล่าอบอุ่นใจ",
-      "handle": "@kongkeatpratumma (K to change in Studio — API cannot rename a handle)",
+      "name": "เรื่องเล่าการ์ตูน",
+      "handle": "@kongkeatpratumma",
       "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
-      "angle": "เรื่องเล่าอบอุ่นใจ — เรื่องเล่าความทรงจำครอบครัวอบอุ่นใจ",
+      "angle": "เรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัวอบอุ่นใจ",
       "videos_seen": 8,
       "account": "kongkeat.p3@gmail.com",
       "token_path": "~/.config/content-lab/yt_token_kongkeat-story.json",
-      "status": "live — 8 videos (long-form Thai story/drama + Shorts). Series brand decided 2026-10-31: เรื่องเล่าการ์ตูน. Channel TITLE is เรื่องเล่าการ์ตูน (set 2026-11-05). The HANDLE is still @kongkeatpratumma because the Data API cannot rename a handle — K must change it in YouTube Studio (Settings > Channel > Handle). All clip/description text now uses the name-free channel URL https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ so no personal name shows on a clip."
+      "status": "live — long-form family-memory compilations + Shorts. 2026-11-07: advisor panel (3 camps, unanimous) traced the channel's weakest reach of the three (4,136 views / 16.1 watch-hours / +8 subs / 28d) to the name 'เรื่องเล่าการ์ตูน' promising a cartoon the content never was. Decision: realign name + metadata to 'เรื่องเล่าอบอุ่นใจ'. Metadata/tags/playlists/generators already realigned in ai-content-lab (commit 9b93e87). Panel-backed (3 camps) so ak applies it -- see _rules.rename. scripts/set_channel_name.py writes brandingSettings.channel.title + localizations.th.title (CI: set-channel-name.yml, retries after the 08:00Z quota reset); YouTube Studio only if the API will not stick."
     }
   ]
 }

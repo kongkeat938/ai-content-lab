@@ -55,11 +55,22 @@ C (แยกช่อง — ช่องเล็กเกินไป ไม�
 `brandingSettings.channel.{country,description,defaultLanguage,keywords,trackingAnalyticsAccountId,unsubscribedTrailer}`
 · `localizations.(key).{title,description}` · `status.selfDeclaredMadeForKids`
 
-→ **`snippet.title` (ชื่อช่องหลัก) และ handle เปลี่ยนผ่าน API ไม่ได้** ต้องทำใน **YouTube Studio** (K เท่านั้น)
+→ **`snippet.title` และ handle เปลี่ยนผ่าน API ไม่ได้** ส่วน `brandingSettings.channel.title`
+   และ `localizations.th.title` นั้น PUT ผ่าน (200) แต่จะ**ติดจริงหรือไม่ ต้องวัด** (ดูด้านล่าง)
 
-**แต่มีช่องทาง API ที่ทำได้ทันที: `localizations.th.title`** = ชื่อช่องที่แสดงกับผู้ชมที่ตั้งภาษาไทย
-→ สำหรับช่องไทย = เปลี่ยนชื่อที่ผู้ชมเห็นจริง **โดยไม่ต้องรอ K** (reversible: set กลับได้)
-*(ยังต้องทดสอบกับ quota จริง — ตอนนี้ quota หมด 403 รีเซ็ต 08:00 UTC)*
+**มี 2 ช่องทาง API ที่ลองเขียนชื่อได้ — และหลักฐานที่วัดได้:**
+1. `brandingSettings.channel.title` — ทดสอบ 2026-10-31: PUT → **HTTP 200 แต่ชื่อที่แสดง echo
+   กลับชื่อเดิม** (Google docs ก็ **ไม่** ระบุ `title` ในรายการฟิลด์ที่เขียนได้ ข้างบน)
+2. `localizations.th.title` — ชื่อ localized ตามภาษา (docs ระบุว่าเขียนได้)
+
+ชื่อที่แสดงวันนี้ = "เรื่องเล่าการ์ตูน" ≠ ชื่อบัญชี → **มีคนเปลี่ยนสำเร็จ** (หมายเหตุ 11-06: "rename is DONE")
+น่าจะทำใน Studio แต่ยังไม่ได้ทดสอบ `localizations.th.title` กับ quota จริง (quota หมด 403)
+
+**⚠️ gate "รอ K" ถูกยกเลิกไปแล้ว (มติที่ 7, 2026-11-06):** K สั่ง *"ยกเลิกคำสั่งรอ K ทั้งหมด ให้ ak
+ตัดสินใจบริหารงานได้เลย ถ้าผ่านมติที่ประชุมทีมที่ปรึกษา"* → **gate คือ "หลักฐาน" ไม่ใช่ "คน"**
+panel ผ่าน 3 ค่ายแล้ว → **ak ลงมือเองก่อน** ไม่ใช่ประกาศ "รอ K"
+(`scripts/set_channel_name.py` + CI `set-channel-name.yml` ลองทั้ง 2 ทางหลัง quota รีเซ็ต 08:00Z
+แล้วรายงานว่าทางไหนติด — ถ้าไม่ติดทั้งคู่จึงเหลือ Studio)
 
 ## ลำดับงาน "รื้อทำใหม่" (ตามที่ panel แนะนำ — ถูก/ย้อนได้ก่อน ของแพง/มองเห็นมากทีหลัง)
 
@@ -69,7 +80,8 @@ C (แยกช่อง — ช่องเล็กเกินไป ไม�
 | 1 | **วินัยเนื้อหา** — เลิกผลิตนิทาน/คลาสสิก ผลิตเฉพาะ "ช่วงเวลาครอบครัวเจาะจง" (แก้ `gen_family_scripts.py` arc) | ak | ✅ code |
 | 2 | **Realign metadata** — keywords/tags/คำอธิบาย/เพลย์ลิสต์ ถอด "การ์ตูน/เด็ก/นิทาน" ใส่ "ความทรงจำ/อบอุ่นใจ/ครอบครัว" | ak | ✅ API |
 | 3 | **ตั้งชื่อ localized (th)** = เรื่องเล่าอบอุ่นใจ (path ไม่ต้องรอ K) | ak | ✅ API |
-| 4 | **เปลี่ยนชื่อช่องหลัก + handle ใน Studio** = เรื่องเล่าอบอุ่นใจ / @… | **K** | ❌ Studio |
+| 4 | **เปลี่ยนชื่อช่อง** = เรื่องเล่าอบอุ่นใจ (panel ผ่านมติ → ak ทำเอง) | ak | ✅ API (brandingSettings/localizations) |
+| 4b | handle `@kongkeatpratumma` → ชื่อที่ตรง (ถ้าต้องการ) | K | ❌ Studio (API เปลี่ยน handle ไม่ได้) |
 | 5 | Thumbnail/การ์ดไตเติลใหม่ ให้ตรง promise ใหม่ (ไม่ใช่สไตล์การ์ตูน) | ak | ✅ code |
 | 6 | ดัน Shorts ที่ชนะซ้ำภายใต้ promise ใหม่ | ak | ✅ API |
 | 7 | **ห้ามลบคลิปเก่า** — วัดต่อ | — | — |

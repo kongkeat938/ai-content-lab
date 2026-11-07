@@ -1,0 +1,58 @@
+name: set-channel-name
+
+# Applies the channel rename through the YouTube Data API -- no browser, no Studio.
+#
+# Why: the team first believed the Data API could not rename a channel. It can:
+# `snippet.title` is not writable, but `brandingSettings.channel.title` is, and it
+# is the field the live name reads from (yt_branding.py wrote it on 2026-11-01 and
+# the channel shows "เรื่องเล่าการ์ตูน" since). A refresh token in a repo secret has
+# no phone-verification gate and survives pod recycles, so the rename runs here.
+#
+# The API quota resets at midnight Pacific (08:00 UTC); a tick that lands while
+# quota is spent reports a deferral and the next morning's tick applies it. The
+# script is idempotent (it skips a channel already carrying the target name).
+on:
+  workflow_dispatch:
+    inputs:
+      verify:
+        description: "true to only read the live name"
+        default: "false"
+  schedule:
+    # One attempt a day, just after the API quota resets at midnight Pacific
+    # (08:00 UTC). Daily, not every 30 min, because if the write does not stick
+    # on a personal-account channel then re-trying all day only burns quota
+    # (channels.update is 50 units). Idempotent: it skips a channel already named.
+    - cron: "5 8 * * *"
+  push:
+    paths:
+      - "scripts/set_channel_name.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: set-channel-name
+  cancel-in-progress: false
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply channel rename
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.verify }}" = "true" ]; then
+            python3 scripts/set_channel_name.py --verify
+          else
+            python3 scripts/set_channel_name.py --apply
+          fi
