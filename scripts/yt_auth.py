@@ -55,6 +55,18 @@ SCOPE_SETS = {
 }
 TOKEN_PATH = os.environ.get(
     "YT_TOKEN_PATH", os.path.expanduser("~/.config/content-lab/yt_token.json"))
+# Which secret holds which channel's refresh token. The per-channel secret is
+# itself the identity: a token stored in YT_CH1_REFRESH_TOKEN is ch1's by
+# construction. The rail uses this when the Data API cannot be asked which
+# channel a token owns -- a spent daily quota makes that call return 403 for every
+# token, and the rail must keep working rather than declare a false mismatch
+# (measured 2026-11-07: short doors died on exactly that, three runs in a row).
+CHANNEL_ENV = {
+    "UCI6EfsgM1HNjrYarvigxyrQ": "YT_CH1_REFRESH_TOKEN",   # genx
+    "UCM3QO5L_pmj34n1JVlbhh-w": "YT_CH2_REFRESH_TOKEN",   # dharma
+    "UCm44BjAn03ruOF-WaA3ZRww": "YT_CH3_REFRESH_TOKEN",   # aeris-music (cancelled)
+    "UC7gCIu4G_7QCEJ8hJ-34zoQ": "YT_CH4_REFRESH_TOKEN",   # kongkeat
+}
 # A loopback redirect is registered once and never changes, unlike a sandbox
 # hostname. That is why it is the preferred method: the pod can be recycled
 # without the owner touching the Google console again.
@@ -228,8 +240,26 @@ def env_token_candidates(slug: str | None = None) -> list[tuple[str, str]]:
     return out
 
 
+def env_token_for_channel(channel_id: str) -> tuple[str, str] | None:
+    """The (refresh_token, source) that the per-channel secret pins to channel_id.
+
+    The channel id is the identity: whatever sits in YT_CH<N>_REFRESH_TOKEN is that
+    channel's token. This answers the question the Data API answers, but offline --
+    which is what keeps a rail alive when the daily quota is spent.
+    """
+    var = CHANNEL_ENV.get(channel_id)
+    if not var:
+        return None
+    value = (os.environ.get(var) or "").strip()
+    return (value, f"${var}") if value else None
+
+
 def _channel_id_for_refresh(refresh_token: str, client: tuple[str, str]) -> str | None:
-    """The channel a refresh token belongs to, or None if it cannot be read."""
+    """The channel a refresh token belongs to, or None if it cannot be read.
+
+    None means "unknown", never "wrong": a spent Data API quota makes this call
+    return 403 for every token, and the caller must not read that as a mismatch.
+    """
     import urllib.request
     cid, secret = client
     data = urllib.parse.urlencode({
@@ -296,10 +326,27 @@ def materialise_env_token(slug: str | None, expected_channel: str | None = None)
 
     chosen = candidates[0]
     if expected_channel:
+        # Ask Google which token owns the channel. A token that cannot be resolved
+        # (a spent quota answers 403 for every token) must not be read as "wrong" --
+        # fall back to the per-channel secret, which pins the channel by
+        # construction, the same rule publish_batch.py already uses. A token that
+        # *does* resolve to a different channel is a real mismatch and still aborts.
+        pinned = env_token_for_channel(expected_channel)
+        match = None
+        pinned_unresolved = False
         for refresh_token, source in candidates:
-            if _channel_id_for_refresh(refresh_token, client) == expected_channel:
-                chosen = (refresh_token, source)
+            got = _channel_id_for_refresh(refresh_token, client)
+            if got == expected_channel:
+                match = (refresh_token, source)
                 break
+            if pinned and refresh_token == pinned[0] and got is None:
+                pinned_unresolved = True
+        if match:
+            chosen = match
+        elif pinned and pinned_unresolved:
+            chosen = pinned
+            print(f"channel check unavailable (quota); using the secret that pins "
+                  f"channel {expected_channel}: {pinned[1]}")
         else:
             sys.exit(f"No refresh token in the environment belongs to channel "
                      f"{expected_channel}. Authorise that channel first with "
@@ -320,6 +367,12 @@ def materialise_env_token(slug: str | None, expected_channel: str | None = None)
         # the grant speak for itself.
         "scopes": None,
     }
+    if expected_channel:
+        # Stamp the channel so a later call can prove the file's owner without a
+        # Data API read (token_file_channel returns the stamp as-is). Without it the
+        # file reads as "unknown" whenever the quota is spent, and every call
+        # deletes and rewrites it.
+        doc["channel_id"] = expected_channel
     fd = os.open(TOKEN_PATH, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         json.dump(doc, fh, indent=2)
