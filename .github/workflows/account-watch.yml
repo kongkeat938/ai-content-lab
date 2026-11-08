@@ -54,11 +54,17 @@ jobs:
           IMAP_ACCOUNTS: ${{ secrets.IMAP_ACCOUNTS }}
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_APP_PASSWORD: ${{ secrets.IMAP_APP_PASSWORD }}
+          PC1_MCP_URL: ${{ secrets.PC1_MCP_URL }}
+          PC1_MCP_TOKEN: ${{ secrets.PC1_MCP_TOKEN }}
         run: |
           set +e
           python3 scripts/mail_watch.py --days "${{ github.event.inputs.days || '3' }}" --write
           echo "exit=$?" >> "$GITHUB_STEP_SUMMARY"
+          # When the inbox is BLIND, say why. The mail is only readable on PC1, so
+          # "PC1 is down" is the difference between a fixable outage and a mystery.
+          python3 scripts/pc1_health.py --write >> "$GITHUB_STEP_SUMMARY" 2>&1
           cat docs/MAIL-ALERTS.md >> "$GITHUB_STEP_SUMMARY"
+
 
       - name: Commit the report
         if: ${{ github.event.inputs.commit != 'false' }}
