@@ -438,6 +438,25 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **หลักการ:** "ออโตเมชันสมบูรณ์" ไม่ใช่แค่ทุกอย่างมี cron — ต้องมี **ตัวขับที่เชื่อถือได้
   (chain) + guard ที่บังคับให้ rail ใหม่ต้องถูกขับ**. เช็คเร็ว: `python3 scripts/foreman.py --dry-run`.
 
+## 🔎 PCSEV — "verify จากอะไร" (2026-11-08)
+- **PCSEV = Problem→Cause→Solution→Execute→Verify.** K ถามขั้น V ควรตรวจจากไหน.
+  คำตอบ: **จากแหล่งที่วัดได้จริง ณ ปัจจุบัน ไม่ใช่เอกสารที่ commit ไว้** (เอกสาร=คำอ้าง
+  อีกชั้น). ลำดับ: **API สด > ไฟล์จริง(ffprobe) > เทสต์ที่ล้มได้ > เอกสาร(อ่อนสุด)**.
+- **เจอ 2 จุดที่เอกสารผิด (วัดสด):** (1) `report_reach.py` อ้างว่า Analytics API ปฏิเสธ
+  token — จริง ๆ **ได้ทั้ง 3 ช่อง** (รวม `audienceWatchRatio`=retention curve); แก้แล้ว.
+  ที่ API ไม่มีจริง: `impressions`/CTR (400) + รายได้ (scope ไม่พอ). (2) `docs/watch_hours.json`
+  **คลาดเคลื่อน 52-244%** จาก live (genx 5,743→19,760) เพราะ API **รายงานย้อนหลังช้า ~2 วัน**.
+- **⭐ K ต่อยอด:** แหล่ง verify ที่ดีสุด = **counter ที่ต้องโต** (lifetime views/watch/subs)
+  เพราะแบก invariant ในตัว: **ห้ามลดลง** (ลด=ข้อมูลผิดแน่นอน) · **ห้ามนิ่ง** (นิ่ง=ช่อง/pipeline
+  หยุด) · ledger append-only = หลักฐานว่าตรวจแล้ว. snapshot บอก "ตอนนั้นเท่าไหร่"; counter
+  บอก "ตอนนี้ยังเดินอยู่ไหม".
+- **เครื่องมือ:** `verify_claims.py` (วัดซ้ำเทียบ snapshot, `--strict` ให้ exit 1) ·
+  `counter_ledger.py` (append `docs/counters.jsonl` + ตรวจ 2 invariant; ลด=exit 1, นิ่ง≥3วัน=flag) ·
+  guard `test_verify_claims.py` + `test_counter_ledger.py`. เทสต์ **11/11**.
+- **Data API quota หมด (403) ห้ามตีว่า "ไม่มีข้อมูล"** — Analytics API quota แยก ยังตอบ
+  (ใช้หน้าต่าง `2020-01-01..today` เป็น counter สะสม: genx 23,681 · dharma 10,861 · kongkeat 5,645).
+- เอกสาร: `docs/PCSEV-VERIFY-2026-11-08.md`.
+
 ## 🏢 โมเดลธุรกิจ + ทีม 5 agent + QA critic (2026-11-08)
 - K: "ak สร้างทีม developer ... ออกแบบโมเดลธุรกิจเลย". เอกสาร: `docs/BUSINESS-MODEL-2026-11-08.md`.
 - **Panel 3 ค่าย เอกฉันท์:** คอขวดจริง = **retention/AVD ไม่ใช่เพดานอัปโหลด** (ใช้แค่ ~2.8
