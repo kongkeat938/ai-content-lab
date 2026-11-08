@@ -1,4 +1,4 @@
-# Account watch — 2026-11-08T04:32+00:00
+# Account watch — 2026-11-08T04:34+00:00
 
 ## Channel health (Data API — always available)
 - **dharma**: cannot check — 403 {
@@ -16,5 +16,5 @@
     "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
 
 ## Inbox (IMAP — needs an app password)
-- no mail credential (IMAP_ACCOUNTS, or IMAP_USER / IMAP_APP_PASSWORD unset) -- the inbox cannot be read, so this layer is BLIND
+- IMAP failed for farmmer.938@gmail.com: error: b'[ALERT] Application-specific password required: https://support.google.com/accounts/answer/185833 (Failure)'; IMAP failed for kongkeat.938@gmail.com: error: b'[ALERT] Application-specific password required: https://support.google.com/accounts/answer/185833 (Failure)'; IMAP failed for kongkeat.p3@gmail.com: error: b'[ALERT] Application-specific password required: https://support.google.com/accounts/answer/185833 (Failure)'
 
