@@ -336,6 +336,31 @@ def main() -> int:
             plan.append(("remake shorts", {"channel": slug, "per_run": "1"}))
             break
 
+    # 5g. The packaging rail (2026-11-08). It writes ch2 titles, tags and covers
+    #     and carries a schedule, so GitHub's unreliable cron could miss it for
+    #     days. Due when a packaging entry is not yet in the ledger, i.e. when the
+    #     rail still has work; idempotent, so a tick with nothing to do is a no-op.
+    pack = load("content/ch2_packaging.json", {"videos": {}}).get("videos", {})
+    done = {c.get("key") for c in
+            load("content/packaging_changes.json", {"changes": []}).get("changes", [])}
+    if pack and set(pack) - done:
+        plan.append(("apply-packaging", {}))
+
+    # 5h. The ch2 playlists (2026-11-08). Also schedule-only. The organise step
+    #     reuses a playlist by title and adds only missing videos, so it is safe
+    #     to run daily; drive it from the chain so it cannot be missed.
+    pl_age = last_success_min("ch2-playlists", ids)
+    if pl_age is None or pl_age > 24 * 60:
+        plan.append(("ch2-playlists", {}))
+
+    # 5i. Delete rails that are still pending. remove-bad-cut carries only a
+    #     schedule, so GitHub's cron could miss it; drive it from the chain until
+    #     the video's .done marker appears, then stop dispatching it.
+    dels = load("content/deletes.json", {"pending": []}).get("pending", [])
+    if any(not os.path.exists(os.path.join(ROOT, "content", "deleted", e["video"] + ".done"))
+           for e in dels):
+        plan.append(("remove-bad-cut", {}))
+
     # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
     #    any push runs the foreman, so a broken chain repairs itself on the next
     #    commit instead of staying dead until someone notices.

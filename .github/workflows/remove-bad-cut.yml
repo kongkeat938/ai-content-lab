@@ -35,13 +35,30 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Delete the 57-minute cut (idempotent)
+      - name: Delete the pending cuts (idempotent)
         continue-on-error: true   # a second run has nothing to delete
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
-        run: python3 scripts/delete_video.py --slug dharma --video HkbSguA53ro --yes
+        run: |
+          # Read the pending list rather than hard-coding one id, so the rail can
+          # be reused and the foreman can gate on the same file. A video whose
+          # .done marker exists is skipped: the delete already succeeded.
+          python3 - <<'PY'
+          import json, os, subprocess, sys
+          pend = json.load(open("content/deletes.json", encoding="utf-8"))["pending"]
+          rc = 0
+          for e in pend:
+              vid = e["video"]
+              if os.path.exists(os.path.join("content", "deleted", vid + ".done")):
+                  print(f"{vid}: already deleted (marker present)")
+                  continue
+              r = subprocess.run([sys.executable, "scripts/delete_video.py",
+                                  "--slug", e["slug"], "--video", vid, "--yes"])
+              rc = rc or r.returncode
+          sys.exit(rc)
+          PY
 
       - name: Commit the metadata backup
         if: always()
