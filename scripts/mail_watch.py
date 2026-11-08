@@ -241,6 +241,22 @@ def credential_shape() -> str:
             f"line(s), {with_colon} with a ':') but no account was parsed")
 
 
+def explain_imap_error(exc: Exception) -> str:
+    """Turn a raw IMAP failure into something the reader can act on.
+
+    Gmail's most common refusal here is exact and worth naming: it means the value
+    is the account's normal login password, and Gmail will not accept that over
+    IMAP -- an app password is required. Measured 2026-11-08 on all three accounts.
+    """
+    text = str(exc)
+    if "Application-specific password required" in text or "app-specific password" in text.lower():
+        return ("this account requires an app password (the normal login password "
+                "is refused) -- create one at https://myaccount.google.com/apppasswords")
+    if "Invalid credentials" in text or "Authentication failed" in text:
+        return "the app password was rejected -- check it was copied whole and not expired"
+    return f"{type(exc).__name__}: {text[:160]}"
+
+
 def inbox_alerts(days: int) -> tuple[list[dict], str]:
     """Unread mail from the senders that matter, across every configured account.
 
@@ -254,6 +270,7 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
                     ". Expected 'user:app_password' per line, or IMAP_USER / "
                     "IMAP_APP_PASSWORD. The inbox cannot be read, so this layer "
                     "is BLIND")
+
 
     alerts: list[dict] = []
     notes: list[str] = []
@@ -277,7 +294,7 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
             box.logout()
             notes.append(f"read {user}: {found} flagged unread in {days} day(s)")
         except Exception as exc:  # noqa: BLE001 - any IMAP failure must be reported, not hidden
-            notes.append(f"IMAP failed for {user}: {type(exc).__name__}: {exc}")
+            notes.append(f"IMAP failed for {user}: {explain_imap_error(exc)}")
     return alerts, "; ".join(notes)
 
 
