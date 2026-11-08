@@ -30,10 +30,13 @@ WORKFLOW = "cred-transport.yml"
 def gh(*args: str, check: bool = True) -> str:
     token = os.environ.get("KONGKEAT_GH_TOKEN") or os.environ.get("GITHUB_TOKEN", "")
     env = dict(os.environ, GH_TOKEN=token)
-    r = subprocess.run(("gh",) + args, capture_output=True, text=True, env=env)
+    # Log output is not guaranteed to be valid UTF-8, and a stray byte must not take
+    # the whole run down with a decode error.
+    r = subprocess.run(("gh",) + args, capture_output=True, env=env)
     if check and r.returncode != 0:
-        sys.exit(f"gh {' '.join(args)} failed: {r.stderr.strip()}")
-    return r.stdout
+        err = r.stderr.decode("utf-8", "replace").strip()
+        sys.exit(f"gh {' '.join(args)} failed: {err}")
+    return r.stdout.decode("utf-8", "replace")
 
 
 def ensure_key(path: str) -> tuple[str, str]:
@@ -80,18 +83,20 @@ def main() -> int:
 
     if run_id:
         gh("run", "watch", run_id, "--repo", REPO, "--exit-status", check=False)
+        # `gh run view --log` is used rather than the API's log endpoint, which
+        # returns a zip. The echoed script is interleaved with the output, and that
+        # echoed script contains the marker strings, so the filters below require the
+        # line to be bare output rather than source.
         log = gh("run", "view", run_id, "--repo", REPO, "--log", check=False)
     else:
         log = ""
 
     ct = ""
-    plen = ""
     for line in log.splitlines():
-        if "CIPHERTEXT_B64=" in line:
-            ct = line.split("CIPHERTEXT_B64=", 1)[1].strip()
-        if "PLAINTEXT_LEN=" in line:
-            plen = line.split("PLAINTEXT_LEN=", 1)[1].strip()
-        if "EMPTY:" in line:
+        # The real line is bare output: it has no surrounding source quoting.
+        if "CIPHERTEXT_B64=" in line and "print(" not in line and '"' not in line:
+            ct = line.split("CIPHERTEXT_B64=", 1)[1].strip().strip("'\"")
+        if "EMPTY:" in line and "print(" not in line:
             print(line.split("EMPTY:", 1)[1].strip(), file=sys.stderr)
             return 2
 
