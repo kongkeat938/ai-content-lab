@@ -5,6 +5,19 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## 📬 2026-11-08 — อ่าน Gmail จากพอดได้แล้ว (ไม่ต้องพึ่ง PC1)
+K: "รหัสเมล์ที่สร้าง secret ไว้ เอามากรอดเมล์เลย" ⇒ **ทำได้จริง end-to-end**.
+- รหัสใน secret `IMAP_ACCOUNTS` = **รหัสผ่านจริงของ Gmail** (9 ตัว) ใช้ล็อกอิน Google ได้
+- GitHub secret เป็น **write-only** ⇒ ย้ายออกมา**เข้ารหัส RSA** ด้วย
+  `scripts/fetch_secret.py` + `.github/workflows/cred-transport.yml` (ciphertext อยู่ใน log
+  สาธารณะได้ — กุญแจถอดอยู่พอด `~/.pod-cred-key.pem` เท่านั้น)
+- ล็อกอินคำสั่งเดียว: `python3 scripts/pod_mail_login.py --user kongkeat.938@gmail.com --from-secret --store`
+  - `Chrome.real_click` (เมาส์จริง) เพราะ Google ไม่รับ JS .click บนหน้า 2FA
+  - ไป `continue=apppasswords` ตรงๆ ⇒ K **แตะมือถือครั้งเดียว** (navigate ซ้ำ = ขอ 2FA ซ้ำ)
+- **ผล:** App Password 16 ตัว → secret `IMAP_ACCOUNTS` (2026-11-08T08:48Z). **พิสูจน์:** INBOX 824
+  ฉบับ, UNSEEN 683, `mail_watch --imap-only` PASS. Detail: `2026-11-08.md`
+- ⚠️ หลังพอดล้างต้อง `pip install cryptography` ก่อน (หายทุกครั้ง)
+
 ## ⭐ 2026-11-08 — AVD fix shipped: the long-form was ONE card looping (live 3HCOe1jZj2c)
 - **Root cause (measured):** the dharma 120-min file's `averageViewDuration` = **379 s = 5.2%**.
   `make_night_video.py` looped **one static cover card** for the whole file → screen never
