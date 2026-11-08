@@ -770,3 +770,15 @@ being the account owner. Do not hunt for one; remove the step from the critical 
 แต่ token ที่ยืนยันได้ว่าเป็นช่องอื่นยัง abort. ใช้ใน `yt_auth.CHANNEL_ENV` +
 `env_token_for_channel`; เทสต์ `scripts/test_channel_identity.py`. **cron ที่รัน
 ก่อน 08:00 UTC จะอยู่ในหน้าต่างโควตาหมดเสมอ** (Data API รีเซ็ต 08:00 UTC; Analytics แยกโควตา).
+
+## ⏱️ Long-form rail: `--minutes` is a FLOOR, not a target (2026-11-08)
+- `build_night.py --minutes N` loops the whole talk until it reaches N minutes. If the
+  content set is *under* N, the talk is heard **twice** (a 28.5-min set under `--minutes 30`
+  shipped as **57.1 min**, title still saying "30 นาที"). Size the set so **one pass already
+  exceeds the floor**; never rely on `--minutes` to trim.
+- **Quota split:** `videos.insert` draws its own pool, so an upload can succeed while
+  `videos.delete`/reads 403 all day on the spent read pool. Queue deletes for **08:12 UTC**
+  (after the 08:00 reset, before publish-batch's 09:17 tick). `scripts/delete_video.py` +
+  `.github/workflows/delete-video.yml` = guarded delete; `remove-bad-cut.yml` = the scheduled
+  cleanup. `publish-batch.yml` also fires on **push to `content/ch2_publish.json`** — a build's
+  manifest commit auto-uploads with no dispatch.
