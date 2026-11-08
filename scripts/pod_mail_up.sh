@@ -16,11 +16,22 @@ PORT="${1:-12001}"
 DISPLAY_NUM=":99"
 LOG_DIR="${HOME}/.novnc"
 VNC_PASS_FILE="${HOME}/.vnc/passwd"
-# Random each start, so a recycled pod never reuses an old password. Letters and
-# digits only, because VNC caps the password at 8 characters and symbols are easy to
-# mistype on a phone. Shown below.
-VNC_PASSWORD="${VNC_PASSWORD:-$(python3 -c 'import secrets,string;print("".join(secrets.choice(string.ascii_letters+string.digits) for _ in range(8)))')}"
-CHROME_PROFILE="${CHROME_PROFILE:-$HOME/.chromium-profile}"
+# Keep one password across restarts. A new random password on every start means the
+# owner has to be told a new one each time, and an old one silently stops working.
+# If a password file exists it wins, so the same password keeps working after a
+# recycle. The password is short by necessity -- VNC ignores everything past the
+# eighth character.
+VNC_PASS_FILE="${HOME}/.vnc/passwd"
+VNC_PASSWORD_FILE="${HOME}/.vnc/password"
+if [ -n "${VNC_PASSWORD:-}" ]; then
+  :                                   # caller overrode it explicitly
+elif [ -s "$VNC_PASSWORD_FILE" ]; then
+  VNC_PASSWORD="$(cat "$VNC_PASSWORD_FILE")"
+else
+  VNC_PASSWORD="$(python3 -c 'import secrets,string;print("".join(secrets.choice(string.ascii_letters+string.digits) for _ in range(8)))')"
+fi
+mkdir -p "$(dirname "$VNC_PASSWORD_FILE")"
+printf '%s' "$VNC_PASSWORD" > "$VNC_PASSWORD_FILE"
 export VNC_PASSWORD
 
 echo "STEP=packages"
