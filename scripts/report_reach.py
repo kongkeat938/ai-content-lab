@@ -6,11 +6,18 @@ video has been up: a Short that pulled 900 views in two days and one that pulled
 900 in two weeks are different results. This prints, per channel, every video
 with its views, age, and views-per-day, newest Shorts first.
 
-Retention and impressions are NOT available: the refresh tokens carry the
-`youtube` scope only, not `yt-analytics.readonly`, so the YouTube Analytics API
-refuses them (measured 2026-11-03). That is the one number that would explain
-*why* a clip won, and it needs K to re-consent. Views-per-day is what we can
-honestly read until then.
+Retention *is* available. This docstring used to say the refresh tokens carry the
+`youtube` scope only and the Analytics API refuses them -- that was wrong, and it
+is the exact failure this project's "evidence, not claims" rule is about: a
+committed note was treated as the answer. Re-measured 2026-11-08, all three tokens
+answer `youtubeanalytics.googleapis.com/v2/reports` (views, estimatedMinutesWatched,
+averageViewPercentage, and the `audienceWatchRatio` retention curve). Use
+`scripts/verify_claims.py` to re-check, and `scripts/analytics.py` for the numbers.
+
+What the API genuinely will not give: `impressions` and `clickThroughRate` are not
+Analytics API metrics (HTTP 400 "Unknown identifier"), and revenue needs a scope
+these tokens do not hold ("Insufficient permission"). Those two still need the
+Studio UI. Views-per-day and the retention curve are what we can read here.
 
     python3 scripts/report_reach.py
     python3 scripts/report_reach.py --channel dharma --shorts-only
