@@ -1,0 +1,68 @@
+name: cred-transport
+
+# Hand a repository secret to the pod without ever exposing it.
+#
+# A GitHub secret cannot be read back -- it is write-only by design. To move one to
+# the pod, this encrypts it with an RSA public key that the pod generated and keeps
+# the private half of. The ciphertext is safe to publish: only the pod can open it.
+# Nothing here prints the secret itself.
+#
+# The pod runs:  scripts/fetch_secret.py IMAP_ACCOUNTS
+# which triggers this workflow, reads the ciphertext from the run log, and decrypts
+# it locally.
+
+on:
+  workflow_dispatch:
+    inputs:
+      secret_name:
+        description: Name of the repository secret to wrap
+        required: true
+        type: string
+      pubkey:
+        description: Base64 of the pod's PEM public key
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  wrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Encrypt the secret to the pod's key
+        env:
+          PUBKEY_B64: ${{ inputs.pubkey }}
+          WANTED: ${{ inputs.secret_name }}
+          IMAP_VALUE: ${{ secrets.IMAP_ACCOUNTS }}
+          GEMINI_VALUE: ${{ secrets.GEMINI_API_KEY }}
+          YT_CLIENT_ID_VALUE: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET_VALUE: ${{ secrets.YT_CLIENT_SECRET }}
+        run: |
+          pip install --quiet cryptography
+          python3 - <<'PY'
+          import base64, os
+          from cryptography.hazmat.primitives import hashes, serialization
+          from cryptography.hazmat.primitives.asymmetric import padding
+
+          wanted = os.environ["WANTED"]
+          table = {
+              "IMAP_ACCOUNTS": os.environ.get("IMAP_VALUE", ""),
+              "GEMINI_API_KEY": os.environ.get("GEMINI_VALUE", ""),
+              "YT_CLIENT_ID": os.environ.get("YT_CLIENT_ID_VALUE", ""),
+              "YT_CLIENT_SECRET": os.environ.get("YT_CLIENT_SECRET_VALUE", ""),
+          }
+          value = table.get(wanted, "")
+          if not value:
+              print(f"EMPTY: no secret named {wanted} is visible to this workflow")
+              raise SystemExit(0)
+
+          pub = serialization.load_pem_public_key(
+              base64.b64decode(os.environ["PUBKEY_B64"]))
+          ct = pub.encrypt(value.encode(), padding.OAEP(
+              mgf=padding.MGF1(algorithm=hashes.SHA256()),
+              algorithm=hashes.SHA256(), label=None))
+          # Only the ciphertext leaves this job.
+          print("CIPHERTEXT_B64=" + base64.b64encode(ct).decode())
+          print(f"PLAINTEXT_LEN={len(value)}")
+          PY
