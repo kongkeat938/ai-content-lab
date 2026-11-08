@@ -16,8 +16,10 @@ PORT="${1:-12001}"
 DISPLAY_NUM=":99"
 LOG_DIR="${HOME}/.novnc"
 VNC_PASS_FILE="${HOME}/.vnc/passwd"
-# Random each start, so a recycled pod never reuses an old password. Shown below.
-VNC_PASSWORD="${VNC_PASSWORD:-$(python3 -c 'import secrets;print(secrets.token_urlsafe(6))')}"
+# Random each start, so a recycled pod never reuses an old password. Letters and
+# digits only, because VNC caps the password at 8 characters and symbols are easy to
+# mistype on a phone. Shown below.
+VNC_PASSWORD="${VNC_PASSWORD:-$(python3 -c 'import secrets,string;print("".join(secrets.choice(string.ascii_letters+string.digits) for _ in range(8)))')}"
 CHROME_PROFILE="${CHROME_PROFILE:-$HOME/.chromium-profile}"
 export VNC_PASSWORD
 

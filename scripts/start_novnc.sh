@@ -62,8 +62,22 @@ fi
 
 if ! running "x11vnc -display $DISPLAY_NUM"; then
   echo "starting x11vnc"
-  # -auth guess finds the X server's cookie wherever this distro keeps it.
-  setsid x11vnc -display "$DISPLAY_NUM" -auth guess -rfbauth "$VNC_PASS_FILE" \
+  # Xvfb runs with -ac (access control off), so there is no cookie to find and
+  # -auth guess fails with "file ~/.Xauthority does not exist". /dev/null is the
+  # correct auth file in that case.
+  setsid x11vnc -display "$DISPLAY_NUM" -auth /dev/null -rfbauth "$VNC_PASS_FILE" \
+    -forever -shared -rfbport 5900 -quiet >"$LOG_DIR/x11vnc.log" 2>&1 </dev/null &
+  sleep 3
+fi
+
+# x11vnc can die while websockify stays up, and noVNC then shows a black screen
+# instead of an error. Check the socket, not just the process name.
+if ! running "x11vnc -display $DISPLAY_NUM" || \
+   ! python3 -c "import socket,sys;s=socket.socket();s.settimeout(2);sys.exit(0 if s.connect_ex(('127.0.0.1',5900))==0 else 1)"; then
+  echo "x11vnc not serving; restarting"
+  pkill -9 -f "x11vnc -display $DISPLAY_NUM" 2>/dev/null
+  sleep 1
+  setsid x11vnc -display "$DISPLAY_NUM" -auth /dev/null -rfbauth "$VNC_PASS_FILE" \
     -forever -shared -rfbport 5900 -quiet >"$LOG_DIR/x11vnc.log" 2>&1 </dev/null &
   sleep 3
 fi
