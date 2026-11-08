@@ -203,6 +203,22 @@ def main() -> int:
         vids.append(entry)
         action = "added"
 
+    # The QA/critic gate. Every other rail only checks that the file is well-formed;
+    # this is the one that can refuse to publish a boring one. A blocked build is
+    # recorded but never uploaded -- publish_batch skips state=blocked.
+    try:
+        sys.path.insert(0, HERE)
+        import qa_gate  # noqa: E402
+        qa = qa_gate.grade(receipt)
+        entry["qa"] = qa
+        if qa["blocked"] and not entry.get("video_id"):
+            entry["state"] = "blocked"
+            print(f"  QA VETO (grade {qa['grade']}): " + "; ".join(qa["reasons"]))
+        else:
+            print(f"  QA grade {qa['grade']} -- publishable")
+    except Exception as exc:  # noqa: BLE001 - a missing gate must not block the rail
+        print(f"  QA gate skipped ({exc})")
+
     with open(args.manifest, "w", encoding="utf-8") as fh:
         json.dump(man, fh, ensure_ascii=False, indent=2)
     live = entry.get("video_id", "")

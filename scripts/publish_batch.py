@@ -216,11 +216,17 @@ def main() -> int:
         save(man, args.manifest)
         return 0
 
-    todo = [v for v in vids if not v.get("video_id") and _due(v)]
-    held = [v for v in vids if not v.get("video_id") and not _due(v)]
+    todo = [v for v in vids if not v.get("video_id") and _due(v)
+            and v.get("state") != "blocked"]
+    held = [v for v in vids if not v.get("video_id") and not _due(v)
+            and v.get("state") != "blocked"]
+    blocked = [v for v in vids if not v.get("video_id") and v.get("state") == "blocked"]
     done = [v for v in vids if v.get("video_id")]
     print(f"channel {slug} ({man['channel_id']}): {len(todo)} to publish, "
-          f"{len(held)} held, {len(done)} already live")
+          f"{len(held)} held, {len(blocked)} blocked, {len(done)} already live")
+    for v in blocked:
+        why = "; ".join((v.get("qa") or {}).get("reasons") or ["QA veto"])
+        print(f"  {v['key']}: BLOCKED by QA — {why}")
     for v in held:
         print(f"  {v['key']}: held until {v.get('not_before')} — cadence, not a block")
     for v in done:
