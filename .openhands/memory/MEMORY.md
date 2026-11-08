@@ -423,6 +423,21 @@ different ways) — use F0-contour correlation + MFCC distance.
 - pod PAT dispatch = **403** (fine-grained); CI ใช้ `GITHUB_TOKEN` ของตัวเอง (actions:write) ได้.
 - เหลือข้อจำกัดเดียว: repo เงียบ 60 วัน → GitHub ปิด cron (แต่ chain ไม่พึ่ง cron).
 
+## 🔁 ออโตเมชันสมบูรณ์ = ทุก rail ต้องถูก foreman ขับ (2026-11-08)
+- **นิยามที่ K ต้องการ:** "การทำงานที่ไม่ต้องพึ่ง K คือออโตเมชันที่สมบูรณ์" → ไม่มีงานไหนที่
+  รอคนกด. ตัวขับคือ **foreman** (ตัดสินว่าอะไรถึงกำหนด) อยู่บน **watchdog chain**
+  (ต่อคิวจริง, cron เป็นแค่ backup).
+- **ปิดช่องจริงที่พบ (2026-11-08):** 2 rail มีแค่ `schedule` ไม่มีใครขับ → `studio-ai`
+  (สมองเรียนรู้ที่อ่าน Analytics → ป้อนหัวข้อให้ pool) และ `fetch-music` (เพลงพื้น Shorts).
+  เพิ่ม rule ใน foreman แล้ว. + `selftest` ใหม่.
+- **เทสต์ที่ไม่มีใครรัน:** 5/8 guard (channel identity, chapter, music beds, remake, Short
+  art/music) ไม่มี CI caller → สร้าง **`selftest.yml`** รันทั้ง suite (ไม่กี่วินาที) ให้
+  foreman ขับรายวัน. CI run 42439933204 = **success, 8/8 ผ่าน**.
+- **guard กันหลุดซ้ำ:** `test_watchdog.py` บังคับว่า **ทุก workflow ยกเว้น `foreman`/`watchdog`
+  ต้องถูก foreman อ้างถึง** → เพิ่ม rail ใหม่แบบ schedule-only จะ fail ทันที ไม่เงียบ.
+- **หลักการ:** "ออโตเมชันสมบูรณ์" ไม่ใช่แค่ทุกอย่างมี cron — ต้องมี **ตัวขับที่เชื่อถือได้
+  (chain) + guard ที่บังคับให้ rail ใหม่ต้องถูกขับ**. เช็คเร็ว: `python3 scripts/foreman.py --dry-run`.
+
 ## 🔍 คลิปวิว 0 — ต้นเหตุจริงคือ burst ไม่ใช่คุณภาพ (2026-11-07)
 - **Analytics รายงานคลิปใหม่ช้า** — คลิปที่ขึ้น '0 วิว' ใน Analytics จริง ๆ มี 154/107/75
   (Data API). **อย่าใช้ Analytics ตัดสินคลิปใหม่** ใช้ Data API `statistics.viewCount`.
