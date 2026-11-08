@@ -106,8 +106,8 @@ jobs:
           fp="$(cat "${{ steps.pick.outputs.content }}"/*.txt \
                  scripts/make_compilation.py \
                  scripts/make_bed.py scripts/make_audio.py \
-                 scripts/make_night_video.py scripts/make_poster.py \
-                 scripts/verify_night.py | sha256sum | cut -c1-12)"
+                 scripts/make_chapter_video.py scripts/make_night_video.py \
+                 scripts/make_poster.py scripts/verify_night.py | sha256sum | cut -c1-12)"
           # Fold the voice into the fingerprint: switching between K's cloned
           # voice and edge-tts changes the audio and must force a rebuild.
           fp="${fp}-$(echo "${FISH_REFERENCE_ID:-edge}" | sha256sum | cut -c1-6)"
