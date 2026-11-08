@@ -14,6 +14,7 @@ keep that from happening, and this test locks both:
 """
 from __future__ import annotations
 
+import glob
 import os
 import re
 import sys
@@ -54,7 +55,27 @@ def main() -> int:
     if "content" not in src or "STOP" not in src:
         fail("the STOP kill switch is gone from watchdog.py")
 
-    print("OK: successor queued before work, foreman revives the chain, backup schedule present")
+    # 4. Every workflow must be reachable without a person. GitHub's cron is
+    #    unreliable here (measured: the */30 foreman cron fired once in 30 runs),
+    #    so a rail that lives only on a `schedule` can be missed for days. The
+    #    foreman must name every workflow except the foreman itself (the watchdog
+    #    drives that one). A new workflow added with only a schedule would silently
+    #    never run, so this fails until the foreman knows about it.
+    referenced = set(re.findall(r'plan\.append\(\("([^"]+)"', fm))
+    for path in sorted(glob.glob(os.path.join(ROOT, ".github", "workflows", "*.yml"))):
+        text = open(path, encoding="utf-8").read()
+        m = re.search(r"^name:\s*(.+)$", text, re.M)
+        if not m:
+            fail(f"{os.path.basename(path)} has no name; the foreman cannot address it")
+        name = m.group(1).strip().strip('"')
+        if name in ("foreman", "watchdog"):
+            continue
+        if name not in referenced:
+            fail(f"the foreman never dispatches {name!r} ({os.path.basename(path)}); "
+                 "with only a schedule it may never run -- add a rule in foreman.py")
+
+    print("OK: successor queued before work, foreman revives the chain, backup "
+          "schedule present, every workflow is foreman-reachable")
     return 0
 
 
