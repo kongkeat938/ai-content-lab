@@ -29,6 +29,9 @@ on:
       generate:
         description: "true to generate a fresh content set with Gemini"
         default: "false"
+      bed_file:
+        description: "Real music bed to loop under the voice (e.g. assets/music/bed-middleway.mp3); blank = synthesised fallback"
+        default: ""
   schedule:
     # Weekly, Monday 02:17 UTC. A 2-hour file is not a daily post, and the
     # content set grows between runs.
@@ -150,6 +153,7 @@ jobs:
             --minutes "${{ inputs.minutes || '120' }}" \
             --image-style dharma \
             --hook-file content/hooks/dharma.md \
+            ${{ inputs.bed_file != '' && format('--bed-file {0}', inputs.bed_file) || '' }} \
             --chapters \
             --image-prompt "serene Thai Buddhist night, soft moonlight, mist, calm"
 
