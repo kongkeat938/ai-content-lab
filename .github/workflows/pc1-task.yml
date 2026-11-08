@@ -1,0 +1,77 @@
+name: pc1-task
+
+# Run a task ON PC1, through the self-hosted runner PC1 installed for itself.
+#
+# PC1 is the only machine that can read K's mail and the only one that can restart
+# the winremote MCP server, and the pod cannot dial in to it (no inbound route, no
+# SSH, no tailnet, funnel 502, every old rendezvous host dead). The runner reverses
+# that: PC1 dials out to github.com and picks the job up here. Nothing to forward,
+# nothing to tunnel, and it keeps working after the pod is recycled.
+#
+# Dispatch from the pod:
+#   gh workflow run pc1-task.yml -f task=status
+#   gh workflow run pc1-task.yml -f task=fix-remote
+#   gh workflow run pc1-task.yml -f task=readbox -f label=ch2
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "status | fix-remote | readbox | shell"
+        required: true
+        default: status
+      label:
+        description: "mailbox label for readbox (ch1/ch2/ch4)"
+        required: false
+        default: ch2
+      command:
+        description: "PowerShell to run when task=shell"
+        required: false
+        default: "hostname"
+
+jobs:
+  run-on-pc1:
+    runs-on: [self-hosted, pc1]
+    timeout-minutes: 30
+    steps:
+      - name: Where am I
+        shell: pwsh
+        run: |
+          "HOST=$env:COMPUTERNAME"
+          "USER=$env:USERNAME"
+          "RUNNER=$env:RUNNER_NAME"
+
+      - name: status
+        if: ${{ github.event.inputs.task == 'status' }}
+        shell: pwsh
+        run: |
+          try {
+            $h = Invoke-WebRequest -Uri 'http://127.0.0.1:8090/health' -UseBasicParsing -TimeoutSec 10
+            "WINREMOTE_HEALTH=$($h.StatusCode)"
+          } catch { "WINREMOTE_HEALTH=DOWN ($($_.Exception.Message))" }
+          (Get-ScheduledTask -TaskName 'ax-github-runner' -ErrorAction SilentlyContinue).State |
+            ForEach-Object { "RUNNER_TASK_STATE=$_" }
+
+      - name: fix-remote
+        if: ${{ github.event.inputs.task == 'fix-remote' }}
+        shell: pwsh
+        run: |
+          $u = 'https://raw.githubusercontent.com/kongkeat938/ai-content-lab/main/ops/pc1_fix_remote.ps1'
+          $f = Join-Path $env:TEMP 'pc1_fix_remote.ps1'
+          Invoke-WebRequest -Uri $u -OutFile $f -UseBasicParsing
+          & powershell -ExecutionPolicy Bypass -File $f -Persist
+
+      - name: readbox
+        if: ${{ github.event.inputs.task == 'readbox' }}
+        shell: pwsh
+        run: |
+          $rb = 'C:\ax-work\_ax\readbox.ps1'
+          if (Test-Path $rb) {
+            & powershell -ExecutionPolicy Bypass -File $rb -Profile "Profile 3" -Label "${{ github.event.inputs.label }}"
+          } else {
+            "READBOX_MISSING: $rb -- fall back to launching the profile at the atom feed"
+          }
+
+      - name: shell
+        if: ${{ github.event.inputs.task == 'shell' }}
+        shell: pwsh
+        run: ${{ github.event.inputs.command }}
