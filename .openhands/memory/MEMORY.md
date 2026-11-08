@@ -450,6 +450,18 @@ different ways) — use F0-contour correlation + MFCC distance.
   `raw.githubusercontent.com/kongkeat938/ai-content-lab/main/ops/pc1_fix_remote.ps1`
   (200 ✓, ไม่มีรหัสฝัง). Brief: `docs/PC1-BRIDGE-2026-11-08.md`.
 
+## 🔌 ทางถาวรสู่ PC1: self-hosted runner (2026-11-08)
+- **pod สั่ง PC1 ตรง ๆ ไม่ได้เลย** (วัดครบ): funnel 502 · ports 22/3389/5900/8090/12000 ปิด ·
+  rendezvous host เก่าตายหมด (pod รีไซเคิล+เปลี่ยนชื่อ) · ไม่มี runner ใน repo.
+- **ทางยั่งยืน = GitHub Actions self-hosted runner บน PC1** (PC1 dial ออกเอง; ไม่มี inbound;
+  รอด pod รีไซเคิล). **ak ออก registration token ได้** (มี admin):
+  `gh api -X POST repos/kongkeat938/ax-workspace/actions/runners/registration-token -q .token`.
+- ติดตั้ง: `ops/pc1_install_runner.ps1` (logon task — service account เห็น Chrome ไม่ได้;
+  idempotent; ไม่เก็บ token) → แล้วสั่งงานด้วย `gh workflow run pc1-task.yml -R
+  kongkeat938/ax-workspace -f task=status|fix-remote|readbox`. Doc: `docs/PC1-RUNNER-2026-11-08.md`.
+- **ตัดออกแล้ว:** Google **device flow + Gmail = `invalid_scope`**; OAuth YouTube scope = แค่
+  `youtube`; แต่ pod **เข้า imap.gmail.com:993 ได้** ⇒ ถ้ามี app password อ่านเมล์จาก pod ได้เลย.
+
 ## 📧 เก็บรหัสผ่านเมล์ (K: กรอกครั้งเดียว ใช้ทุกบัญชี) — 2026-11-08
 - **เก็บที่ GitHub Repository Secret ชื่อ `IMAP_ACCOUNTS`** (JSON หลายบัญชีในค่าเดียว);
   ไม่มีรหัสใน git (repo public). เอกสาร `docs/MAIL-CREDENTIAL-2026-11-08.md`.
