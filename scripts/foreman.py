@@ -282,6 +282,15 @@ def main() -> int:
     if st_age is None or st_age > 20 * 60:
         plan.append(("selftest", {}))
 
+    # 5d-v. Append the daily counter measurement. The ledger verifies against data
+    #       that must keep growing: a lifetime view counter cannot go down, and a
+    #       freeze means the channel or the pipeline stopped. That is a stronger
+    #       check than any snapshot, because it needs no document to compare
+    #       against. Daily.
+    cl_age = last_success_min("counter-ledger", ids)
+    if cl_age is None or cl_age > 20 * 60:
+        plan.append(("counter-ledger", {}))
+
     # 5e. The three rails that were only reachable through GitHub's cron. That cron
     #     is unreliable here (measured 2026-11-07: the */30 foreman cron fired once
     #     in 30 runs), so a rail that only has a `schedule` can be missed for days.
