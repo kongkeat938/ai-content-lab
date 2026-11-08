@@ -117,6 +117,60 @@ class Chrome:
         time.sleep(1.2)
         return True
 
+    def real_click(self, selector: str, by_text: str = "") -> bool:
+        """Click with real mouse events at the element's centre.
+
+        Google's sign-in reacts to a synthetic .click() differently from a genuine
+        press -- a JS click can land on the wrong control or be ignored. Dispatching
+        mousePressed/mouseReleased at the element's coordinates is indistinguishable
+        from a person clicking, which matters on the 2-step verification screens.
+
+        With by_text, the first element whose visible text matches (case-insensitive
+        substring) is used, so a control can be picked by its label rather than by a
+        markup id that Google changes.
+        """
+        if by_text:
+            # Pick the smallest element that contains the text: a big container also
+            # "contains" it, but its centre is somewhere else on the page, so clicking
+            # it misses the control.
+            box = self.js(
+                "(function(){var t=%r.toLowerCase();"
+                "var els=document.querySelectorAll('div[role=link],li,button,a,div,span');"
+                "var best=null,area=Infinity;"
+                "for(var i=0;i<els.length;i++){var e=els[i];"
+                "var s=(e.innerText||'').trim().toLowerCase();"
+                "if(s.indexOf(t)<0) continue;"
+                "var r=e.getBoundingClientRect();"
+                "if(r.width<=0||r.height<=0) continue;"
+                "var a=r.width*r.height;"
+                "if(a<area){area=a;best=r;}}"
+                "if(!best)return null;"
+                "return {x:best.left+best.width/2,y:best.top+best.height/2};})()"
+                % by_text)
+        else:
+            box = self.js(
+                "(function(){var e=document.querySelector(%r);if(!e)return null;"
+                "var r=e.getBoundingClientRect();"
+                "return {x:r.left+r.width/2,y:r.top+r.height/2};})()" % selector)
+        if not box or not box.get("x"):
+            return False
+        x, y = box["x"], box["y"]
+        for kind in ("mousePressed", "mouseReleased"):
+            self.cmd("Input.dispatchMouseEvent",
+                     {"type": kind, "x": x, "y": y, "button": "left",
+                      "clickCount": 1})
+            time.sleep(0.08)
+        time.sleep(1.2)
+        return True
+
+    def clickable_labels(self) -> list[str]:
+        """Labels of the visible, clickable controls, for choosing one to press."""
+        got = self.js(
+            "Array.from(document.querySelectorAll('div[role=link],li,button,a'))"
+            ".map(e=>(e.innerText||'').trim().replace(/\\s+/g,' '))"
+            ".filter(t=>t&&t.length<90)")
+        return got or []
+
 
 def page_text(c: Chrome) -> str:
     return c.js("document.body ? document.body.innerText : ''") or ""
@@ -171,35 +225,45 @@ def sign_in(c: Chrome, user: str, password: str, totp: str | None) -> str:
 
 def create_app_password(c: Chrome, name: str) -> str | None:
     """Open the app-password page, name one, and read it back. None on failure."""
-    c.nav(APPPW, settle=6)
+    # Only navigate when not already there. Google treats a fresh navigation to this
+    # page as a new sensitive action and asks for the second factor again; when the
+    # caller has already cleared that challenge, re-navigating throws the approval
+    # away and the owner has to tap the phone a third time.
+    if "apppasswords" not in (c.js("location.href") or ""):
+        c.nav(APPPW, settle=6)
     text = page_text(c).lower()
     if "sign in" in text and "app password" not in text and "app passwords" not in text:
         return None
     if "2-step verification" in text and "app password" not in text:
         return "NO_2SV"  # 2-step verification is off; app passwords do not exist yet
 
-    # The page's markup is not fixed, so try the shapes it has used, in order, and
-    # keep the HTML when none of them match -- guessing blind from here is slower
-    # than reading the real page once.
-    name_field = ("input[type=text], input[aria-label*='name' i], "
-                  "input[aria-labelledby*='name' i]")
+    # The page's markup is not fixed, and the interface is shown in Thai for this
+    # account, so the field is chosen as the first visible text box rather than by an
+    # English label.
+    name_field = ("input[type=text]:not([aria-hidden=true]), "
+                  "input[aria-label*='name' i], input[aria-labelledby*='name' i]")
     if not c.type_into(name_field, name):
         _dump(c, "apppw-no-field")
         return None
 
+    # Press Create by its label, in either language; a disabled button is skipped so
+    # the press lands on the real one once the name has been entered.
+    made = False
     for sel in ("button[jsname='V67aGc']",
-                "//button[.//span[contains(., 'Create')]]",
-                "//button[contains(., 'Create')]",
-                "button:not([disabled])"):
+                "//button[.//span[contains(., 'Create') or contains(., 'สร้าง')]]",
+                "//button[contains(., 'Create') or contains(., 'สร้าง')]"):
         if sel.startswith("//"):
             expr = ("(function(){var r=document.evaluate(" + repr(sel) +
                     ",document,null,9,null).singleNodeValue;"
-                    "if(r){r.click();return true}return false})()")
+                    "if(r&&!r.disabled){r.click();return true}return false})()")
             if c.js(expr):
+                made = True
                 break
         elif c.click(sel):
+            made = True
             break
     time.sleep(2)
+    _ = made
 
     if not c.wait_js(
             r"/([a-z]{4}\s+){3}[a-z]{4}/.test(document.body.innerText)", timeout=15):
