@@ -438,6 +438,18 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **หลักการ:** "ออโตเมชันสมบูรณ์" ไม่ใช่แค่ทุกอย่างมี cron — ต้องมี **ตัวขับที่เชื่อถือได้
   (chain) + guard ที่บังคับให้ rail ใหม่ต้องถูกขับ**. เช็คเร็ว: `python3 scripts/foreman.py --dry-run`.
 
+## 🌉 "ak ทำแทน K" ได้แค่ไหน + สะพาน PC1 (2026-11-08)
+- **ทำแทน 100% ไม่ได้:** (1) pod browser → Google **ถูกบล็อก** (`signin/rejected`
+  "browser may not be secure") (2) App password K สร้างไม่ได้ (3) **PC1 = 502**
+  backend-down (`winremote-mcp` ดับ) + ไม่มี inbound route ให้ pod สตาร์ทโปรเซส.
+- **ทางเดียวที่อ่านเมล์ได้ = Chrome บน PC1** (login ค้าง 4 บัญชี, ผ่าน `feed/atom`).
+  ⇒ ทุกอย่างขึ้นกับ "PC1 ออนไลน์" → **ต้องมีคนที่เครื่อง (หรือ ChatGPT ที่รีม็อต PC1) รันซ่อม**.
+- `scripts/pc1_health.py` (+guard) แยก **up / backend-down / auth / offline** (4 อย่าง
+  4 วิธีแก้); `account-watch` รันเมื่อ inbox BLIND. วัดสด = **backend-down**.
+- `ops/pc1_fix_remote.ps1` คัดลอกเข้า **public repo** → ลิงก์ถาวรให้ ChatGPT:
+  `raw.githubusercontent.com/kongkeat938/ai-content-lab/main/ops/pc1_fix_remote.ps1`
+  (200 ✓, ไม่มีรหัสฝัง). Brief: `docs/PC1-BRIDGE-2026-11-08.md`.
+
 ## 📧 เก็บรหัสผ่านเมล์ (K: กรอกครั้งเดียว ใช้ทุกบัญชี) — 2026-11-08
 - **เก็บที่ GitHub Repository Secret ชื่อ `IMAP_ACCOUNTS`** (JSON หลายบัญชีในค่าเดียว);
   ไม่มีรหัสใน git (repo public). เอกสาร `docs/MAIL-CREDENTIAL-2026-11-08.md`.
