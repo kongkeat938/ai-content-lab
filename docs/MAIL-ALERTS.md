@@ -1,4 +1,4 @@
-# Account watch — 2026-11-08T03:33+00:00
+# Account watch — 2026-11-08T04:32+00:00
 
 ## Channel health (Data API — always available)
 - **dharma**: cannot check — 403 {
@@ -16,5 +16,5 @@
     "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
 
 ## Inbox (IMAP — needs an app password)
-- no mail credential (IMAP_USER / IMAP_APP_PASSWORD unset) -- the inbox cannot be read, so this layer is BLIND
+- no mail credential (IMAP_ACCOUNTS, or IMAP_USER / IMAP_APP_PASSWORD unset) -- the inbox cannot be read, so this layer is BLIND
 
