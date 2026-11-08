@@ -72,6 +72,41 @@ set + delete สำเร็จ). ทางเลือก:
 5. กด **Add secret** → เสร็จ. งาน `account-watch` (รันทุกวัน 08:42 UTC) จะอ่านเมล์ทุกกล่องให้
 
 
+## ✅ ผลทดสอบจริง (2026-11-08 04:33Z) — ระบบอ่าน secret ได้แล้ว แต่ Gmail ปฏิเสธรหัส
+
+รันงาน `account-watch` จริง → อ่าน `IMAP_ACCOUNTS` ได้ → ลอง login **ครบทั้ง 3 บัญชี** →
+Gmail ตอบกลับ**เหมือนกันทั้ง 3**:
+
+```
+IMAP failed for kongkeat.938@gmail.com: this account requires an app password
+(the normal login password is refused) -- create one at
+https://myaccount.google.com/apppasswords
+```
+
+**แปลว่า:** รหัสที่ใส่ = **รหัสผ่าน login ตัวจริง** ซึ่ง Gmail **ห้ามใช้ผ่าน IMAP** (ตามที่เตือน)
+⇒ **ต้องสร้าง App Password แทน** — และเพราะ app password ผูกกับบัญชีเดียว
+ถ้า 3 บัญชีใช้รหัส login เดียวกัน ก็ยังต้องสร้าง **3 app password**
+
+> หมายเหตุ: Google **ยกเลิก** "Less secure app access" ไปแล้ว (2022) — ไม่มีทางลัดให้ใช้รหัส login
+
+## 🔑 ขั้นตอนที่ K ต้องทำ (มือถือ)
+
+ทำ 3 ครั้ง (บัญชีละครั้ง):
+1. เปิด 👉 **https://myaccount.google.com/apppasswords** (บัญชีนั้น)
+   - ถ้ายังไม่เปิด 2-Step Verification → เปิดก่อนที่ `myaccount.google.com/security`
+2. ตั้งชื่อ เช่น `ai-content-lab` → กด **Create**
+3. **คัดลอกรหัส 16 หลัก** ที่ขึ้นมา (คัดลอกได้ครั้งเดียว)
+
+จากนั้นแก้ secret `IMAP_ACCOUNTS` เป็น (บรรทัดละบัญชี):
+```
+kongkeat.938@gmail.com:<app password ของบัญชีนี้>
+farmmer.938@gmail.com:<app password ของบัญชีนี้>
+kongkeat.p3@gmail.com:<app password ของบัญชีนี้>
+```
+(แก้ที่ 👉 https://github.com/kongkeat938/ai-content-lab/settings/secrets/actions → กด `IMAP_ACCOUNTS` → **Update**)
+
+**หรือให้ ak ใส่ให้:** ส่ง app password ทั้ง 3 มาในแชท แล้ว ak รัน `gh secret set IMAP_ACCOUNTS` ให้ทันที
+
 ## ปลอดภัยแค่ไหน (วัดแล้ว)
 
 | คำถาม | คำตอบ |
