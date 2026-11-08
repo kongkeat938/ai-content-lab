@@ -102,6 +102,15 @@ def main() -> int:
     if any(p != CLEAN for _h, _u, p in line_accounts):
         fail("the line form did not strip the cosmetic spaces")
 
+    # 2c. A bare password -- "one password for all accounts", as K described it --
+    #     must expand to every account this project knows.
+    os.environ["IMAP_ACCOUNTS"] = PW
+    shared = mw.mail_accounts()
+    if len(shared) != 3:
+        fail(f"a bare shared password did not expand to the three accounts: {shared}")
+    if any(p != CLEAN for _h, _u, p in shared):
+        fail("the shared password was not stripped of the cosmetic spaces")
+
 
     # 3. No credential at all must read as BLIND, not as "all clear".
     os.environ.pop("IMAP_ACCOUNTS", None)
