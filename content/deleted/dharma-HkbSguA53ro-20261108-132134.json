@@ -1,0 +1,85 @@
+{
+ "kind": "youtube#video",
+ "etag": "wfmYTFk3Ce3lE9ok9KXEsAqOfRU",
+ "id": "HkbSguA53ro",
+ "snippet": {
+  "publishedAt": "2026-11-08T12:42:39Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "ธรรมะกลางสายลม — ทางสายกลางและสติ ปล่อยวางความทุกข์ ใจสงบ 30 นาที",
+  "description": "ฟังเสียงบรรยายธรรมะก่อนนอน 30 นาที ช่วยกล่อมจิตใจให้สงบ ปล่อยวางเรื่องกังวลและความเครียดสะสมทั้งวัน เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน\n\nเปิดทิ้งไว้ได้ทั้งคืน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ\n\nบทที่ผ่านมา: present · breath · restless_mind · root_of_suffering · lute · two_extremes · middle_way · sila · samadhi · panna\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก\n\n— ช่องพี่น้อง —\nเรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว\nhttps://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i.ytimg.com/vi/HkbSguA53ro/default.jpg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i.ytimg.com/vi/HkbSguA53ro/mqdefault.jpg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i.ytimg.com/vi/HkbSguA53ro/hqdefault.jpg",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i.ytimg.com/vi/HkbSguA53ro/sddefault.jpg",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i.ytimg.com/vi/HkbSguA53ro/maxresdefault.jpg",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "tags": [
+   "ทำใจให้สงบ",
+   "ธรรมะก่อนนอน",
+   "ธรรมะผ่อนคลาย",
+   "นอนหลับสบาย",
+   "นั่งสมาธิก่อนนอน",
+   "ปล่อยวาง",
+   "ฟังธรรมะก่อนนอน",
+   "ลดความเครียด",
+   "เสียงธรรมะนอนหลับ",
+   "แก้โรคนอนไม่หลับ"
+  ],
+  "categoryId": "22",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "ธรรมะกลางสายลม — ทางสายกลางและสติ ปล่อยวางความทุกข์ ใจสงบ 30 นาที",
+   "description": "ฟังเสียงบรรยายธรรมะก่อนนอน 30 นาที ช่วยกล่อมจิตใจให้สงบ ปล่อยวางเรื่องกังวลและความเครียดสะสมทั้งวัน เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน\n\nเปิดทิ้งไว้ได้ทั้งคืน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ\n\nบทที่ผ่านมา: present · breath · restless_mind · root_of_suffering · lute · two_extremes · middle_way · sila · samadhi · panna\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก\n\n— ช่องพี่น้อง —\nเรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว\nhttps://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "contentDetails": {
+  "duration": "PT57M6S",
+  "dimension": "2d",
+  "definition": "hd",
+  "caption": "false",
+  "licensedContent": false,
+  "contentRating": {},
+  "projection": "rectangular",
+  "hasCustomThumbnail": false
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "public",
+  "license": "youtube",
+  "embeddable": true,
+  "publicStatsViewable": true,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}
