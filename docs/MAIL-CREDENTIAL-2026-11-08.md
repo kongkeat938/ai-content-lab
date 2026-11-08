@@ -28,7 +28,35 @@ Google Account"*, *"can only be used with 2-Step Verification"*). **ฉะนั
 
 > แนะนำ **#1** — ตรงกับที่ K ต้องการ (กรอกครั้งเดียว) และปลอดภัยสุด.
 
-## วิธีใส่ (GitHub UI — K ทำเอง ครั้งเดียว)
+## วิธีใส่ (มือถือ — กดลิงก์เดียวแล้วกรอก)
+
+**กดลิงก์นี้** (เปิดหน้า GitHub ตรง ๆ):
+
+👉 **https://github.com/kongkeat938/ai-content-lab/settings/secrets/actions/new**
+
+1. ช่อง **Name** พิมพ์: `IMAP_ACCOUNTS`
+2. ช่อง **Secret** วาง (บรรทัดละบัญชี — รูปแบบง่ายสุดสำหรับพิมพ์มือถือ):
+```
+kongkeat.938@gmail.com:xxxx xxxx xxxx xxxx
+farmmer.938@gmail.com:xxxx xxxx xxxx xxxx
+kongkeat.p3@gmail.com:xxxx xxxx xxxx xxxx
+```
+   แทน `xxxx xxxx xxxx xxxx` ด้วย App Password จริงของบัญชีนั้น
+3. กด **Add secret** → เสร็จ
+
+> รับได้ 3 แบบ: **บรรทัดละบัญชี** (`user:รหัส`), JSON list, หรือ JSON map — เลือกอันที่พิมพ์ง่ายสุด
+> (บรรทัดที่ไม่มี `:` จะถูกข้าม ไม่เดา)
+
+สร้าง App Password (ทำต่อบัญชี): 👉 **https://myaccount.google.com/apppasswords**
+(ต้องเปิด 2-Step Verification ก่อน; คัดลอกได้ครั้งเดียวตอนสร้าง — วางใส่ secret ทันที)
+
+### ถ้าไม่อยากพิมพ์เอง — ให้ ak ใส่ให้ได้
+โทเคน `KONGKEAT_GH_TOKEN` ใน pod **เขียน secret ให้ได้** (วัดแล้ว 2026-11-08:
+set + delete สำเร็จ). ทางเลือก:
+- K บอก App Password ในแชท → ak รัน `gh secret set IMAP_ACCOUNTS` ให้ทันที
+- **ข้อควรรู้:** ค่าที่พิมพ์ในแชทจะอยู่ในประวัติบทสนทนา (log) — ถ้าเลี่ยงได้ ให้ใช้ลิงก์ข้างบนปลอดภัยกว่า
+
+## วิธีใส่ (เดิม: GitHub UI เต็ม)
 
 1. เปิด `https://github.com/kongkeat938/ai-content-lab/settings/secrets/actions`
 2. กด **New repository secret**
@@ -43,8 +71,6 @@ Google Account"*, *"can only be used with 2-Step Verification"*). **ฉะนั
 ```
 5. กด **Add secret** → เสร็จ. งาน `account-watch` (รันทุกวัน 08:42 UTC) จะอ่านเมล์ทุกกล่องให้
 
-สร้าง App Password: `https://myaccount.google.com/apppasswords` (ต้องเปิด 2-Step Verification ก่อน;
-คัดลอกได้**ครั้งเดียว**ตอนสร้าง — เก็บใส่ secret ทันที)
 
 ## ปลอดภัยแค่ไหน (วัดแล้ว)
 

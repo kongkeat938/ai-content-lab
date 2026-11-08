@@ -157,18 +157,20 @@ def mail_accounts() -> list[tuple[str, str, str]]:
 
     K holds one mailbox password that is used across accounts, and wants it stored
     once. The store is a repository *secret* (never a file in this public repo), and
-    one secret can carry every account as JSON, so the password is entered a single
-    time:
+    one secret can carry every account, so the password is entered a single time.
 
-        IMAP_ACCOUNTS = [
-          {"user": "kongkeat.938@gmail.com", "app_password": "xxxx xxxx xxxx xxxx"},
-          {"user": "farmmer.938@gmail.com",  "app_password": "xxxx xxxx xxxx xxxx"}
-        ]
+    Three shapes are accepted, so the easiest one can be used on a phone:
 
-    A mapping form ({"user": "password"}) is accepted too. The older single pair,
-    IMAP_USER + IMAP_APP_PASSWORD, still works and is merged in without duplicates.
-    Google displays app passwords with spaces; they are stripped here because the
-    spaces are cosmetic.
+        one account per line, "user:app password"   <- easiest to type on mobile
+        kongkeat.938@gmail.com:xxxx xxxx xxxx xxxx
+        farmmer.938@gmail.com:xxxx xxxx xxxx xxxx
+
+        a JSON list   [{"user": "...", "app_password": "..."}, ...]
+        a JSON map    {"user": "app_password", ...}
+
+    The older single pair, IMAP_USER + IMAP_APP_PASSWORD, still works and is merged
+    in without duplicates. Google displays app passwords with spaces; the spaces are
+    cosmetic and are stripped.
     """
     default_host = os.environ.get("IMAP_HOST", "imap.gmail.com")
     pairs: list[tuple[str, str, str]] = []
@@ -180,10 +182,12 @@ def mail_accounts() -> list[tuple[str, str, str]]:
 
     raw = (os.environ.get("IMAP_ACCOUNTS") or "").strip()
     if raw:
-        try:
-            doc = json.loads(raw)
-        except json.JSONDecodeError:
-            doc = None
+        doc = None
+        if raw[:1] in "[{":
+            try:
+                doc = json.loads(raw)
+            except json.JSONDecodeError:
+                doc = None
         if isinstance(doc, dict):
             doc = [{"user": u, "app_password": p} for u, p in doc.items()]
         if isinstance(doc, list):
@@ -191,10 +195,20 @@ def mail_accounts() -> list[tuple[str, str, str]]:
                 if isinstance(item, dict):
                     add(item.get("host") or default_host, item.get("user", ""),
                         item.get("app_password") or item.get("password") or "")
+        else:
+            # "user:password" per line. A line without a colon is ignored rather
+            # than guessed at -- a mistyped credential must not read as a valid one.
+            for line in raw.splitlines():
+                line = line.strip().lstrip("-*").strip()
+                if not line or ":" not in line:
+                    continue
+                user, pw = line.split(":", 1)
+                add(default_host, user, pw)
 
     add(default_host, os.environ.get("IMAP_USER", ""),
         os.environ.get("IMAP_APP_PASSWORD", ""))
     return pairs
+
 
 
 def inbox_alerts(days: int) -> tuple[list[dict], str]:

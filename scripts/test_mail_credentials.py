@@ -87,6 +87,22 @@ def main() -> int:
     if [u for _h, u, _p in mw.mail_accounts()] != ["a@gmail.com"]:
         fail("the mapping form of IMAP_ACCOUNTS was not accepted")
 
+    # 2b. The mobile form: one "user:password" per line. This is the shape K will
+    #     type on a phone, so it must work, spaces and all.
+    os.environ["IMAP_ACCOUNTS"] = (
+        "kongkeat.938@gmail.com:" + PW + "\n"
+        "farmmer.938@gmail.com:" + PW + "\n"
+        "  \n"                       # a blank line must be skipped
+        "this-line-has-no-colon\n"   # a malformed line must be ignored, not guessed
+    )
+    line_accounts = mw.mail_accounts()
+    if [u for _h, u, _p in line_accounts] != ["kongkeat.938@gmail.com",
+                                              "farmmer.938@gmail.com"]:
+        fail(f"the line-per-account form was not parsed: {line_accounts}")
+    if any(p != CLEAN for _h, _u, p in line_accounts):
+        fail("the line form did not strip the cosmetic spaces")
+
+
     # 3. No credential at all must read as BLIND, not as "all clear".
     os.environ.pop("IMAP_ACCOUNTS", None)
     alerts, status = mw.inbox_alerts(3)
