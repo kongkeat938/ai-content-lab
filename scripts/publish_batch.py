@@ -196,6 +196,10 @@ def main() -> int:
     ap.add_argument("--forget", metavar="KEY",
                     help="clear a recorded video_id (for a known duplicate that was deleted)")
     ap.add_argument("--cache", default=os.path.join(ROOT, "work", "publish_cache"))
+    ap.add_argument("--publish-at", metavar="ISO8601", default=None,
+                    help="schedule release (e.g. 2026-11-09T12:30:00Z): uploads "
+                         "private with status.publishAt, so the slot fires even if "
+                         "the cron that would flip it to public is dropped")
     args = ap.parse_args()
 
     with open(args.manifest, encoding="utf-8") as fh:
@@ -335,6 +339,15 @@ def main() -> int:
                 "embeddable": True,
             },
         }
+        # A scheduled release is the safe way to hit a fixed slot: YouTube holds
+        # the video private and flips it public at publishAt on its own clock, so
+        # a dropped cron tick cannot miss the slot. It requires privacyStatus
+        # private; the API rejects publishAt on a public insert.
+        if args.publish_at:
+            body["status"]["privacyStatus"] = "private"
+            body["status"]["publishAt"] = args.publish_at
+            privacy = "private"
+            print(f"  scheduled release at {args.publish_at} (held private until then)")
         print(f"\nuploading {key} ({os.path.getsize(local)/1e6:.0f} MB) as {privacy} ...")
         try:
             request = yt.videos().insert(
