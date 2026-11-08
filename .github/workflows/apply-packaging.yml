@@ -1,0 +1,74 @@
+name: apply-packaging
+
+# Applies the ch2 packaging plan -- new title, tags and cover -- through the
+# YouTube Data API, with no browser and no human.
+#
+# Why this job exists: the competitor research (2026-11-08) showed the search
+# blocker is packaging. The cover files are committed by the build, but writing
+# a title and installing a thumbnail both draw the daily Data API quota, which
+# resets at midnight Pacific (08:00 UTC). A scheduled job is the only way to run
+# unattended in that window.
+#
+# GitHub's scheduler is unreliable in this repo, so there is also a push trigger:
+# the run is idempotent (content/packaging_changes.json is the ledger), so an
+# extra tick after the reset costs nothing and a dropped one loses nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Space-separated packaging keys (blank = every entry)"
+        default: ""
+  schedule:
+    - cron: "25 8 * * *"   # 08:25 UTC, after the 08:00 reset
+    - cron: "25 9 * * *"   # retry in case the first tick lands mid-reset
+  push:
+    paths:
+      - "content/ch2_packaging.json"
+      - "assets/branding/farmmer/thumbs/**"
+      - "scripts/apply_packaging.py"
+      - "scripts/make_cover_youtube.py"
+
+permissions:
+  contents: write   # commit the ledger and the thumbnail manifest
+
+concurrency:
+  group: apply-packaging
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow
+        run: pip install --quiet pillow
+
+      - name: Apply titles, tags and covers
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+        run: |
+          ONLY="${{ github.event.inputs.only }}"
+          ARGS="--apply"
+          for k in $ONLY; do ARGS="$ARGS --only $k"; done
+          python3 scripts/apply_packaging.py $ARGS
+
+      - name: Commit the ledger and manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/packaging_changes.json content/ch2_thumbnails.json
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "dharma: record applied packaging changes [skip ci]"
+            git pull --rebase --autostash origin main
+            git push
+          fi
