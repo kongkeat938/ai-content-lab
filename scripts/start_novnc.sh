@@ -38,9 +38,22 @@ DISPLAY_NUM=":99"
 SCREEN="1440x900x24"
 LOG_DIR="${HOME}/.novnc"
 VNC_PASS_FILE="${HOME}/.vnc/passwd"
-VNC_PASSWORD="${VNC_PASSWORD:-contentlab}"
+VNC_PASSWORD_FILE="${HOME}/.vnc/password"
 CHROME_PROFILE="${CHROME_PROFILE:-$HOME/.chromium-profile}"
 mkdir -p "$LOG_DIR" "$(dirname "$VNC_PASS_FILE")"
+
+# One password, kept. If the caller sets VNC_PASSWORD that wins; otherwise reuse the
+# saved one so it survives a restart and a recycle. Regenerating each time would mean
+# telling the owner a new password on every start, and the old one silently failing.
+if [ -z "${VNC_PASSWORD:-}" ]; then
+  if [ -s "$VNC_PASSWORD_FILE" ]; then
+    VNC_PASSWORD="$(cat "$VNC_PASSWORD_FILE")"
+  else
+    VNC_PASSWORD="$(python3 -c 'import secrets,string;print("".join(secrets.choice(string.ascii_letters+string.digits) for _ in range(8)))')"
+  fi
+fi
+printf '%s' "$VNC_PASSWORD" > "$VNC_PASSWORD_FILE"
+export VNC_PASSWORD
 
 running() { pgrep -f "$1" >/dev/null 2>&1; }
 
