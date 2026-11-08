@@ -42,6 +42,12 @@ python3 -c "import websocket" 2>/dev/null || pip install -q websocket-client
 
 echo "STEP=desktop"
 mkdir -p "$LOG_DIR" "$(dirname "$VNC_PASS_FILE")"
+# Full restart, so the VNC password file is rewritten and x11vnc picks it up. A
+# running x11vnc keeps whatever password it started with, and a stale one would not
+# match the password printed below.
+bash "$(dirname "$0")/start_novnc.sh" --stop >/dev/null 2>&1 || true
+sleep 1
+rm -f "/tmp/.X${DISPLAY_NUM#:}-lock"
 bash "$(dirname "$0")/start_novnc.sh" "$PORT" | sed 's/^/  /'
 
 echo

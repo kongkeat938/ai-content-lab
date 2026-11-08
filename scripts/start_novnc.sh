@@ -56,9 +56,10 @@ if ! running "Xvfb $DISPLAY_NUM"; then
   sleep 3
 fi
 
-if [ ! -f "$VNC_PASS_FILE" ]; then
-  x11vnc -storepasswd "$VNC_PASSWORD" "$VNC_PASS_FILE" >/dev/null 2>&1
-fi
+# Rewrite every start, not only when missing: the script prints a new password each
+# run, so a password file left from an earlier run would not match what is shown and
+# the owner would be locked out with no clue why.
+x11vnc -storepasswd "$VNC_PASSWORD" "$VNC_PASS_FILE" >/dev/null 2>&1
 
 if ! running "x11vnc -display $DISPLAY_NUM"; then
   echo "starting x11vnc"
