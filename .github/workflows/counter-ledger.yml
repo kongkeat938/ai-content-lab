@@ -1,0 +1,62 @@
+name: counter-ledger
+
+# Verify against data that must keep growing. A lifetime view/watch/sub counter can
+# never go down and can never stand still while the channel is alive, so it carries
+# its own truth: a decrease is impossible (a bug or a wrong channel), and a freeze
+# means the channel -- or the pipeline -- has stopped. Neither needs a document to
+# compare against, which is the point: the last committed snapshot was 52-244%
+# behind the live API and could not tell us anything was wrong.
+#
+# Uses the Analytics API, not the Data API: it has its own quota and answers even
+# when the Data API is spent (measured 2026-11-08: Data API 403 "exceeded your
+# quota" while Analytics answered all three channels).
+#
+# Appends one line per run to docs/counters.jsonl and commits it, so the ledger is
+# itself evidence the check ran. GitHub's cron is unreliable here, so the foreman
+# drives this daily from the chain.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 4 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: counter-ledger
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check the invariants the ledger already holds
+        run: python3 scripts/test_counter_ledger.py
+
+      - name: Measure, append, and verify monotonicity
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: python3 scripts/counter_ledger.py
+
+      - name: Commit the appended measurement
+        run: |
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git add docs/counters.jsonl
+          if git diff --cached --quiet; then
+            echo "no change"; exit 0
+          fi
+          git commit -m "counters: append the daily measurement [skip ci]"
+          git pull --rebase --autostash origin main
+          git push
