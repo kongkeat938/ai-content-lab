@@ -64,6 +64,9 @@ def main() -> int:
                     help="file holding the spoken cold open (several lines); "
                          "overrides --hook. Kept in the repo so the opening can be "
                          "reviewed and reused, not buried in a workflow string.")
+    ap.add_argument("--bed-file", default=None,
+                    help="real music to loop under the narration (e.g. a Flow "
+                         "Music export); omit to synthesise the free fallback bed")
     ap.add_argument("--chapters", action="store_true",
                     help="change the picture per piece (one card per chapter) "
                          "instead of one card looping for the whole file")
@@ -140,7 +143,8 @@ def main() -> int:
                    os.path.join(a.content, "[0-9]*.txt"),
                    "--work", a.work, "--minutes", str(a.minutes),
                    "--voice", a.voice or "th-TH-NiwatNeural",
-                   *(["--hook", hook_text] if hook_text else [])]),
+                   *(["--hook", hook_text] if hook_text else []),
+                   *(["--bed-file", a.bed_file] if a.bed_file else [])]),
     ]
     if not a.skip_video:
         if a.chapters:

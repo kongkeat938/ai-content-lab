@@ -144,11 +144,21 @@ def sequence_to_length(parts: list, target_seconds: float) -> tuple:
     return seq, cycles
 
 
-def bed_for(seconds: float, work: str) -> str:
-    """A seamless ambient bed, looped to the exact length of the voice track."""
-    seed = os.path.join(work, "bed_seed.wav")
-    if not os.path.exists(seed):
-        make_bed.write_wav(seed, make_bed.build(120.0, 110.0, -20.0))
+def bed_for(seconds: float, work: str, seed_file: str | None = None) -> str:
+    """A seamless ambient bed, looped to the exact length of the voice track.
+
+    `seed_file` is the owner's real music -- the Flow Music export K supplies --
+    looped under the narration. With no file the bed is synthesised here, which is
+    the free fallback rather than the preferred sound.
+    """
+    if seed_file:
+        if not os.path.exists(seed_file):
+            raise SystemExit(f"bed file not found: {seed_file}")
+        seed = seed_file
+    else:
+        seed = os.path.join(work, "bed_seed.wav")
+        if not os.path.exists(seed):
+            make_bed.write_wav(seed, make_bed.build(120.0, 110.0, -20.0))
     out = os.path.join(work, "bed.wav")
     run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1", "-i", seed,
          "-t", f"{seconds:.3f}", "-ar", "48000", "-ac", "2",
@@ -180,6 +190,9 @@ def main() -> None:
                     help="scripts to stitch, in order (globs are expanded by the shell)")
     ap.add_argument("--work", required=True)
     ap.add_argument("--bed", default="yes", choices=["yes", "no"])
+    ap.add_argument("--bed-file", default=None,
+                    help="real music to loop under the voice (e.g. a Flow Music "
+                         "export); omit to synthesise the free fallback bed")
     ap.add_argument("--minutes", type=float, default=0.0,
                     help="target length; repeat the pieces until reached "
                          "(a sleep file is meant to be left playing)")
@@ -226,7 +239,7 @@ def main() -> None:
 
     mixed = voice
     if a.bed == "yes":
-        bed = bed_for(total, a.work)
+        bed = bed_for(total, a.work, a.bed_file)
         mixed = os.path.join(a.work, "mixed.wav")
         mix(voice, bed, mixed)
 
