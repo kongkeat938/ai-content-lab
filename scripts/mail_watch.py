@@ -19,10 +19,14 @@ checks two layers:
     python3 scripts/mail_watch.py --api-only
     python3 scripts/mail_watch.py --imap-only --days 7
 
-IMAP credentials, when they exist, come from the environment:
-    IMAP_HOST (default imap.gmail.com), IMAP_USER, IMAP_APP_PASSWORD
+IMAP credentials, when they exist, come from the environment. One secret can hold
+every account, so the password is entered once:
+    IMAP_ACCOUNTS  -- JSON: [{"user": "...", "app_password": "..."}, ...]
+    IMAP_USER / IMAP_APP_PASSWORD -- the older single-account pair, still accepted
+    IMAP_HOST (default imap.gmail.com)
 A Google account needs 2-step verification and an app password for this -- a normal
-password will not work. Without them the script says so and still runs layer 1.
+password will not work. The credential lives in a repository secret, never in a file
+in this repository. Without it the script says so and still runs layer 1.
 """
 from __future__ import annotations
 
@@ -148,34 +152,88 @@ def decode(value: str) -> str:
     return "".join(out)
 
 
+def mail_accounts() -> list[tuple[str, str, str]]:
+    """(host, user, app_password) triples to read, from one secret.
+
+    K holds one mailbox password that is used across accounts, and wants it stored
+    once. The store is a repository *secret* (never a file in this public repo), and
+    one secret can carry every account as JSON, so the password is entered a single
+    time:
+
+        IMAP_ACCOUNTS = [
+          {"user": "kongkeat.938@gmail.com", "app_password": "xxxx xxxx xxxx xxxx"},
+          {"user": "farmmer.938@gmail.com",  "app_password": "xxxx xxxx xxxx xxxx"}
+        ]
+
+    A mapping form ({"user": "password"}) is accepted too. The older single pair,
+    IMAP_USER + IMAP_APP_PASSWORD, still works and is merged in without duplicates.
+    Google displays app passwords with spaces; they are stripped here because the
+    spaces are cosmetic.
+    """
+    default_host = os.environ.get("IMAP_HOST", "imap.gmail.com")
+    pairs: list[tuple[str, str, str]] = []
+
+    def add(host: str, user: str, pw: str) -> None:
+        user, pw = (user or "").strip(), "".join((pw or "").split())
+        if user and pw and not any(u == user for _h, u, _p in pairs):
+            pairs.append((host or default_host, user, pw))
+
+    raw = (os.environ.get("IMAP_ACCOUNTS") or "").strip()
+    if raw:
+        try:
+            doc = json.loads(raw)
+        except json.JSONDecodeError:
+            doc = None
+        if isinstance(doc, dict):
+            doc = [{"user": u, "app_password": p} for u, p in doc.items()]
+        if isinstance(doc, list):
+            for item in doc:
+                if isinstance(item, dict):
+                    add(item.get("host") or default_host, item.get("user", ""),
+                        item.get("app_password") or item.get("password") or "")
+
+    add(default_host, os.environ.get("IMAP_USER", ""),
+        os.environ.get("IMAP_APP_PASSWORD", ""))
+    return pairs
+
+
 def inbox_alerts(days: int) -> tuple[list[dict], str]:
-    """Unread mail from the senders that matter. Returns (alerts, status note)."""
-    host = os.environ.get("IMAP_HOST", "imap.gmail.com")
-    user = os.environ.get("IMAP_USER")
-    pw = os.environ.get("IMAP_APP_PASSWORD")
-    if not (user and pw):
-        return [], ("no mail credential (IMAP_USER / IMAP_APP_PASSWORD unset) -- "
-                    "the inbox cannot be read, so this layer is BLIND")
+    """Unread mail from the senders that matter, across every configured account.
+
+    Returns (alerts, status note). The note never contains a password, and the
+    alerts never contain the account password either -- only sender and subject,
+    which go to a private file outside the repo.
+    """
+    accounts = mail_accounts()
+    if not accounts:
+        return [], ("no mail credential (IMAP_ACCOUNTS, or IMAP_USER / "
+                    "IMAP_APP_PASSWORD unset) -- the inbox cannot be read, so "
+                    "this layer is BLIND")
     alerts: list[dict] = []
-    try:
-        box = imaplib.IMAP4_SSL(host)
-        box.login(user, pw)
-        box.select("INBOX")
-        since = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%d-%b-%Y")
-        typ, data = box.search(None, f'(UNSEEN SINCE {since})')
-        for num in (data[0].split() if data and data[0] else []):
-            typ, raw = box.fetch(num, "(RFC822)")
-            msg = email.message_from_bytes(raw[0][1])
-            frm, subj = decode(msg.get("From", "")), decode(msg.get("Subject", ""))
-            hay = f"{frm} {subj}".lower()
-            if any(w in hay for w in ALERT_WORDS) or any(s in frm.lower() for s in IMPORTANT_SENDERS):
-                alerts.append({"kind": "mail", "from": frm, "subject": subj,
-                               "date": msg.get("Date", "")})
-        box.logout()
-        status = f"read {user}: {len(alerts)} flagged unread in {days} day(s)"
-    except Exception as exc:  # noqa: BLE001 - any IMAP failure must be reported, not hidden
-        return [], f"IMAP failed for {user}: {type(exc).__name__}: {exc}"
-    return alerts, status
+    notes: list[str] = []
+    for host, user, pw in accounts:
+        try:
+            box = imaplib.IMAP4_SSL(host)
+            box.login(user, pw)
+            box.select("INBOX")
+            since = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%d-%b-%Y")
+            typ, data = box.search(None, f'(UNSEEN SINCE {since})')
+            found = 0
+            for num in (data[0].split() if data and data[0] else []):
+                typ, raw = box.fetch(num, "(RFC822)")
+                msg = email.message_from_bytes(raw[0][1])
+                frm, subj = decode(msg.get("From", "")), decode(msg.get("Subject", ""))
+                hay = f"{frm} {subj}".lower()
+                if any(w in hay for w in ALERT_WORDS) or any(s in frm.lower() for s in IMPORTANT_SENDERS):
+                    alerts.append({"kind": "mail", "account": user, "from": frm,
+                                   "subject": subj, "date": msg.get("Date", "")})
+                    found += 1
+            box.logout()
+            notes.append(f"read {user}: {found} flagged unread in {days} day(s)")
+        except Exception as exc:  # noqa: BLE001 - any IMAP failure must be reported, not hidden
+            notes.append(f"IMAP failed for {user}: {type(exc).__name__}: {exc}")
+    return alerts, "; ".join(notes)
+
 
 
 def main() -> int:
@@ -223,6 +281,7 @@ def main() -> int:
         # The detail goes to a private file outside the repo.
         for i, _a in enumerate(alerts, 1):
             lines.append(f"- :email: alert {i} — recorded privately, not printed here")
+
         if alerts:
             with open(PRIVATE, "w", encoding="utf-8") as fh:
                 json.dump({"checked_at": now.isoformat(timespec="seconds"), "alerts": alerts},

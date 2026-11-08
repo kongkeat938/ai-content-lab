@@ -51,6 +51,7 @@ jobs:
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
           YT_CH3_REFRESH_TOKEN: ${{ secrets.YT_CH3_REFRESH_TOKEN }}
           YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+          IMAP_ACCOUNTS: ${{ secrets.IMAP_ACCOUNTS }}
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_APP_PASSWORD: ${{ secrets.IMAP_APP_PASSWORD }}
         run: |

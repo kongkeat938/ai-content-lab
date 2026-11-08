@@ -1,0 +1,68 @@
+# เก็บรหัสผ่านเมล์ยังไง (K ถาม 2026-11-08)
+
+K: *"จะกรอกรหัสผ่านเมล์ไว้ให้ใช้ แต่จะกรอกให้ครั้งเดียว ... รหัสนี้ใช้กับทุกบัญชี"*
+
+## คำตอบสั้น
+
+**เก็บที่ GitHub Repository Secret** (ไม่ใช่ไฟล์ในเครื่อง, ไม่ใช่ใน git — repo นี้ **public**).
+ใส่ **ครั้งเดียว** ในชื่อ `IMAP_ACCOUNTS` แล้วใส่ได้ทุกบัญชีในค่าเดียว. โค้ดพร้อมใช้แล้ว
+(`scripts/mail_watch.py`) + มีเทสต์กันรหัสหลุด.
+
+## ⚠️ ความจริงที่ต้องรู้ก่อน: "รหัสเดียวใช้ได้ทุกบัญชี" ไม่มีใน Gmail
+
+Google ไม่ยอมให้ใช้ "รหัสผ่านเมล์ตัวจริง" ผ่าน IMAP — **ต้องเป็น App Password** และ
+App Password ของ Google **ผูกกับบัญชีเดียว** (ยืนยันจากเอกสาร Google, 2026-11-08:
+*"An app password is a 16-digit passcode that gives a less secure app ... access to your
+Google Account"*, *"can only be used with 2-Step Verification"*). **ฉะนั้น:**
+
+- ถ้า K หมายถึง **รหัสผ่าน login ตัวจริงที่ใช้ซ้ำทุกบัญชี** → ใช้กับ IMAP ไม่ได้
+- สิ่งที่ทำได้ = **1 บัญชี 1 App Password** แต่ใส่ทุกตัวใน **secret เดียว** ⇒ K ยังกรอกครั้งเดียว
+
+## ทางเลือก (เรียงตามแนะนำ)
+
+| # | วิธี | ต้องมี | ข้อดี |
+|---|---|---|---|
+| 1 | **App Password ต่อบัญชี** ใส่ใน secret `IMAP_ACCOUNTS` อันเดียว | เปิด 2FA ทุกบัญชี + สร้าง app password | ได้ทุกบัญชี, เต็มความสามารถ, ไม่มีรหัสใน git |
+| 2 | **Gmail Delegation** — ให้บัญชีหลักอ่านเมล์ของบัญชีอื่น | ตั้งค่าใน Gmail ของแต่ละบัญชี | อ่านได้ทุกกล่องจากที่เดียว |
+| 3 | ไม่อ่านเมล์ (ใช้ layer 1) | ไม่ต้องทำอะไร | Data API จับคลิปถูกระงับ/ลบ อยู่แล้ว |
+
+> แนะนำ **#1** — ตรงกับที่ K ต้องการ (กรอกครั้งเดียว) และปลอดภัยสุด.
+
+## วิธีใส่ (GitHub UI — K ทำเอง ครั้งเดียว)
+
+1. เปิด `https://github.com/kongkeat938/ai-content-lab/settings/secrets/actions`
+2. กด **New repository secret**
+3. **Name:** `IMAP_ACCOUNTS`
+4. **Secret:** วาง JSON นี้ (แก้รหัสเป็น app password จริงของแต่ละบัญชี):
+```json
+[
+  {"user": "kongkeat.938@gmail.com", "app_password": "xxxx xxxx xxxx xxxx"},
+  {"user": "farmmer.938@gmail.com",  "app_password": "xxxx xxxx xxxx xxxx"},
+  {"user": "kongkeat.p3@gmail.com",  "app_password": "xxxx xxxx xxxx xxxx"}
+]
+```
+5. กด **Add secret** → เสร็จ. งาน `account-watch` (รันทุกวัน 08:42 UTC) จะอ่านเมล์ทุกกล่องให้
+
+สร้าง App Password: `https://myaccount.google.com/apppasswords` (ต้องเปิด 2-Step Verification ก่อน;
+คัดลอกได้**ครั้งเดียว**ตอนสร้าง — เก็บใส่ secret ทันที)
+
+## ปลอดภัยแค่ไหน (วัดแล้ว)
+
+| คำถาม | คำตอบ |
+|---|---|
+| รหัสจะหลุดลง git ไหม | **ไม่** — เก็บใน GitHub Secret เท่านั้น; เทสต์ `test_mail_credentials.py` ยืนยันว่ารหัสไม่โผล่ในรายงาน |
+| Agent อ่านรหัสกลับได้ไหม | **ไม่ได้** — GitHub Secret เป็น write-only (อ่านกลับไม่ได้) |
+| โผล่ใน log ไหม | ไม่ — GitHub mask ค่า secret ใน log อัตโนมัติ |
+| รายงานที่ commit ลง public เก็บอะไร | แค่ "มีอีเมลเตือน N ฉบับ" — **ไม่เก็บผู้ส่ง/หัวเรื่อง**; รายละเอียดไปไฟล์ส่วนตัวนอก repo |
+
+## ถ้าไม่อยากให้รหัสผ่านบัญชีเลย (ทางเลือกที่ปลอดภัยสุด)
+
+เพิ่ม scope `https://www.googleapis.com/auth/gmail.readonly` ตอนทำ OAuth consent แล้วใช้
+**refresh token อ่านเมล์** (เหมือนที่ทำกับ YouTube อยู่แล้ว) — ไม่มีรหัสผ่านเก็บเลย.
+แต่ต้องทำ OAuth flow ใหม่ต่อบัญชี ⇒ **#1 เร็วกว่า** จึงแนะนำ #1 ก่อน.
+
+## ไฟล์ที่เกี่ยว
+
+- `scripts/mail_watch.py` — อ่าน `IMAP_ACCOUNTS` (หรือ `IMAP_USER`/`IMAP_APP_PASSWORD` แบบเดิม)
+- `scripts/test_mail_credentials.py` — guard: secret เดียว→หลายบัญชี, กันรหัสหลุด
+- `.github/workflows/account-watch.yml` — ส่ง secret เข้างานรายวัน
