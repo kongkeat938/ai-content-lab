@@ -274,6 +274,14 @@ def main() -> int:
     if fm_age is None or fm_age > 6 * 24 * 60:
         plan.append(("fetch music", {}))
 
+    # 5d-iv. Run the guard tests. Each rail runs its own test inline, but five
+    #        guards (channel identity, chapter renderer, music beds, remake, Short
+    #        art/music) had no CI caller, so a regression there would go unnoticed.
+    #        The whole suite is a few seconds. Daily.
+    st_age = last_success_min("selftest", ids)
+    if st_age is None or st_age > 20 * 60:
+        plan.append(("selftest", {}))
+
     # 5e. The three rails that were only reachable through GitHub's cron. That cron
     #     is unreliable here (measured 2026-11-07: the */30 foreman cron fired once
     #     in 30 runs), so a rail that only has a `schedule` can be missed for days.

@@ -1,0 +1,54 @@
+name: selftest
+
+# Run every guard test on a schedule, so a regression fails a job instead of
+# waiting for someone to run the suite by hand. Each rail already runs its own
+# test inline before it builds (night runs test_night, publish-shorts runs
+# test_publish_shorts_cap, foreman runs test_watchdog), but five guards had no CI
+# caller at all: channel identity, the chapter renderer, the music beds, the
+# remake rail and the Short art/music check. GitHub's cron is unreliable here, so
+# the foreman drives this daily from the chain like every other rail.
+#
+# Free on a public repo, and the whole suite is a few seconds of ffmpeg.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 5 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: selftest
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ffmpeg + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-tlwg-garuda
+          pip install --quiet -r requirements.txt
+
+      - name: Run every guard test
+        run: |
+          fail=0
+          for t in scripts/test_*.py; do
+            echo "== $t =="
+            if python3 "$t"; then
+              echo "   ok"
+            else
+              echo "   FAILED"
+              fail=1
+            fi
+          done
+          exit $fail
