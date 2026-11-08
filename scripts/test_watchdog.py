@@ -61,6 +61,11 @@ def main() -> int:
     #    foreman must name every workflow except the foreman itself (the watchdog
     #    drives that one). A new workflow added with only a schedule would silently
     #    never run, so this fails until the foreman knows about it.
+    #
+    #    A workflow with no `schedule` at all is exempt: it is on-demand by design
+    #    (it takes inputs, or a person runs it), so it is not a rail that can be
+    #    missed. Demanding the foreman dispatch it would be wrong -- the foreman
+    #    would call it with no inputs.
     referenced = set(re.findall(r'plan\.append\(\("([^"]+)"', fm))
     for path in sorted(glob.glob(os.path.join(ROOT, ".github", "workflows", "*.yml"))):
         text = open(path, encoding="utf-8").read()
@@ -69,6 +74,8 @@ def main() -> int:
             fail(f"{os.path.basename(path)} has no name; the foreman cannot address it")
         name = m.group(1).strip().strip('"')
         if name in ("foreman", "watchdog"):
+            continue
+        if re.search(r"^\s{2}schedule:", text, re.M) is None:
             continue
         if name not in referenced:
             fail(f"the foreman never dispatches {name!r} ({os.path.basename(path)}); "
