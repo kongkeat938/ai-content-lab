@@ -16,6 +16,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "12 8 * * *"   # 08:12 UTC, just after the quota reset
+  push:
+    paths:
+      - "content/ch2_publish.json"   # scheduled crons are unreliable here, so also
+                                     # retry on every manifest push (idempotent)
 
 permissions:
   contents: write   # commit the metadata backup
