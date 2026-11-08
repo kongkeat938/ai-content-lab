@@ -26,6 +26,15 @@ video in the top 30 for ธรรมะก่อนนอน, while 4.3k-sub cha
   publishAt, so a dropped cron can't miss a slot (needs privacyStatus private).
 - **Live apply DEFERRED** — Data API quota was already spent (403 quotaExceeded).
   CI proved auth+wiring by deferring cleanly. First writes at the 08:25 UTC tick.
+- ⚠️ **`scripts/test_watchdog.py` fails any workflow that has a `schedule:` but is
+  not dispatched by `foreman.py`** (GitHub cron is unreliable here). New rails MUST
+  get a foreman rule. Added rules for apply-packaging / ch2-playlists / remove-bad-cut.
+- ⚠️ **First-run CI bugs that only appear when you actually dispatch:** `git add
+  <new-file>` aborts the step with `fatal: pathspec ... did not match` when the
+  ledger does not exist yet (use `git add -A content/`); and re-rendering covers in
+  CI uses a different Pillow than the build, so upload the committed JPG instead.
+- **Bad cut `HkbSguA53ro` STILL LIVE** — delete defers on the spent quota; now
+  data-driven via `content/deletes.json` + a `.done` marker, foreman-driven.
   Doc: `docs/PACKAGING-PLAN-2026-11-08.md`. ⚠️ MEMORY.md is ~71 KB — over the
   loader's injectable size; prune when convenient.
 
