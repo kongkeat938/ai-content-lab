@@ -371,6 +371,8 @@ def main() -> int:
             path = thumb if os.path.isabs(thumb) else os.path.join(ROOT, thumb)
             try:
                 yt.thumbnails().set(videoId=vid, media_body=MediaFileUpload(path)).execute()
+                v["thumbnail_set"] = True
+                save(man, args.manifest)
                 print("  thumbnail set")
             except HttpError as exc:
                 print(f"  thumbnail deferred ({exc.status_code}); "
@@ -408,6 +410,25 @@ def main() -> int:
             print(f"repaired: {v['key']} -> playlist {v['playlist']}")
         except HttpError as exc:
             print(f"  playlist repair deferred for {v['key']} ({exc.status_code})",
+                  file=sys.stderr)
+
+    # Thumbnail repair, for the same reason as the playlist one: a quota 403 at
+    # upload time leaves a published video wearing a frame grabbed from its own
+    # second minute, and nothing retries it. `thumbnails.set` is idempotent, so a
+    # re-set costs nothing and the flag makes a success permanent.
+    for v in [x for x in man["videos"]
+              if x.get("video_id") and x.get("thumbnail") and not x.get("thumbnail_set")]:
+        path = v["thumbnail"] if os.path.isabs(v["thumbnail"]) else os.path.join(ROOT, v["thumbnail"])
+        if not os.path.exists(path):
+            continue
+        try:
+            yt.thumbnails().set(videoId=v["video_id"],
+                                media_body=MediaFileUpload(path)).execute()
+            v["thumbnail_set"] = True
+            save(man, args.manifest)
+            print(f"repaired: {v['key']} -> thumbnail")
+        except HttpError as exc:
+            print(f"  thumbnail repair deferred for {v['key']} ({exc.status_code})",
                   file=sys.stderr)
 
     live = [v for v in man["videos"] if v.get("video_id")]
