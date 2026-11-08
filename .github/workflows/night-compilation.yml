@@ -149,6 +149,8 @@ jobs:
             --out work/night \
             --minutes "${{ inputs.minutes || '120' }}" \
             --image-style dharma \
+            --hook "คืนนี้ ... ถ้าคุณอยากวางทุกอย่างลงสักคืน ปล่อยให้เสียงธรรมะค่อย ๆ พาใจคุณเข้าสู่การพักผ่อน" \
+            --chapters \
             --image-prompt "serene Thai Buddhist night, soft moonlight, mist, calm"
 
       - name: Show the receipt

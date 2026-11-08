@@ -116,6 +116,9 @@ jobs:
 
       - name: Build and verify
         run: |
+          # The panel's #1 lever is a spoken promise in the first 20 seconds; the
+          # picture then changes per chapter instead of one card looping all file.
+          HOOK="คืนนี้ ... ถ้าคุณอยากมีเรื่องอบอุ่นไว้ฟังก่อนนอน สามสิบนาทีนี้เรามีเรื่องเล่าให้ใจได้พัก"
           python3 scripts/build_night.py \
             --content "${{ steps.pick.outputs.content }}" \
             --work work/ch4_family_01 \
@@ -125,6 +128,8 @@ jobs:
             --subtitle "รวมเรื่องครอบครัว ฟังเพลินทั้งคืน" \
             --voice th-TH-NiwatNeural \
             --image-style family \
+            --hook "$HOOK" \
+            --chapters \
             --image-prompt "warm Thai family home evening, soft golden lamp light, cozy"
 
       - name: Show the receipt
