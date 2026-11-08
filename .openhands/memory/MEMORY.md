@@ -438,6 +438,18 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **หลักการ:** "ออโตเมชันสมบูรณ์" ไม่ใช่แค่ทุกอย่างมี cron — ต้องมี **ตัวขับที่เชื่อถือได้
   (chain) + guard ที่บังคับให้ rail ใหม่ต้องถูกขับ**. เช็คเร็ว: `python3 scripts/foreman.py --dry-run`.
 
+## 📧 เก็บรหัสผ่านเมล์ (K: กรอกครั้งเดียว ใช้ทุกบัญชี) — 2026-11-08
+- **เก็บที่ GitHub Repository Secret ชื่อ `IMAP_ACCOUNTS`** (JSON หลายบัญชีในค่าเดียว);
+  ไม่มีรหัสใน git (repo public). เอกสาร `docs/MAIL-CREDENTIAL-2026-11-08.md`.
+- **⚠️ Gmail ไม่ให้ใช้รหัสผ่าน login จริงผ่าน IMAP** — ต้อง **App Password** และ
+  **app password ผูกกับบัญชีเดียว** ⇒ "รหัสเดียวใช้ทุกบัญชี" ไม่มีจริง. ที่ทำได้ =
+  1 บัญชี 1 app password แต่ยัดใน secret เดียว ⇒ K กรอกครั้งเดียว. ทางเลือก: Gmail
+  Delegation หรือ scope `gmail.readonly`.
+- **สถานะ:** ชั้นอ่านเมล์ = **BLIND** (ยังไม่มี cred; token ทั้ง 4 = scope `youtube`
+  อ่านเมล์ไม่ได้). รอ K ใส่ `IMAP_ACCOUNTS`.
+- `mail_watch.py` รับ `IMAP_ACCOUNTS` (list/dict) + `IMAP_USER`/`IMAP_APP_PASSWORD` เดิม;
+  guard `test_mail_credentials.py` (กันรหัสหลุดในรายงาน). เทสต์ **12/12**.
+
 ## 🔎 PCSEV — "verify จากอะไร" (2026-11-08)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** K ถามขั้น V ควรตรวจจากไหน.
   คำตอบ: **จากแหล่งที่วัดได้จริง ณ ปัจจุบัน ไม่ใช่เอกสารที่ commit ไว้** (เอกสาร=คำอ้าง
