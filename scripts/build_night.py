@@ -32,6 +32,12 @@ def run(cmd: list) -> tuple:
     return p.returncode, p.stdout + p.stderr
 
 
+def label_for_piece(stem: str) -> str:
+    """A readable chapter label from a piece filename stem: `03_others` -> `others`."""
+    import re as _re
+    return _re.sub(r"^\d+[_\-]+", "", stem).replace("_", " ").strip() or stem
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -52,6 +58,11 @@ def main() -> int:
     ap.add_argument("--subtitle", default="ธรรมะก่อนนอน เปิดทิ้งไว้ทั้งคืน",
                     help="poster subtitle")
     ap.add_argument("--voice", default=None, help="edge-tts voice (default: dharma's)")
+    ap.add_argument("--hook", default="",
+                    help="one-line opening hook spoken before the body")
+    ap.add_argument("--chapters", action="store_true",
+                    help="change the picture per piece (one card per chapter) "
+                         "instead of one card looping for the whole file")
     a = ap.parse_args()
 
     out = a.out or a.work
@@ -70,37 +81,74 @@ def main() -> int:
     # caller passed --image. The seed is derived from the content directory name,
     # so a rebuild of the same set yields the same picture (the ledger stays
     # meaningful) while a different set yields a different one.
+    def gen_image(dst: str, seed: int, prompt: str) -> int:
+        rc, log = run([sys.executable, os.path.join(HERE, "gen_cover_image.py"),
+                       "--out", dst, "--style", a.image_style,
+                       "--seed", str(seed), "--prompt", prompt])
+        sys.stdout.write(log)
+        return rc
+
+    import hashlib as _h
+    base_seed = int(_h.sha256(os.path.basename(os.path.normpath(a.content))
+                              .encode()).hexdigest()[:8], 16)
+
     image = a.image
     if not image:
-        import hashlib as _h
-        seed = int(_h.sha256(os.path.basename(os.path.normpath(a.content))
-                             .encode()).hexdigest()[:8], 16)
         image = os.path.join(a.work, "source.jpg")
-        rc, log = run([sys.executable, os.path.join(HERE, "gen_cover_image.py"),
-                       "--out", image, "--style", a.image_style,
-                       "--seed", str(seed), "--prompt", a.image_prompt])
-        sys.stdout.write(log)
-        if rc != 0:
+        if gen_image(image, base_seed, a.image_prompt) != 0:
             print("could not generate a cover image", file=sys.stderr)
             return 2
+
+    # In chapter mode each piece gets its own card, so the screen changes as the
+    # narration moves to the next beat. The seed varies per piece but stays tied
+    # to the piece name, so a rebuild reproduces the same set.
+    images_dir = os.path.join(a.work, "images")
+    if a.chapters and not a.skip_video:
+        os.makedirs(images_dir, exist_ok=True)
+        for i, fn in enumerate(parts):
+            stem = os.path.splitext(fn)[0]
+            dst = os.path.join(images_dir, stem + ".jpg")
+            if os.path.exists(dst):
+                continue
+            seed = (base_seed + int(_h.sha256(stem.encode()).hexdigest()[:6], 16)) % (2 ** 31)
+            prompt = (a.image_prompt or "") + f", mood of {label_for_piece(stem)}"
+            if gen_image(dst, seed, prompt) != 0:
+                print(f"could not generate art for {fn}; falling back to the cover",
+                      file=sys.stderr)
+        # The hook card shares the first piece's art; the renderer names it 00_hook.
+        if a.hook:
+            first = os.path.join(images_dir, os.path.splitext(parts[0])[0] + ".jpg")
+            if os.path.exists(first):
+                import shutil as _sh
+                _sh.copyfile(first, os.path.join(images_dir, "00_hook.jpg"))
 
     steps = [
         ("audio", [sys.executable, os.path.join(HERE, "make_compilation.py"),
                    "--out", mp3, "--part",
                    os.path.join(a.content, "[0-9]*.txt"),
                    "--work", a.work, "--minutes", str(a.minutes),
-                   "--voice", a.voice or "th-TH-NiwatNeural"]),
+                   "--voice", a.voice or "th-TH-NiwatNeural",
+                   *(["--hook", a.hook] if a.hook else [])]),
     ]
     if not a.skip_video:
-        steps += [
-            ("cover", [sys.executable, "-c",
-                       f"import sys;sys.path.insert(0,{HERE!r});import make_poster;"
-                       f"make_poster.build({image!r},{cover!r},{a.title!r},"
-                       f"{a.subtitle!r},3)"]),
-            ("video", [sys.executable, os.path.join(HERE, "make_night_video.py"),
-                       "--audio", mp3, "--image", image, "--cover", cover,
-                       "--out", mp4, "--loop-seconds", str(a.loop_seconds)]),
-        ]
+        if a.chapters:
+            steps += [("video", [sys.executable,
+                                 os.path.join(HERE, "make_chapter_video.py"),
+                                 "--audio", mp3, "--info", mp3 + ".info.json",
+                                 "--images", images_dir, "--out", mp4,
+                                 "--title", a.title, "--subtitle", a.subtitle,
+                                 "--style", a.image_style,
+                                 "--prompt", a.image_prompt])]
+        else:
+            steps += [
+                ("cover", [sys.executable, "-c",
+                           f"import sys;sys.path.insert(0,{HERE!r});import make_poster;"
+                           f"make_poster.build({image!r},{cover!r},{a.title!r},"
+                           f"{a.subtitle!r},3)"]),
+                ("video", [sys.executable, os.path.join(HERE, "make_night_video.py"),
+                           "--audio", mp3, "--image", image, "--cover", cover,
+                           "--out", mp4, "--loop-seconds", str(a.loop_seconds)]),
+            ]
 
     for name, cmd in steps:
         print(f"== {name} ==", flush=True)
