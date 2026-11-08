@@ -48,6 +48,10 @@ TP_TRIES = 3
 # crossfade runs between cards. A hard cut reads as a glitch to a listener who is
 # half-watching; a 1.5 s dissolve reads as a scene change.
 XFADE = 1.5
+# Cap on the number of cards in one xfade chain. A 120-minute sleep file would need
+# ~130 one-per-piece cards; grouping them keeps a picture change every few minutes
+# (the panel's guidance) without an unbounded filter chain on CI.
+MAX_CARDS = 30
 
 
 def run(cmd: list) -> None:
@@ -99,6 +103,25 @@ def piece_boundaries(info: dict) -> list[tuple[str, float]]:
     return out
 
 
+def coalesce(segs: list[tuple[str, float]], max_cards: int) -> list[tuple[str, float]]:
+    """Merge consecutive pieces until there are at most `max_cards` of them.
+
+    A 120-minute file built one-card-per-piece would need ~130 cards, and a single
+    xfade chain that long is both slow and memory-heavy on CI. The panel's guidance
+    was a picture change every 3-5 minutes, so grouping pieces up to a card ceiling
+    is the intended shape for a long sleep file, not a compromise. A short file
+    stays one card per piece because it never reaches the ceiling.
+    """
+    if max_cards <= 0 or len(segs) <= max_cards:
+        return segs
+    group = (len(segs) + max_cards - 1) // max_cards
+    out: list[tuple[str, float]] = []
+    for i in range(0, len(segs), group):
+        chunk = segs[i:i + group]
+        out.append((chunk[0][0], sum(d for _, d in chunk)))
+    return out
+
+
 def label_for(name: str) -> str:
     """A human chapter label from a piece name: `03_others` -> `03 others`."""
     base = os.path.splitext(os.path.basename(name))[0]
@@ -135,8 +158,8 @@ def ensure_image(images: str, name: str, style: str, prompt: str) -> str:
 
 def build(audio: str, info: dict, images: str, out: str, title: str,
           subtitle: str = "", fade: float = XFADE, style: str = "dharma",
-          prompt: str = "") -> dict:
-    segs = piece_boundaries(info)
+          prompt: str = "", max_cards: int = MAX_CARDS) -> dict:
+    segs = coalesce(piece_boundaries(info), max_cards)
     if not segs:
         raise SystemExit("info has no pieces; cannot lay out chapters")
     tmp = tempfile.mkdtemp(prefix="chapvid_")
@@ -246,11 +269,13 @@ def main() -> None:
     ap.add_argument("--subtitle", default="")
     ap.add_argument("--style", default="dharma", help="house style for missing art")
     ap.add_argument("--prompt", default="", help="subject for missing art (English)")
+    ap.add_argument("--max-cards", type=int, default=MAX_CARDS,
+                    help="cap on chapter cards (long files group pieces)")
     ap.add_argument("--fade", type=float, default=XFADE)
     a = ap.parse_args()
     info = json.load(open(a.info, encoding="utf-8"))
     print(json.dumps(build(a.audio, info, a.images, a.out, a.title, a.subtitle,
-                           a.fade, a.style, a.prompt), ensure_ascii=False))
+                           a.fade, a.style, a.prompt, a.max_cards), ensure_ascii=False))
 
 
 if __name__ == "__main__":

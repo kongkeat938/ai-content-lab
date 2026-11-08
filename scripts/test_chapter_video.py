@@ -55,6 +55,17 @@ def main() -> int:
         if abs(sum(d for _, d in segs) - 11.0) > 0.01:
             fail("chapter durations do not sum to the audio length")
 
+        # A long sleep file must group pieces rather than build one card each; the
+        # grouping must not lose or add time.
+        long_segs = [(f"p{i:03d}", 100.0) for i in range(130)]
+        grouped = mcv.coalesce(long_segs, mcv.MAX_CARDS)
+        if len(grouped) > mcv.MAX_CARDS:
+            fail(f"coalesce left {len(grouped)} cards, over the {mcv.MAX_CARDS} cap")
+        if abs(sum(d for _, d in grouped) - sum(d for _, d in long_segs)) > 0.01:
+            fail("coalesce changed the total length")
+        if mcv.coalesce([("a", 1.0), ("b", 1.0)], mcv.MAX_CARDS) != [("a", 1.0), ("b", 1.0)]:
+            fail("coalesce touched a file that was already under the cap")
+
         audio = os.path.join(tmp, "compilation.mp3")
         run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
              "-i", "sine=frequency=200:duration=11", "-c:a", "libmp3lame", audio])
