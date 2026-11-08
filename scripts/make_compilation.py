@@ -97,6 +97,25 @@ def concat(parts: list, out: str) -> None:
     os.remove(listfile)
 
 
+def hook_piece(text: str, work: str, voice: str = VOICE) -> dict | None:
+    """Synthesise a short opening hook and return its info, or None if empty.
+
+    The advisor panel (2026-11-07) put this first: people leave in the first
+    minute, so the file must state its promise before it settles in. The hook is
+    spoken once, in front of the looped body, so a replay passes through it again
+    -- which is correct, the promise is what earns the next minute.
+    """
+    text = (text or "").strip()
+    if not text:
+        return None
+    path = os.path.join(work, "00_hook.txt")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text + "\n")
+    info = build_part(path, work, voice)
+    info["name"] = "00_hook"
+    return info
+
+
 def sequence_to_length(parts: list, target_seconds: float) -> tuple:
     """Repeat the piece list until it reaches the target, with a longer breath
     between cycles than between pieces.
@@ -165,6 +184,9 @@ def main() -> None:
                     help="target length; repeat the pieces until reached "
                          "(a sleep file is meant to be left playing)")
     ap.add_argument("--voice", default=VOICE, help="edge-tts voice")
+    ap.add_argument("--hook", default="",
+                    help="one-line opening hook spoken before the body "
+                         "(the panel's #1 retention lever)")
     a = ap.parse_args()
 
     scripts = []
@@ -177,12 +199,24 @@ def main() -> None:
 
     print(f"building {len(scripts)} pieces")
     infos = [build_part(s, a.work, a.voice) for s in scripts]
+
+    hook = hook_piece(a.hook, a.work, a.voice)
+    if hook:
+        infos = [hook] + infos
+        print(f"  hook: {hook['duration_sec']:.0f}s")
+
     part_files = [os.path.join(a.work, f"part_{i['name']}.mp3") for i in infos]
 
     cycles = 1
     if a.minutes > 0:
-        part_files, cycles = sequence_to_length(part_files, a.minutes * 60)
-        print(f"repeating the {len(infos)} pieces x{cycles} to reach "
+        # The hook plays once; only the body repeats to reach the target. Asking
+        # sequence_to_length for the full target would let the hook count toward
+        # it, and the file would come out short by the hook's length.
+        hook_sec = hook["duration_sec"] if hook else 0.0
+        body_files = part_files[len(part_files) - len(scripts):]
+        body_files, cycles = sequence_to_length(body_files, a.minutes * 60 - hook_sec)
+        part_files = ([part_files[0]] if hook else []) + body_files
+        print(f"repeating the {len(scripts)} pieces x{cycles} to reach "
               f"{a.minutes:.0f} min")
 
     voice = os.path.join(a.work, "voice.wav")
@@ -201,7 +235,10 @@ def main() -> None:
     lufs, peak = make_audio.measure(a.out)
     info = {
         "out": a.out,
-        "pieces": [{"name": i["name"], "duration_sec": i["duration_sec"]} for i in infos],
+        "pieces": [{"name": i["name"], "duration_sec": i["duration_sec"]}
+                   for i in infos if not (hook and i is hook)],
+        "hook": ({"name": hook["name"], "duration_sec": hook["duration_sec"]}
+                 if hook else None),
         "cycles": cycles,
         "duration_sec": round(duration(a.out), 2),
         "minutes": round(duration(a.out) / 60, 1),

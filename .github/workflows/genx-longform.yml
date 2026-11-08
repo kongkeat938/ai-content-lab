@@ -117,6 +117,9 @@ jobs:
 
       - name: Build and verify
         run: |
+          # The panel's #1 lever is a spoken promise in the first 20 seconds, so
+          # the hook is a real sentence, not the theme's few words.
+          HOOK="ถ้าทั้งวันคุณเหนื่อยกับเรื่องเดิม ๆ อยู่ ... สามสิบนาทีนี้ เรามาให้ใจได้พักกัน ไม่ต้องทำอะไร แค่ฟัง"
           python3 scripts/build_night.py \
             --content "${{ steps.pick.outputs.content }}" \
             --work work/ch1_long \
@@ -126,6 +129,8 @@ jobs:
             --subtitle "รวมข้อคิดให้ใจเบาลง ฟังเพลิน ๆ" \
             --voice th-TH-NiwatNeural \
             --image-style dharma \
+            --hook "$HOOK" \
+            --chapters \
             --image-prompt "serene calm Thai evening, soft warm light, quiet reflection, minimal"
 
       - name: Show the receipt
@@ -138,7 +143,8 @@ jobs:
           CONTENT="${{ steps.pick.outputs.content }}"
           fp="$(cat "$CONTENT"/*.txt \
                  scripts/make_compilation.py scripts/make_bed.py scripts/make_audio.py \
-                 scripts/make_night_video.py scripts/make_poster.py scripts/verify_night.py \
+                 scripts/make_chapter_video.py scripts/make_night_video.py \
+                 scripts/make_poster.py scripts/verify_night.py \
                  | sha256sum | cut -c1-12)"
           fp="${fp}-$(echo "NiwatNeural" | sha256sum | cut -c1-6)"
           echo "fp=$fp" >> "$GITHUB_OUTPUT"
