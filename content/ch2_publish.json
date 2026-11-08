@@ -172,7 +172,7 @@
     },
     {
       "key": "night_dharma_01",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-4476981cd9d5-a74f6e/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-4476981cd9d5-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_dharma_01.jpg",
@@ -193,7 +193,9 @@
       ],
       "category_id": 22,
       "privacy": "public",
-      "playlist": "PLBpZCGnd7Q5Y"
+      "playlist": "PLBpZCGnd7Q5Y",
+      "video_id": "QbVcMb8-DlI",
+      "url": "https://youtu.be/QbVcMb8-DlI"
     }
   ]
 }
