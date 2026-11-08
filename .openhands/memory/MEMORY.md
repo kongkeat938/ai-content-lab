@@ -438,6 +438,21 @@ different ways) — use F0-contour correlation + MFCC distance.
 - **หลักการ:** "ออโตเมชันสมบูรณ์" ไม่ใช่แค่ทุกอย่างมี cron — ต้องมี **ตัวขับที่เชื่อถือได้
   (chain) + guard ที่บังคับให้ rail ใหม่ต้องถูกขับ**. เช็คเร็ว: `python3 scripts/foreman.py --dry-run`.
 
+## 🏢 โมเดลธุรกิจ + ทีม 5 agent + QA critic (2026-11-08)
+- K: "ak สร้างทีม developer ... ออกแบบโมเดลธุรกิจเลย". เอกสาร: `docs/BUSINESS-MODEL-2026-11-08.md`.
+- **Panel 3 ค่าย เอกฉันท์:** คอขวดจริง = **retention/AVD ไม่ใช่เพดานอัปโหลด** (ใช้แค่ ~2.8
+  ชม./วัน). **$500/ช่องใน 6-12 เดือนไม่จริง** → 18-36 เดือน; เป้าตั้งต้น $50-100/ช่อง.
+  **ทุ่ม dharma ก่อน** แล้วก็อปโมเดล. ลำดับ: retention → CTR → niche → ปริมาณ(สุดท้าย).
+- **ทีม = 5 agent:** Strategist(`studio_ai.py`) · Scriptwriter(`gen_*_scripts.py`) ·
+  Producer(`make_compilation`/`make_chapter_video`) · Publisher(`publish_*`) ·
+  **QA/Critic(`qa_gate.py` — สร้างใหม่วันนี้, veto ได้)**.
+- **QA gate:** เกรด A-D จาก receipt. veto เมื่อ: verifier fail · ไม่มี hook (2-30 วิ) ·
+  <2 การ์ด หรือการ์ดใด > 8 นาที · TP > -3 dBFS. veto → `state=blocked` →
+  `publish_batch` ไม่อัปโหลด. ผูกทุก long-form rail ผ่าน `add_release_to_manifest.py`.
+  **dharma build จริง = เกรด A**; guard = `test_qa_gate.py`. CI 42442103719 = 9/9 ผ่าน.
+- **หลักการ:** ประตูอนุมัติที่ดี ≠ "รอคน" แต่คือ **gate ที่วัดได้ + บล็อกเองได้**.
+  "ออโต้" ที่ไม่มี critic = automate การปล่อยของเสีย.
+
 ## 🔍 คลิปวิว 0 — ต้นเหตุจริงคือ burst ไม่ใช่คุณภาพ (2026-11-07)
 - **Analytics รายงานคลิปใหม่ช้า** — คลิปที่ขึ้น '0 วิว' ใน Analytics จริง ๆ มี 154/107/75
   (Data API). **อย่าใช้ Analytics ตัดสินคลิปใหม่** ใช้ Data API `statistics.viewCount`.
