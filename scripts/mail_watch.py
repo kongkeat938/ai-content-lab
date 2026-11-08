@@ -168,6 +168,9 @@ def mail_accounts() -> list[tuple[str, str, str]]:
         a JSON list   [{"user": "...", "app_password": "..."}, ...]
         a JSON map    {"user": "app_password", ...}
 
+        a bare password, applied to every account this project knows  <- "one
+        password for all accounts", exactly as K described it
+
     The older single pair, IMAP_USER + IMAP_APP_PASSWORD, still works and is merged
     in without duplicates. Google displays app passwords with spaces; the spaces are
     cosmetic and are stripped.
@@ -207,8 +210,35 @@ def mail_accounts() -> list[tuple[str, str, str]]:
 
     add(default_host, os.environ.get("IMAP_USER", ""),
         os.environ.get("IMAP_APP_PASSWORD", ""))
+
+    # K's own words were "one password for all accounts". If the secret holds a bare
+    # password -- no "user:", no JSON -- then it is that shared password, and it is
+    # applied to every account this project already knows. That is the smallest thing
+    # to type on a phone, and it matches how K described it.
+    if not pairs and raw and ":" not in raw and not raw.startswith(("[", "{")):
+        for _slug, (_var, addr) in ACCOUNTS.items():
+            if addr and _slug not in CANCELLED:
+                add(default_host, addr, raw)
     return pairs
 
+
+
+
+def credential_shape() -> str:
+    """Describe IMAP_ACCOUNTS without revealing it, for when parsing finds nothing.
+
+    A secret can be set and still be unusable -- a line with no colon, a stray
+    character -- and "unset" would then be a lie that sends the reader looking in the
+    wrong place. This reports only the shape: length, line count, and whether the
+    lines carry the separator the parser needs.
+    """
+    raw = os.environ.get("IMAP_ACCOUNTS")
+    if raw is None:
+        return "IMAP_ACCOUNTS is not set"
+    lines = [ln for ln in raw.splitlines() if ln.strip()]
+    with_colon = sum(1 for ln in lines if ":" in ln)
+    return (f"IMAP_ACCOUNTS is set ({len(raw)} chars, {len(lines)} non-blank "
+            f"line(s), {with_colon} with a ':') but no account was parsed")
 
 
 def inbox_alerts(days: int) -> tuple[list[dict], str]:
@@ -220,9 +250,11 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
     """
     accounts = mail_accounts()
     if not accounts:
-        return [], ("no mail credential (IMAP_ACCOUNTS, or IMAP_USER / "
-                    "IMAP_APP_PASSWORD unset) -- the inbox cannot be read, so "
-                    "this layer is BLIND")
+        return [], ("no usable mail credential -- " + credential_shape() +
+                    ". Expected 'user:app_password' per line, or IMAP_USER / "
+                    "IMAP_APP_PASSWORD. The inbox cannot be read, so this layer "
+                    "is BLIND")
+
     alerts: list[dict] = []
     notes: list[str] = []
     for host, user, pw in accounts:
