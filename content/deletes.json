@@ -1,0 +1,10 @@
+{
+  "_comment": "Videos to remove from a channel, driven by remove-bad-cut.yml. A delete writes content/deleted/<id>.done on success, so the rail and the foreman skip it afterwards; until that marker exists the delete is retried (it defers cleanly on a spent quota).",
+  "pending": [
+    {
+      "slug": "dharma",
+      "video": "HkbSguA53ro",
+      "reason": "57-minute cut: one static card looping for the whole file, averageViewDuration 5.2% (Reused Content risk). Replaced by the chaptered rebuild."
+    }
+  ]
+}

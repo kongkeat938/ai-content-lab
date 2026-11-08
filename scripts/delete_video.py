@@ -102,7 +102,14 @@ def main() -> int:
 
     st, body = delete(token, a.video)
     print(f"DELETE {a.video} -> HTTP {st}" + ("" if st in (200, 204) else f"  {body[:200]}"))
-    return 0 if st in (200, 204) else 1
+    ok = st in (200, 204)
+    # A marker on success, so a driver (the foreman) can tell a finished delete
+    # from one that is still pending on quota. Without it a schedule-only rail
+    # that keeps getting deferred would be retried forever with no way to stop.
+    if ok:
+        with open(os.path.join(BACKUP_DIR, f"{a.video}.done"), "w", encoding="utf-8") as fh:
+            fh.write(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()) + "\n")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
