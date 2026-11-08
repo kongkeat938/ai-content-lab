@@ -5,6 +5,30 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## 🎨 2026-11-08 — Packaging rail shipped for ch2 (the meeting plan, executed)
+Competitor research found the search blocker is **packaging, not reach**: no Farmmer
+video in the top 30 for ธรรมะก่อนนอน, while 4.3k-sub channels hold 600k views.
+- **`scripts/make_cover_youtube.py`** (NEW) — 1280x720 cover in the winning recipe:
+  glowing gold Buddha + deep-navy night + big heavy-stroke Thai text. `_gild()` =
+  `autocontrast` then composite gold by luminance → museum bronze reads as glowing
+  gold AND the set shares one warm grade. `variant` alternates text side (mirrors
+  the statue) so a channel page isn't a wall of identical covers. Vision 7/10 → 8/10.
+  Art = 8 CC0/PD Commons statues in `assets/branding/farmmer/art/` (+credits.json).
+  ⚠️ Commons `generator=search` 429s after ~5 queries from this pod.
+- **`content/ch2_packaging.json`** + **`scripts/apply_packaging.py`** +
+  `apply-packaging.yml` (08:25/09:25 UTC + push) — title+tags+cover via Data API,
+  ledger `content/packaging_changes.json`, quota-deferral safe. Covers all 13 ch2 vids.
+- **Playlists**: `channel_overhaul.py` ch2 PLAN gained ปล่อยวาง/คลายกังวล + นิทาน;
+  new `ch2-playlists.yml` (08:40 UTC). `organise()` is idempotent.
+- **Hook rail already existed** (`--hook-file content/hooks/dharma.md`, used by
+  night-compilation.yml). Only trimmed to ~44s + dropped its false "ยี่สิบนาที" claim.
+- **`publish_batch.py --publish-at ISO`** — YouTube holds private and flips at
+  publishAt, so a dropped cron can't miss a slot (needs privacyStatus private).
+- **Live apply DEFERRED** — Data API quota was already spent (403 quotaExceeded).
+  CI proved auth+wiring by deferring cleanly. First writes at the 08:25 UTC tick.
+  Doc: `docs/PACKAGING-PLAN-2026-11-08.md`. ⚠️ MEMORY.md is ~71 KB — over the
+  loader's injectable size; prune when convenient.
+
 ## 📬 2026-11-08 — อ่าน Gmail จากพอดได้แล้ว (ไม่ต้องพึ่ง PC1)
 K: "รหัสเมล์ที่สร้าง secret ไว้ เอามากรอดเมล์เลย" ⇒ **ทำได้จริง end-to-end**.
 - รหัสใน secret `IMAP_ACCOUNTS` = **รหัสผ่านจริงของ Gmail** (9 ตัว) ใช้ล็อกอิน Google ได้
