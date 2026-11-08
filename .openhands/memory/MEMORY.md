@@ -5,6 +5,29 @@ evidence. This file is an **index** and must stay small — the loader injects i
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
 in `topics/*.md` and the daily logs.
 
+## ⭐ 2026-11-08 — AVD fix shipped: the long-form was ONE card looping (live 3HCOe1jZj2c)
+- **Root cause (measured):** the dharma 120-min file's `averageViewDuration` = **379 s = 5.2%**.
+  `make_night_video.py` looped **one static cover card** for the whole file → screen never
+  changed → YouTube reads it as low-effort/reused content. It is the format, not the audio.
+- **Panel (4 camps, `docs/PANEL-2026-11-07c.md`):** gemini-3.5-flash-lite, gemini-3.6-flash,
+  gemma-4-31b-it, gpt-oss-20b (DeepSeek/Zhipu down). Verdict, by ROI: (1) spoken **hook**
+  first ~20 s, (2) cut to **20–30 min**, (3) **change the picture per chapter**, (4) do NOT
+  pump 8–10 h loops (Reused Content trap at YPP review). "คนอยู่ 4–6 นาทีเท่าเดิม" ไม่ว่า
+  คลิปจะยาวแค่ไหน → ความยาวสั้นลงทำให้ %AVD ดีขึ้นทันที.
+- **Shipped:** `scripts/make_chapter_video.py` (NEW) = one Ken Burns card per piece, chapter
+  label, crossfade; `make_compilation --hook`; `build_night --chapters/--hook`; wired into
+  **all three rails** (genx, ch4, dharma). Card cap `MAX_CARDS=30` coalesces pieces on a long
+  file (120 min → ~26 cards ≈ 8 min/ใบ) so the xfade chain stays bounded. Test:
+  `scripts/test_chapter_video.py` (one card per piece, consecutive cards differ in luma, tv
+  range, TP ≤ -2.9). Fingerprints of all rails fold in `make_chapter_video.py`.
+- **Proof (CI run 42431978059 SUCCESS):** hook 11 s + 8 pieces ×2 = **17 cards**, 26.3 min,
+  **-14.4 LUFS / true peak -3.2 dBFS**, verdict pass → **live https://youtu.be/3HCOe1jZj2c**
+  (ตาต้า GenX, public, manifest key `ch1_auto_202645`). Report `docs/STATUS-2026-11-08-avd.md`.
+- **Not yet measured:** whether AVD actually lifts. Do NOT claim a win before the 26-min
+  file's AVD has a week of data. Baseline to beat = **5.2%**.
+- **Lesson:** ฟอร์แมตเดียวที่ทำให้ภาพนิ่ง = ตัวฆ่า AVD; เปลี่ยนภาพตามบท (ทุก 3–5 นาที) คือของถูก
+  ที่ได้ผล ส่วนการเคลื่อนไหวความละเอียดสูงหลาย layer ชนเพดานเวลาเรนเดอร์ CI.
+
 ## ⭐ 2026-11-07 — genx long-form rail: the channel had Shorts reach and zero destination
 - **Advisor panel closed (3 camps, satisfies ≥3-distinct-camps rule):** Google ×3 models
   (`gemini-3.5-flash-lite`/`3.6-flash`/`gemma-4-31b-it`), **OpenAI-OSS** (gpt-oss-20b via
