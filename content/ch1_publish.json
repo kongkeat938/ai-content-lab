@@ -64,6 +64,47 @@
       "video_id": "3HCOe1jZj2c",
       "url": "https://youtu.be/3HCOe1jZj2c",
       "playlist_added": true
+    },
+    {
+      "key": "ch1_long_02",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/genx-long-4078c5a3d9d9-af6a96/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/genx-long-4078c5a3d9d9-af6a96/compilation.mp3",
+      "thumbnail": "assets/branding/genx/thumbs/ch1_long_02.jpg",
+      "duration_sec": 1873.1,
+      "title": "ปรัชญาชีวิต รวมข้อคิดให้ใจเบาลง ฟังเพลิน ๆ ทั้งวัน",
+      "description": "รวมข้อคิดและปรัชญาชีวิตสำหรับคนวัยทำงาน 25 นาที ฟังเพลิน ๆ ช่วยให้ใจสงบ ได้มุมมองใหม่กับเรื่องที่แบกมาทั้งวัน\n\nเปิดฟังได้ทุกเวลา ทั้งตอนพัก ตอนขับรถ หรือก่อนนอน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่ฟังเสียงนุ่ม ๆ ไปเรื่อย ๆ\n\nตอนในคลิปนี้: permission · enough · others · compare · forgive · anger · alone · body · present · kindness\n\nฝากกดติดตามช่อง ตาต้า GenX — ปรัชญาชีวิต เพื่อรับข้อคิดใหม่ ๆ ที่ช่วยให้ใจเบาลง\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\nhttps://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w",
+      "tags": [
+        "ปรัชญาชีวิต",
+        "ข้อคิดชีวิต",
+        "แง่คิด",
+        "กำลังใจ",
+        "คนวัยทำงาน",
+        "ปล่อยวาง",
+        "ความสุข",
+        "รักตัวเอง",
+        "คิดมาก",
+        "จิตสงบ",
+        "ฟังเพลิน",
+        "GenX",
+        "ให้กำลังใจตัวเอง"
+      ],
+      "category_id": 22,
+      "privacy": "public",
+      "playlist": "PLXEV3B3DcgsU",
+      "qa": {
+        "grade": "A",
+        "blocked": false,
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "duration_min": 31.2,
+          "chapters": 21,
+          "longest_card_min": 1.7,
+          "hook_sec": 28.6,
+          "true_peak_dbfs": -3.1
+        }
+      }
     }
   ]
 }
