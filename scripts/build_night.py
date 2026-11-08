@@ -60,10 +60,22 @@ def main() -> int:
     ap.add_argument("--voice", default=None, help="edge-tts voice (default: dharma's)")
     ap.add_argument("--hook", default="",
                     help="one-line opening hook spoken before the body")
+    ap.add_argument("--hook-file", default="",
+                    help="file holding the spoken cold open (several lines); "
+                         "overrides --hook. Kept in the repo so the opening can be "
+                         "reviewed and reused, not buried in a workflow string.")
     ap.add_argument("--chapters", action="store_true",
                     help="change the picture per piece (one card per chapter) "
                          "instead of one card looping for the whole file")
     a = ap.parse_args()
+
+    # The cold open decides the first two minutes, so it may come from a file that
+    # lives in the repo (reviewable, reusable) rather than a one-line argument.
+    hook_text = a.hook
+    if a.hook_file and os.path.exists(a.hook_file):
+        hook_text = open(a.hook_file, encoding="utf-8").read().strip()
+    elif a.hook_file:
+        print(f"hook file {a.hook_file} not found; using --hook", file=sys.stderr)
 
     out = a.out or a.work
     os.makedirs(a.work, exist_ok=True)
@@ -116,7 +128,7 @@ def main() -> int:
                 print(f"could not generate art for {fn}; falling back to the cover",
                       file=sys.stderr)
         # The hook card shares the first piece's art; the renderer names it 00_hook.
-        if a.hook:
+        if hook_text:
             first = os.path.join(images_dir, os.path.splitext(parts[0])[0] + ".jpg")
             if os.path.exists(first):
                 import shutil as _sh
@@ -128,7 +140,7 @@ def main() -> int:
                    os.path.join(a.content, "[0-9]*.txt"),
                    "--work", a.work, "--minutes", str(a.minutes),
                    "--voice", a.voice or "th-TH-NiwatNeural",
-                   *(["--hook", a.hook] if a.hook else [])]),
+                   *(["--hook", hook_text] if hook_text else [])]),
     ]
     if not a.skip_video:
         if a.chapters:
