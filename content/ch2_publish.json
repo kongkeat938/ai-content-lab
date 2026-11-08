@@ -200,7 +200,7 @@
     },
     {
       "key": "night_middleway_01",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-6ef8acb6623e-a74f6e/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-6ef8acb6623e-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_middleway_01.jpg",
@@ -236,7 +236,9 @@
           "hook_sec": 26.8,
           "true_peak_dbfs": -3.1
         }
-      }
+      },
+      "video_id": "HkbSguA53ro",
+      "url": "https://youtu.be/HkbSguA53ro"
     }
   ]
 }
