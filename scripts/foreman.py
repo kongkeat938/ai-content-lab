@@ -257,6 +257,23 @@ def main() -> int:
     if wh_age is None or wh_age > 6 * 24 * 60:
         plan.append(("watch-hours", {}))
 
+    # 5d-ii. The learning brain. studio-ai reads each channel's real Analytics and
+    #       asks the panel what to make next; grow-shorts-pool then builds scripts
+    #       from those subjects, so without this tick the pool follows a fixed list
+    #       instead of what actually worked. It had only a schedule, and GitHub's
+    #       cron is unreliable here, so drive it from the chain. Daily.
+    sa_age = last_success_min("studio-ai", ids)
+    if sa_age is None or sa_age > 20 * 60:
+        plan.append(("studio-ai", {}))
+
+    # 5d-iii. Top up the Shorts music bed. It had only a weekly schedule, so on a
+    #        quiet cron week the pool of real instrumentals could run dry and new
+    #        Shorts would fall back to silence. Cheap and idempotent -- an existing
+    #        pack is kept. Weekly.
+    fm_age = last_success_min("fetch music", ids)
+    if fm_age is None or fm_age > 6 * 24 * 60:
+        plan.append(("fetch music", {}))
+
     # 5e. The three rails that were only reachable through GitHub's cron. That cron
     #     is unreliable here (measured 2026-11-07: the */30 foreman cron fired once
     #     in 30 runs), so a rail that only has a `schedule` can be missed for days.
