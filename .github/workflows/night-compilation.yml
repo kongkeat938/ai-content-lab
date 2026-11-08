@@ -213,7 +213,12 @@ jobs:
           git push
           # A push made with GITHUB_TOKEN does not start another workflow, so the
           # upload is dispatched explicitly rather than left to the push trigger.
-          gh workflow run publish-batch.yml --repo "${{ github.repository }}"
+          # `publish_at=slot` schedules the release at the next 19:30 Bangkok:
+          # YouTube holds it private and flips it on its own clock, so a dropped
+          # tick cannot miss the slot. (The GITHUB_TOKEN push above cannot start
+          # the push-triggered publish, so this dispatch is the only upload path.)
+          gh workflow run publish-batch.yml --repo "${{ github.repository }}" \
+            -f publish_at=slot
 
       - name: Alert on failure
         if: failure()

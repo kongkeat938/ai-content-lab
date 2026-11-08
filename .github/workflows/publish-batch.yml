@@ -21,6 +21,9 @@ on:
       dry_run:
         description: "true to only list what would be posted"
         default: "false"
+      publish_at:
+        description: "ISO8601 UTC, or 'slot' for the next 19:30 Bangkok (= 12:30 UTC)"
+        default: ""
   schedule:
     - cron: "17 */3 * * *"   # every 3 hours; a no-op tick is cheap
   push:
@@ -59,6 +62,18 @@ jobs:
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           if [ -n "${{ github.event.inputs.privacy }}" ]; then ARGS="$ARGS --privacy ${{ github.event.inputs.privacy }}"; fi
           for k in ${{ github.event.inputs.only }}; do ARGS="$ARGS --only $k"; done
+          PUB="${{ github.event.inputs.publish_at }}"
+          # 'slot' = the next 19:30 Bangkok. Thailand has no DST, so that is a
+          # fixed 12:30 UTC; computing it in UTC avoids depending on the runner's
+          # tz database. A scheduled release means YouTube flips the video public
+          # at the slot on its own clock, so a dropped cron cannot miss it.
+          if [ "$PUB" = "slot" ]; then
+            PUB=$(date -u -d "$(date -u +%Y-%m-%d) 12:30" +%Y-%m-%dT%H:%M:%SZ)
+            if [ "$(date -u +%s)" -ge "$(date -u -d "$PUB" +%s)" ]; then
+              PUB=$(date -u -d "$(date -u -d '+1 day' +%Y-%m-%d) 12:30" +%Y-%m-%dT%H:%M:%SZ)
+            fi
+          fi
+          if [ -n "$PUB" ]; then ARGS="$ARGS --publish-at $PUB"; fi
           python3 scripts/publish_batch.py $ARGS
 
       - name: Record the new video ids
