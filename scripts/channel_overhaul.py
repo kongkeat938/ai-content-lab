@@ -64,6 +64,15 @@ PLAN = {
              "desc": "ฟังต่อเนื่องก่อนนอน ให้ใจค่อย ๆ สงบลง"},
             {"title": "ธรรมะก่อนนอน — ตอน", "by": "long", "keep": True,
              "desc": "ธรรมะก่อนนอนฉบับเต็มตอน"},
+            # Thematic shelves from the 2026-11-08 competitor plan: a playlist
+            # gives a viewer a next video to play, which is the session-time
+            # lever. These are additive; the shelves above are left as they are.
+            {"title": "ธรรมะก่อนนอน — ปล่อยวาง คลายกังวล",
+             "match": r"ปล่อยวาง|กังวล|เครียด|ทุกข์|เหนื่อย|หนักใจ",
+             "desc": "ฟังแล้ววางเรื่องหนักใจไว้ตรงนี้ คลายความกังวลก่อนนอน"},
+            {"title": "นิทานธรรมะก่อนนอน",
+             "match": r"นิทาน",
+             "desc": "นิทานธรรมะสอนใจก่อนนอน ฟังเพลิน ได้ข้อคิด"},
         ],
     },
     "ch4": {
