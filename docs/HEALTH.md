@@ -1,4 +1,4 @@
-# Channel health — 2026-11-08T14:58:52+00:00
+# Channel health — 2026-11-08T15:35:06+00:00
 
 - long videos live: **8** ['night_120', 'k_tone_01', 'night_110', 'night_money_01', 'night_sleep_01', 'night_auto_202645', 'night_dharma_01', 'night_middleway_01']
 - thumbnails queued: 13
@@ -8,22 +8,22 @@
 - genx: 72 live of 90 in the pool (18 waiting)
 
 ## rails
-- account-watch: last success 84 min ago; last success 1.4 h ago
-- ch4-longform: last success 2814 min ago; last success 46.9 h ago
-- ch4-realign: last success 44 min ago; last success 0.7 h ago
-- check-duplicates: last success 1911 min ago; last success 31.8 h ago
-- foreman: last None 1 min ago; last success 0.5 h ago
-- genx-longform: last success 290 min ago; last success 4.8 h ago
-- grow-shorts-pool: last success 827 min ago; last success 13.8 h ago
-- link-shorts: last success 325 min ago; last success 5.4 h ago
-- night-compilation: last success 126 min ago; last success 2.1 h ago
-- polish-all: last success 325 min ago; last success 5.4 h ago
-- progress: last success 43 min ago; last success 0.7 h ago
-- publish-batch: last success 43 min ago; last success 0.7 h ago
+- account-watch: last None 0 min ago; last success 2.0 h ago
+- ch4-longform: last success 2850 min ago; last success 47.5 h ago
+- ch4-realign: last success 31 min ago; last success 0.5 h ago
+- check-duplicates: last success 1947 min ago; last success 32.4 h ago
+- foreman: last None 0 min ago; last success 0.6 h ago
+- genx-longform: last success 326 min ago; last success 5.4 h ago
+- grow-shorts-pool: last success 863 min ago; last success 14.4 h ago
+- link-shorts: last None 0 min ago; last success 6.0 h ago
+- night-compilation: last success 162 min ago; last success 2.7 h ago
+- polish-all: last success 28 min ago; last success 0.5 h ago
+- progress: last success 80 min ago; last success 1.3 h ago
+- publish-batch: last success 79 min ago; last success 1.3 h ago
 - publish-ch1: last None 0 min ago; last success 0.5 h ago
-- publish-ch4: last success 16 min ago; last success 0.3 h ago
-- publish-shorts: last None 0 min ago; last success 0.5 h ago
-- set-thumbnails: last success 45 min ago; last success 0.8 h ago
-- watch-hours: last success 2828 min ago; last success 47.1 h ago
+- publish-ch4: last success 53 min ago; last success 0.9 h ago
+- publish-shorts: last None 0 min ago; last success 0.6 h ago
+- set-thumbnails: last success 81 min ago; last success 1.4 h ago
+- watch-hours: last success 2864 min ago; last success 47.7 h ago
 
 ## all rails fresh
