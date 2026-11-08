@@ -89,6 +89,53 @@ def titles(token: str, ids: list[str]) -> dict:
     return out
 
 
+def durations(token: str, ids: list[str]) -> dict:
+    """Map video id -> length in seconds, from the Data API's ISO-8601 duration."""
+    import re as _re
+    out = {}
+    for i in range(0, len(ids), 50):
+        req = urllib.request.Request(
+            "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="
+            + ",".join(ids[i:i + 50]), headers={"Authorization": f"Bearer {token}"})
+        with urllib.request.urlopen(req, timeout=30) as fh:
+            for it in json.load(fh).get("items", []):
+                m = _re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?",
+                              it["contentDetails"]["duration"])
+                h, mi, s = (int(x) if x else 0 for x in m.groups())
+                out[it["id"]] = h * 3600 + mi * 60 + s
+    return out
+
+
+def retention_curve(token: str, cid: str, video_id: str, days: int = 90) -> list:
+    """The audience-retention curve for one video: [(ratio, watch_ratio), ...].
+
+    This is the measurement that decides the growth question. The video's opening
+    is where a calm long-form loses its audience -- measured 2026-11-08, 71% of
+    starters left a 120-minute file within two minutes -- so the number to watch
+    is the watch ratio at the two-minute mark, not the total view count.
+    """
+    start = (date.today() - timedelta(days=days)).isoformat()
+    end = date.today().isoformat()
+    params = {"ids": "channel==" + cid, "startDate": start, "endDate": end,
+              "metrics": "audienceWatchRatio", "dimensions": "elapsedVideoTimeRatio",
+              "filters": "video==" + video_id}
+    req = urllib.request.Request(
+        "https://youtubeanalytics.googleapis.com/v2/reports?" + urllib.parse.urlencode(params),
+        headers={"Authorization": f"Bearer {token}"})
+    with urllib.request.urlopen(req, timeout=60) as fh:
+        return json.load(fh).get("rows", [])
+
+
+def retention_at(token: str, cid: str, video_id: str, seconds: int,
+                 duration_s: float) -> float | None:
+    """The watch ratio (percent) at `seconds` into `video_id`, or None if unknown."""
+    rows = retention_curve(token, cid, video_id)
+    if not rows or duration_s <= 0:
+        return None
+    target = seconds / duration_s
+    return min(rows, key=lambda r: abs(r[0] - target))[1] * 100.0
+
+
 def report(name: str, token: str, start: str, end: str, show_videos: bool) -> dict:
     head = analytics(token, start, end,
                      "views,estimatedMinutesWatched,averageViewDuration,"
@@ -125,6 +172,8 @@ def main() -> int:
     ap.add_argument("--channel", choices=list(CHANNELS))
     ap.add_argument("--days", type=int, default=28)
     ap.add_argument("--videos", action="store_true", help="per-video breakdown")
+    ap.add_argument("--retention", action="store_true",
+                    help="long-form videos: retention at 2:00 (the growth metric)")
     ap.add_argument("--json", metavar="PATH", help="also write the totals to this file")
     args = ap.parse_args()
 
@@ -142,6 +191,35 @@ def main() -> int:
             out["channels"][name] = r
         except urllib.error.HTTPError as exc:
             print(f"\n=== {name}: FAILED {exc.code} {exc.read().decode()[:160]}")
+
+    if args.retention:
+        # The panel's number to watch for seven days: retention at 2:00 on each
+        # long-form. Above ~40% the opening works; below 30% after three uploads
+        # the niche is wrong, not the script. Long-form only -- a Short has no
+        # two-minute mark to speak of, and its watch time does not count anyway.
+        print("\n=== retention at 2:00 (long-form only) ===")
+        for name in names:
+            env, cid = CHANNELS[name]
+            tok = access_token(env)
+            try:
+                rows = analytics(tok, start, end,
+                                 "views,estimatedMinutesWatched,averageViewDuration",
+                                 dims="video", sort="-views", max_results=50)
+            except urllib.error.HTTPError as exc:
+                print(f"  {name}: FAILED {exc.code}")
+                continue
+            longforms = [r for r in rows if r[3] >= 300]   # >= 5 min avg view
+            try:
+                durs = durations(tok, [r[0] for r in longforms])
+            except urllib.error.HTTPError:
+                durs = {}
+            for vid, v, _m, avd in longforms:
+                d = durs.get(vid, 0)
+                pct = retention_at(tok, cid, vid, 120, d) if d else None
+                tag = f"{pct:5.1f}%" if pct is not None else "  n/a"
+                print(f"  {name:9s} {vid}  views={v:>4.0f}  "
+                      f"dur={d/60:>5.1f}m  retention@2min={tag}")
+
     out["total_watch_hours"] = round(total_h, 2)
     print(f"\nTOTAL watch-hours across {len(names)} channel(s), {args.days} d: {total_h:,.1f}")
     if args.json:
