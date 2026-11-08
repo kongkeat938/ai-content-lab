@@ -148,12 +148,15 @@ def main() -> int:
     print(f"packaging plan: {len(items)} video(s)\n")
 
     os.makedirs(THUMB_DIR, exist_ok=True)
-    # Covers are generated locally and committed; that costs no quota.
+    # The covers are generated and committed by the build, so CI uploads exactly
+    # the reviewed image. A re-render in CI could differ by Pillow version; only
+    # generate here when a cover is genuinely missing.
     covers = {}
     for key, vid, spec in items:
         out = os.path.join(THUMB_DIR, f"{vid}.jpg")
-        build_cover(pick_art(key), out, "ธรรมะก่อนนอน",
-                    spec["line1"], spec["line2"], spec["sub"], key=key)
+        if not os.path.exists(out):
+            build_cover(pick_art(key), out, "ธรรมะก่อนนอน",
+                        spec["line1"], spec["line2"], spec["sub"], key=key)
         covers[key] = out
 
     if not args.apply:
