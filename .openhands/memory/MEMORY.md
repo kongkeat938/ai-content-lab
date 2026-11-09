@@ -21,6 +21,11 @@ it must stay short. Full detail lives in `.openhands/memory/2026-11-DD.md` (dail
 - **Winning content is specific + actionable** ("นอนไม่หลับ? ลองทำท่านี้ 10 วินาที"), not abstract
   reassurance. The dharma hook now opens with a concrete action; guard `scripts/test_hook_concrete.py`.
 - **Review the decision 2026-11-16** (after ~2 new long-form uploads).
+- **Two durable rules learned 2026-11-09:** (a) a guard that checks "health threshold vs driver
+  cadence" must **sweep every foreman gate**, not hardcode rails — hardcoding let the same
+  false-alarm bug live in `link-shorts`/`set-thumbnails` (issue #20); (b) a generator that can
+  drop a piece must **fail**, not write a partial set (a partial night set shipped with no
+  `01_open`, the lever itself, and would have been looped twice under the `--minutes` floor).
 
 ## 🟠 2026-11-09 — the TRACKING system was lying (defects fixed; `docs/STATUS-2026-11-09.md`)
 0. **The progress report inflated YPP watch-hours up to 92×.** `progress.py` compared a
