@@ -57,6 +57,45 @@ TITLE_MANIFESTS = {
     "ch4": ("content/ch4_shorts.json", "content/ch4_publish.json"),
 }
 
+# The publish manifests list the LONG-FORM uploads -- the only videos that count
+# toward YPP watch-hours. Their ids let the learning loop tell a long-form winner
+# from a Short. Without this the "winners" were whatever had the most *views*,
+# which is always the Shorts: a Short can out-view a long-form a hundred to one
+# while contributing zero YPP watch-hours, so the panel learned from the wrong
+# videos and the long-form rail (the one that gates the business) learned nothing.
+LONGFORM_MANIFESTS = {
+    "ch1": "content/ch1_publish.json",
+    "ch2": "content/ch2_publish.json",
+    "ch3": "content/ch3_publish.json",
+    "ch4": "content/ch4_publish.json",
+}
+
+
+def longform_ids(channel: str) -> set:
+    """video_ids of this channel's long-form uploads (the YPP-qualifying ones)."""
+    rel = LONGFORM_MANIFESTS.get(channel)
+    path = os.path.join(ROOT, rel) if rel else ""
+    if not path or not os.path.exists(path):
+        return set()
+    try:
+        with open(path, encoding="utf-8") as fh:
+            doc = json.load(fh)
+    except (json.JSONDecodeError, OSError):
+        return set()
+    return {v.get("video_id") for v in doc.get("videos", [])
+            if v.get("video_id") and v.get("state") == "published"}
+
+
+def rank_winners(per_video: list[dict], longform: list[dict] | None) -> list[str]:
+    """The videos the learning loop should learn from: the long-form ones, ranked
+    by the watch time they actually earned. Falls back to top-by-views only when a
+    channel has no long-form at all (so the loop still runs on a Shorts-only one).
+    """
+    if longform:
+        return [r["title"] for r in longform[:6]]
+    return [r["title"] for r in per_video[:6]]
+
+
 
 def manifest_titles(channel: str) -> dict[str, str]:
     """video_id -> title, from committed sources (no API, no quota).
@@ -191,6 +230,20 @@ def gather(tok: str, days: int, channel: str = "") -> dict:
         "dimensions": "video", "sort": "-views", "maxResults": "50"}))
     by_day = rows(report(tok, {**base, "metrics": "views,estimatedMinutesWatched",
                                "dimensions": "day", "sort": "day"}))
+    # The long-form-only view. This is the one the learning loop must use: watch
+    # time on the videos that count toward YPP, ranked by watch time (not views).
+    lf_ids = longform_ids(channel)
+    longform: list[dict] = []
+    if lf_ids:
+        try:
+            lf = rows(report(tok, {**base, "metrics":
+                "views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage",
+                "dimensions": "video", "filters": "video==" + ",".join(sorted(lf_ids)),
+                "sort": "-estimatedMinutesWatched", "maxResults": "50"}))
+            # Keep the watch-time order; the report already sorts by it.
+            longform = [r for r in lf if r["video"] in lf_ids]
+        except Exception:  # noqa: BLE001 - no long-form data must not break the run
+            longform = []
     # Committed manifests first, live Data API second: the API 403s on a spent
     # quota (most days), and a title we uploaded is better evidence than none.
     try:
@@ -198,13 +251,15 @@ def gather(tok: str, days: int, channel: str = "") -> dict:
     except Exception:  # noqa: BLE001 - titles are cosmetic; the grades still count
         live = {}
     fill_titles(channel, per_video, live)
+    fill_titles(channel, longform, live)
     # Remember only the titles we had to resolve beyond the committed manifests
     # (live API + oEmbed), so a later quota day cannot lose them. The manifests
     # stay authoritative; the cache only fills their gaps.
     known = manifest_titles(channel)
     remember_titles(channel, {r["video"]: r["title"] for r in per_video
                               if r["title"] != "(title unavailable)" and r["video"] not in known})
-    return {"start": str(start), "end": str(end), "per_video": per_video, "by_day": by_day}
+    return {"start": str(start), "end": str(end), "per_video": per_video,
+            "longform": longform, "by_day": by_day}
 
 
 def fill_titles(channel: str, per_video: list[dict], live: dict[str, str]) -> None:
@@ -236,6 +291,13 @@ def brief(data: dict) -> str:
     for r in top:
         lines.append(f"  - {r['views']:>5} | {r['estimatedMinutesWatched']:>5} | "
                      f"{r['averageViewDuration']:>3} | {r['averageViewPercentage']:>5}% | {r['title'][:60]}")
+    lf = data.get("longform") or []
+    if lf:
+        lines.append("")
+        lines.append("คลิปยาว (นับเข้า YPP) เรียงตามนาทีดู — นี่คือคลิปที่ต้องเรียนแบบ:")
+        for r in lf[:8]:
+            lines.append(f"  - {r['views']:>5} | {r['estimatedMinutesWatched']:>5} | "
+                         f"{r['averageViewDuration']:>3} | {r['averageViewPercentage']:>5}% | {r['title'][:60]}")
     return "\n".join(lines)
 
 
@@ -259,24 +321,42 @@ QUESTION = (
     "1) คลิปแบบไหนทำผลงานดีที่สุด (ดูจากชื่อ+ตัวเลข) และเพราะอะไร\n"
     "2) 3 ธีมที่ควรทำต่อ เรียงตามโอกาส\n"
     "3) hook 3 วินาทีแรกควรพูดอะไร\n"
-    "จากนั้นบรรทัดสุดท้าย ให้เขียนหัวข้อ Shorts ใหม่ 8 หัวข้อ ที่ต่อยอดจากคลิปที่ทำได้ดี "
-    "ในรูปบรรทัดเดียว ขึ้นต้นด้วย 'TOPICS:' แล้วคั่นแต่ละหัวข้อด้วย ' | '")
+    "จากนั้นให้เขียน 2 บรรทัดสุดท้าย:\n"
+    "- ขึ้นต้นด้วย 'THEMES:' แล้วตามด้วย 3 ธีมสำหรับ 'คลิปยาวธรรมะก่อนนอน' "
+    "(บรรยาย 20-120 นาที) คั่นด้วย ' | ' — ธีมที่คนนอนไม่หลับอยากฟังจริง\n"
+    "- ขึ้นต้นด้วย 'TOPICS:' แล้วตามด้วยหัวข้อ Shorts ใหม่ 8 หัวข้อ คั่นด้วย ' | '")
 
 
 def parse_topics(text: str) -> list[str]:
     """Pull the generator's next subjects out of a panel answer."""
+    return _parse_tagged(text, "TOPICS:", 4, 80, 8)
+
+
+def parse_themes(text: str) -> list[str]:
+    """Pull long-form night-set themes out of a panel answer (20-80 chars)."""
+    return _parse_tagged(text, "THEMES:", 6, 80, 3)
+
+
+def _parse_tagged(text: str, tag: str, lo: int, hi: int, cap: int) -> list[str]:
     for line in reversed(text.splitlines()):
-        if "TOPICS:" in line:
-            blob = line.split("TOPICS:", 1)[1]
+        if tag in line:
+            blob = line.split(tag, 1)[1]
             items = [t.strip(" -*\t") for t in blob.replace("|", "\n").splitlines()]
-            return [t for t in items if 4 <= len(t) <= 80][:8]
+            return [t for t in items if lo <= len(t) <= hi][:cap]
     return []
 
 
-def write_insights(channel: str, per_video: list[dict], answers: dict[str, str]) -> str:
-    """Feed the generator: the winning hooks plus the panel's next subjects."""
-    top = [r for r in per_video[:6]]
-    winners = [r["title"] for r in top]
+def write_insights(channel: str, per_video: list[dict], answers: dict[str, str],
+                   longform: list[dict] | None = None) -> str:
+    """Feed the generator: the winning hooks plus the panel's next subjects.
+
+    The winners are the **long-form** videos ranked by watch time, not the top
+    videos by views. Views always crown the Shorts, which contribute zero YPP
+    watch-hours; learning from them taught the long-form rail nothing. When a
+    channel has no long-form yet, this falls back to top-by-views so the loop
+    still runs.
+    """
+    winners = rank_winners(per_video, longform)
     topics: list[str] = []
     for ans in answers.values():
         for t in parse_topics(ans):
@@ -289,8 +369,19 @@ def write_insights(channel: str, per_video: list[dict], answers: dict[str, str])
             break
     if not topics:
         topics = winners[:5]
+    themes: list[str] = []
+    for ans in answers.values():
+        for t in parse_themes(ans):
+            if t not in themes:
+                themes.append(t)
+        if themes:
+            break
     blob = {"generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "winners": winners, "topics": topics}
+    if themes:
+        # Long-form night-set themes for gen_night_scripts.py -- the only content
+        # that moves YPP watch-hours. Kept separate from the Shorts topics above.
+        blob["themes"] = themes
     # Write under the channel id and under the generator's own name, so
     # gen_short_scripts.py finds it without a copy step.
     names = {channel, GEN_ALIAS.get(channel, channel)}
@@ -325,7 +416,7 @@ def main() -> int:
         for name, ans in answers.items():
             print(f"\n### {name}\n{ans}")
             text += f"\n\n### {name}\n{ans}"
-        ins = write_insights(a.channel, data["per_video"], answers)
+        ins = write_insights(a.channel, data["per_video"], answers, data.get("longform"))
         print(f"\nwrote {ins}")
 
     if a.out:

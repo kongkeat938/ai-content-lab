@@ -57,12 +57,29 @@ _FOREIGN = re.compile(
     r"[^\u0e00-\u0e7fA-Za-z0-9\s.,!?%\-–—:;()\u2018\u2019\u201c\u201d\u2026/&']")
 
 
-def prompt_for(theme: str, angle: str, want: str) -> str:
+def learned(channel: str) -> dict:
+    """Read content/insights/<channel>.json -- the themes and rules the analytics
+    loop learned. Empty on any error, so generation never depends on it existing."""
+    path = os.path.join(ROOT, "content", "insights", f"{channel}.json")
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def prompt_for(theme: str, angle: str, want: str, rules: list[str] | None = None) -> str:
+    rule_block = ""
+    if rules:
+        rule_block = ("\n\nกฎที่เรียนรู้จากคลิปยาวที่ทำผลงานดี/แย่ของช่องนี้ (ต้องทำตาม):\n- "
+                      + "\n- ".join(rules))
     return f"""คุณคือผู้เขียนบทบรรยาย "ธรรมะก่อนนอน" ภาษาไทย ให้ช่อง Farmmer — ธรรมะก่อนนอน
 กลุ่มเป้าหมาย: คนไทยที่นอนไม่หลับ เครียด คิดมากตอนกลางคืน
 
 ธีมของชุดนี้: "{theme}"
-ท่อนนี้รับผิดชอบช่วง: {angle} ({want})
+ท่อนนี้รับผิดชอบช่วง: {angle} ({want}){rule_block}
 
 เขียนบทบรรยาย 1 ท่อน รูปแบบบรรทัดละหนึ่งวลีสั้น ๆ (เหมือนกวี) เว้นบรรทัดว่างระหว่างจังหวะ
 ความยาว 22-28 บรรทัด (พูดประมาณ 1.5-2 นาที)
@@ -114,16 +131,33 @@ def valid(text: str) -> tuple:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--theme", required=True, help="the set's theme, in Thai")
+    ap.add_argument("--theme", default="", help="the set's theme, in Thai (or use --from-insights)")
     ap.add_argument("--out", required=True, help="output directory (content/night_XX)")
     ap.add_argument("--count", type=int, default=len(ARC),
                     help=f"how many pieces (default {len(ARC)}, one per arc stage)")
+    ap.add_argument("--channel", default="dharma",
+                    help="which insights file to learn from (dharma/ch2/...)")
+    ap.add_argument("--from-insights", action="store_true",
+                    help="take the theme from the analytics-learned insights if one is "
+                         "available, instead of the hardcoded weekly list")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
 
     key = (os.environ.get("GEMINI_API_KEY") or "").strip()
     if not key:
         raise SystemExit("Set GEMINI_API_KEY.")
+
+    ins = learned(a.channel)
+    rules = [r for r in ins.get("rules", []) if isinstance(r, str)][:3]
+    if a.from_insights and not a.theme:
+        themes = [t for t in ins.get("themes", []) if isinstance(t, str)]
+        if themes:
+            a.theme = themes[0]
+            print(f"theme learned from {a.channel} analytics: {a.theme}")
+    if not a.theme:
+        raise SystemExit("no theme: pass --theme, or --from-insights with a learned theme")
+    if rules:
+        print(f"applying {len(rules)} rules learned from the channel's long-form review")
 
     stages = ARC[:a.count]
     pieces, skipped = [], []
@@ -134,7 +168,7 @@ def main() -> int:
         # response tripped the gate and was skipped -- the cold open is the exact
         # lever the decision named, so a silent drop disarms the fix.
         for attempt in range(3):
-            cand = ask(key, prompt_for(a.theme, name, want))
+            cand = ask(key, prompt_for(a.theme, name, want, rules))
             ok, reason = valid(cand)
             if ok:
                 text = cand

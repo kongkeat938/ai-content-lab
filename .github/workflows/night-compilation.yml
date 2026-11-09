@@ -90,8 +90,13 @@ jobs:
                         "ความรักตัวเองและการยอมรับ" "ขอบคุณสิ่งเล็ก ๆ ในชีวิต"
                         "ปล่อยวางความกลัวอนาคต" "ความสงบในความไม่แน่นอน")
                 wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
+                # Prefer the theme the analytics loop learned from the long-form
+                # videos that actually earned YPP watch-hours; fall back to the
+                # fixed weekly list when no learned theme exists yet.
                 python3 scripts/gen_night_scripts.py \
-                  --theme "${THEMES[$wk]}" --out "$CONTENT" --count 8
+                  --out "$CONTENT" --count 8 --channel dharma --from-insights \
+                  || python3 scripts/gen_night_scripts.py \
+                       --theme "${THEMES[$wk]}" --out "$CONTENT" --count 8 --channel dharma
               fi
             else
               CONTENT="content/night_dharma_01"
