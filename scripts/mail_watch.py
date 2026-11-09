@@ -274,6 +274,7 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
 
     alerts: list[dict] = []
     notes: list[str] = []
+    read_users = {u for _h, u, _p in accounts}
     for host, user, pw in accounts:
         try:
             box = imaplib.IMAP4_SSL(host)
@@ -295,6 +296,14 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
             notes.append(f"read {user}: {found} flagged unread in {days} day(s)")
         except Exception as exc:  # noqa: BLE001 - any IMAP failure must be reported, not hidden
             notes.append(f"IMAP failed for {user}: {explain_imap_error(exc)}")
+    # An account with no credential in the secret is skipped silently, which reads
+    # as "clean". Name it instead: an unwatched inbox is a gap, not a clean one.
+    # (Measured 2026-11-09: IMAP_ACCOUNTS held only kongkeat.938, so dharma and
+    # kongkeat-story were never read and the report said nothing about them.)
+    for slug, (_var, addr) in ACCOUNTS.items():
+        if slug in CANCELLED or not addr or addr in read_users:
+            continue
+        notes.append(f"NOT read {addr} ({slug}): no app password in IMAP_ACCOUNTS")
     return alerts, "; ".join(notes)
 
 

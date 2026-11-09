@@ -132,6 +132,17 @@ def main() -> int:
     if "kongkeat.938@gmail.com" not in status:
         fail("the account that was read is not named in the status")
 
+    # 5. An account with no credential in the secret must be NAMED as unread, not
+    #    silently skipped. Measured 2026-11-09: IMAP_ACCOUNTS held only
+    #    kongkeat.938, so dharma and kongkeat-story were never read yet the report
+    #    showed only the one line -- an unwatched inbox looked like a clean one.
+    if "farmmer.938@gmail.com" not in status:
+        fail(f"an account with no credential was not flagged as unread: {status!r}")
+    if "NOT read" not in status:
+        fail(f"the unread account is not marked NOT read: {status!r}")
+    if "aeris-music" in status:
+        fail("a cancelled account must not be listed as a gap")
+
     print("OK: one secret serves every account, duplicates merge, no credential "
           "reads as BLIND, and the password never reaches the report")
     return 0

@@ -20,9 +20,11 @@ PC1 เดิมถูกใช้ 2 อย่าง:
 pod = HTTPS egress เท่านั้น.
 
 **แต่ (1) ไม่ต้องใช้ PC1 อีกแล้ว:** `account-watch.yml` รันบน **ubuntu-latest** และอ่าน IMAP ได้เอง
-ผ่าน secret `IMAP_ACCOUNTS` — วัดสดวันนี้: อ่าน **kongkeat.938** (genx), **farmmer.938** (dharma),
-**kongkeat.p3** (ch4) ครบ, ไม่มี "BLIND", รันทุก ~2 ชม. `mail_watch.py` **ไม่มีโค้ดแตะ PC1 เลย**
-(มีแต่ IMAP + Data API).
+ผ่าน secret `IMAP_ACCOUNTS` — `mail_watch.py` **ไม่มีโค้ดแตะ PC1 เลย** (มีแต่ IMAP + Data API).
+**วัดสด 2026-11-09:** secret มีแค่ **kongkeat.938@gmail.com** → dharma (`farmmer.938`) และ
+kongkeat-story (`kongkeat.p3`) **ยังไม่ได้อ่าน**. รายงานแก้ให้พิมพ์
+`NOT read <addr>: no app password in IMAP_ACCOUNTS` แล้ว (เดิมเงียบ = เหมือนสะอาด).
+⇒ ถ้าจะครบ 3 บัญชี K เพิ่ม app password ของ 2 บัญชีนั้นลง secret (บรรทัดละ `user:pw`).
 
 ## S — Solution
 1. **ไม่ต้องแตะ PC1.** งานที่ต้องเดิน = บน Actions. PC1 = ทางเลือก.
@@ -39,9 +41,9 @@ pod = HTTPS egress เท่านั้น.
 - เก็บสะพาน `ops/pc1_agent_bridge.ps1` ไว้ (ใช้เมื่อมีคนหน้าเครื่อง) — ไม่ลบ
 
 ## V — Verify (วัดสด)
-- **เมล์ = คลาวด์, วัดจริง:** `docs/MAIL-ALERTS.md` (2026-11-09T09:37Z) ระบุ `read
-  kongkeat.938@gmail.com: 1 flagged`; `content/mail_watch_state.json` → `inbox_blind: false`;
-  ไม่มีบรรทัด "is BLIND" ใด ๆ ⇒ อ่านได้ครบทุกบัญชีที่กำหนด
+- **เมล์ = คลาวด์, วัดจริง:** `docs/MAIL-ALERTS.md` (2026-11-09T11:37Z) → `read kongkeat.938:
+  0 flagged`; state `inbox_blind: false`. **แต่ครบทุกบัญชีหรือยัง? ยัง** — รายงานตอนนี้ระบุ
+  ชัดว่า dharma/ch4 ยัง **NOT read** (เดิมซ่อน) ⇒ รู้ตรง ๆ ว่าเหลืออะไร ไม่อ้างเกินจริง
 - **ไม่มี rail ไหนต้องพึ่ง PC1:** `grep self-hosted .github/workflows/` → เจอแค่ `pc1-task.yml`
   (ใช้ *สั่งงาน PC1* เท่านั้น ไม่ใช่ rail ผลิต); health rail ติดตาม `account-watch` (คลาวด์)
 - **Suite ผ่าน** (มี `test_pc1_bridge.py`, `test_pcsev.py` กันถอยหลัง)

@@ -60,23 +60,23 @@ it must stay short. Full detail lives in `.openhands/memory/2026-11-DD.md` (dail
   dharma titles no manifest knew.
 - **Measured win:** watch-hours 28d **79.12 → 219.87 h** (genx 120.2 · dharma 79.8 · kongkeat 19.9).
 
-## 🖥️ PC1 — the one load-bearing job (mail) already moved to the cloud (2026-11-09)
-- **PC1 is NOT needed for mail.** `account-watch.yml` (ubuntu-latest) reads all three mailboxes
-  via `IMAP_ACCOUNTS` (a repo secret): **kongkeat.938** (genx), **farmmer.938** (dharma),
-  **kongkeat.p3** (ch4) — measured 2026-11-09, no "BLIND", runs every ~2 h. `mail_watch.py` is
-  pure IMAP + Data API, **no PC1 path at all**. Only Studio-only jobs (impressions/CTR, revenue)
-  still need a browser, and those are on hold.
-- **If K cannot reach PC1 at all: do NOT retry PC1 channels.** Everything load-bearing runs on
-  GitHub Actions. PC1 is now optional (for future Studio work). Route around it.
-- Historical (what PC1 was for): `docs/PC1-BRIDGE-2026-11-08.md`, `PC1-RUNNER-2026-11-08.md`,
-  `PC1-TEST-2026-11-09.md`. Root cause PC1 runner never started = **Smart App Control blocks the
-  unsigned `Runner.Listener.exe`; SAC has NO allowlist and turning it off is irreversible.** The
-  tailnet funnel is now **NXDOMAIN** (fully gone). The runner-less fallback is
-  `ops/pc1_agent_bridge.ps1` (signed PowerShell polling bridge) — keep it, but it also needs a
-  human at PC1 once, so it is moot while K is locked out.
-- **Traps fixed in `ops/check_pc1.py`:** `app.all-hands.dev/mcp/mcp` is **OpenHands' OWN MCP**
-  (`create_pr`/`tavily_*`), NOT a PC1 route — never count it. `pc1-task.yml` lives in
-  **ax-workspace**, not aeris-drive-automation.
+## 🖥️ PC1 — mail already moved to the cloud; do not retry PC1 (2026-11-09)
+- **Mail is read on the cloud, not PC1.** `account-watch.yml` (ubuntu-latest) reads IMAP from the
+  `IMAP_ACCOUNTS` repo secret; `mail_watch.py` is pure IMAP + Data API, **no PC1 path at all**.
+  **BUT (measured 2026-11-09): the secret holds only `kongkeat.938@gmail.com`** → dharma
+  (`farmmer.938`) and kongkeat-story (`kongkeat.p3`) inboxes are **NOT read yet**. The report now
+  says `NOT read <addr>: no app password in IMAP_ACCOUNTS` instead of hiding it. **To cover them,
+  add their app passwords to the secret** (`kongkeat.938:pw` per line). *Corrected an earlier
+  memory entry that wrongly said all three were read.*
+- **If K cannot reach PC1: do NOT retry PC1 channels.** Everything load-bearing runs on GitHub
+  Actions. PC1 is optional. Route around it. Historical detail: `docs/PC1-*.md`.
+- Root cause PC1 was never drivable: runner `Runner.Listener.exe` is unsigned and **Smart App
+  Control blocks it (no allowlist; disabling SAC is irreversible)**; tailnet funnel = **NXDOMAIN**;
+  pod = HTTPS egress only. The signed-PowerShell bridge `ops/pc1_agent_bridge.ps1` still needs a
+  human at PC1 once → moot while K is locked out. Studio-only jobs (impressions/CTR/revenue) need a
+  browser but are **not the YPP constraint**, so they stay parked.
+- **Traps in `ops/check_pc1.py`:** `app.all-hands.dev/mcp/mcp` is OpenHands' OWN MCP, not a PC1
+  route. `pc1-task.yml` lives in **ax-workspace**, not aeris-drive-automation.
 
 ## 🔴 2026-11-09 — foreman was DOWN ~6 h (committed git conflict)
 `content/upload_log.json` held raw conflict markers from `git pull --rebase --autostash` in
