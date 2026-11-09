@@ -136,6 +136,28 @@ def retention_at(token: str, cid: str, video_id: str, seconds: int,
     return min(rows, key=lambda r: abs(r[0] - target))[1] * 100.0
 
 
+def content_type_hours(token: str, cid: str, start: str, end: str) -> dict:
+    """Watch time split by content type: long-form vs Shorts.
+
+    The channel total mixes both, and only long-form counts toward YPP's
+    4,000-hour bar -- Shorts have their own path (10M views / 90 days). Measured
+    2026-11-09: on genx 99% of watch time was Shorts, so the channel total said
+    39% of the YPP bar while the qualifying number was 0.4%. The split is what
+    keeps the tracker honest.
+    """
+    params = {"ids": "channel==" + cid, "startDate": start, "endDate": end,
+              "metrics": "estimatedMinutesWatched", "dimensions": "creatorContentType"}
+    req = urllib.request.Request(
+        "https://youtubeanalytics.googleapis.com/v2/reports?" + urllib.parse.urlencode(params),
+        headers={"Authorization": f"Bearer {token}"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as fh:
+            rows = json.load(fh).get("rows", [])
+    except urllib.error.HTTPError:
+        return {}
+    return {row[0]: row[1] for row in rows}   # e.g. {'shorts': 2126.0, 'videoOnDemand': 2664.0}
+
+
 def report(name: str, token: str, start: str, end: str, show_videos: bool) -> dict:
     head = analytics(token, start, end,
                      "views,estimatedMinutesWatched,averageViewDuration,"
@@ -144,8 +166,14 @@ def report(name: str, token: str, start: str, end: str, show_videos: bool) -> di
     if head:
         views, mw, _avg, _pct, sg, sl = head[0]
     hours = mw / 60.0
+    # Split long-form from Shorts: only long-form counts toward YPP's 4,000 h.
+    env, cid = CHANNELS[name]
+    split = content_type_hours(token, cid, start, end)
+    lf_hours = split.get("videoOnDemand", 0.0) / 60.0
+    sh_hours = split.get("shorts", 0.0) / 60.0
     print(f"\n=== {name}  ({start} .. {end})")
     print(f"  views={views:,.0f}   watch-hours={hours:,.1f}   subs +{sg:.0f}/-{sl:.0f}")
+    print(f"  long-form={lf_hours:,.1f} h (YPP-qualifying)   Shorts={sh_hours:,.1f} h")
     if show_videos:
         # The Analytics endpoint has its own quota, so the per-video rows usually
         # come back even when the Data API (needed only for the titles) is spent.
@@ -164,7 +192,10 @@ def report(name: str, token: str, start: str, end: str, show_videos: bool) -> di
             flag = " ⟳loop" if pct and pct > 100 else ""
             print(f"  {vid:12s} {v:7.0f} {m/60:8.2f} {pct:6.1f}% {s:6.0f}  "
                   f"{tmap.get(vid, '?')[:38]}{flag}")
-    return {"views": views, "watch_hours": hours, "subs_gained": sg, "subs_lost": sl}
+    return {"views": views, "watch_hours": hours,
+            "longform_watch_hours": round(lf_hours, 2),
+            "shorts_watch_hours": round(sh_hours, 2),
+            "subs_gained": sg, "subs_lost": sl}
 
 
 def main() -> int:
@@ -181,6 +212,7 @@ def main() -> int:
     start = (date.today() - timedelta(days=args.days)).isoformat()
     names = [args.channel] if args.channel else list(CHANNELS)
     total_h = 0.0
+    total_lf = 0.0
     out = {"measured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "days": args.days, "start": start, "end": end, "channels": {}}
     for name in names:
@@ -188,6 +220,7 @@ def main() -> int:
         try:
             r = report(name, access_token(env), start, end, args.videos)
             total_h += r["watch_hours"]
+            total_lf += r.get("longform_watch_hours", 0.0)
             out["channels"][name] = r
         except urllib.error.HTTPError as exc:
             print(f"\n=== {name}: FAILED {exc.code} {exc.read().decode()[:160]}")
@@ -221,7 +254,9 @@ def main() -> int:
                       f"dur={d/60:>5.1f}m  retention@2min={tag}")
 
     out["total_watch_hours"] = round(total_h, 2)
-    print(f"\nTOTAL watch-hours across {len(names)} channel(s), {args.days} d: {total_h:,.1f}")
+    out["total_longform_watch_hours"] = round(total_lf, 2)
+    print(f"\nTOTAL watch-hours across {len(names)} channel(s), {args.days} d: "
+          f"{total_h:,.1f}  (long-form / YPP-qualifying: {total_lf:,.1f})")
     if args.json:
         with open(args.json, "w", encoding="utf-8") as fh:
             json.dump(out, fh, ensure_ascii=False, indent=2)
