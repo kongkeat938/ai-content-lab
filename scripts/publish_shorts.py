@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import urllib.error
@@ -279,6 +280,42 @@ def note_upload_limit(channel_id: str, detail: str = "") -> None:
     commit(LIMIT_FILE, f"publish: record the daily upload limit for {channel_id}")
 
 
+def _union_resolve_upload_log() -> bool:
+    """Union-resolve conflict markers a stash pop left in the ledger.
+
+    The ledger is append-only, so both sides of a conflict are real uploads and
+    the merge that keeps both is the correct one. Measured 2026-11-09: a
+    `pull --rebase --autostash` in remake-shorts left markers here, the next
+    `git add` committed them (612f185), and every foreman run then crashed on the
+    unparsable JSON. Returns True when it rewrote the file.
+    """
+    if not os.path.exists(UPLOAD_LOG):
+        return False
+    raw = open(UPLOAD_LOG, encoding="utf-8").read()
+    if "<<<<<<< " not in raw:
+        return False
+
+    def fix(m):
+        sides = [ln.strip().rstrip(",") for ln in
+                 (m.group(1) + "\n" + m.group(2)).splitlines() if ln.strip()]
+        seen, out = set(), []
+        for ln in sides:
+            if ln not in seen:
+                seen.add(ln)
+                out.append(ln)
+        return ",\n".join(out)
+
+    fixed = re.sub(r"<<<<<<< [^\n]*\n(.*?)=======\n(.*?)>>>>>>> [^\n]*\n",
+                   fix, raw, flags=re.S)
+    try:
+        json.loads(fixed)
+    except ValueError:
+        return False
+    with open(UPLOAD_LOG, "w", encoding="utf-8") as fh:
+        fh.write(fixed)
+    return True
+
+
 def commit(path: str, message: str) -> None:
     """Persist the manifest to git the moment an id is known.
 
@@ -289,17 +326,22 @@ def commit(path: str, message: str) -> None:
     """
     if not os.environ.get("GITHUB_ACTIONS"):
         return
+    gitc = ["git", "-c", "user.name=openhands", "-c", "user.email=openhands@all-hands.dev"]
     try:
         subprocess.run(["git", "add", os.path.relpath(path, ROOT)], cwd=ROOT, check=True)
-        subprocess.run(["git", "-c", "user.name=openhands",
-                        "-c", "user.email=openhands@all-hands.dev",
-                        "commit", "-q", "-m", message], cwd=ROOT, check=True)
+        subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT, check=True)
         # Two channel jobs run at once and both commit; without the rebase the
-        # second push is rejected and its id is lost (seen 2026-11-03).
-        subprocess.run(["git", "-c", "user.name=openhands",
-                        "-c", "user.email=openhands@all-hands.dev",
-                        "pull", "--rebase", "--autostash", "origin", "main"],
+        # second push is rejected and its id is lost (seen 2026-11-03). A plain
+        # rebase, not --autostash: a dirty tree must fail loudly rather than let a
+        # stash pop leave conflict markers in the ledger (612f185, 2026-11-09).
+        subprocess.run(gitc + ["pull", "--rebase", "origin", "main"],
                        cwd=ROOT, check=True, capture_output=True, timeout=120)
+        if _union_resolve_upload_log():
+            print("  resolved a conflict in the upload ledger (kept both sides)")
+            subprocess.run(["git", "add", os.path.relpath(UPLOAD_LOG, ROOT)], cwd=ROOT)
+            subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT)
+            subprocess.run(gitc + ["pull", "--rebase", "origin", "main"],
+                           cwd=ROOT, capture_output=True, timeout=120)
         subprocess.run(["git", "push"], cwd=ROOT, check=True,
                        capture_output=True, timeout=120)
         print("  manifest committed")
