@@ -60,6 +60,34 @@ TITLE_MANIFESTS = {
     "ch4": ("content/ch4_shorts.json", "content/ch4_publish.json"),
 }
 
+# The publish manifests list the LONG-FORM uploads -- the only videos that count
+# toward YPP. Reviewing top-by-views instead grades the Shorts, and the RULES the
+# panel derives then flow into the long-form generator as if they were lessons
+# about long-form. Measured 2026-11-09: the channel's long-form (the rail that
+# gates YPP) was never in the review set.
+LONGFORM_MANIFESTS = {
+    "ch1": "content/ch1_publish.json",
+    "ch2": "content/ch2_publish.json",
+    "ch3": "content/ch3_publish.json",
+    "ch4": "content/ch4_publish.json",
+}
+
+
+def longform_ids(channel: str) -> set:
+    """video_ids of this channel's published long-form uploads (YPP-qualifying)."""
+    rel = LONGFORM_MANIFESTS.get(channel)
+    path = os.path.join(ROOT, rel) if rel else ""
+    if not path or not os.path.exists(path):
+        return set()
+    try:
+        with open(path, encoding="utf-8") as fh:
+            doc = json.load(fh)
+    except (json.JSONDecodeError, OSError):
+        return set()
+    return {v.get("video_id") for v in doc.get("videos", [])
+            if v.get("video_id") and v.get("state") == "published"}
+
+
 
 def manifest_titles(channel: str) -> dict[str, str]:
     """video_id -> title, from committed sources (no API, no quota).
@@ -284,9 +312,22 @@ def main() -> int:
     env, scripts_path, manifest_path = CHANNELS[a.channel]
     tok = access_token(env)
     end = dt.date.today(); start = end - dt.timedelta(days=a.days)
-    per_video = rows(report(tok, {"ids": "channel==MINE", "startDate": str(start),
-        "endDate": str(end), "metrics": METRICS, "dimensions": "video",
-        "sort": "-views", "maxResults": "50"}))
+    lf_ids = longform_ids(a.channel)
+    q = {"ids": "channel==MINE", "startDate": str(start), "endDate": str(end),
+         "metrics": METRICS, "dimensions": "video", "maxResults": "50",
+         "sort": "-estimatedMinutesWatched" if lf_ids else "-views"}
+    if lf_ids:
+        # Grade the long-form (the YPP-qualifying videos), not the top-by-views
+        # Shorts -- otherwise the RULES the panel writes are lessons about Shorts
+        # that then get injected into the long-form generator.
+        q["filters"] = "video==" + ",".join(sorted(lf_ids))
+    per_video = rows(report(tok, q))
+    if lf_ids and not per_video:
+        # The long-form had no traffic in the window; fall back to the whole
+        # channel so the review still runs and the medians still mean something.
+        q.pop("filters", None)
+        q["sort"] = "-views"
+        per_video = rows(report(tok, q))
     names = titles_for(tok, [r["video"] for r in per_video])
     remember_titles(a.channel, names)
     # Fill any title the API could not return (a spent quota 403s videos.list) from
