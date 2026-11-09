@@ -67,8 +67,25 @@ def main() -> int:
     if src.count("$configCmd") < 2:
         fail("config.cmd is not invoked by full path")
 
+    # --- Bug 3 (2026-11-09): the exe existed and was complete, yet would not RUN.
+    #     Device Guard / Smart App Control refused the unsigned binary, and the
+    #     first failure even masqueraded as "cannot find the file specified". The
+    #     installer must clear the Mark-of-the-Web, probe whether the exe can start,
+    #     and name the policy block instead of a bare exit code. ---
+    if "Unblock-File" not in src:
+        fail("no Unblock-File step -- a download-derived exe stays blocked by its "
+             "Mark-of-the-Web even when the policy itself would allow it")
+    if "LISTENER_RUNS" not in src:
+        fail("the installer never tries to start the listener exe, so a policy block "
+             "is only discovered as a confusing register failure")
+    if "DEVICE_GUARD_BLOCK" not in src:
+        fail("a Device Guard / Smart App Control block is not named as its own cause")
+    if "VerifiedAndReputablePolicyState" not in src:
+        fail("Smart App Control state is not reported")
+
     print("OK: -Clean deletes before the completeness test, completeness requires "
-          "bin\\Runner.Listener.exe, and a bad download or locked dir names itself")
+          "bin\\Runner.Listener.exe, the listener is Unblocked and start-probed, "
+          "and a bad download / locked dir / Device Guard block each names itself")
     return 0
 
 
