@@ -34,6 +34,16 @@ it must stay short. Full detail lives in `.openhands/memory/2026-11-DD.md` (dail
   dharma titles no manifest knew.
 - **Measured win:** watch-hours 28d **79.12 → 219.87 h** (genx 120.2 · dharma 79.8 · kongkeat 19.9).
 
+## 🖥️ PC1 (2026-11-09 test) — online but NOT drivable; two lying probes fixed
+- **PC1 = ON** (funnel `desktop-rgk6jkb.tail8740ad.ts.net` → 502 = tailscaled up + serve listener;
+  DNS → 103.84.155.153/.217) **but both agent channels dead:** winremote MCP backend
+  (127.0.0.1:8090) 502, and `kongkeat938/ax-workspace` has **0 self-hosted runners** → every
+  `pc1-task` job queues forever. Fix = 2 PowerShell cmds ON PC1 (`ops/pc1_fix_remote.ps1 -Persist`,
+  `ops/pc1_install_runner.ps1`); **ak can mint the ax-workspace runner reg token** (~1 h TTL).
+- **Traps fixed in `ops/check_pc1.py`:** `app.all-hands.dev/mcp/mcp` is **OpenHands' OWN MCP**
+  (`create_pr`/`tavily_*`), NOT a PC1 route — never count it. `pc1-task.yml` lives in
+  **ax-workspace**, not aeris-drive-automation. Doc: `docs/PC1-TEST-2026-11-09.md`.
+
 ## 🔴 2026-11-09 — foreman was DOWN ~6 h (committed git conflict)
 `content/upload_log.json` held raw conflict markers from `git pull --rebase --autostash` in
 `publish_shorts.commit()` → every foreman run 19:35Z→01:36Z died on `JSONDecodeError`; no rail
