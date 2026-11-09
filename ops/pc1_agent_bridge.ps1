@@ -48,6 +48,10 @@
 param(
   [string]$Repo = 'kongkeat938/ax-workspace',
   [string]$TokenFile = (Join-Path $env:USERPROFILE '.ax\pc1-token.txt'),
+  # Install-time convenience only: if given, the token is written to the locked
+  # token file and never placed in the scheduled-task action, so it does not appear
+  # in the process list or in logs. The long-running task always reads the file.
+  [string]$Token = '',
   [int]$PollSeconds = 20,
   [switch]$Once,
   [switch]$Install
@@ -127,6 +131,14 @@ function Invoke-OnePoll([string]$tok) {
 function Install-Bridge {
   $dir = Split-Path $TokenFile
   if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
+  # If a token was handed in, write it once to the file; never into the task action.
+  if ($Token) {
+    Set-Content -Path $TokenFile -Value $Token -NoNewline
+    $Token = ''
+  }
+  if (-not (Test-Path $TokenFile)) {
+    throw "no token: write your PAT to $TokenFile, or pass -Token '<PAT>' once"
+  }
   # Lock the token file to the current user only.
   icacls $TokenFile /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null
   $ps = (Get-Command powershell.exe).Source
