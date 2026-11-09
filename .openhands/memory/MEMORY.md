@@ -88,3 +88,18 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
   `content/upload_log.json`. Pages: https://kongkeat938.github.io/ai-content-lab/ (`/docs`, main).
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; re-export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
+
+## 📺 ch4 (kongkeat-story) — K's focus: subscribers are flat (2026-11-09; `2026-11-09.md`)
+- **Shorts work, long-form is dead.** 28 d: top Shorts 1,083 views/40%, 1,079/104% loop,
+  461/115%; every 120-min long-form gets **1-3 views**. **subs/1,000 views = 1.93, worst on
+  the fleet** (dharma 2.92, genx 5.36).
+- **A Short must not promise a "full clip" it cannot deliver.** 12 of 71 CTAs said "go watch
+  the full clip" -- a dead end. `gen_short_scripts` now has a per-channel `forbid_cta`
+  (kongkeat-story = `คลิปเต็ม|คลิปยาว|วิดีโอตัวเต็ม|...`); `scripts/test_ch4_cta.py` locks it.
+- **`unsubscribedTrailer` is a subscribe lever that was never wired.** Every rail called
+  `channel_overhaul.py --only playlists`, so no channel had a trailer. Now ch2/ch4 run the
+  full overhaul and ch1's trailer lives in publish-ch1; `test_repo_hygiene` forbids
+  `--only playlists`. **It must run after the 08:00 UTC quota reset** (ch1 08:07, ch4 08:05,
+  ch2 08:40) -- the genx-longform 04:47 tick would defer forever.
+- Still to measure: whether the trailer lifts ch4 subs (Data API `subscriberCount` is
+  quota-gated; a 403 at any hour before 08:00 UTC is expected, not an outage).
