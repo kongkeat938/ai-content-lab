@@ -179,6 +179,7 @@ jobs:
             --image-style dharma \
             --hook-file content/hooks/dharma.md \
             ${{ inputs.bed_file != '' && format('--bed-file {0}', inputs.bed_file) || '' }} \
+            --bed-ledger content/bed_ledger_dharma.json \
             --chapters \
             --image-prompt "serene Thai Buddhist night, soft moonlight, mist, calm"
 
@@ -245,7 +246,7 @@ jobs:
             --tag "night-${{ steps.fp.outputs.fp }}" \
             --key "$KEY" --content "$CONTENT" --minutes "$MIN" \
             --title "$TITLE" --receipt work/night/receipt.json
-          git add content/ch2_publish.json
+          git add content/ch2_publish.json content/bed_ledger_dharma.json
           git add assets/branding/farmmer/thumbs 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "manifest already current"

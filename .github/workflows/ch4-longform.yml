@@ -129,6 +129,7 @@ jobs:
             --voice th-TH-NiwatNeural \
             --image-style family \
             --hook-file content/hooks/kongkeat.md \
+            --bed-ledger content/bed_ledger_kongkeat.json \
             --chapters \
             --image-prompt "warm Thai family home evening, soft golden lamp light, cozy"
 
@@ -190,7 +191,7 @@ jobs:
             --title "$TITLE" --receipt work/ch4_family_01/receipt.json
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/ch4_publish.json
+          git add content/ch4_publish.json content/bed_ledger_kongkeat.json
           git add assets/branding/thumbs 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "manifest already current"

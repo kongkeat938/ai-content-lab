@@ -43,6 +43,16 @@ LONG_URL = "https://youtu.be/F4qFHoVpEyI"
 # The AERIS pack that stood here first was replaced on 2026-11-07: it measured as
 # test tones, not music (see scripts/test_music_beds.py).
 MUSIC_CREDIT = "\n\n🎵 ดนตรีประกอบ: CC0 (Openverse / Freesound)"
+
+
+def art_ledger_path(channel: str) -> str:
+    return os.path.join(ROOT, "content", f"art_ledger_{channel}.json")
+
+
+def bed_ledger_path(channel: str) -> str:
+    return os.path.join(ROOT, "content", f"bed_ledger_{channel}.json")
+
+
 LONG_PLAYLIST = "PLBpZCGnd7Q5Y"   # "หลับลึกทั้งคืน — ฟังยาว"
 
 # One rail, several channels. The body below reads these rather than the module
@@ -52,6 +62,7 @@ CHANNELS = {
         "scripts": SCRIPTS, "manifest": MANIFEST, "channel_id": CHANNEL_ID,
         "token": TOKEN_ENV, "work": os.path.join(ROOT, "work", "ch2_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch2"),
+        "art_style": "dharma",
         "music_dir": os.path.join(ROOT, "assets", "music"),
         "mood": "calm",
         "tags": ["ธรรมะก่อนนอน", "นอนไม่หลับ", "ปล่อยวาง", "ธรรมะ", "สมาธิ",
@@ -77,6 +88,7 @@ CHANNELS = {
         "token": "YT_CH1_REFRESH_TOKEN",
         "work": os.path.join(ROOT, "work", "ch1_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch1"),
+        "art_style": "genx",
         "music_dir": os.path.join(ROOT, "assets", "music"),
         "mood": "hopeful",
         "tags": ["ปรัชญาชีวิต", "ข้อคิด", "แง่คิด", "กำลังใจ", "ชีวิต", "GenX",
@@ -97,6 +109,7 @@ CHANNELS = {
         "token": "YT_CH4_REFRESH_TOKEN",
         "work": os.path.join(ROOT, "work", "ch4_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch4"),
+        "art_style": "family",
         "music_dir": os.path.join(ROOT, "assets", "music"),
         "mood": "warm",
         "tags": ["เรื่องเล่า", "อบอุ่นใจ", "ครอบครัว", "ความทรงจำ", "เรื่องเล่าอบอุ่นใจ",
@@ -363,36 +376,56 @@ def winning_first(todo: list, cues) -> list:
     return sorted(todo, key=lambda s: 0 if any(c in s["hook"] for c in cues) else 1)
 
 
-def pick_bed(music_dir: str | None, sid: str, mood: str | None = None) -> str | None:
+def pick_bed(music_dir: str | None, sid: str, mood: str | None = None,
+             ledger_path: str | None = None) -> str | None:
     """Choose a bed for a short, preferring one that matches the channel's mood.
 
-    The AERIS pack tags each bed with a mood and records it in provenance.json, so
-    a dharma Short gets the calm bed and a family Short the warm one. If there is
-    no provenance, fall back to a stable hash pick -- the same short must keep the
-    same bed across rebuilds, or a published video stops matching its own file.
+    The owner's rule (2026-11-09) is that no two clips share a bed. The old form
+    gave every Short of a channel the same mood-matched file (ch4's warm bed ran
+    under all of them), which is exactly what was forbidden. So the mood still
+    guides the *first* choice, but the ledger is what guarantees no repeat: a bed
+    already used by another id is skipped, and only when a channel's mood-matched
+    beds run out does it fall through to another mood. The same short keeps the
+    same bed across rebuilds because its id is already in the ledger.
     """
     if not music_dir or not os.path.isdir(music_dir):
         return None
     prov = os.path.join(music_dir, "provenance.json")
-    if mood and os.path.exists(prov):
+    mood_of = {}
+    if os.path.exists(prov):
         try:
             with open(prov, encoding="utf-8") as fh:
-                beds = json.load(fh).get("beds", [])
-            for b in beds:
-                if b.get("mood") == mood:
-                    p = os.path.join(music_dir, b["file"])
-                    if os.path.exists(p):
-                        return p
+                mood_of = {b["file"]: b.get("mood") for b in json.load(fh).get("beds", [])}
         except (OSError, ValueError):
-            pass
+            mood_of = {}
+    # Only beds that passed the music test are in the library: a stray file that
+    # never made provenance must not be handed to a clip (it may not even decode).
     pool = sorted(f for f in os.listdir(music_dir)
-                  if f.lower().endswith((".mp3", ".wav", ".m4a")))
+                  if f.lower().endswith((".mp3", ".wav", ".m4a")) and f in mood_of)
+    if not pool:
+        pool = sorted(f for f in os.listdir(music_dir)
+                      if f.lower().endswith((".mp3", ".wav", ".m4a")))
     if not pool:
         return None
-    h = 0
-    for ch in sid:
-        h = (h * 31 + ord(ch)) & 0xFFFFFFFF
-    return os.path.join(music_dir, pool[h % len(pool)])
+    if mood:
+        pool.sort(key=lambda f: 0 if mood_of.get(f) == mood else 1)
+    used = {}
+    if ledger_path and os.path.exists(ledger_path):
+        try:
+            with open(ledger_path, encoding="utf-8") as fh:
+                used = json.load(fh).get("beds", {})
+        except (OSError, ValueError):
+            used = {}
+    free = [f for f in pool if used.get(f, sid) == sid] or pool
+    pick = free[0]
+    if ledger_path:
+        used[pick] = sid
+        tmp = ledger_path + ".part"
+        os.makedirs(os.path.dirname(os.path.abspath(ledger_path)), exist_ok=True)
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump({"beds": used}, fh, ensure_ascii=False, indent=2)
+        os.replace(tmp, ledger_path)
+    return os.path.join(music_dir, pick)
 
 
 def main() -> int:
@@ -485,9 +518,15 @@ def main() -> int:
             cmd = [sys.executable, os.path.join(HERE, "make_short.py"),
                    "--scripts", spec["scripts"], "--index", sid,
                    "--out-dir", work]
-            if spec.get("art") and os.path.isdir(spec["art"]):
+            if spec.get("art_style"):
+                # One generated image per clip -- no two Shorts share a picture.
+                cmd += ["--art-style", spec["art_style"],
+                        "--art-dir", spec.get("art", ""),
+                        "--art-ledger", art_ledger_path(args.channel)]
+            elif spec.get("art") and os.path.isdir(spec["art"]):
                 cmd += ["--art-dir", spec["art"]]
-            bed = pick_bed(spec.get("music_dir"), sid, spec.get("mood"))
+            bed = pick_bed(spec.get("music_dir"), sid, spec.get("mood"),
+                           bed_ledger_path(args.channel))
             if bed:
                 cmd += ["--music", bed]
             r = subprocess.run(cmd, capture_output=True, text=True)

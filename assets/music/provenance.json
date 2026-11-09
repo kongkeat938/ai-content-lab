@@ -57,6 +57,150 @@
       "creator": "MichaelMalong",
       "source": "https://freesound.org/people/MichaelMalong/sounds/360740",
       "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-ambient-space-texture.mp3",
+      "id": "bed-calm-0",
+      "mood": "calm",
+      "title": "Ambient Space Texture",
+      "creator": "Andrewkn",
+      "source": "https://freesound.org/people/Andrewkn/sounds/474864",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-calm-and-sad-ambient.mp3",
+      "id": "bed-calm-1",
+      "mood": "calm",
+      "title": "Calm And Sad Ambient",
+      "creator": "Sami_Hiltunen",
+      "source": "https://freesound.org/people/Sami_Hiltunen/sounds/652432",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-a-soothing-song-mp3.mp3",
+      "id": "bed-calm-0",
+      "mood": "calm",
+      "title": "a soothing song.mp3",
+      "creator": "cheesepuff",
+      "source": "https://freesound.org/people/cheesepuff/sounds/110215",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-mellow-chill-song23-wav.mp3",
+      "id": "bed-calm-1",
+      "mood": "calm",
+      "title": "mellow_chill_song23.wav",
+      "creator": "bainmack",
+      "source": "https://freesound.org/people/bainmack/sounds/632681",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-warm-japan-koto-improv-amateur-se.mp3",
+      "id": "bed-warm-0",
+      "mood": "warm",
+      "title": "Japan_Koto_Improv_Amateur_Session_3.wav",
+      "creator": "RutgerMuller",
+      "source": "https://freesound.org/people/RutgerMuller/sounds/365242",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-warm-sigil-mgreel-harmonics-wav.mp3",
+      "id": "bed-warm-1",
+      "mood": "warm",
+      "title": "sigil-mgReel-harmonics.wav",
+      "creator": "makenoisemusic",
+      "source": "https://freesound.org/people/makenoisemusic/sounds/440135",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-road-in-the-forest.mp3",
+      "id": "bed-sad-0",
+      "mood": "sad",
+      "title": "Road In The Forest",
+      "creator": "Andrewkn",
+      "source": "https://freesound.org/people/Andrewkn/sounds/439553",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-a-melancholic-existence.mp3",
+      "id": "bed-sad-1",
+      "mood": "sad",
+      "title": "A Melancholic Existence",
+      "creator": "Wricken",
+      "source": "https://freesound.org/people/Wricken/sounds/323531",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-hopeful-bright-piano-128bpm-arp-wav.mp3",
+      "id": "bed-hopeful-0",
+      "mood": "hopeful",
+      "title": "Bright Piano 128bpm (ARP).wav",
+      "creator": "Johnnie_Holiday",
+      "source": "https://freesound.org/people/Johnnie_Holiday/sounds/560760",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-hopeful-the-lucky-ticket.mp3",
+      "id": "bed-hopeful-1",
+      "mood": "hopeful",
+      "title": "The Lucky Ticket",
+      "creator": "Antenalosmusic",
+      "source": "https://freesound.org/people/Antenalosmusic/sounds/714932",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-mystic-jungle-rain.mp3",
+      "id": "bed-mystic-0",
+      "mood": "mystic",
+      "title": "Mystic Jungle rain",
+      "creator": "szegvari",
+      "source": "https://freesound.org/people/szegvari/sounds/569912",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-suspense-line-mp3.mp3",
+      "id": "bed-mystic-1",
+      "mood": "mystic",
+      "title": "suspense_line.mp3",
+      "creator": "vlad.zaichyk",
+      "source": "https://freesound.org/people/vlad.zaichyk/sounds/495017",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-epic-logo.mp3",
+      "id": "bed-epic-0",
+      "mood": "epic",
+      "title": "Epic Logo",
+      "creator": "Andrewkn",
+      "source": "https://freesound.org/people/Andrewkn/sounds/474993",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-slow-cinematic-music-wav.mp3",
+      "id": "bed-epic-1",
+      "mood": "epic",
+      "title": "Slow Cinematic Music.wav",
+      "creator": "DeVern",
+      "source": "https://freesound.org/people/DeVern/sounds/384202",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-orchestral-5of5-ogg.mp3",
+      "id": "bed-epic-0",
+      "mood": "epic",
+      "title": "Orchestral_5of5.ogg",
+      "creator": "Quilt",
+      "source": "https://freesound.org/people/Quilt/sounds/32084",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-orchestral-1of5-ogg.mp3",
+      "id": "bed-epic-1",
+      "mood": "epic",
+      "title": "Orchestral_1of5.ogg",
+      "creator": "Quilt",
+      "source": "https://freesound.org/people/Quilt/sounds/32080",
+      "license": "CC0-1.0"
     }
   ]
 }
