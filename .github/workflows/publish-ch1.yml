@@ -76,3 +76,15 @@ jobs:
           git commit -m "publish(ch1): record live video ids / upload-cap reset"
           git pull --rebase --autostash origin main
           git push
+
+      - name: Set the genx trailer
+        # No rail had set ch1's unsubscribedTrailer (measured 2026-11-09). It must
+        # run AFTER the 08:00 UTC quota reset -- the first scheduled tick here is
+        # 08:07, unlike genx-longform's 04:47 build, which is why it lives in this
+        # rail. Idempotent: it re-sets the same best Short every run.
+        if: github.event_name == 'schedule'
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+        run: python3 scripts/channel_overhaul.py --channel ch1 --only trailer
