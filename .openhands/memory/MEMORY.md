@@ -1,5 +1,16 @@
 # Project Memory — ak (ai-content-lab)
 
+## 🔴 2026-11-09 — foreman was DOWN ~6 h (committed git conflict)
+`content/upload_log.json` on main held raw conflict markers from a
+`git pull --rebase --autostash` in `publish_shorts.commit()`. Every foreman run
+19:35Z→01:36Z died on `JSONDecodeError`, so **no rail was driven from the chain**
+for ~6 h (schedule-driven rails still ran). Fixed: union the ledger (append-only),
+plain `--rebase` (no autostash), `_union_resolve_upload_log()`, and a new
+**`scripts/test_repo_hygiene.py`** (in `selftest.yml`) that fails on any line-start
+conflict marker or unparsable JSON. Foreman verified live → 3 dispatches, all
+success. Detail: `.openhands/memory/2026-11-09.md`. **Rule: any file two workflows
+commit concurrently needs a writer-side conflict guard.**
+
 **Agent name: `ak`** (renamed from AX by K, 2026-10-31). Owner **K**; Thai answers, measured
 evidence. This file is an **index** and must stay small — the loader injects it every session
 and **truncates the tail**, which is why the old 48 KB file lost its newest work. Detail lives
