@@ -22,3 +22,6 @@ work/gemini_proof/
 work/ch2_branding/
 work/ch2_shorts/
 .aider*
+
+# scratch/advisor work (may hold API keys + session cookies)
+.stockwork/

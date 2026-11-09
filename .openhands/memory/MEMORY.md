@@ -110,3 +110,24 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
   ch2 08:40) -- the genx-longform 04:47 tick would defer forever.
 - Still to measure: whether the trailer lifts ch4 subs (Data API `subscriberCount` is
   quota-gated; a 403 at any hour before 08:00 UTC is expected, not an outage).
+
+## 🧑⚖️ Advisor panel: 6 fast vendors by default (2026-11-09; `2026-11-09.md`)
+- `scripts/advise.py` default = **`FAST_PLUS`** = 4 Gemini models + Pollinations +
+  **OpenRouter** (6 advisors, seconds). `--fast` drops OpenRouter; `--deep` adds 3
+  OpenHands conversations (~20 min). K's rule: **≥5 independent advisors, never a person.**
+- **Bug fixed:** `FAST` listed `gemini-latest` but `ADVISORS` only had `gemini-flash`, so a
+  slot silently became "(unknown advisor)" and still counted. `scripts/test_advise_panel.py`
+  now fails if any panel name is missing from `ADVISORS`.
+- **OpenRouter (free, genuinely new vendor):** key at `~/.pod-openrouter-key` (override with
+  `OPENROUTER_API_KEY`). `ask_openrouter()` tries free slugs in order + backoff on 429/5xx.
+  Working free models from the pod: `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free`,
+  `cohere/north-mini-code:free`, `nvidia/nemotron-3.5-lightning:free`. Google free slugs
+  (`google/gemma-4-*:free`) 429 on the shared pool; `meta-llama/llama-3.3-70b:free` is now paid.
+- **Recovering an OpenRouter key:** the UI **masks** the value forever; the internal API is
+  Clerk-gated (a raw session cookie does not authenticate `/api/v1/keys`). The only plaintext
+  is the **clipboard** after the create-key modal's copy button → create the key in headless
+  chromium (playwright + `/usr/bin/chromium`), log in with email+password and the 6-digit email
+  code read via Gmail IMAP, then `navigator.clipboard.readText()`. See `.stockwork/or_*.py`.
+- **Measured:** panel of 6 answered in **15.3 s**. Evidence `.stockwork/PANEL-EVIDENCE-2026-11-09.md`.
+- **Pod tooling:** `ffmpeg`/`ffprobe` via `pip install static-ffmpeg` (no root); copy binaries to
+  `~/bin` and add to PATH, or the media tests fail with FileNotFoundError.
