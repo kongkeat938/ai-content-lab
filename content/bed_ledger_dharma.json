@@ -1,1 +1,6 @@
-{"beds": {"bed-calm.mp3": "dharma:legacy"}}
+{
+  "beds": {
+    "bed-calm.mp3": "dharma:legacy",
+    "bed-calm-a-soothing-song-mp3.mp3": "105"
+  }
+}
