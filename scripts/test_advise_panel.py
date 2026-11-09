@@ -16,22 +16,28 @@ import advise  # noqa: E402
 
 def test_every_panel_name_exists():
     for group, names in (("FAST", advise.FAST), ("FAST_PLUS", advise.FAST_PLUS),
-                         ("DEEP", advise.DEEP)):
+                         ("BROAD", advise.BROAD), ("DEEP", advise.DEEP)):
         missing = [n for n in names if n not in advise.ADVISORS]
         assert not missing, f"{group} references unknown advisors: {missing}"
 
 
-def test_default_panel_has_at_least_five_independent_slots():
-    assert len(advise.FAST_PLUS) >= 5, advise.FAST_PLUS
-    assert len(set(advise.FAST_PLUS)) == len(advise.FAST_PLUS), "duplicate panelist"
-    # more than one vendor: pollinations and openrouter are not Gemini.
-    assert "pollinations" in advise.FAST_PLUS
-    assert "openrouter" in advise.FAST_PLUS
+def test_default_team_has_at_least_five_independent_slots():
+    assert len(advise.FAST) >= 5, advise.FAST
+    assert len(set(advise.FAST)) == len(advise.FAST), "duplicate panelist"
+    # more than one vendor: openrouter is not Google.
+    assert "openrouter" in advise.FAST
 
 
-def test_fast_is_a_subset_of_plus():
-    assert set(advise.FAST) <= set(advise.FAST_PLUS)
-    assert "openrouter" not in advise.FAST
+def test_default_team_excludes_the_measured_slow_advisor():
+    # pollinations measured ~66 s vs ~0.5-1.5 s for the rest (panel_bench.py):
+    # a slow panelist drags every decision, so it stays opt-in via --broad.
+    assert "pollinations" not in advise.FAST
+    assert "pollinations" in advise.BROAD
+    assert set(advise.FAST) <= set(advise.BROAD)
+
+
+def test_broad_is_default_plus_pollinations():
+    assert advise.BROAD == advise.FAST + ["pollinations"]
 
 
 if __name__ == "__main__":

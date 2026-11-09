@@ -111,10 +111,17 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - Still to measure: whether the trailer lifts ch4 subs (Data API `subscriberCount` is
   quota-gated; a 403 at any hour before 08:00 UTC is expected, not an outage).
 
-## 🧑⚖️ Advisor panel: 6 fast vendors by default (2026-11-09; `2026-11-09.md`)
-- `scripts/advise.py` default = **`FAST_PLUS`** = 4 Gemini models + Pollinations +
-  **OpenRouter** (6 advisors, seconds). `--fast` drops OpenRouter; `--deep` adds 3
-  OpenHands conversations (~20 min). K's rule: **≥5 independent advisors, never a person.**
+## 🧑⚖️ Advisor team: 5 fast vendors by default (2026-11-09; `2026-11-09.md`)
+- `scripts/advise.py` default team = **`FAST`** = 4 Gemini models + **OpenRouter**
+  (5 advisors, two vendors, seconds). `--broad` adds Pollinations (a 6th vendor but
+  **~66 s** and 400s on long prompts — a slow panelist drags every decision); `--deep`
+  adds 3 OpenHands conversations (~20 min). `FAST_PLUS` kept as an alias of `FAST`.
+  K's rule: **≥5 independent advisors, never a person**; K: **ทีมเร็วมีคุณภาพ**.
+- `scripts/panel_bench.py` measures each advisor on 5 checkable probes (math, logic,
+  exact-format, Thai, counting) + latency. Measured 2026-11-09: all 5/5; median
+  gemini-3.5 0.5s · gemini-3.1 0.6s · openrouter 1.3s · gemini-flash 1.5s ·
+  gemini-preview ~1-4s (high variance) · pollinations 65.7s. Re-run it before trusting
+  a vendor's speed.
 - **Bug fixed:** `FAST` listed `gemini-latest` but `ADVISORS` only had `gemini-flash`, so a
   slot silently became "(unknown advisor)" and still counted. `scripts/test_advise_panel.py`
   now fails if any panel name is missing from `ADVISORS`.
