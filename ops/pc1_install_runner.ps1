@@ -55,43 +55,60 @@ Step 'paths'
 New-Item -ItemType Directory -Force -Path $RunnerDir | Out-Null
 Say "runner dir = $RunnerDir"
 
-# config.cmd is only a wrapper: it invokes bin\Runner.Listener.exe. A partial
-# extract can leave config.cmd present while bin\ is missing, and then config.cmd
-# fails with "The system cannot find the file specified" (exit 1) -- the exact
-# failure seen on PC1. So completeness means the listener exe exists, not just
-# run.cmd / config.cmd.
+# config.cmd is only a wrapper for bin\Runner.Listener.exe. The unpack is complete
+# only when that exe is present: a truncated extract leaves run.cmd/config.cmd
+# behind without bin\, and then config.cmd dies with "The system cannot find the
+# file specified" (exit 1) -- the failure seen on PC1.
 $runCmd = Join-Path $RunnerDir 'run.cmd'
 $configCmd = Join-Path $RunnerDir 'config.cmd'
 $listener = Join-Path $RunnerDir 'bin\Runner.Listener.exe'
-$complete = (Test-Path $runCmd) -and (Test-Path $configCmd) -and (Test-Path $listener)
+$zip = Join-Path $env:TEMP "actions-runner-win-x64-$Version.zip"
+$url = "https://github.com/actions/runner/releases/download/v$Version/actions-runner-win-x64-$Version.zip"
 
-if ($Clean -and (Test-Path $RunnerDir)) {
+# -Clean must wipe the folder BEFORE the completeness test. Computing $complete
+# first and deleting second is what broke the PC1 run: it printed "removing
+# C:\actions-runner" and then "already present and complete", because the test had
+# read the folder that was about to be deleted, so the download was skipped and
+# there was nothing left to register.
+if ($Clean) {
   Step 'clean'
   Say "removing $RunnerDir (-Clean)"
   Remove-Item -Recurse -Force $RunnerDir -ErrorAction SilentlyContinue
+  if (Test-Path $listener) {
+    throw "CLEAN_FAILED: $listener survived the delete -- a runner process is locking it. Stop it (Stop-ScheduledTask $TaskName; Get-Process Runner.Listener -ErrorAction SilentlyContinue | Stop-Process -Force) and re-run."
+  }
   New-Item -ItemType Directory -Force -Path $RunnerDir | Out-Null
 }
 
+$complete = (Test-Path $runCmd) -and (Test-Path $configCmd) -and (Test-Path $listener)
+
 # --- 1. Download and unpack unless the previous unpack is provably complete.
 if (-not $complete) {
-  $zip = Join-Path $env:TEMP "actions-runner-win-x64-$Version.zip"
-  $url = "https://github.com/actions/runner/releases/download/v$Version/actions-runner-win-x64-$Version.zip"
   Step 'download'
   Say "url = $url"
-  # A truncated zip from an earlier failed download is indistinguishable from a
-  # good one by name, so fetch it fresh whenever the unpack is incomplete.
+  # A truncated zip is indistinguishable from a good one by name, so fetch it
+  # fresh whenever the unpack is incomplete, and refuse a zip that is too small.
   if (Test-Path $zip) { Remove-Item -Force $zip -ErrorAction SilentlyContinue }
   Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
-  Say "zip = $zip ($((Get-Item $zip).Length) bytes)"
+  $sizeMB = [math]::Round((Get-Item $zip).Length / 1MB, 1)
+  Say "zip = $zip ($sizeMB MB)"
+  if ($sizeMB -lt 50) { throw "DOWNLOAD_INCOMPLETE: only $sizeMB MB, expected ~100 MB -- re-run" }
   Step 'extract'
   Expand-Archive -Path $zip -DestinationPath $RunnerDir -Force
-  if (-not (Test-Path $listener)) {
-    throw "EXTRACT_INCOMPLETE: $listener missing after Expand-Archive -- re-run with -Clean"
-  }
-  Say 'extracted'
 } else {
   Step 'download'
-  Say "already present and complete, skipping ($runCmd)"
+  Say 'already present and complete, skipping'
+}
+
+# --- 1b. Evidence of what is actually on disk, so a register failure can be
+#         diagnosed from the log alone instead of from a bare exit code.
+Step 'unpacked'
+foreach ($f in @($runCmd, $configCmd, $listener)) {
+  $mark = if (Test-Path $f) { 'OK     ' } else { 'MISSING' }
+  Say "$mark $f"
+}
+if (-not (Test-Path $listener)) {
+  throw "EXTRACT_INCOMPLETE: $listener is still missing -- re-run with -Clean"
 }
 
 # --- 2. Register. --replace takes over an existing registration with the same name,
