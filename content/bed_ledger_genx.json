@@ -1,1 +1,6 @@
-{"beds": {"bed-hopeful.mp3": "genx:legacy"}}
+{
+  "beds": {
+    "bed-hopeful.mp3": "genx:legacy",
+    "bed-hopeful-bright-piano-128bpm-arp-wav.mp3": "76"
+  }
+}
