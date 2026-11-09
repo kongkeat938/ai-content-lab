@@ -30,6 +30,12 @@ ROOT = os.path.dirname(HERE)
 # gemini-3.5-flash-lite intermittently 503s, gemini-3.1-flash-lite answered.
 MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
 
+# ch4's long-form is dead (measured 2026-11-09: 1-3 views per 120-min file), so a
+# CTA that promises a "full clip" is a promise the channel cannot keep. Its Shorts
+# also get the worst subs-per-1k on the fleet (1.93). An honest subscribe ask is
+# the only funnel that exists, so the broken-promise shape is forbidden there.
+_BROKEN_CTA = re.compile(r"คลิปเต็ม|คลิปยาว|วิดีโอตัวเต็ม|คลิปต่อ|เรื่องเต็ม|คลิปถัดไป")
+
 CHANNELS = {
     "dharma": {
         "path": os.path.join(ROOT, "content", "ch2_shorts", "scripts.json"),
@@ -130,6 +136,10 @@ CHANNELS = {
             "พ่ออุ้มขึ้นบ่าไปดูงานวัด", "พี่ชายยืนรอรับที่ป้ายรถ",
         ],
         "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
+        # The channel has no reachable long-form (its 120-min files get 1-3 views),
+        # so a "go watch the full clip" CTA sends viewers to a dead end. Enforced by
+        # valid(), not just asked for in the prompt.
+        "forbid_cta": _BROKEN_CTA,
         "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "เรื่องเล่าอบอุ่นใจ"
 กลุ่มเป้าหมาย: คนไทยที่ชอบเรื่องเล่าอบอุ่นใจเกี่ยวกับครอบครัว
 
@@ -146,6 +156,8 @@ CHANNELS = {
   ห้ามเขียนฮุกกว้าง ๆ แบบนิทาน/ตำนาน/เทพนิยาย เด็ดขาด
   (วัดจริง: ช่วงเวลาครอบครัวเจาะจงได้ 460-1,083 วิว; เรื่องคลาสสิกได้ 1-6 วิว)
 - เรื่องสั้นจบในคลิปเดียว จุดจบอบอุ่น กินใจ ไม่เทศนา
+- cta: ชวนติดตามอย่างเดียว ห้ามสัญญาว่า "มีคลิปเต็ม/คลิปยาว/วิดีโอตัวเต็ม/ไปดูต่อ"
+  เพราะช่องนี้ยังไม่มีคลิปยาวที่คนดูถึง ให้เขียนแบบ "กดติดตามเพื่อรับเรื่องอบอุ่นใจแบบนี้ทุกวัน"
 - ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
 - ไม่มี emoji ไม่มี markdown
 
@@ -192,7 +204,7 @@ _PREACHY = re.compile(
     r"สิ่งสำคัญคือ|บทเรียนที่ได้|ข้อเตือนใจ")
 
 
-def valid(s: dict, cues=()) -> bool:
+def valid(s: dict, cues=(), forbid=None) -> bool:
     if not isinstance(s, dict):
         return False
     if not s.get("hook") or not isinstance(s.get("lines"), list) or not s.get("cta"):
@@ -206,6 +218,8 @@ def valid(s: dict, cues=()) -> bool:
     if _FOREIGN.search(joined):
         return False
     if _PREACHY.search(joined):
+        return False
+    if forbid and forbid.search(joined):
         return False
     # The measured winning hook shape must be present, or the pool drifts back to
     # the shape that got 74-173 views/day. See docs/HOOKS-MEASURED.md.
@@ -303,12 +317,13 @@ def main() -> int:
         prompt += ("\n\nกฎที่เรียนรู้จากคลิปที่ทำได้ดี/แย่ของช่องนี้ (ต้องทำตาม):\n- "
                    + "\n- ".join(rules))
         print(f"  applying {len(rules)} rules learned from the video review")
-    fresh = [s for s in ask(key, prompt) if valid(s, cues)]
+    forbid = cfg.get("forbid_cta")
+    fresh = [s for s in ask(key, prompt) if valid(s, cues, forbid)]
     # Gemini sometimes ignores the hook rule; ask once more before giving up, so
     # a thin batch does not silently leave the pool short.
     if len(fresh) < args.count:
         print(f"  only {len(fresh)}/{args.count} passed the hook check; asking again")
-        again = [s for s in ask(key, prompt) if valid(s, cues)]
+        again = [s for s in ask(key, prompt) if valid(s, cues, forbid)]
         seen_hooks = {s["hook"] for s in fresh}
         fresh += [s for s in again if s["hook"] not in seen_hooks]
 
@@ -334,7 +349,7 @@ def main() -> int:
                     res = panel_vet(args.channel, {"hook": s["hook"], "lines": s["lines"],
                                                    "cta": s["cta"]}, args.vet_rounds, key)
                     ch = res["chosen"]
-                    if valid(ch, cues):
+                    if valid(ch, cues, forbid):
                         s.update(hook=ch["hook"], lines=ch["lines"], cta=ch["cta"])
                         s["vetted"] = True
                 except Exception as e:  # noqa: BLE001
