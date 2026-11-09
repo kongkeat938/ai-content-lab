@@ -123,6 +123,14 @@ repair pass each tick. Live `l5hkDGVIYXE`.
 already exceeds the floor.
 
 ## 🔑 Durable principles (K)
+- **PCSEV = Problem → Cause → Solution → Execute → Verify** (2026-11-08; `docs/PCSEV-VERIFY-2026-11-08.md`).
+  **Every fix K is shown must be framed in all five steps**, and **Verify must measure live** —
+  never from our own committed docs (a doc is just another claim: stale-able, wrong-able).
+  Trust order: **live API > real output file (ffprobe/ebur128) > a test that can FAIL > committed
+  doc (weakest)**. A doc tells you *where* to measure, not *what the answer is*. Best verify =
+  a **counter with an invariant** (lifetime views/subs must not fall, must not sit still) —
+  it carries the truth in itself (`scripts/counter_ledger.py`, `docs/counters.jsonl`). K pushed
+  this exact point 2026-11-09 when the PC1 answer was given as an answer instead of a PCSEV chain.
 - **Everything is an algorithm** (2026-11-07): a wall is a rule not yet read. When a paid tool
   dies, a free one does the job. Two duties: **read the vendor's own rule** before declaring
   anything impossible; **an LLM is not a primary source** (verify against docs or a live
