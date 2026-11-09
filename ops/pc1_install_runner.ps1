@@ -111,6 +111,61 @@ if (-not (Test-Path $listener)) {
   throw "EXTRACT_INCOMPLETE: $listener is still missing -- re-run with -Clean"
 }
 
+# --- 1c. Preflight: the runner exe must be allowed to RUN, not merely to exist.
+#         On PC1 it was refused with "was blocked by your organization's Device
+#         Guard policy" -- WDAC or Smart App Control blocking an unsigned binary.
+#         A download-derived file also carries a Mark-of-the-Web, which is enough
+#         to block it on its own, so clear that first; then report the policy so
+#         the reader knows what to change.
+Step 'preflight'
+Get-ChildItem -Path $RunnerDir -Recurse -File -ErrorAction SilentlyContinue |
+  Unblock-File -ErrorAction SilentlyContinue
+Say 'cleared Mark-of-the-Web on the extracted files (Unblock-File)'
+
+$sac = (Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy' `
+        -Name VerifiedAndReputablePolicyState -ErrorAction SilentlyContinue).VerifiedAndReputablePolicyState
+$sacTxt = switch ($sac) { 0 { 'off' } 1 { 'ON (enforce)' } 2 { 'ON (evaluation)' } default { 'unknown' } }
+Say "SMART_APP_CONTROL=$sacTxt"
+
+$dg = Get-CimInstance -ClassName Win32_DeviceGuard `
+        -Namespace root\Microsoft\Windows\DeviceGuard -ErrorAction SilentlyContinue
+if ($dg) {
+  Say "WDAC_CODE_INTEGRITY=$($dg.CodeIntegrityPolicyEnforcementStatus) (0=off 1=audit 2=enforce)"
+  Say "WDAC_USERMODE=$($dg.UsermodeCodeIntegrityPolicyEnforcementStatus) (0=off 1=audit 2=enforce)"
+}
+
+# Can the exe actually start? A policy block throws at launch, or the process
+# exits non-zero with the policy text on stderr. The probe is time-boxed so a
+# misbehaving exe cannot hang the installer.
+$listenerBlocked = $false
+$probeOut = Join-Path $env:TEMP 'pc1_listener_probe.out'
+$probeErr = Join-Path $env:TEMP 'pc1_listener_probe.err'
+try {
+  $p = Start-Process -FilePath $listener -ArgumentList '--version' -NoNewWindow -PassThru `
+        -RedirectStandardOutput $probeOut -RedirectStandardError $probeErr
+  $deadline = (Get-Date).AddSeconds(20)
+  while (-not $p.HasExited -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 300 }
+  if (-not $p.HasExited) {
+    $p | Stop-Process -Force -ErrorAction SilentlyContinue
+    Say 'LISTENER_RUNS=unknown (probe timed out -- continuing)'
+  } elseif ($p.ExitCode -eq 0) {
+    $v = (Get-Content $probeOut -Raw -ErrorAction SilentlyContinue)
+    Say "LISTENER_RUNS=yes ($("$v".Trim()))"
+  } else {
+    $err = "$(Get-Content $probeErr -Raw -ErrorAction SilentlyContinue)$(Get-Content $probeOut -Raw -ErrorAction SilentlyContinue)"
+    Say "LISTENER_RUNS=NO (exit $($p.ExitCode)) -- $($err.Trim())"
+    if ($err -match 'Device Guard|blocked by your organization|Code Integrity|Smart App Control|0x8007') {
+      $listenerBlocked = $true
+    }
+  }
+} catch {
+  $msg = "$($_.Exception.Message)".Trim()
+  Say "LISTENER_RUNS=NO -- $msg"
+  if ($msg -match 'Device Guard|blocked by your organization|Code Integrity|Smart App Control') {
+    $listenerBlocked = $true
+  }
+}
+
 # --- 2. Register. --replace takes over an existing registration with the same name,
 #        which is what makes a re-run a repair rather than an error. The full config
 #        output is echoed on failure, so a failed registration names its own cause
@@ -121,6 +176,9 @@ try {
   & $configCmd --url $RepoUrl --token $Token --name $Name --labels $Labels `
       --unattended --replace 2>&1 | ForEach-Object { Say $_ }
   if ($LASTEXITCODE -ne 0) {
+    if ($listenerBlocked) {
+      throw "DEVICE_GUARD_BLOCK: Windows refuses to run bin\Runner.Listener.exe because the exe is unsigned. Fix one of: (a) Windows Security > App & browser control > Smart App Control > Off (irreversible once off), or (b) ask IT to add $RunnerDir as a WDAC exception, or (c) run the runner from a path the policy allows. The winremote MCP channel is unaffected."
+    }
     throw "CONFIG_FAILED: exit $LASTEXITCODE (see the config output above; if it is a token problem, mint a fresh registration token and re-run)"
   }
   Say 'registered'
