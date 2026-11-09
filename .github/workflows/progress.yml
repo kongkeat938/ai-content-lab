@@ -48,6 +48,5 @@ jobs:
             exit 0
           fi
           git commit -m "progress: refresh the distance-to-goal report [skip ci]"
-          if git push; then exit 0; fi
-          git pull --rebase --autostash origin main || { git rebase --abort || true; exit 0; }
-          git push || echo "push rejected -- next tick refreshes it"
+          # generated artifact; a lost push is fine -- the next tick refreshes it
+          bash scripts/git_push_retry.sh --best-effort

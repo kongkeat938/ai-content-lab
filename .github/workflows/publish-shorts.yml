@@ -107,4 +107,4 @@ jobs:
           fi
           git commit -m "publish(${{ matrix.channel }}): record new Short ids"
           git pull --rebase --autostash origin main
-          git push
+          bash scripts/git_push_retry.sh

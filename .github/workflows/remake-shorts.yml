@@ -121,10 +121,6 @@ jobs:
             exit 0
           fi
           git commit -m "remake(${{ matrix.slug }}): record the new Short versions"
-          for i in 1 2 3 4 5; do
-            if git push; then echo "pushed"; exit 0; fi
-            echo "push rejected (attempt $i); rebasing onto origin/main"
-            git pull --rebase --autostash origin main || true
-          done
-          echo "::error::could not push the record after 5 attempts"
-          exit 1
+          # The union merge driver above lets both racing jobs' records survive a
+          # rebase; the helper does the rebase+retry and aborts a conflicted one.
+          bash scripts/git_push_retry.sh

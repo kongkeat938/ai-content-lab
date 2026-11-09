@@ -111,8 +111,7 @@ jobs:
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
           git commit -m "ch4: add generated content set ${{ steps.pick.outputs.content }} [skip ci]"
-          git pull --rebase --autostash origin main
-          git push
+          bash scripts/git_push_retry.sh
 
       - name: Build and verify
         run: |
@@ -198,16 +197,10 @@ jobs:
             exit 0
           fi
           git commit -m "ch4: queue $KEY for publish [skip ci]"
-          # Retry the push: a single pull-then-push loses the race when another
-          # rail commits in between (measured 2026-11-09 on the night rail), which
-          # strands a finished video. Retry the pull+push a few times.
-          pushed=0
-          for i in 1 2 3 4 5; do
-            git pull --rebase origin main || true
-            if git push; then pushed=1; break; fi
-            echo "push attempt $i lost the race; retrying"
-          done
-          [ "$pushed" = 1 ] || { echo "could not push the manifest after retries"; exit 1; }
+          # A single pull-then-push loses the race when another rail commits in
+          # between (measured 2026-11-09 on the night rail), which strands a
+          # finished video. The helper rebases and retries.
+          bash scripts/git_push_retry.sh
           # A push made with GITHUB_TOKEN does not start another workflow.
           gh workflow run publish-ch4.yml --repo "${{ github.repository }}"
 

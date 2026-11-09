@@ -78,4 +78,4 @@ jobs:
           git add docs/MAIL-ALERTS.md content/mail_watch_state.json
           git diff --staged --quiet || git commit -m "chore(watch): refresh the account alert report"
           git pull --rebase --autostash origin main
-          git push
+          bash scripts/git_push_retry.sh

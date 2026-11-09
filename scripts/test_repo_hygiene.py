@@ -76,18 +76,32 @@ def main() -> int:
     # A workflow that pushes must rebase first, or it races every other rail that
     # commits to main. Skip a push in a workflow_dispatch-only path that never
     # lands on main? None exist; every `git push` here writes main.
+    #
+    # Rebasing alone is not enough: the race is *between* the rebase and the push,
+    # so a single `pull --rebase; push` still loses when another rail commits in
+    # that window. Measured 2026-11-09: that exact window failed night-compilation
+    # ("cannot lock ref ... is at X but expected Y") and stranded a built video
+    # (issue #21). Every push must therefore go through the retry helper, which
+    # re-pulls and re-pushes on rejection.
     racy = []
     wf_dir = os.path.join(ROOT, ".github", "workflows")
     for name in sorted(os.listdir(wf_dir)):
         if not name.endswith((".yml", ".yaml")):
             continue
         text = open(os.path.join(wf_dir, name), encoding="utf-8").read()
-        if "git push" in text and "git pull --rebase" not in text:
+        # Ignore comments so a prose mention of "git push" does not count.
+        code = "\n".join(l for l in text.splitlines()
+                         if not l.lstrip().startswith("#"))
+        if "git push" not in code:
+            continue
+        if "git pull --rebase" not in code:
             racy.append(name)
+        elif "git_push_retry.sh" not in code:
+            racy.append(name + " (no retry)")
     if racy:
-        fail(f"these workflows push without rebasing first: {', '.join(racy)} -- "
-             "a concurrent rail will reject the push; add `git pull --rebase "
-             "--autostash origin main` before `git push`")
+        fail(f"these workflows push without a rebase+retry: {', '.join(racy)} -- "
+             "a concurrent rail will reject a single push; use "
+             "`bash scripts/git_push_retry.sh` (it rebases and retries)")
 
     # Two hand-off traps measured 2026-11-09, both of which strand a finished
     # video with no error anyone sees:
