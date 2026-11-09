@@ -23,8 +23,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
 # A concrete action cue a listener can act on immediately. The proven winners
-# use this shape; an abstract reassurance does not.
-ACTION_CUES = ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ลองกด", "ปล่อยลมหายใจ")
+# use this shape; an abstract reassurance does not. Per channel: genx is
+# philosophy (a calming action), kongkeat is family story (a concrete image).
+CHANNEL_CUES = {
+    "dharma.md": ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ลองกด", "ปล่อยลมหายใจ"),
+    "genx.md": ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ปล่อยลมหายใจ"),
+    "kongkeat.md": ("เรื่องของผู้ชาย", "มือที่คอยซ่อม", "กลับไปกอด"),
+}
 
 # The panel's other half of the lever: the promise must land fast. edge-tts Thai
 # speaks ~9 characters per second here, so 220 characters is ~24 s -- inside the
@@ -40,18 +45,23 @@ def fail(msg: str) -> None:
 
 
 def main() -> int:
-    hook_path = os.path.join(ROOT, "content", "hooks", "dharma.md")
-    if not os.path.exists(hook_path):
-        fail(f"missing {hook_path}")
-    hook = open(hook_path, encoding="utf-8").read()
-    if not any(c in hook for c in ACTION_CUES):
-        fail("the dharma hook has no concrete action cue "
-             f"(one of {ACTION_CUES}); the measured lever is a concrete opening")
-    chars = len(hook.strip())
-    if chars > MAX_HOOK_CHARS:
-        fail(f"the dharma hook is {chars} chars (~{chars/9:.0f}s spoken); it must be "
-             f"<= {MAX_HOOK_CHARS} so the promise lands before the 30 s ceiling. "
-             "A long opening is where the retention is lost and qa_gate blocks it.")
+    # Every channel's hook, not just dharma: measured 2026-11-09, genx was 279
+    # chars (~31 s) -- over qa_gate's 30 s ceiling, so the next genx long-form
+    # would have been vetoed before anyone noticed.
+    for fname, cues in CHANNEL_CUES.items():
+        hook_path = os.path.join(ROOT, "content", "hooks", fname)
+        if not os.path.exists(hook_path):
+            fail(f"missing {hook_path}")
+        hook = open(hook_path, encoding="utf-8").read()
+        if not any(c in hook for c in cues):
+            fail(f"{fname} has no concrete cue (one of {cues}); the measured "
+                 "lever is a concrete opening")
+        chars = len(hook.strip())
+        if chars > MAX_HOOK_CHARS:
+            fail(f"{fname} is {chars} chars (~{chars/9:.0f}s spoken); it must be "
+                 f"<= {MAX_HOOK_CHARS} so the promise lands before the 30 s "
+                 "ceiling. A long opening is where retention is lost and qa_gate "
+                 "blocks it.")
 
     gen = open(os.path.join(HERE, "gen_night_scripts.py"), encoding="utf-8").read()
     m = re.search(r'\(\s*"open"\s*,\s*"([^"]+)"', gen)
@@ -62,8 +72,8 @@ def main() -> int:
         fail("the night-set opening angle is abstract again; it must ask for a "
              f"concrete action. Got: {open_angle!r}")
 
-    print("OK: the dharma hook and the night-set opening ask for a concrete action "
-          "(the measured retention lever)")
+    print("OK: every channel hook is concrete and short (the measured retention "
+          "lever), and the night-set opening asks for a concrete action")
     return 0
 
 

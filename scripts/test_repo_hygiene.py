@@ -89,8 +89,57 @@ def main() -> int:
              "a concurrent rail will reject the push; add `git pull --rebase "
              "--autostash origin main` before `git push`")
 
+    # Two hand-off traps measured 2026-11-09, both of which strand a finished
+    # video with no error anyone sees:
+    #   4. A release that omits receipt.json cannot be re-graded. A recovery run
+    #      (build skipped) has no local receipt, so qa_gate sees an empty one and
+    #      writes state=blocked -- a false veto. The release MUST carry the receipt.
+    #   5. A hook file that is not in the build fingerprint means editing the hook
+    #      does not change the tag, so the rail reuses the old release and never
+    #      rebuilds with the fix.
+    missing_receipt = []
+    hook_untracked = []
+    for name in sorted(os.listdir(wf_dir)):
+        if not name.endswith((".yml", ".yaml")):
+            continue
+        text = open(os.path.join(wf_dir, name), encoding="utf-8").read()
+        if "gh release create" not in text:
+            continue
+        # The release command is a set of lines joined by trailing backslashes
+        # (create ... || upload ...). Collect that block and check the receipt is
+        # among the uploaded assets -- a bare "receipt.json" elsewhere in the file
+        # (e.g. the --receipt arg to add_release_to_manifest) must not satisfy it.
+        lines = text.splitlines()
+        block = []
+        for i, ln in enumerate(lines):
+            if "gh release create" in ln:
+                block = [ln]
+                j = i
+                while lines[j].rstrip().endswith("\\") and j + 1 < len(lines):
+                    j += 1
+                    block.append(lines[j])
+                break
+        block_text = "\n".join(block)
+        for rec in re.findall(r"--receipt\s+(\S+\.json)", text):
+            if os.path.basename(rec) not in block_text:
+                missing_receipt.append(f"{name}: {rec}")
+        for hook in re.findall(r"--hook-file\s+(\S+\.md)", text):
+            fp_block = text.split("fp=\"$(cat", 1)
+            in_fp = len(fp_block) > 1 and hook in fp_block[1].split("|", 1)[0]
+            if not in_fp:
+                hook_untracked.append(f"{name}: {hook}")
+    if missing_receipt:
+        fail("these releases omit the receipt the hand-off needs to re-grade: "
+             + ", ".join(missing_receipt) + " -- add the receipt to `gh release "
+             "create`/`upload`, or a recovery run will false-veto the video")
+    if hook_untracked:
+        fail("these hook files are not in the build fingerprint, so a hook edit "
+             "will not rebuild: " + ", ".join(hook_untracked) + " -- add the hook "
+             "path to the `fp=\"$(cat ...)` block")
+
     print(f"OK: no conflict markers, all JSON parses, every pushing workflow "
-          f"rebases ({len(tracked_files())} files)")
+          f"rebases, releases carry the receipt, hooks are fingerprinted "
+          f"({len(tracked_files())} files)")
     return 0
 
 
