@@ -38,10 +38,10 @@ TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.envir
 # the bug: a rail that has never succeeded is stale, not fine.
 EXPECTED = {
     "foreman": 240,              # the driver; the chain ticks it every 2 h, so allow one dropped tick
-    "set-thumbnails": 240,       # the foreman only dispatches it past a 180-min gate (foreman.py)
+    "set-thumbnails": 360,       # foreman gate 180 + one 120-min chain tick
     "publish-shorts": 420,       # 01:30 + 13:30 + the chain
     "publish-batch": 400,        # */3h, but only counts when a long video is due
-    "link-shorts": 420,          # daily 09:00 + the chain every 6 h
+    "link-shorts": 540,          # foreman gate 360 + one 120-min chain tick
     "grow-shorts-pool": 1700,    # daily 22:00 + the chain
     "ch4-realign": 1700,         # daily 08:05 + the chain
     "polish-all": 1700,          # daily 08-11 + the chain
