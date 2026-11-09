@@ -43,6 +43,11 @@ permissions:
 
 jobs:
   remake:
+    # One upload at a time per channel, shared with publish-shorts so the two
+    # rails never push the same channel's records at once (2026-11-09).
+    concurrency:
+      group: shorts-upload-${{ matrix.slug }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -108,6 +113,7 @@ jobs:
           # whatever landed first and retry, so both jobs' records survive.
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
+          git config merge.unionjson.driver "python3 scripts/git_union_merge.py %O %A %B"
           git add content/*_shorts_remakes.json content/upload_log.json 2>/dev/null || true
           git add content/art_ledger_${{ matrix.slug }}.json content/bed_ledger_${{ matrix.slug }}.json 2>/dev/null || true
           if git diff --cached --quiet; then

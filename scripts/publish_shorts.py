@@ -343,6 +343,11 @@ def commit(path: str, message: str) -> None:
     try:
         subprocess.run(["git", "add", os.path.relpath(path, ROOT)], cwd=ROOT, check=True)
         subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT, check=True)
+        # Union-merge the append-only ledgers, so a racing job's records are kept
+        # instead of leaving conflict markers that lose a live upload id.
+        subprocess.run(["git", "config", "merge.unionjson.driver",
+                        "python3 scripts/git_union_merge.py %O %A %B"],
+                       cwd=ROOT, capture_output=True)
         # Two channel jobs run at once and both commit; without the rebase the
         # second push is rejected and its id is lost (seen 2026-11-03). A plain
         # rebase, not --autostash: a dirty tree must fail loudly rather than let a

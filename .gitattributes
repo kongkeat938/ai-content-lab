@@ -1,0 +1,6 @@
+# Append-only JSON records several channel jobs push at once. Union-merge them so
+# a rebase never leaves conflict markers (see scripts/git_union_merge.py).
+content/upload_log.json             merge=unionjson
+content/*_shorts_remakes.json       merge=unionjson
+content/art_ledger_*.json           merge=unionjson
+content/bed_ledger_*.json           merge=unionjson
