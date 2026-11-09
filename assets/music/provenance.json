@@ -1,7 +1,7 @@
 {
   "pack": "Openverse / Freesound CC0",
   "license": "CC0-1.0",
-  "note": "Replaced the AERIS pack on 2026-11-07: every AERIS file measured as a single test tone (one partial, no melody), not music. Each bed below was measured before use -- see scripts/test_music_beds.py.",
+  "note": "Every bed measured as music before use -- see scripts/test_music_beds.py.",
   "credit": "See each bed's creator (CC0-1.0, Openverse/Freesound)",
   "beds": [
     {
@@ -17,18 +17,18 @@
       "file": "bed-warm.mp3",
       "id": "bed-warm",
       "mood": "warm",
-      "title": "Japan_Koto_Improv_Amateur_Session_3.wav",
-      "creator": "RutgerMuller",
-      "source": "https://freesound.org/people/RutgerMuller/sounds/365242",
+      "title": "String Serenade",
+      "creator": "UneeKStringZ",
+      "source": "https://freesound.org/people/UneeKStringZ/sounds/271017",
       "license": "CC0-1.0"
     },
     {
       "file": "bed-sad.mp3",
       "id": "bed-sad",
       "mood": "sad",
-      "title": "Road In The Forest",
-      "creator": "Andrewkn",
-      "source": "https://freesound.org/people/Andrewkn/sounds/439553",
+      "title": "Piano improvisation 2",
+      "creator": "unfa",
+      "source": "https://freesound.org/people/unfa/sounds/213242",
       "license": "CC0-1.0"
     },
     {
@@ -53,7 +53,7 @@
       "file": "bed-epic.mp3",
       "id": "bed-epic",
       "mood": "epic",
-      "title": "Atmosphere Entry.wav",
+      "title": "Epic Intro",
       "creator": "MichaelMalong",
       "source": "https://freesound.org/people/MichaelMalong/sounds/360740",
       "license": "CC0-1.0"
