@@ -171,3 +171,20 @@ already exceeds the floor.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt` each
   session; `gh` needs `GH_TOKEN` re-exported (`KONGKEAT_GH_TOKEN`). Full test suite:
   `for t in scripts/test_*.py; do python3 "$t"; done`.
+
+## 🌙 Night rail: 3 traps ที่ทำให้คลิปที่ผ่านแล้ว "ค้าง" (2026-11-09) — รายละเอียด `2026-11-09.md`
+night-compilation สร้าง 120 นาที 89 นาที CI → เจอ push race + กับดัก cascade. **3 trap:**
+1. **skip ผูกกับ "release มีแล้ว" ≠ "คิวแล้ว"** → รอบหน้า skip hand-off ถาวร. แยก `skip` (build)
+   กับ `skip_pub` (hand-off) ใน `scripts/night_built_queued.py`. hand-off รันเมื่อยังไม่ถูกคิว.
+2. **`qa_gate` veto ทุกไฟล์ 120 นาที** (LEN_WARN_MAX เดิม 90) — rail veto ตัวเอง. แก้เป็น 150.
+3. **ordering ใน `add_release_to_manifest.py`:** merge (`hit.update`) **ก่อน** `apply_qa_gate` →
+   verdict ใหม่ไม่ถึง manifest (entry ยัง `blocked/D`). **ต้อง gate ก่อน แล้ว merge**; merge คัดลอก
+   state/qa เก่ากลับ **เฉพาะเมื่อไม่มี receipt** (รอบ skip) เท่านั้น.
+- **receipt ว่าง ≠ คลิปแย่:** skip-build re-run ไม่มี receipt, `grade({})`=blocked (verdict None)
+  → veto ปลอม. build อัป `receipt.json` ขึ้น release; hand-off `gh release download` มากรอก.
+- **hook ยาว = ตัวการ retention:** `content/hooks/dharma.md` 361 ตัว → พูด **40.3 วิ** (edge-tts
+  ไทย ~9 ตัว/วิ) เกินเพดาน 30 วิ + ตรง retention 28.9%@2:00. เขียนใหม่ 171 ตัว (~19 วิ) ยัง concrete.
+  `test_hook_concrete` cap 220 ตัว; fingerprint **ไม่รวม hook** → แก้ hook ไม่ trigger rebuild.
+- **hand-off = `publish_at=slot`** → อัป **private** + publishAt ให้ YouTube เปิด public เอง
+  19:30 Bangkok (12:30Z). ถ้าเห็น "private" อย่าตกใจ = ตั้งใจ (ไม่ใช่ค้าง).
+- เทสต์: `test_manifest_qa.py`, `test_night_queued.py`. suite 24.
