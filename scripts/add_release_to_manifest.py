@@ -184,6 +184,30 @@ def apply_qa_gate(entry: dict, receipt: dict) -> None:
     print(f"  QA grade {qa['grade']} -- publishable")
 
 
+def queue_entry(vids: list, entry: dict, receipt: dict) -> str:
+    """Merge the freshly built entry into the manifest; return added|updated.
+
+    Ordering matters: apply_qa_gate() must run BEFORE this, so a passing (re)grade
+    clears an earlier veto. A prior hit's state and qa are copied into the entry
+    only to preserve the upload record when the current run cannot re-grade -- a
+    skipped build with no receipt. Otherwise the fresh verdict wins. Getting this
+    backwards shipped state=blocked with qa=null over a fresh grade B (measured
+    2026-11-09), because the gate then edited an entry no longer in the manifest.
+    """
+    hit = next((v for v in vids if v.get("key") == entry["key"]), None)
+    if not hit:
+        vids.append(entry)
+        return "added"
+    if "video_id" in hit:
+        entry["video_id"] = hit["video_id"]
+    if not receipt:
+        entry["state"] = hit.get("state", entry.get("state", "ready"))
+        if "qa" in hit:
+            entry["qa"] = hit["qa"]
+    hit.update(entry)
+    return "updated"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", default=os.path.join(ROOT, "content", "ch2_publish.json"))
@@ -223,19 +247,8 @@ def main() -> int:
     if args.not_before:
         entry["not_before"] = args.not_before
 
-    hit = next((v for v in vids if v.get("key") == args.key), None)
-    if hit:
-        # keep the upload record; refresh only the pointers and the copy
-        for f in ("video_id", "url", "state"):
-            if f in hit:
-                entry[f] = hit[f]
-        hit.update(entry)
-        action = "updated"
-    else:
-        vids.append(entry)
-        action = "added"
-
     apply_qa_gate(entry, receipt)
+    action = queue_entry(vids, entry, receipt)
 
     with open(args.manifest, "w", encoding="utf-8") as fh:
         json.dump(man, fh, ensure_ascii=False, indent=2)
