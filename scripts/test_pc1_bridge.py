@@ -50,12 +50,16 @@ def main() -> int:
         fail("the allowlist contains a 'shell' task -- an arbitrary-command bridge "
              "reachable from the internet is exactly what this design refuses to be")
 
-    # 3. The token must come from a file, never a command-line parameter.
-    if re.search(r"\[string\]\$Token\b(?!File)", src):
-        fail("the token is a plain parameter -- it would leak into the process list "
-             "and logs; read it from $TokenFile instead")
+    # 3. The token must live in a locked file, and the scheduled-task action must
+    #    NOT carry it (a token in the action would show in the process list/logs).
     if "Get-Content -Raw -Path $TokenFile" not in src:
         fail("the token is not read from $TokenFile")
+    psargs = re.search(r"\$psArgs\s*=\s*\"(.*?)\"", src, re.S)
+    if not psargs:
+        fail("could not find the scheduled-task argument string")
+    if "$Token" in psargs.group(1):
+        fail("the scheduled-task action carries $Token -- it would leak into the "
+             "process list and logs; the action must pass only -TokenFile")
 
     # 4. It must be installed as a logon task (survives reboot) with the hidden
     #    signed powershell.exe, and it must lock the token file ACL.
