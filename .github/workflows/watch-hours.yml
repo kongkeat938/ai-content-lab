@@ -43,7 +43,7 @@ jobs:
           YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
         run: |
           set +e
-          python3 scripts/analytics.py --days 28 --json /tmp/wh.json
+          python3 scripts/analytics.py --days 28 --retention --json /tmp/wh.json
           test -f /tmp/wh.json || { echo "no measurement; nothing to record"; exit 0; }
           python3 - <<'PY'
           import json, os

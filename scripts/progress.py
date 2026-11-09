@@ -98,12 +98,14 @@ def build() -> dict:
         lf = lf if lf_exact else hours
         views = ch.get("views", 0)
         s = subs.get(slug, 0)
+        ret2 = ch.get("retention_2min")   # KPI: the opening of the best-seen long-form
         # A 28-day window scaled to a year is the honest annual pace this rail runs at.
         annual_lf = lf * 365 / max(latest.get("days", 28), 1)
         month_views = views * 30 / max(latest.get("days", 28), 1)
         rows.append({
             "slug": slug, "label": LABEL[slug], "subs": s, "hours": lf,
             "hours_all": hours, "lf_exact": lf_exact, "views": views,
+            "retention_2min": ret2,
             "annual_hours": annual_lf,
             "subs_pct": 100 * s / SUBS_TARGET,
             "hours_pct": 100 * annual_lf / HOURS_TARGET,
@@ -135,19 +137,23 @@ def render(d: dict) -> str:
              "long-form (Shorts มีเส้นทางแยก 10M วิว/90 วัน และ **ไม่นับ** เข้า 4,000 ชม.). "
              "ตัวเลขรวมทุกประเภทจะสูงเกินจริง — วัด 2026-11-09: genx รวม = 39% แต่ long-form จริง = **0.4%**")
     L.append("")
-    L.append("| ช่อง | subs | ถึง 1,000 | ชม.ดู long-form/28วัน | เทียบ 4,000/ปี | ประมาณรายได้/เดือน |")
-    L.append("|---|---:|---:|---:|---:|---:|")
+    L.append("| ช่อง | subs | ถึง 1,000 | ชม.ดู long-form/28วัน | เทียบ 4,000/ปี | ดูจบ@2นาที | ประมาณรายได้/เดือน |")
+    L.append("|---|---:|---:|---:|---:|---:|---:|")
     for r in d["rows"]:
         star = "" if r.get("lf_exact", True) else " *(รวม Shorts)*"
+        ret = r.get("retention_2min")
+        ret_txt = f"{ret:.0f}%" if ret is not None else "—"
         L.append(f"| {r['label']} | {r['subs']:,} | {r['subs_pct']:.0f}% | "
-                 f"{fmt(r['hours'])}{star} | {r['hours_pct']:.1f}% | ${r['revenue']:,.0f} |")
+                 f"{fmt(r['hours'])}{star} | {r['hours_pct']:.1f}% | {ret_txt} | ${r['revenue']:,.0f} |")
     t = d["total"]
     L.append(f"| **รวม** | **{t['subs']:,}** | **{100*t['subs']/SUBS_TARGET:.0f}%** | "
-             f"**{fmt(t['hours'])}** | **{100*t['hours']*365/max(d['days'],1)/HOURS_TARGET:.1f}%** | — |")
+             f"**{fmt(t['hours'])}** | **{100*t['hours']*365/max(d['days'],1)/HOURS_TARGET:.1f}%** | — | — |")
     L.append("")
     L.append("## อ่านตัวเลขนี้ยังไง")
-    L.append("- **ชม.ดู/28วัน → เทียบ 4,000/ปี** คือเข็มหลัก: ขยายหน้าต่าง 28 วันเป็นรายปี "
-             "แล้วเทียบเป้า 4,000 ชั่วโมง")
+    L.append("- **ชม.ดู long-form/28วัน → เทียบ 4,000/ปี** คือเข็มหลัก: ขยายหน้าต่าง 28 วันเป็นรายปี "
+             "แล้วเทียบเป้า 4,000 ชั่วโมง — **นับเฉพาะ long-form**")
+    L.append("- **ดูจบ@2นาที** = retention ที่นาทีที่ 2 ของคลิปยาวที่คนดูมากสุด. "
+             "ตัวนี้คือคันโยกจริง: วัด 2026-11-09 dharma = 29% (คนออก 71% ใน 2 นาที). เป้า ≥ 40%")
     L.append("- **รายได้/เดือน** = วิวต่อเดือน ÷ 1,000 × RPM (ประมาณการ ไม่ใช่ตัวเลขจ่ายจริง)")
     L.append("- **Shorts ไม่นับ** watch-hours → เพิ่มได้จาก long-form ที่คนดูจนจบเท่านั้น")
     L.append("")
