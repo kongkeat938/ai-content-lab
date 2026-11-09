@@ -8,15 +8,20 @@ or is a person needed at the machine?
 
 Three independent routes are probed, because they fail separately:
 
-  tailnet   https://desktop-rgk6jkb.tail8740ad.ts.net  (tailscale serve)
-  cloud     https://app.all-hands.dev/mcp/mcp          (the OpenHands proxy)
-  runner    GitHub Actions self-hosted runner on PC1
+  tailnet   https://desktop-rgk6jkb.tail8740ad.ts.net  (tailscale serve -> winremote MCP)
+  cloud     https://app.all-hands.dev/mcp/mcp          (OpenHands' OWN MCP -- egress only,
+                                                         NOT a route to PC1; see probe_cloud)
+  runner    GitHub Actions self-hosted runner on PC1 (registered in ax-workspace)
 
 A 502 on the tailnet URL is the interesting answer: it means tailscaled is up
 and the serve listener exists, so PC1 is powered on and online, but the
 winremote-mcp backend on 127.0.0.1:8090 is not answering. That is the exact
 state that makes an agent able to capture the screen but unable to run a
 command, and it is what ops/pc1_fix_remote.ps1 repairs.
+
+The runner route is the durable one: it is the only route that survives a pod
+recycle, and it is dead whenever PC1 has not (re)installed the runner -- measured
+2026-11-09: ax-workspace had 0 runners and every pc1-task job queued forever.
 
 Exit code: 0 when PC1 is drivable, 1 when it is not.
 """
@@ -31,7 +36,7 @@ import urllib.request
 
 TAILNET = os.environ.get("PC1_MCP_URL", "https://desktop-rgk6jkb.tail8740ad.ts.net")
 CLOUD = "https://app.all-hands.dev/mcp/mcp"
-REPO = "aerismusic8-alt/aeris-drive-automation"
+REPO = os.environ.get("PC1_TASK_REPO", "kongkeat938/ax-workspace")
 TIER3 = ["Shell", "FileRead", "FileWrite", "FileUpload", "FileDownload", "App", "PlaySound", "KillProcess"]
 
 
@@ -116,27 +121,44 @@ def probe_tools() -> tuple[bool, str]:
 
 
 def probe_cloud() -> tuple[bool, str]:
-    """The OpenHands proxy route. 406/400 means it is answering but not an MCP client."""
+    """The OpenHands Cloud MCP endpoint.
+
+    Measured 2026-11-09: with the bearer token this answers as an MCP server whose
+    tools are create_pr / create_mr / tavily_* -- i.e. OpenHands' own MCP, NOT a
+    route to PC1. It is probed only to prove the pod's egress is alive; it must
+    never be counted as a way to drive PC1, which is why it returns False here.
+    """
     st, _, body = http(CLOUD, "POST", {"jsonrpc": "2.0", "id": 1, "method": "initialize",
                                        "params": {"protocolVersion": "2025-06-18", "capabilities": {},
                                                   "clientInfo": {"name": "check_pc1", "version": "1"}}},
-                       headers={"Accept": "application/json, text/event-stream"})
+                       tok=token(), headers={"Accept": "application/json, text/event-stream"})
     if st == 200 and "serverInfo" in body:
-        return True, "answering as an MCP server"
+        return False, "egress OK -- this is OpenHands' own MCP (create_pr, tavily), not a PC1 route"
     if st in (401, 403):
-        return True, f"HTTP {st} - reachable, needs credentials"
-    if st == 406:
-        return True, "HTTP 406 - reachable, rejected a bare probe"
+        return False, f"HTTP {st} - reachable, needs credentials (still not a PC1 route)"
     if st == 0:
-        return False, f"unreachable ({body[:60]})"
+        return False, f"egress FAILED ({body[:60]})"
     return False, f"HTTP {st}"
 
 
 def probe_runner() -> tuple[bool, str]:
-    """A queued job older than an hour means the PC1 runner is not picking work up."""
+    """The durable route: is a PC1 self-hosted runner registered and free?
+
+    A registered runner is the only way to run a command on PC1 that survives a
+    pod recycle. Zero runners is the definitive answer -- no job can ever be
+    picked up -- and it is reported before the queued-count heuristic, because
+    "0 runners" explains a queue that the heuristic alone would call ambiguous.
+    """
     tok = os.environ.get("GITHUB_TOKEN")
     if not tok:
         return False, "no GITHUB_TOKEN in this session"
+    st, _, body = http(f"https://api.github.com/repos/{REPO}/actions/runners", tok=tok)
+    if st == 200:
+        n = json.loads(body or "{}").get("total_count", 0)
+        if n == 0:
+            return False, (f"0 runners registered in {REPO} -- PC1 has not installed "
+                           "the runner, so every pc1-task job queues forever. Install it "
+                           "on PC1 with ops/pc1_install_runner.ps1.")
     st, _, body = http(f"https://api.github.com/repos/{REPO}/actions/runs?per_page=10&status=queued",
                        tok=tok)
     if st != 200:
@@ -144,7 +166,7 @@ def probe_runner() -> tuple[bool, str]:
     d = json.loads(body or "{}")
     n = d.get("total_count", 0)
     if n == 0:
-        return True, "no queued jobs"
+        return True, "runner registered, no queued jobs"
     return False, f"{n} job(s) queued - the PC1 runner is not taking work"
 
 
@@ -153,7 +175,7 @@ def main() -> int:
     ok = True
     for label, fn in (("tailnet /health", probe_tailnet),
                       ("tailnet tools  ", probe_tools),
-                      ("cloud /mcp     ", probe_cloud),
+                      ("cloud egress   ", probe_cloud),
                       ("actions runner ", probe_runner)):
         try:
             good, msg = fn()
@@ -169,7 +191,9 @@ def main() -> int:
     else:
         print("  verdict: NOT DRIVABLE from here.")
         print("           PC1 is behind NAT with no inbound route, so the fix has to run")
-        print("           ON PC1: ops/pc1_fix_remote.ps1 (as Administrator).")
+        print("           ON PC1, and there are two independent fixes to run there:")
+        print("             1. restart the winremote MCP backend:  ops\\pc1_fix_remote.ps1 -Persist")
+        print("             2. install the durable runner:          ops\\pc1_install_runner.ps1")
         print("           Then OPEN A NEW OpenHands conversation - the tool list loads once.")
     return 0 if ok else 1
 
