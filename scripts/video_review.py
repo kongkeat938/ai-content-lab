@@ -50,6 +50,79 @@ METRICS = ("views,estimatedMinutesWatched,averageViewDuration,averageViewPercent
 # the generator's name.
 GEN_ALIAS = {"ch1": "genx", "ch2": "dharma", "ch4": "kongkeat-story"}
 
+# Committed video_id -> title maps, the fallback when the Data API quota is spent
+# (videos.list 403s on most days here). Without it every reviewed clip is titled
+# "(title unavailable)" and the panel critiques a channel it cannot read.
+TITLE_MANIFESTS = {
+    "ch1": ("content/ch1_shorts.json", "content/ch1_publish.json"),
+    "ch2": ("content/ch2_shorts.json", "content/ch2_publish.json"),
+    "ch3": ("content/ch3_shorts.json", "content/ch3_publish.json"),
+    "ch4": ("content/ch4_shorts.json", "content/ch4_publish.json"),
+}
+
+
+def manifest_titles(channel: str) -> dict[str, str]:
+    """video_id -> title, from committed sources (no API, no quota).
+
+    Sources, later winning over earlier: the per-channel learned cache
+    (content/titles/<ch>.json, written whenever the live API does answer), the
+    upload manifests, and the SEO title ledger.
+    """
+    out: dict[str, str] = {}
+    cache = os.path.join(ROOT, "content", "titles", f"{channel}.json")
+    if os.path.exists(cache):
+        try:
+            with open(cache, encoding="utf-8") as fh:
+                for vid, title in json.load(fh).items():
+                    if vid and title:
+                        out[vid] = title
+        except (json.JSONDecodeError, OSError):
+            pass
+    for rel in TITLE_MANIFESTS.get(channel, ()):
+        path = os.path.join(ROOT, rel)
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, encoding="utf-8") as fh:
+                blob = json.load(fh)
+        except (json.JSONDecodeError, OSError):
+            continue
+        for rec in (blob.get("shorts") or {}).values():
+            if rec.get("video_id") and rec.get("title"):
+                out[rec["video_id"]] = rec["title"]
+        for rec in blob.get("videos") or []:
+            if rec.get("video_id") and rec.get("title"):
+                out[rec["video_id"]] = rec["title"]
+    tc = os.path.join(ROOT, "docs", "title_changes.json")
+    if os.path.exists(tc):
+        try:
+            with open(tc, encoding="utf-8") as fh:
+                for rec in json.load(fh).get("changes", []):
+                    if rec.get("id") and rec.get("new_title"):
+                        out[rec["id"]] = rec["new_title"]
+        except (json.JSONDecodeError, OSError):
+            pass
+    return out
+
+
+def remember_titles(channel: str, titles: dict[str, str]) -> None:
+    """Persist live-resolved titles so a later quota day cannot lose them again."""
+    if not titles:
+        return
+    d = os.path.join(ROOT, "content", "titles")
+    os.makedirs(d, exist_ok=True)
+    path = os.path.join(d, f"{channel}.json")
+    cache: dict[str, str] = {}
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as fh:
+                cache = json.load(fh)
+        except (json.JSONDecodeError, OSError):
+            cache = {}
+    cache.update({k: v for k, v in titles.items() if k and v})
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(cache, fh, ensure_ascii=False, indent=1, sort_keys=True)
+
 
 def access_token(env: str) -> str:
     data = urllib.parse.urlencode({
@@ -215,6 +288,11 @@ def main() -> int:
         "endDate": str(end), "metrics": METRICS, "dimensions": "video",
         "sort": "-views", "maxResults": "50"}))
     names = titles_for(tok, [r["video"] for r in per_video])
+    remember_titles(a.channel, names)
+    # Fill any title the API could not return (a spent quota 403s videos.list) from
+    # the committed manifests, so the review never reads "(title unavailable)".
+    for vid, title in manifest_titles(a.channel).items():
+        names.setdefault(vid, title)
     for r in per_video:
         r["title"] = names.get(r["video"], "(title unavailable)")
         r["eng"] = engagement_per_1k(r)

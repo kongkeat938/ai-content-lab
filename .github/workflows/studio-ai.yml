@@ -90,13 +90,13 @@ jobs:
 
       - name: Commit what was learned
         run: |
-          if git diff --quiet content/insights content/reviews content/diagnosis docs/STUDIO-AI-*.md docs/REVIEW-*.md docs/DIAGNOSIS-*.md 2>/dev/null; then
+          if git diff --quiet content/insights content/reviews content/diagnosis content/titles docs/STUDIO-AI-*.md docs/REVIEW-*.md docs/DIAGNOSIS-*.md 2>/dev/null; then
             echo "nothing new to learn"
             exit 0
           fi
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/insights content/reviews content/diagnosis "docs/STUDIO-AI-${{ matrix.channel }}.md" \
+          git add content/insights content/reviews content/diagnosis content/titles "docs/STUDIO-AI-${{ matrix.channel }}.md" \
                   "docs/REVIEW-${{ matrix.channel }}.md" "docs/DIAGNOSIS-${{ matrix.channel }}.md"
           git commit -m "studio-ai(${{ matrix.channel }}): learn subjects, grade and diagnose the videos"
           git pull --rebase --autostash origin main
