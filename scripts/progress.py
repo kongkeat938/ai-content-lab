@@ -85,26 +85,35 @@ def build() -> dict:
     subs = scrape_subs()
 
     rows = []
-    tot_h = tot_v = tot_s = 0
+    tot_h = tot_v = tot_s = tot_lf = 0
     for slug in HANDLES:
         ch = latest.get("channels", {}).get(slug, {})
         hours = ch.get("watch_hours", 0.0)
+        # Only long-form counts toward the YPP 4,000-hour bar. A sample written
+        # before the split existed has no longform field: fall back to the channel
+        # total but mark it, so a stale sample is visible rather than silently
+        # inflating the number (genx measured 39% vs a true 0.4%).
+        lf = ch.get("longform_watch_hours")
+        lf_exact = lf is not None
+        lf = lf if lf_exact else hours
         views = ch.get("views", 0)
         s = subs.get(slug, 0)
         # A 28-day window scaled to a year is the honest annual pace this rail runs at.
-        annual_h = hours * 365 / max(latest.get("days", 28), 1)
+        annual_lf = lf * 365 / max(latest.get("days", 28), 1)
         month_views = views * 30 / max(latest.get("days", 28), 1)
         rows.append({
-            "slug": slug, "label": LABEL[slug], "subs": s, "hours": hours,
-            "views": views, "annual_hours": annual_h,
+            "slug": slug, "label": LABEL[slug], "subs": s, "hours": lf,
+            "hours_all": hours, "lf_exact": lf_exact, "views": views,
+            "annual_hours": annual_lf,
             "subs_pct": 100 * s / SUBS_TARGET,
-            "hours_pct": 100 * annual_h / HOURS_TARGET,
+            "hours_pct": 100 * annual_lf / HOURS_TARGET,
             "revenue": month_views / 1000 * RPM,
             "prev": (prev or {}).get("channels", {}).get(slug, {}),
         })
-        tot_h += hours
+        tot_h += lf
         tot_v += views
         tot_s += s
+        tot_lf += lf
     return {"measured_at": latest.get("measured_at", "?"), "days": latest.get("days", 28),
             "rows": rows, "total": {"subs": tot_s, "hours": tot_h, "views": tot_v},
             "samples": len(samples)}
@@ -122,11 +131,16 @@ def render(d: dict) -> str:
     L.append(f"เกณฑ์ YPP: **{SUBS_TARGET:,} subs + {HOURS_TARGET:,} watch-hours/12 เดือน** · "
              f"เป้ารายได้ **${REVENUE_TARGET}/เดือน/ช่อง** (ที่ RPM ${RPM:.0f})")
     L.append("")
-    L.append("| ช่อง | subs | ถึง 1,000 | ชม.ดู/28วัน | เทียบ 4,000/ปี | ประมาณรายได้/เดือน |")
+    L.append("> **หมายเหตุสำคัญ:** คอลัมน์ watch-hours นับ **เฉพาะ long-form** เพราะ YPP วัดเฉพาะ "
+             "long-form (Shorts มีเส้นทางแยก 10M วิว/90 วัน และ **ไม่นับ** เข้า 4,000 ชม.). "
+             "ตัวเลขรวมทุกประเภทจะสูงเกินจริง — วัด 2026-11-09: genx รวม = 39% แต่ long-form จริง = **0.4%**")
+    L.append("")
+    L.append("| ช่อง | subs | ถึง 1,000 | ชม.ดู long-form/28วัน | เทียบ 4,000/ปี | ประมาณรายได้/เดือน |")
     L.append("|---|---:|---:|---:|---:|---:|")
     for r in d["rows"]:
+        star = "" if r.get("lf_exact", True) else " *(รวม Shorts)*"
         L.append(f"| {r['label']} | {r['subs']:,} | {r['subs_pct']:.0f}% | "
-                 f"{fmt(r['hours'])} | {r['hours_pct']:.1f}% | ${r['revenue']:,.0f} |")
+                 f"{fmt(r['hours'])}{star} | {r['hours_pct']:.1f}% | ${r['revenue']:,.0f} |")
     t = d["total"]
     L.append(f"| **รวม** | **{t['subs']:,}** | **{100*t['subs']/SUBS_TARGET:.0f}%** | "
              f"**{fmt(t['hours'])}** | **{100*t['hours']*365/max(d['days'],1)/HOURS_TARGET:.1f}%** | — |")
