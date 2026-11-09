@@ -60,8 +60,10 @@ jobs:
           set +e
           python3 scripts/mail_watch.py --days "${{ github.event.inputs.days || '3' }}" --write
           echo "exit=$?" >> "$GITHUB_STEP_SUMMARY"
-          # When the inbox is BLIND, say why. The mail is only readable on PC1, so
-          # "PC1 is down" is the difference between a fixable outage and a mystery.
+          # The inbox is read from the cloud now (IMAP_ACCOUNTS is a repository
+          # secret), so mail no longer depends on PC1. PC1 is probed only when its
+          # funnel URL is configured; with no PC1_MCP_URL the step says so and moves
+          # on. (Measured 2026-11-09: all three mailboxes are read here.)
           python3 scripts/pc1_health.py --write >> "$GITHUB_STEP_SUMMARY" 2>&1
           cat docs/MAIL-ALERTS.md >> "$GITHUB_STEP_SUMMARY"
 
