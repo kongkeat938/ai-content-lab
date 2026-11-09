@@ -97,15 +97,44 @@ def main() -> int:
         fail("cannot read the chain interval from watchdog.yml; the health "
              "thresholds cannot be checked against it")
     chain_interval = int(m.group(1)) / 60            # seconds -> minutes
-    fm_gate = 180   # the set-thumbnails / ch4-realign style gate in foreman.py, minutes
     if health.EXPECTED["foreman"] <= chain_interval:
         fail(f"health EXPECTED['foreman']={health.EXPECTED['foreman']} min is not "
              f"above the {chain_interval:.0f}-min chain tick; it will cry wolf every link")
-    if health.EXPECTED["set-thumbnails"] <= fm_gate:
-        fail(f"health EXPECTED['set-thumbnails']={health.EXPECTED['set-thumbnails']} "
-             f"min is not above the foreman's {fm_gate}-min dispatch gate")
 
-    print("OK: health thresholds sit above the real driver cadence")
+    # 5b. GENERALISE the rule: for every rail the foreman dispatches past a gate,
+    #     health's threshold must sit above gate + one chain tick. Checking only a
+    #     hardcoded pair (the original bug) let the same defect survive in
+    #     link-shorts (gate 360 + 120 = 480 > EXPECTED 420) -- issue #20 was exactly
+    #     that false alarm. Parse every `last_success_min("X")` gate in foreman.py.
+    fsrc = open(FOREMAN, encoding="utf-8").read().splitlines()
+    gates: dict[str, int] = {}
+    for i, line in enumerate(fsrc):
+        mm = re.search(r'last_success_min\("([^"]+)"', line)
+        if not mm:
+            continue
+        window = " ".join(fsrc[i:i + 4])
+        gm = re.search(r'>\s*([0-9]+(?:\s*\*\s*[0-9]+)*)', window)
+        if not gm:
+            continue
+        val = 1
+        for f in re.findall(r"[0-9]+", gm.group(1)):
+            val *= int(f)
+        gates[mm.group(1)] = val
+    if len(gates) < 5:
+        fail(f"parsed only {len(gates)} foreman gates; the health-threshold sweep "
+             "is not seeing the foreman -- check the regex, not just the thresholds")
+    for name, gate in sorted(gates.items()):
+        exp = health.EXPECTED.get(name)
+        if exp is None:
+            continue          # guarded separately by check 6 below
+        worst = gate + chain_interval
+        if exp <= worst:
+            fail(f"health EXPECTED[{name!r}]={exp} min is not above the foreman's "
+                 f"{gate}-min gate + a {chain_interval:.0f}-min chain tick ({worst} min); "
+                 "it will open a false rail-health issue (this is the issue #20 bug)")
+
+    print(f"OK: health thresholds sit above the real driver cadence "
+          f"({len(gates)} foreman gates swept)")
 
     # 6. Every rail the foreman drives must also be watched by health.py, or it
     #    can fail with nobody told. Measured 2026-11-09: "fetch music" had been
