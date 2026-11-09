@@ -42,7 +42,10 @@ jobs:
     # matrix is not available to a workflow-level concurrency group, so the lock
     # lives here, one per channel.
     concurrency:
-      group: publish-shorts-${{ matrix.channel }}
+      # Shared with remake-shorts: a publish and a remake for the same
+      # channel must never push at once (measured 2026-11-09: they did,
+      # and a rebase conflict lost a live remake id).
+      group: shorts-upload-${{ matrix.channel }}
       cancel-in-progress: false
     strategy:
       fail-fast: false
@@ -92,6 +95,8 @@ jobs:
         run: |
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
+          # Union-merge the append-only JSON ledgers (scripts/git_union_merge.py)
+          git config merge.unionjson.driver "python3 scripts/git_union_merge.py %O %A %B"
           git add "${{ matrix.manifest }}"
           # The art/bed ledgers record which image and which bed each Short used,
           # so the next clip cannot repeat them (the owner's no-repeat rule).
