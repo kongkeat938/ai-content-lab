@@ -26,6 +26,13 @@ ROOT = os.path.dirname(HERE)
 # use this shape; an abstract reassurance does not.
 ACTION_CUES = ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ลองกด", "ปล่อยลมหายใจ")
 
+# The panel's other half of the lever: the promise must land fast. edge-tts Thai
+# speaks ~9 characters per second here, so 220 characters is ~24 s -- inside the
+# 30 s ceiling qa_gate enforces. Measured 2026-11-09: a 361-char hook spoke for
+# 40.3 s, which both failed qa_gate (state=blocked) and matched the 28.9% retention
+# at 2:00 -- a long opening is where the 71% who leave are lost.
+MAX_HOOK_CHARS = 220
+
 
 def fail(msg: str) -> None:
     print(f"FAIL: {msg}")
@@ -40,6 +47,11 @@ def main() -> int:
     if not any(c in hook for c in ACTION_CUES):
         fail("the dharma hook has no concrete action cue "
              f"(one of {ACTION_CUES}); the measured lever is a concrete opening")
+    chars = len(hook.strip())
+    if chars > MAX_HOOK_CHARS:
+        fail(f"the dharma hook is {chars} chars (~{chars/9:.0f}s spoken); it must be "
+             f"<= {MAX_HOOK_CHARS} so the promise lands before the 30 s ceiling. "
+             "A long opening is where the retention is lost and qa_gate blocks it.")
 
     gen = open(os.path.join(HERE, "gen_night_scripts.py"), encoding="utf-8").read()
     m = re.search(r'\(\s*"open"\s*,\s*"([^"]+)"', gen)
