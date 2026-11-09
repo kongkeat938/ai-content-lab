@@ -88,6 +88,43 @@
         }
       },
       "total_watch_hours": 219.87
+    },
+    {
+      "measured_at": "2026-11-09T16:20:59+00:00",
+      "days": 28,
+      "start": "2026-10-12",
+      "end": "2026-11-09",
+      "channels": {
+        "genx": {
+          "views": 27014,
+          "watch_hours": 120.16666666666667,
+          "longform_watch_hours": 1.33,
+          "shorts_watch_hours": 118.88,
+          "subs_gained": 153,
+          "subs_lost": 7
+        },
+        "dharma": {
+          "views": 14017,
+          "watch_hours": 79.76666666666667,
+          "longform_watch_hours": 44.4,
+          "shorts_watch_hours": 35.43,
+          "subs_gained": 49,
+          "subs_lost": 6,
+          "retention_2min": 28.9,
+          "retention_2min_video": "F4qFHoVpEyI",
+          "retention_2min_views": 361
+        },
+        "kongkeat": {
+          "views": 6126,
+          "watch_hours": 19.933333333333334,
+          "longform_watch_hours": 0.52,
+          "shorts_watch_hours": 19.43,
+          "subs_gained": 11,
+          "subs_lost": 1
+        }
+      },
+      "total_watch_hours": 219.87,
+      "total_longform_watch_hours": 46.25
     }
   ]
 }
