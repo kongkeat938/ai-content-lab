@@ -36,7 +36,8 @@ param(
   [string]$Labels = 'pc1',
   [string]$RunnerDir = 'C:\actions-runner',
   [string]$Version = '2.338.2',
-  [string]$TaskName = 'ax-github-runner'
+  [string]$TaskName = 'ax-github-runner',
+  [switch]$Clean
 )
 
 $ErrorActionPreference = 'Stop'
@@ -54,33 +55,57 @@ Step 'paths'
 New-Item -ItemType Directory -Force -Path $RunnerDir | Out-Null
 Say "runner dir = $RunnerDir"
 
-# --- 1. Download the runner, only if it is not already unpacked.
+# config.cmd is only a wrapper: it invokes bin\Runner.Listener.exe. A partial
+# extract can leave config.cmd present while bin\ is missing, and then config.cmd
+# fails with "The system cannot find the file specified" (exit 1) -- the exact
+# failure seen on PC1. So completeness means the listener exe exists, not just
+# run.cmd / config.cmd.
 $runCmd = Join-Path $RunnerDir 'run.cmd'
-if (-not (Test-Path $runCmd)) {
+$configCmd = Join-Path $RunnerDir 'config.cmd'
+$listener = Join-Path $RunnerDir 'bin\Runner.Listener.exe'
+$complete = (Test-Path $runCmd) -and (Test-Path $configCmd) -and (Test-Path $listener)
+
+if ($Clean -and (Test-Path $RunnerDir)) {
+  Step 'clean'
+  Say "removing $RunnerDir (-Clean)"
+  Remove-Item -Recurse -Force $RunnerDir -ErrorAction SilentlyContinue
+  New-Item -ItemType Directory -Force -Path $RunnerDir | Out-Null
+}
+
+# --- 1. Download and unpack unless the previous unpack is provably complete.
+if (-not $complete) {
   $zip = Join-Path $env:TEMP "actions-runner-win-x64-$Version.zip"
   $url = "https://github.com/actions/runner/releases/download/v$Version/actions-runner-win-x64-$Version.zip"
   Step 'download'
   Say "url = $url"
-  if (-not (Test-Path $zip)) {
-    Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
-  }
+  # A truncated zip from an earlier failed download is indistinguishable from a
+  # good one by name, so fetch it fresh whenever the unpack is incomplete.
+  if (Test-Path $zip) { Remove-Item -Force $zip -ErrorAction SilentlyContinue }
+  Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
   Say "zip = $zip ($((Get-Item $zip).Length) bytes)"
   Step 'extract'
   Expand-Archive -Path $zip -DestinationPath $RunnerDir -Force
+  if (-not (Test-Path $listener)) {
+    throw "EXTRACT_INCOMPLETE: $listener missing after Expand-Archive -- re-run with -Clean"
+  }
   Say 'extracted'
 } else {
   Step 'download'
-  Say "already present, skipping ($runCmd)"
+  Say "already present and complete, skipping ($runCmd)"
 }
 
 # --- 2. Register. --replace takes over an existing registration with the same name,
-#        which is what makes a re-run a repair rather than an error.
+#        which is what makes a re-run a repair rather than an error. The full config
+#        output is echoed on failure, so a failed registration names its own cause
+#        instead of only "exit 1".
 Step 'register'
 Push-Location $RunnerDir
 try {
-  & .\config.cmd --url $RepoUrl --token $Token --name $Name --labels $Labels `
-      --unattended --replace
-  if ($LASTEXITCODE -ne 0) { throw "CONFIG_FAILED: exit $LASTEXITCODE" }
+  & $configCmd --url $RepoUrl --token $Token --name $Name --labels $Labels `
+      --unattended --replace 2>&1 | ForEach-Object { Say $_ }
+  if ($LASTEXITCODE -ne 0) {
+    throw "CONFIG_FAILED: exit $LASTEXITCODE (see the config output above; if it is a token problem, mint a fresh registration token and re-run)"
+  }
   Say 'registered'
 } finally { Pop-Location }
 
