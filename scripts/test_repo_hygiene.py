@@ -137,9 +137,32 @@ def main() -> int:
              "will not rebuild: " + ", ".join(hook_untracked) + " -- add the hook "
              "path to the `fp=\"$(cat ...)` block")
 
+    # 6. `channel_overhaul.py --only playlists` silently skips the trailer step.
+    #    Measured 2026-11-09: every rail called it that way, so NO channel had an
+    #    `unsubscribedTrailer` -- the clip a non-subscriber sees first, and a direct
+    #    subscribe lever -- sitting unused. The trailer must be set, so forbid the
+    #    playlists-only form.
+    no_trailer = []
+    for name in sorted(os.listdir(wf_dir)):
+        if not name.endswith((".yml", ".yaml")):
+            continue
+        text = open(os.path.join(wf_dir, name), encoding="utf-8").read()
+        if "channel_overhaul.py" not in text:
+            continue
+        for ln in text.splitlines():
+            if ln.lstrip().startswith("#"):
+                continue
+            if "--only playlists" in ln:
+                no_trailer.append(name)
+                break
+    if no_trailer:
+        fail("these workflows run channel_overhaul with `--only playlists`, which "
+             "skips the trailer: " + ", ".join(no_trailer) + " -- drop the --only "
+             "so the channel gets an unsubscribedTrailer")
+
     print(f"OK: no conflict markers, all JSON parses, every pushing workflow "
-          f"rebases, releases carry the receipt, hooks are fingerprinted "
-          f"({len(tracked_files())} files)")
+          f"rebases, releases carry the receipt, hooks are fingerprinted, trailers "
+          f"are wired ({len(tracked_files())} files)")
     return 0
 
 

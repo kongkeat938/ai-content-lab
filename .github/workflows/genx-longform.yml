@@ -164,6 +164,17 @@ jobs:
             || gh release upload "$tag" work/ch1_long/video.mp4 work/ch1_long/compilation.mp3 work/ch1_long/receipt.json \
                --repo "${{ github.repository }}" --clobber
 
+      - name: Set the genx trailer
+        # No rail set ch1's unsubscribedTrailer (measured 2026-11-09), so a
+        # non-subscriber had no clip to be pulled in by. Idempotent: it re-sets the
+        # same best Short every run. Runs after the 08:00 quota reset.
+        if: github.event_name == 'schedule'
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+        run: python3 scripts/channel_overhaul.py --channel ch1 --only trailer
+
       - name: Add the release to the genx publish manifest and start the upload
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

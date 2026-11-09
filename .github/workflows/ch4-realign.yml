@@ -61,9 +61,11 @@ jobs:
             python3 scripts/set_channel_name.py --apply
           fi
 
-      - name: Rename the playlists in place
+      - name: Set the trailer and rename the playlists in place
         run: |
-          ARGS="--channel ch4 --only playlists"
+          # No --only: run the trailer too (a non-subscriber's first impression and
+          # a direct subscribe lever; measured 2026-11-09, no rail had ever set it).
+          ARGS="--channel ch4"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           python3 scripts/channel_overhaul.py $ARGS
 

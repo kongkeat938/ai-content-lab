@@ -9,6 +9,11 @@ name: ch2-playlists
 # idempotently (it re-uses an existing playlist by title and adds only the videos
 # that are missing), it was just never wired to run on ch2.
 #
+# It also sets `unsubscribedTrailer` -- the clip a non-subscriber sees first. No
+# channel had a trailer (measured 2026-11-09: the trailer branch had never been
+# invoked by any rail), and a trailer is a direct subscribe lever, so this job now
+# runs the whole channel_overhaul (trailer + playlists), not just --only playlists.
+#
 # Quota: playlists.insert and playlistItems.insert draw the daily pool, which
 # resets at midnight Pacific (08:00 UTC); a tick before that defers cleanly.
 on:
@@ -45,8 +50,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Organise ch2 playlists
+      - name: Set the trailer and organise the ch2 playlists
         run: |
-          ARGS="--channel ch2 --only playlists"
+          ARGS="--channel ch2"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           python3 scripts/channel_overhaul.py $ARGS
