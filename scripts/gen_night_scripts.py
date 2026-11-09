@@ -128,11 +128,21 @@ def main() -> int:
     stages = ARC[:a.count]
     pieces, skipped = [], []
     for i, (name, want) in enumerate(stages, 1):
-        text = ask(key, prompt_for(a.theme, name, want))
-        ok, reason = valid(text)
-        if not ok:
+        text, reason = "", "no attempt"
+        # Retry: a piece that fails the shape gate must not be silently dropped.
+        # Measured 2026-11-09: a set shipped without its 01_open because one
+        # response tripped the gate and was skipped -- the cold open is the exact
+        # lever the decision named, so a silent drop disarms the fix.
+        for attempt in range(3):
+            cand = ask(key, prompt_for(a.theme, name, want))
+            ok, reason = valid(cand)
+            if ok:
+                text = cand
+                break
+            time.sleep(2)
+        if not text:
             skipped.append((name, reason))
-            print(f"  {i:02d}_{name}: SKIP ({reason})", flush=True)
+            print(f"  {i:02d}_{name}: SKIP after 3 tries ({reason})", flush=True)
             continue
         pieces.append((f"{i:02d}_{name}", text))
         n = len([ln for ln in text.splitlines() if ln.strip()])
@@ -142,6 +152,15 @@ def main() -> int:
         for name, text in pieces:
             print(f"\n===== {name} =====\n{text}")
         return 0
+
+    # A set missing its opening (or any stage) would build a shorter talk than the
+    # arc intends and, under a --minutes floor, get looped twice. Fail loudly
+    # instead of writing a partial set -- the caller can regenerate.
+    missing = [name for name, _ in stages if name not in {n.split("_", 1)[1] for n, _ in pieces}]
+    if missing:
+        raise SystemExit(
+            f"could not generate {missing} after retries; refusing to write a "
+            f"partial set to {a.out} (skipped: {skipped})")
 
     os.makedirs(a.out, exist_ok=True)
     for name, text in pieces:
