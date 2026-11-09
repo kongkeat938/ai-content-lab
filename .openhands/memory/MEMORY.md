@@ -78,6 +78,13 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
   Data API resets **08:00 UTC**; Analytics has its own quota. GITHUB_TOKEN push does NOT trigger a
   workflow → dispatch explicitly (`KONGKEAT_GH_TOKEN` can).
 
+- **Racing jobs lose records:** publish-shorts and remake-shorts for the same channel pushed at
+  once (2026-11-09); `--autostash` + `check=True` hid a conflict in `content/upload_log.json`, a
+  live remake id (QLUp6sV16fs) was never recorded, and a 403'd privacy move vanished. Fix = one
+  **shared concurrency group per channel** (`shorts-upload-<ch>`) **and** a union merge driver
+  (`scripts/git_union_merge.py`, `.gitattributes merge=unionjson`) for the append-only ledgers.
+  Guard `test_union_merge.py`. Any new rail that commits a ledger needs both.
+
 ## 🗂️ Where things are
 - **Automation:** GitHub Actions only (the pod is recycled when idle). watchdog (self-chaining) →
   foreman (dispatches what is due) → rails. Health: `scripts/health.py` → `docs/HEALTH.md` + issue.
