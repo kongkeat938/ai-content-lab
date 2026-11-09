@@ -65,6 +65,32 @@ def main() -> int:
     A.apply_qa_gate(e, receipt(40.3))
     check("a published entry keeps its state", e["state"] == "published", e["state"])
 
+    # 6. The ordering bug: a fresh grade B must beat the hit's stale state=blocked.
+    #    apply_qa_gate then queue_entry is the only correct order; reversed, the
+    #    merge copies state=blocked and qa=null back over the new verdict.
+    vids = [{"key": "k", "state": "blocked", "qa": None, "video_url": "old"}]
+    entry = {"key": "k", "state": "ready", "duration_sec": 7208.3, "video_url": "new"}
+    A.apply_qa_gate(entry, receipt(12.0))
+    A.queue_entry(vids, entry, receipt(12.0))
+    check("a re-grade clears the stale blocked state in the manifest",
+          vids[0]["state"] == "ready" and (vids[0].get("qa") or {}).get("grade") == "B",
+          f'{vids[0]["state"]}/{vids[0].get("qa", {}).get("grade") if vids[0].get("qa") else None}')
+
+    # 7. Without a receipt the upload record is preserved (skip path).
+    vids = [{"key": "k", "state": "published", "qa": {"grade": "B"}, "video_id": "abc"}]
+    entry = {"key": "k", "state": "ready"}
+    A.apply_qa_gate(entry, {})
+    A.queue_entry(vids, entry, {})
+    check("a no-receipt re-run keeps the live record",
+          vids[0]["state"] == "published" and vids[0]["video_id"] == "abc"
+          and vids[0]["qa"]["grade"] == "B", vids[0]["state"])
+
+    # 8. A brand-new key is appended.
+    vids = []
+    check("a new key is added",
+          A.queue_entry(vids, {"key": "new", "state": "ready"}, receipt(12.0)) == "added"
+          and len(vids) == 1)
+
     if FAILS:
         print(f"\nFAILED: {FAILS}")
         return 1
