@@ -120,11 +120,30 @@ jobs:
           # voice and edge-tts changes the audio and must force a rebuild.
           fp="${fp}-$(echo "${FISH_REFERENCE_ID:-edge}" | sha256sum | cut -c1-6)"
           echo "fp=$fp" >> "$GITHUB_OUTPUT"
-          if gh release view "night-$fp" >/dev/null 2>&1; then
-            echo "build $fp already exists; nothing changed"
+          tag="night-$fp"
+          # Two different questions, and conflating them loses a built video:
+          #   skip       -- the expensive build: true when the release already
+          #                 holds these exact bytes, so rebuilding is wasted CI.
+          #   skip_pub   -- the manifest hand-off: true ONLY when the video is
+          #                 already queued/published in the manifest. A release
+          #                 that exists but is NOT in the manifest must still be
+          #                 queued, or the file sits on a Release forever.
+          # Measured 2026-11-09: the build succeeded but its manifest push lost a
+          # race, so the release existed with no manifest entry. Re-running then
+          # saw "release exists" and skipped the hand-off -- the video was stranded.
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "build $tag already exists; skipping the rebuild"
             echo "skip=true" >> "$GITHUB_OUTPUT"
+            if python3 scripts/night_built_queued.py "$tag"; then
+              echo "and it is already published; skipping the manifest hand-off"
+              echo "skip_pub=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "but it is not queued yet; the manifest hand-off will run"
+              echo "skip_pub=false" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "skip_pub=false" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -192,7 +211,10 @@ jobs:
         # This is the hand-off the rail was missing: without it the file sat on a
         # Release and a person had to write the manifest entry by hand. Writing it
         # here is what turns the weekly build into a weekly published video.
-        if: steps.fp.outputs.skip != 'true'
+        # Runs whenever the video is not yet queued -- including a re-run where the
+        # build was skipped because the release already exists (skip=true) but its
+        # manifest push had failed, so the file would otherwise be stranded.
+        if: steps.fp.outputs.skip != 'true' || steps.fp.outputs.skip_pub != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -201,12 +223,18 @@ jobs:
           TITLE="${{ inputs.title }}"
           TITLE="${TITLE:-ธรรมะก่อนนอน 120 นาที หลับลึกถึงเช้า ปล่อยวางความเครียดทั้งวัน จิตสงบ}"
           MIN="${{ inputs.minutes || '120' }}"
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          # This job runs ~90 min, so main has moved by the time it writes. Pull
+          # FIRST so the manifest edit lands on the latest main and the push is a
+          # fast-forward -- a single pull-after-edit loses the race (measured
+          # 2026-11-09: 'failed to push some refs' when a concurrent commit landed
+          # between the pull and the push, stranding the built video on a Release).
+          git pull --rebase origin main || true
           python3 scripts/add_release_to_manifest.py \
             --tag "night-${{ steps.fp.outputs.fp }}" \
             --key "$KEY" --content "$CONTENT" --minutes "$MIN" \
             --title "$TITLE" --receipt work/night/receipt.json
-          git config user.name "openhands"
-          git config user.email "openhands@all-hands.dev"
           git add content/ch2_publish.json
           git add assets/branding/farmmer/thumbs 2>/dev/null || true
           if git diff --cached --quiet; then
@@ -214,8 +242,14 @@ jobs:
             exit 0
           fi
           git commit -m "night: queue $KEY for publish [skip ci]"
-          git pull --rebase --autostash origin main
-          git push
+          pushed=0
+          for i in 1 2 3 4 5; do
+            if git push; then pushed=1; break; fi
+            git pull --rebase origin main || true
+            echo "push attempt $i lost the race; retrying"
+            sleep 5
+          done
+          [ "$pushed" = 1 ] || { echo "could not push the manifest after retries"; exit 1; }
           # A push made with GITHUB_TOKEN does not start another workflow, so the
           # upload is dispatched explicitly rather than left to the push trigger.
           # `publish_at=slot` schedules the release at the next 19:30 Bangkok:
