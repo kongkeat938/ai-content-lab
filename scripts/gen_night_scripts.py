@@ -40,7 +40,8 @@ MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-prev
 # is generated one piece per angle so the compilation has a real arc rather than
 # eight variations on the same thought.
 ARC = [
-    ("open", "เปิดคืนนี้ ต้อนรับการพักผ่อน บอกว่าไม่ต้องทำอะไรให้สำเร็จ"),
+    ("open", "เปิดคืนนี้แบบเจาะจง: เรียกคนที่นอนไม่หลับ แล้วชวนทำสิ่งที่ลงมือได้ทันที "
+             "(วางมือบนท้อง หายใจเข้าลึก ๆ แล้วปล่อยยาว) ก่อนค่อย ๆ ผ่อนคลาย"),
     ("body", "ผ่อนคลายร่างกายทีละส่วน ตั้งแต่ศีรษะถึงปลายเท้า"),
     ("breath", "ตามดูลมหายใจ ไม่บังคับ แค่รู้ตัวว่าหายใจ"),
     ("letgo", "วางสิ่งที่ถือมาทั้งวัน ความกังวลและความผิดหวัง"),

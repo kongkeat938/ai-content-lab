@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Guard the measured lever: the opening must be concrete, not abstract.
+
+Measured 2026-11-09: dharma's 120-min long-form keeps only 28.9% of viewers at
+the 2:00 mark (71% leave), while the channel's winning Shorts are all *specific
+and actionable* ("นอนไม่หลับ? ลองทำท่านี้ 10 วินาที", "วางมือบนท้องนะ"). The old
+long-form hook was abstract ("ไม่ต้องทำอะไรเลย") and matched nothing that works.
+
+The decision (docs/DECISION-2026-11-09.md) therefore rewrote the dharma hook and
+the night-set opening angle to open with a concrete action a listener can do at
+once. This test fails if either drifts back to pure abstraction, so the fix cannot
+be silently lost in a later edit.
+
+    python3 scripts/test_hook_concrete.py
+"""
+from __future__ import annotations
+
+import os
+import re
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+
+# A concrete action cue a listener can act on immediately. The proven winners
+# use this shape; an abstract reassurance does not.
+ACTION_CUES = ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ลองกด", "ปล่อยลมหายใจ")
+
+
+def fail(msg: str) -> None:
+    print(f"FAIL: {msg}")
+    sys.exit(1)
+
+
+def main() -> int:
+    hook_path = os.path.join(ROOT, "content", "hooks", "dharma.md")
+    if not os.path.exists(hook_path):
+        fail(f"missing {hook_path}")
+    hook = open(hook_path, encoding="utf-8").read()
+    if not any(c in hook for c in ACTION_CUES):
+        fail("the dharma hook has no concrete action cue "
+             f"(one of {ACTION_CUES}); the measured lever is a concrete opening")
+
+    gen = open(os.path.join(HERE, "gen_night_scripts.py"), encoding="utf-8").read()
+    m = re.search(r'\(\s*"open"\s*,\s*"([^"]+)"', gen)
+    if not m:
+        fail("could not find the 'open' angle in gen_night_scripts.py ARC")
+    open_angle = m.group(1)
+    if not any(c in open_angle for c in ("ลงมือ", "วางมือ", "หายใจ", "ทำทันที")):
+        fail("the night-set opening angle is abstract again; it must ask for a "
+             f"concrete action. Got: {open_angle!r}")
+
+    print("OK: the dharma hook and the night-set opening ask for a concrete action "
+          "(the measured retention lever)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
