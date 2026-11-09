@@ -73,6 +73,16 @@ def main() -> int:
             if "long-form" not in text:
                 fail("the report does not say the number is long-form only")
 
+            # The retention KPI must surface when the sample carries it.
+            split_sample["channels"]["dharma"]["retention_2min"] = 28.9
+            with open(os.path.join(td, "docs", "watch_hours.json"), "w") as fh:
+                json.dump({"samples": [split_sample]}, fh)
+            text2 = progress.render(progress.build())
+            if "29%" not in text2:
+                fail("the report does not show retention@2min from the sample")
+            if "ดูจบ@2นาที" not in text2:
+                fail("the report has no retention@2min column")
+
             # A pre-split sample: no longform field -> fall back to the total but
             # flag it, so a stale sample cannot masquerade as the exact number.
             stale = {"measured_at": "2026-11-08T00:00:00+00:00", "days": 28,

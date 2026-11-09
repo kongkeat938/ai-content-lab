@@ -236,22 +236,39 @@ def main() -> int:
             tok = access_token(env)
             try:
                 rows = analytics(tok, start, end,
-                                 "views,estimatedMinutesWatched,averageViewDuration",
+                                 "views,estimatedMinutesWatched,averageViewDuration,"
+                                 "averageViewPercentage",
                                  dims="video", sort="-views", max_results=50)
             except urllib.error.HTTPError as exc:
                 print(f"  {name}: FAILED {exc.code}")
                 continue
             longforms = [r for r in rows if r[3] >= 300]   # >= 5 min avg view
+            # Duration from the Analytics API, not the Data API: duration =
+            # averageViewDuration / (averageViewPercentage/100). The Data API is
+            # spent most days here, so a durations() call returns nothing and the
+            # retention number silently reads n/a -- the KPI would be dark.
             try:
                 durs = durations(tok, [r[0] for r in longforms])
             except urllib.error.HTTPError:
                 durs = {}
-            for vid, v, _m, avd in longforms:
+            best = None
+            for vid, v, _m, avd, avpct in longforms:
                 d = durs.get(vid, 0)
+                if not d and avd and avpct and avpct > 0:
+                    d = avd / (avpct / 100.0)
                 pct = retention_at(tok, cid, vid, 120, d) if d else None
                 tag = f"{pct:5.1f}%" if pct is not None else "  n/a"
                 print(f"  {name:9s} {vid}  views={v:>4.0f}  "
                       f"dur={d/60:>5.1f}m  retention@2min={tag}")
+                # The KPI is the channel's best-viewed long-form: the opening of the
+                # video most people actually see. Views-weight it, so a big video
+                # with a working opening is not outvoted by an unseen one.
+                if pct is not None and (best is None or v > best[0]):
+                    best = (v, pct, vid)
+            if best:
+                out["channels"].setdefault(name, {})["retention_2min"] = round(best[1], 1)
+                out["channels"][name]["retention_2min_video"] = best[2]
+                out["channels"][name]["retention_2min_views"] = best[0]
 
     out["total_watch_hours"] = round(total_h, 2)
     out["total_longform_watch_hours"] = round(total_lf, 2)
