@@ -112,6 +112,7 @@ jobs:
           # nothing. Fingerprint the content and the rail; if that release tag
           # already exists, the same bytes have already been built and verified.
           fp="$(cat "${{ steps.pick.outputs.content }}"/*.txt \
+                 content/hooks/dharma.md \
                  scripts/make_compilation.py \
                  scripts/make_bed.py scripts/make_audio.py \
                  scripts/make_chapter_video.py scripts/make_night_video.py \
@@ -193,11 +194,11 @@ jobs:
         run: |
           tag="night-${{ steps.fp.outputs.fp }}"
           gh release create "$tag" \
-            work/night/video.mp4 work/night/compilation.mp3 \
+            work/night/video.mp4 work/night/compilation.mp3 work/night/receipt.json \
             --repo "${{ github.repository }}" \
             --title "$tag" \
             --notes "Verified night compilation. Regenerable from content/ + scripts/." \
-            || gh release upload "$tag" work/night/video.mp4 work/night/compilation.mp3 \
+            || gh release upload "$tag" work/night/video.mp4 work/night/compilation.mp3 work/night/receipt.json \
                --repo "${{ github.repository }}" --clobber
 
       - name: Open one review issue with the measured numbers
@@ -231,6 +232,15 @@ jobs:
           # 2026-11-09: 'failed to push some refs' when a concurrent commit landed
           # between the pull and the push, stranding the built video on a Release).
           git pull --rebase origin main || true
+          # A re-run that skipped the build has no receipt in work/night; fetch the
+          # one the build uploaded to the Release, so the QA gate grades the real
+          # numbers instead of an empty receipt (which grades as a false veto).
+          if [ ! -f work/night/receipt.json ]; then
+            mkdir -p work/night
+            gh release download "night-${{ steps.fp.outputs.fp }}" \
+              --repo "${{ github.repository }}" --pattern receipt.json \
+              --dir work/night --clobber || true
+          fi
           python3 scripts/add_release_to_manifest.py \
             --tag "night-${{ steps.fp.outputs.fp }}" \
             --key "$KEY" --content "$CONTENT" --minutes "$MIN" \

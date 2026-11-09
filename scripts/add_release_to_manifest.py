@@ -152,6 +152,38 @@ CHANNELS = {
 }
 
 
+def apply_qa_gate(entry: dict, receipt: dict) -> None:
+    """Grade a finished build and set entry['state'] from the verdict.
+
+    A blocked build is recorded but never uploaded (publish_batch skips
+    state=blocked). Two guards, both learned the hard way (2026-11-09):
+
+    * an EMPTY receipt means the build was skipped, not that the video is bad.
+      grade({}) returns blocked (verdict is None) -- a false veto that stranded a
+      verified video -- so with no receipt the state is left untouched.
+    * a passing (re)grade must clear an earlier veto, or a fixed build stays
+      blocked forever because the manifest hit still carries state=blocked.
+    """
+    if not receipt:
+        print("  no receipt here (build was skipped); leaving the state unchanged")
+        return
+    try:
+        sys.path.insert(0, HERE)
+        import qa_gate  # noqa: E402
+        qa = qa_gate.grade(receipt)
+    except Exception as exc:  # noqa: BLE001 - a missing gate must not block the rail
+        print(f"  QA gate skipped ({exc})")
+        return
+    entry["qa"] = qa
+    if qa["blocked"] and not entry.get("video_id"):
+        entry["state"] = "blocked"
+        print(f"  QA VETO (grade {qa['grade']}): " + "; ".join(qa["reasons"]))
+        return
+    if not entry.get("video_id"):
+        entry["state"] = "ready"
+    print(f"  QA grade {qa['grade']} -- publishable")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", default=os.path.join(ROOT, "content", "ch2_publish.json"))
@@ -203,21 +235,7 @@ def main() -> int:
         vids.append(entry)
         action = "added"
 
-    # The QA/critic gate. Every other rail only checks that the file is well-formed;
-    # this is the one that can refuse to publish a boring one. A blocked build is
-    # recorded but never uploaded -- publish_batch skips state=blocked.
-    try:
-        sys.path.insert(0, HERE)
-        import qa_gate  # noqa: E402
-        qa = qa_gate.grade(receipt)
-        entry["qa"] = qa
-        if qa["blocked"] and not entry.get("video_id"):
-            entry["state"] = "blocked"
-            print(f"  QA VETO (grade {qa['grade']}): " + "; ".join(qa["reasons"]))
-        else:
-            print(f"  QA grade {qa['grade']} -- publishable")
-    except Exception as exc:  # noqa: BLE001 - a missing gate must not block the rail
-        print(f"  QA gate skipped ({exc})")
+    apply_qa_gate(entry, receipt)
 
     with open(args.manifest, "w", encoding="utf-8") as fh:
         json.dump(man, fh, ensure_ascii=False, indent=2)

@@ -44,7 +44,12 @@ HOOK_MIN_SEC, HOOK_MAX_SEC = 2.0, 30.0
 # Where a listener actually stays. Inside = full marks; outside = a warning, not a
 # veto, because a deliberately long sleep file is a legitimate format.
 LEN_OK_MIN, LEN_OK_MAX = 15 * 60, 40 * 60
-LEN_WARN_MIN, LEN_WARN_MAX = 8 * 60, 90 * 60
+# The night rail deliberately ships a 120-minute sleep file (build_night.py
+# --minutes 120) -- that IS the format, not a defect. The old ceiling of 90 min
+# vetoed every such build (measured 2026-11-09: a verified 120.5-min file was
+# written state=blocked), so the ceiling now covers the intended 2-hour format
+# with headroom while still failing a file that is nothing like the format.
+LEN_WARN_MIN, LEN_WARN_MAX = 8 * 60, 150 * 60
 
 
 def _get(d: dict, *path, default=None):

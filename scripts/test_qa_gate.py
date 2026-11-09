@@ -94,6 +94,28 @@ def main() -> int:
     if not qa_gate.grade(long_card)["blocked"]:
         fail("a 20-minute card was not vetoed as static")
 
+    # The night rail's intended format: 120 min, a short hook, many cards. This
+    # must be publishable -- the old 90-min ceiling vetoed every such build.
+    night = {
+        "verdict": "pass",
+        "audio_info": {"hook": {"duration_sec": 19.0}},
+        "video_info": {"duration_sec": 7228.75, "chapters": 27,
+                       "chapter_seconds": [258.0] * 27, "true_peak_dbfs": -3.1},
+    }
+    ng = qa_gate.grade(night)
+    if ng["blocked"]:
+        fail(f"the intended 120-minute night build was vetoed: {ng['reasons']}")
+
+    # But a file nothing like the format (200 min) is still vetoed.
+    absurd = {
+        "verdict": "pass",
+        "audio_info": {"hook": {"duration_sec": 19.0}},
+        "video_info": {"duration_sec": 200 * 60, "chapters": 27,
+                       "chapter_seconds": [444.0] * 27, "true_peak_dbfs": -3.1},
+    }
+    if not qa_gate.grade(absurd)["blocked"]:
+        fail("a 200-minute file was not vetoed as far from any usable format")
+
     # And the veto must reach the manifest writer, not just the grader.
     writer = open(os.path.join(HERE, "add_release_to_manifest.py"), encoding="utf-8").read()
     if 'state"] = "blocked"' not in writer:
