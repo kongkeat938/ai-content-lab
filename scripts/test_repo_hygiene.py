@@ -10,6 +10,11 @@ was driven from the chain until it was found. Two properties lock that out:
      was committed unresolved, which is always a bug.
   2. Every JSON file the rails read must parse. A committed marker breaks
      json.load, and a broken ledger silently stops a cap from being counted.
+  3. Every workflow that runs `git push` must `git pull --rebase` first. Rails run
+     concurrently and all commit to main, so a push onto a stale base is rejected
+     -- measured 2026-11-09: fetch-music.yml was the only workflow without the
+     rebase and its push failed against a foreman push (the same race that, in the
+     foreman itself, once committed conflict markers).
 
     python3 scripts/test_repo_hygiene.py     # exit 0 = no committed conflict
 """
@@ -68,7 +73,24 @@ def main() -> int:
         fail("unparsable JSON: " + "; ".join(json_bad) + " -- a rail that reads "
              "this file will crash, as the foreman did on 2026-11-09")
 
-    print(f"OK: no conflict markers, all JSON parses ({len(tracked_files())} files)")
+    # A workflow that pushes must rebase first, or it races every other rail that
+    # commits to main. Skip a push in a workflow_dispatch-only path that never
+    # lands on main? None exist; every `git push` here writes main.
+    racy = []
+    wf_dir = os.path.join(ROOT, ".github", "workflows")
+    for name in sorted(os.listdir(wf_dir)):
+        if not name.endswith((".yml", ".yaml")):
+            continue
+        text = open(os.path.join(wf_dir, name), encoding="utf-8").read()
+        if "git push" in text and "git pull --rebase" not in text:
+            racy.append(name)
+    if racy:
+        fail(f"these workflows push without rebasing first: {', '.join(racy)} -- "
+             "a concurrent rail will reject the push; add `git pull --rebase "
+             "--autostash origin main` before `git push`")
+
+    print(f"OK: no conflict markers, all JSON parses, every pushing workflow "
+          f"rebases ({len(tracked_files())} files)")
     return 0
 
 

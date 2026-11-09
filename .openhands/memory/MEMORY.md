@@ -26,6 +26,12 @@ it must stay short. Full detail lives in `.openhands/memory/2026-11-DD.md` (dail
 - **Guards** in `scripts/test_watchdog.py`: every health threshold must exceed the real driver
   cadence; every foreman-dispatched rail must be watched (condition-gated ones exempt). Both
   verified to FAIL on revert. **Rule: a rail the foreman drives but health ignores fails silently.**
+- **4th (while proving #3): `fetch-music` pushed without `git pull --rebase`** — the only such
+  workflow of 20, so it raced the foreman's push. `test_repo_hygiene.py` now also fails any
+  workflow that pushes without rebasing. **Rule: every rail that pushes to main must rebase first.**
+- **Title sources (order):** live Data API → committed manifests → **YouTube oEmbed** (no auth, no
+  quota) → cache `content/titles/<ch>.json` (one writer per channel). oEmbed recovered 7 legacy
+  dharma titles no manifest knew.
 - **Measured win:** watch-hours 28d **79.12 → 219.87 h** (genx 120.2 · dharma 79.8 · kongkeat 19.9).
 
 ## 🔴 2026-11-09 — foreman was DOWN ~6 h (committed git conflict)
