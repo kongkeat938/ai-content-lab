@@ -75,7 +75,7 @@ jobs:
           git add content/ch1_publish.json content/upload_limit.json
           git commit -m "publish(ch1): record live video ids / upload-cap reset"
           git pull --rebase --autostash origin main
-          git push
+          bash scripts/git_push_retry.sh
 
       - name: Set the genx trailer
         # No rail had set ch1's unsubscribedTrailer (measured 2026-11-09). It must

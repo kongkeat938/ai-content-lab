@@ -92,4 +92,4 @@ jobs:
           # Losing this push loses the video_id, and the next run would upload
           # the same video again. Rebase onto whatever landed while we ran.
           git pull --rebase --autostash origin main
-          git push
+          bash scripts/git_push_retry.sh

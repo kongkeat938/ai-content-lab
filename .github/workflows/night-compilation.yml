@@ -161,8 +161,11 @@ jobs:
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
           git commit -m "night: add generated content set ${{ steps.pick.outputs.content }} [skip ci]"
-          git pull --rebase --autostash origin main
-          git push
+          # A single pull-then-push loses the race when another rail commits
+          # between them (measured 2026-11-09: "cannot lock ref ... is at X but
+          # expected Y", which failed this workflow and stranded the build). The
+          # helper rebases and retries.
+          bash scripts/git_push_retry.sh
 
       - name: Build and verify
         if: steps.fp.outputs.skip != 'true'
@@ -253,14 +256,7 @@ jobs:
             exit 0
           fi
           git commit -m "night: queue $KEY for publish [skip ci]"
-          pushed=0
-          for i in 1 2 3 4 5; do
-            if git push; then pushed=1; break; fi
-            git pull --rebase origin main || true
-            echo "push attempt $i lost the race; retrying"
-            sleep 5
-          done
-          [ "$pushed" = 1 ] || { echo "could not push the manifest after retries"; exit 1; }
+          bash scripts/git_push_retry.sh
           # A push made with GITHUB_TOKEN does not start another workflow, so the
           # upload is dispatched explicitly rather than left to the push trigger.
           # `publish_at=slot` schedules the release at the next 19:30 Bangkok:

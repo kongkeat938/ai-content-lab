@@ -65,12 +65,6 @@ jobs:
           git commit -m "chore(health): refresh the report"
           # Another workflow (publish-batch, publish-shorts, account-watch, or a
           # second foreman) may push while this job runs. HEALTH.md is a
-          # generated artifact, so a rebase conflict on it must not fail the
-          # run: abort and let the next foreman tick regenerate it.
-          if git push; then exit 0; fi
-          if ! git pull --rebase --autostash origin main; then
-            git rebase --abort || true
-            echo "rebase conflict on the generated report -- next run refreshes it"
-            exit 0
-          fi
-          git push || echo "push still rejected -- next run refreshes the report"
+          # generated artifact, so a lost push must not fail the run: the next
+          # foreman tick regenerates it.
+          bash scripts/git_push_retry.sh --best-effort
