@@ -240,7 +240,7 @@
     },
     {
       "key": "night_auto_202646",
-      "state": "blocked",
+      "state": "ready",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-1196b250e156-a74f6e/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-1196b250e156-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_auto_202646.jpg",
@@ -263,20 +263,18 @@
       "privacy": "public",
       "playlist": "PLBpZCGnd7Q5Y",
       "qa": {
-        "grade": "D",
-        "blocked": true,
-        "reasons": [
-          "verifier verdict is None, not 'pass'",
-          "no spoken hook: the first thing a viewer hears must be the promise, not the body",
-          "0 card(s): the picture must change during the file (a single static card is the reused-content trap)"
+        "grade": "B",
+        "blocked": false,
+        "reasons": [],
+        "warnings": [
+          "length 120.1 min is outside the 15-35 min band where a listener stays"
         ],
-        "warnings": [],
         "metrics": {
-          "duration_min": null,
-          "chapters": 0,
-          "longest_card_min": null,
-          "hook_sec": null,
-          "true_peak_dbfs": null
+          "duration_min": 120.1,
+          "chapters": 27,
+          "longest_card_min": 4.8,
+          "hook_sec": 19.8,
+          "true_peak_dbfs": -3.1
         }
       }
     }
