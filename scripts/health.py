@@ -31,12 +31,14 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("KONGKEAT_GH_TOKEN")
 
 # workflow name -> (how often it should succeed, in minutes)
-# Intervals are ~2.5x the cron period, so ordinary scheduler jitter does not cry
-# wolf. A weekly rail gets 8 days. Silence is the bug: a rail that has never
-# succeeded is stale, not fine.
+# Intervals are set against the rail's REAL driver, not its nominal cron. GitHub's
+# cron is unreliable here (measured 2026-11-07), so most rails are actually driven
+# by the watchdog chain, which ticks the foreman every 2 h -- a threshold below
+# that fires on a perfectly healthy chain. A weekly rail gets 8 days. Silence is
+# the bug: a rail that has never succeeded is stale, not fine.
 EXPECTED = {
-    "foreman": 90,               # the driver; */30, so 90 min is already late
-    "set-thumbnails": 90,        # */20
+    "foreman": 240,              # the driver; the chain ticks it every 2 h, so allow one dropped tick
+    "set-thumbnails": 240,       # the foreman only dispatches it past a 180-min gate (foreman.py)
     "publish-shorts": 420,       # 01:30 + 13:30 + the chain
     "publish-batch": 400,        # */3h, but only counts when a long video is due
     "link-shorts": 420,          # daily 09:00 + the chain every 6 h
@@ -52,6 +54,19 @@ EXPECTED = {
     "night-compilation": 11520,  # weekly Monday
     "genx-longform": 11520,      # weekly Tuesday
     "ch4-longform": 11520,       # weekly Thursday
+    # Driven only by the chain (no reliable cron). They were invisible to this
+    # report until 2026-11-09, which is how "fetch music" failed for a day with
+    # nobody told: an unwatched rail looks exactly like a working one. The
+    # thresholds are the foreman's own gate plus ~1.5x, since the chain can drop
+    # a tick. "remake shorts" is deliberately absent: it is condition-gated (it
+    # runs only while a Short still needs remaking), so a fixed age would be a
+    # false alarm once every Short is remade.
+    "studio-ai": 2880,           # foreman gate 20 h (the learning brain)
+    "selftest": 2880,            # foreman gate 20 h
+    "counter-ledger": 2880,      # foreman gate 20 h
+    "ch2-playlists": 2880,       # foreman gate 24 h
+    "fetch music": 11520,        # foreman gate 6 d
+    "short doors": 11520,        # foreman gate 6 d
 }
 
 
@@ -81,13 +96,26 @@ def last_runs() -> dict:
     although it ran (measured 2026-11-04: grow-shorts-pool succeeded 01:59Z but
     the 60-run page only reached back to 04:30Z). Querying the workflow's own
     endpoint makes the window the workflow's, not the repo's.
+
+    The endpoint is addressed by numeric workflow id, resolved from the workflow
+    list. Addressing by file name breaks on any rail whose display name differs
+    from its file name ("fetch music" vs fetch-music.yml) -- the 404 used to blank
+    the whole report via the `_error` path (fixed 2026-11-09).
     """
+    try:
+        wfs = gh(f"/repos/{REPO}/actions/workflows?per_page=100").get("workflows", [])
+    except Exception as exc:  # network, auth, rate limit
+        return {"_error": str(exc)[:120]}
+    by_name = {w["name"]: w["id"] for w in wfs}
     out: dict = {}
     for name in EXPECTED:
+        wid = by_name.get(name)
+        if wid is None:
+            continue
         try:
-            runs = gh(f"/repos/{REPO}/actions/workflows/{name}.yml/runs?per_page=30")
-        except Exception as exc:  # network, auth, rate limit
-            return {"_error": str(exc)[:120]}
+            runs = gh(f"/repos/{REPO}/actions/workflows/{wid}/runs?per_page=30")
+        except Exception:  # one unreadable rail must not blank the whole report
+            continue
         items = runs.get("workflow_runs", [])
         if not items:
             continue

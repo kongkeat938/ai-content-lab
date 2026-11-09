@@ -53,6 +53,33 @@
         }
       },
       "total_watch_hours": 79.12
+    },
+    {
+      "measured_at": "2026-11-09T03:12:20+00:00",
+      "days": 28,
+      "start": "2026-10-12",
+      "end": "2026-11-09",
+      "channels": {
+        "genx": {
+          "views": 27014,
+          "watch_hours": 120.16666666666667,
+          "subs_gained": 153,
+          "subs_lost": 7
+        },
+        "dharma": {
+          "views": 14017,
+          "watch_hours": 79.76666666666667,
+          "subs_gained": 49,
+          "subs_lost": 6
+        },
+        "kongkeat": {
+          "views": 6126,
+          "watch_hours": 19.933333333333334,
+          "subs_gained": 11,
+          "subs_lost": 1
+        }
+      },
+      "total_watch_hours": 219.87
     }
   ]
 }

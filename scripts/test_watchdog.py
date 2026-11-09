@@ -83,6 +83,45 @@ def main() -> int:
 
     print("OK: successor queued before work, foreman revives the chain, backup "
           "schedule present, every workflow is foreman-reachable")
+
+    # 5. The health thresholds must sit ABOVE the real driver cadence, or the
+    #    alert fires on a healthy system and the channel learns to ignore it.
+    #    Measured 2026-11-09: EXPECTED["foreman"] was 90 min while the chain ticks
+    #    the foreman every 2 h, and EXPECTED["set-thumbnails"] was 90 min while the
+    #    foreman only dispatches that rail past a 180-min gate -- so 11 rail-health
+    #    issues opened and closed in two days, each a false alarm.
+    sys.path.insert(0, HERE)
+    import health  # noqa: PLC0415
+    m = re.search(r'interval:.*?default:\s*"(\d+)"', wf, re.S)
+    if not m:
+        fail("cannot read the chain interval from watchdog.yml; the health "
+             "thresholds cannot be checked against it")
+    chain_interval = int(m.group(1)) / 60            # seconds -> minutes
+    fm_gate = 180   # the set-thumbnails / ch4-realign style gate in foreman.py, minutes
+    if health.EXPECTED["foreman"] <= chain_interval:
+        fail(f"health EXPECTED['foreman']={health.EXPECTED['foreman']} min is not "
+             f"above the {chain_interval:.0f}-min chain tick; it will cry wolf every link")
+    if health.EXPECTED["set-thumbnails"] <= fm_gate:
+        fail(f"health EXPECTED['set-thumbnails']={health.EXPECTED['set-thumbnails']} "
+             f"min is not above the foreman's {fm_gate}-min dispatch gate")
+
+    print("OK: health thresholds sit above the real driver cadence")
+
+    # 6. Every rail the foreman drives must also be watched by health.py, or it
+    #    can fail with nobody told. Measured 2026-11-09: "fetch music" had been
+    #    failing for a day and was not in EXPECTED, so health.py said "all rails
+    #    fresh". Exempt: the watchdog (it watches itself), and the condition-gated
+    #    rails, which are legitimately idle when they have nothing to do (a fixed
+    #    age threshold on those would be a false alarm).
+    CONDITION_GATED = {"watchdog", "apply-packaging", "remove-bad-cut", "remake shorts"}
+    unwatched = [n for n in sorted(referenced) if n not in health.EXPECTED]
+    unwatched = [n for n in unwatched if n not in CONDITION_GATED]
+    if unwatched:
+        fail(f"health.py does not watch {unwatched}; a rail the foreman drives but "
+             "health ignores can fail silently -- add it to health.EXPECTED (or to "
+             "the condition-gated exemption)")
+
+    print("OK: every foreman-driven rail is watched by health.py")
     return 0
 
 

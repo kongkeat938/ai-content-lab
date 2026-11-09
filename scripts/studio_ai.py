@@ -44,6 +44,108 @@ CHANNELS = {
 # serves both.
 GEN_ALIAS = {"ch1": "genx", "ch2": "dharma", "ch4": "kongkeat-story"}
 
+# The committed manifests that map video_id -> the title we uploaded. They are the
+# fallback when the Data API quota is spent: videos.list (needed only for titles)
+# 403s on most days here, and without them every winner reads "(title
+# unavailable)", so the panel judges a channel it cannot see and returns generic
+# filler subjects that flow into gen_short_scripts. Measured 2026-11-09: all three
+# channels wrote "(title unavailable)" for every winner.
+TITLE_MANIFESTS = {
+    "ch1": ("content/ch1_shorts.json", "content/ch1_publish.json"),
+    "ch2": ("content/ch2_shorts.json", "content/ch2_publish.json"),
+    "ch3": ("content/ch3_shorts.json", "content/ch3_publish.json"),
+    "ch4": ("content/ch4_shorts.json", "content/ch4_publish.json"),
+}
+
+
+def manifest_titles(channel: str) -> dict[str, str]:
+    """video_id -> title, from committed sources (no API, no quota).
+
+    Sources, later winning over earlier: the per-channel learned cache
+    (content/titles/<ch>.json, written whenever the live API does answer), the
+    upload manifests, and the SEO title ledger. All offline, so a spent quota
+    still yields real titles.
+    """
+    out: dict[str, str] = {}
+    # The learned cache first, so a title once seen is never lost to a later quota
+    # day. It is per channel, so the parallel studio-ai jobs cannot race on it.
+    cache = os.path.join(ROOT, "content", "titles", f"{channel}.json")
+    if os.path.exists(cache):
+        try:
+            with open(cache, encoding="utf-8") as fh:
+                for vid, title in json.load(fh).items():
+                    if vid and title:
+                        out[vid] = title
+        except (json.JSONDecodeError, OSError):
+            pass
+    for rel in TITLE_MANIFESTS.get(channel, ()):
+        path = os.path.join(ROOT, rel)
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, encoding="utf-8") as fh:
+                blob = json.load(fh)
+        except (json.JSONDecodeError, OSError):
+            continue
+        for rec in (blob.get("shorts") or {}).values():
+            if rec.get("video_id") and rec.get("title"):
+                out[rec["video_id"]] = rec["title"]
+        for rec in blob.get("videos") or []:
+            if rec.get("video_id") and rec.get("title"):
+                out[rec["video_id"]] = rec["title"]
+    tc = os.path.join(ROOT, "docs", "title_changes.json")
+    if os.path.exists(tc):
+        try:
+            with open(tc, encoding="utf-8") as fh:
+                for rec in json.load(fh).get("changes", []):
+                    if rec.get("id") and rec.get("new_title"):
+                        out[rec["id"]] = rec["new_title"]
+        except (json.JSONDecodeError, OSError):
+            pass
+    return out
+
+
+def oembed_titles(ids: list[str], cap: int = 50) -> dict[str, str]:
+    """Titles from YouTube's oEmbed endpoint -- no auth, no Data API quota.
+
+    The last resort for a video the Data API cannot answer for and the committed
+    manifests do not know (e.g. a legacy Short uploaded before the manifest
+    existed). One small HTTP call per id, capped so a run cannot fan out.
+    """
+    out: dict[str, str] = {}
+    for vid in ids[:cap]:
+        url = "https://www.youtube.com/oembed?" + urllib.parse.urlencode(
+            {"url": f"https://www.youtube.com/watch?v={vid}", "format": "json"})
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=15) as fh:
+                title = json.load(fh).get("title", "")
+            if title:
+                out[vid] = title
+        except Exception:  # noqa: BLE001 - a missing title is cosmetic
+            continue
+    return out
+
+
+def remember_titles(channel: str, titles: dict[str, str]) -> None:
+    """Persist live-resolved titles to the per-channel cache so a later quota day
+    cannot lose them again. One writer per channel (its own matrix job)."""
+    if not titles:
+        return
+    d = os.path.join(ROOT, "content", "titles")
+    os.makedirs(d, exist_ok=True)
+    path = os.path.join(d, f"{channel}.json")
+    cache: dict[str, str] = {}
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as fh:
+                cache = json.load(fh)
+        except (json.JSONDecodeError, OSError):
+            cache = {}
+    cache.update({k: v for k, v in titles.items() if k and v})
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(cache, fh, ensure_ascii=False, indent=1, sort_keys=True)
+
 
 def access_token(env: str) -> str:
     data = urllib.parse.urlencode({
@@ -80,7 +182,7 @@ def titles_for(tok: str, ids: list[str]) -> dict[str, str]:
     return out
 
 
-def gather(tok: str, days: int) -> dict:
+def gather(tok: str, days: int, channel: str = "") -> dict:
     end = dt.date.today()
     start = end - dt.timedelta(days=days)
     base = {"ids": "channel==MINE", "startDate": str(start), "endDate": str(end)}
@@ -89,10 +191,36 @@ def gather(tok: str, days: int) -> dict:
         "dimensions": "video", "sort": "-views", "maxResults": "50"}))
     by_day = rows(report(tok, {**base, "metrics": "views,estimatedMinutesWatched",
                                "dimensions": "day", "sort": "day"}))
-    names = titles_for(tok, [r["video"] for r in per_video])
+    # Committed manifests first, live Data API second: the API 403s on a spent
+    # quota (most days), and a title we uploaded is better evidence than none.
+    try:
+        live = titles_for(tok, [r["video"] for r in per_video])
+    except Exception:  # noqa: BLE001 - titles are cosmetic; the grades still count
+        live = {}
+    fill_titles(channel, per_video, live)
+    # Remember only the titles we had to resolve beyond the committed manifests
+    # (live API + oEmbed), so a later quota day cannot lose them. The manifests
+    # stay authoritative; the cache only fills their gaps.
+    known = manifest_titles(channel)
+    remember_titles(channel, {r["video"]: r["title"] for r in per_video
+                              if r["title"] != "(title unavailable)" and r["video"] not in known})
+    return {"start": str(start), "end": str(end), "per_video": per_video, "by_day": by_day}
+
+
+def fill_titles(channel: str, per_video: list[dict], live: dict[str, str]) -> None:
+    """Set r['title'] for each row: live Data API title, else the committed manifest,
+    else YouTube oEmbed (no quota) for the stragglers.
+
+    The first two are offline; only ids still unknown reach oEmbed, so a normal run
+    makes no extra calls.
+    """
+    names = manifest_titles(channel)
+    names.update(live)
+    unknown = [r["video"] for r in per_video if r["video"] not in names]
+    if unknown:
+        names.update(oembed_titles(unknown))
     for r in per_video:
         r["title"] = names.get(r["video"], "(title unavailable)")
-    return {"start": str(start), "end": str(end), "per_video": per_video, "by_day": by_day}
 
 
 def brief(data: dict) -> str:
@@ -186,7 +314,7 @@ def main() -> int:
     a = ap.parse_args()
 
     tok = access_token(CHANNELS[a.channel])
-    data = gather(tok, a.days)
+    data = gather(tok, a.days, a.channel)
     text = brief(data)
     print(text)
 

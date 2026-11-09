@@ -26,6 +26,12 @@ jobs:
           python-version: "3.12"
       - name: install ffmpeg
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: install python deps
+        # fetch_music validates every download through test_music_beds.py, which
+        # imports numpy; without it the rail died on ModuleNotFoundError (measured
+        # 2026-11-08, run 42475996215) and, being unwatched by health.py, failed
+        # silently for a day.
+        run: pip install --quiet -r requirements.txt
       - name: fetch real beds
         run: python3 scripts/fetch_music.py --out-dir assets/music --seconds 50
       - name: commit the beds back
