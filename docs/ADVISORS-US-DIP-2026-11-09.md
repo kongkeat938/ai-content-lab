@@ -59,3 +59,53 @@ asked the same question on the **same measured market data**, taken live from
 - `us_dip_scan.py` is **price-only**: no earnings, valuation, or news. A dip can be a
   falling knife for reasons the scan cannot see.
 - This is technical, short-horizon screening, not investment advice.
+
+---
+
+# Run 2 — 2026-11-09 (later the same day, fresh prices)
+
+The panel was re-run on a **fresh** `us_dip_scan.py` snapshot. All six advisors
+answered this time (two needed a shorter prompt; see "reliability" below).
+
+## Vote tally (counted, not asserted)
+
+| advisor | 1st | 2nd | 3rd | avoid |
+|---|---|---|---|---|
+| gemini-3.5 | INTC | DDOG | NVDA | MSTR |
+| gemini-3.1 | AVGO | LRCX | AMAT | NVDA |
+| gemini-flash | NVDA | AVGO | DDOG | INTC |
+| gemini-preview | NVDA | ARM | INTC | NKE |
+| pollinations | DDOG | NVDA | COIN | AVGO |
+| openrouter (Nvidia) | NVDA | INTC | DDOG | COIN |
+
+**Buy mentions:** NVDA **5** (2× #1), DDOG **4** (1× #1), INTC **3** (1× #1),
+AVGO 2, COIN 2, ARM/LRCX/AMAT 1 each.
+
+**Consensus top three: NVDA, DDOG, INTC** — the same three as run 1, so the
+shortlist is stable across two snapshots.
+
+## The dissent is real, and it is about one name
+
+NVDA is #1 for two advisors and in the buy list of five, **but gemini-3.1 puts it
+in "avoid"** (RSI 27.4 with the only negative %chg, -4.27%): "oversold heavily, the
+selling is not finished." INTC is the mirror image — #1 for gemini-3.5 and in
+openrouter's buy list, yet gemini-flash calls it the single worst hold
+(v50 -39.0%, v200 -31.8%, r1m -41.4%: down-trending on every horizon).
+
+## The one number that separates "dip" from "falling knife"
+
+`off52l` (distance above the 52-week low). NVDA +8.2%, DDOG +75.0% have room;
+COIN +1.0%, ORCL +4.2%, NFLX +3.2% are sitting on the low with nothing beneath.
+Every "avoid" vote in this run is a name near its 52-week low, not a name that is
+merely cheap.
+
+## Reliability note (measured)
+
+- `pollinations` returns **HTTP 400 on a long prompt** but answers a short one — its
+  free tier is prompt-length sensitive.
+- `openrouter` answered only after a retry: the three free models share a rate-limited
+  pool, and firing all six advisors at once can exhaust it. Called singly it is fine
+  (this is why `ask_openrouter` walks the model list with backoff).
+- Bench (`scripts/panel_bench.py`): all six scored **5/5 on checkable probes**; median
+  latency gemini-3.5 0.5s, gemini-3.1 0.6s, gemini-preview 1.0s, openrouter 1.3s,
+  gemini-flash 1.5s, pollinations 65.7s.

@@ -6,32 +6,32 @@ K's rule: never bring a decision to a person; take it to an AI. K also requires
 of failure, and one dead vendor must never stop a decision. This asks the whole
 panel and reports which answered.
 
-Default panel (fast, seconds): five advisors drawn from the two free providers
-that answer from the pod (measured 2026-11-09; every other keyless vendor is
-refused by the pod's egress proxy):
+Default team (fast, seconds): **five** advisors measured at ~0.5-1.5 s each on
+checkable probes (`scripts/panel_bench.py`, 2026-11-09), across two vendors:
 
   1. gemini-3.5-flash-lite  -- GEMINI_API_KEY, one independent model
   2. gemini-3.1-flash-lite  -- same key, a second model
-  3. gemini-flash-lite-latest
+  3. gemini-3.5-flash       -- same key, a third model
   4. gemini-3-flash-preview -- same key, a fourth model
-  5. pollinations           -- text.pollinations.ai, no key, a different vendor
+  5. openrouter             -- free tier (Nvidia/Cohere), a different vendor
 
-The Gemini entries share a key but run different models, so the panel is five
-independent opinions, not five copies of one.
+The four Gemini entries share a key but run different models; openrouter is a
+genuinely different vendor, so the team is five opinions, not five copies of one.
 
-The default panel adds a sixth advisor, **openrouter** (OpenRouter free tier,
-key in OPENROUTER_API_KEY or ~/.pod-openrouter-key), which fronts yet other
-vendors (Nvidia, Cohere). It is on by default because it is a genuinely
-different vendor; use ``--fast`` to drop it when the shared free pool is busy.
+A sixth vendor, **pollinations**, is available with ``--broad``. It is *not* in the
+default team because it is slow (~66 s measured, ~50x the others) and returns
+HTTP 400 on a long prompt -- a slow, flaky panelist drags every decision, and K
+wants the team fast.
 
 **Deep mode** (`--deep`) adds three OpenHands Cloud conversations (its own
 DeepSeek agent, Claude Sonnet, GPT-5) on KONGKEAT_OH_KEY. They are genuinely
 independent vendors but each takes 2-20 minutes, so they are opt-in only.
 
     python3 scripts/advise.py "what should I change first?"
+    python3 scripts/advise.py --broad "add the sixth vendor"
     python3 scripts/advise.py --deep "the slow, high-stakes question"
     python3 scripts/advise.py --extra "28-day: Shorts 30.3h, long-form 2.9h" "..."
-    python3 scripts/advise.py --only gemini,pollinations "..."
+    python3 scripts/panel_bench.py "measure the team"
 """
 from __future__ import annotations
 
@@ -222,23 +222,28 @@ def _read_key_file() -> str:
 
 
 ADVISORS = {
-    # fast, free, seconds -- the default panel
+    # fast, free, seconds -- the default team
     "gemini-3.5": lambda p: ask_gemini(p, ("gemini-3.5-flash-lite",)),
     "gemini-3.1": lambda p: ask_gemini(p, ("gemini-3.1-flash-lite",)),
     "gemini-flash": lambda p: ask_gemini(p, ("gemini-3.5-flash",)),
     "gemini-preview": lambda p: ask_gemini(p, ("gemini-3-flash-preview",)),
-    "pollinations": ask_pollinations,
-    # a genuinely different vendor (OpenRouter fronts Nvidia/Cohere); opt in
-    # because the shared free pool is often rate-limited.
+    # a genuinely different vendor (OpenRouter fronts Nvidia/Cohere). Kept in the
+    # default team because it is the only non-Google vendor that is fast (~1.3 s);
+    # ask_openrouter walks the free slugs with backoff because the pool is shared.
     "openrouter": ask_openrouter,
+    # a different vendor but slow (~66 s measured) and prompt-length sensitive, so
+    # it is opt-in: a slow panelist drags every decision.
+    "pollinations": ask_pollinations,
     # slow but genuinely different vendors -- opt in with --deep
     "openhands": ask_openhands,
     "openhands-claude": lambda p: ask_openhands(p, model="openhands/claude-sonnet-4-5"),
     "openhands-gpt": lambda p: ask_openhands(p, model="openhands/gpt-5"),
 }
 
-FAST = ["gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview", "pollinations"]
-FAST_PLUS = FAST + ["openrouter"]
+# The default team: five fast, high-quality advisors across two vendors.
+FAST = ["gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview", "openrouter"]
+FAST_PLUS = FAST
+BROAD = FAST + ["pollinations"]
 DEEP = ["openhands", "openhands-claude", "openhands-gpt"]
 
 
@@ -247,8 +252,8 @@ def main() -> int:
     ap.add_argument("question")
     ap.add_argument("--extra", default="", help="extra measured facts to include")
     ap.add_argument("--only", default="", help="comma list of advisors to use")
-    ap.add_argument("--fast", action="store_true",
-                    help="five Gemini/Pollinations advisors only (skip OpenRouter)")
+    ap.add_argument("--broad", action="store_true",
+                    help="add the slow pollinations advisor (a sixth vendor)")
     ap.add_argument("--deep", action="store_true",
                     help="also ask the slow OpenHands advisors (2-20 min each)")
     ap.add_argument("--no-system", action="store_true")
@@ -257,7 +262,7 @@ def main() -> int:
     if args.only:
         names = [n.strip() for n in args.only.split(",") if n.strip()]
     else:
-        names = (FAST if args.fast else FAST_PLUS) + (DEEP if args.deep else [])
+        names = (BROAD if args.broad else FAST) + (DEEP if args.deep else [])
     parts = [args.question]
     if args.extra:
         parts.insert(0, "ข้อมูลจริงที่วัดได้:\n" + args.extra)
