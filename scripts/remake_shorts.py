@@ -224,9 +224,14 @@ def main() -> int:
             print(f"building {sid} ...")
             cmd = [sys.executable, os.path.join(HERE, "make_short.py"),
                    "--scripts", spec["scripts"], "--index", sid, "--out-dir", work]
-            if spec.get("art") and os.path.isdir(spec["art"]):
+            if spec.get("art_style"):
+                cmd += ["--art-style", spec["art_style"],
+                        "--art-dir", spec.get("art", ""),
+                        "--art-ledger", ps.art_ledger_path(args.channel)]
+            elif spec.get("art") and os.path.isdir(spec["art"]):
                 cmd += ["--art-dir", spec["art"]]
-            bed = ps.pick_bed(spec.get("music_dir"), sid, spec.get("mood"))
+            bed = ps.pick_bed(spec.get("music_dir"), sid, spec.get("mood"),
+                        ps.bed_ledger_path(args.channel))
             if bed:
                 cmd += ["--music", bed]
             r = subprocess.run(cmd, capture_output=True, text=True)

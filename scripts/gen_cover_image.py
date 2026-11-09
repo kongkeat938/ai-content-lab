@@ -49,6 +49,10 @@ STYLES = {
     "family": ("warm Thai family home at evening, soft golden lamp light, cozy "
                "illustration, gentle nostalgic mood, muted warm colours, no text, "
                "no words, no watermark, painterly, centered subject"),
+    "genx": ("quiet reflective scene for a grown-up reader, soft morning light "
+             "through a window, a single chair or a cup of tea, calm muted earthy "
+             "palette, minimal illustration, no text, no words, no watermark, "
+             "painterly, centered subject"),
 }
 
 
@@ -90,19 +94,28 @@ def from_pollinations(prompt: str, seed: int, w: int, h: int, tries: int = 8) ->
     return None
 
 
-def from_commons(query: str, w: int, h: int) -> bytes | None:
-    """Fallback: a real photo under a commercial-use licence."""
+def from_commons(query: str, w: int, h: int, seed: int = 0) -> bytes | None:
+    """Fallback: a real photo under a commercial-use licence.
+
+    seed selects among the results, so two clips with a similar prompt do not both
+    fall back to the identical photo (the owner's no-repeat rule). Every result is
+    licence-checked: a monetised video cannot carry an NC/ND image, and the API
+    does not filter for us."""
     params = urllib.parse.urlencode({
         "action": "query", "format": "json", "generator": "search",
         "gsrsearch": f"filetype:bitmap {query}", "gsrnamespace": "6",
-        "gsrlimit": "8", "prop": "imageinfo",
+        "gsrlimit": "20", "prop": "imageinfo",
         "iiprop": "url|extmetadata", "iiurlwidth": str(max(w, 1280)),
     })
     try:
         d = json.loads(_get(f"{COMMONS_API}?{params}", timeout=40))
     except Exception:  # noqa: BLE001
         return None
-    pages = list(d.get("query", {}).get("pages", {}).values())
+    pages = [p for p in d.get("query", {}).get("pages", {}).values()
+             if _commons_license_ok(p.get("imageinfo", [{}])[0])]
+    if not pages:
+        return None
+    pages = pages[seed % len(pages):] + pages[:seed % len(pages)]
     # prefer landscape, licence-safe results
     for p in pages:
         info = p.get("imageinfo", [{}])[0]
@@ -116,6 +129,23 @@ def from_commons(query: str, w: int, h: int) -> bytes | None:
         except Exception:  # noqa: BLE001
             continue
     return None
+
+
+# Commons licences safe for a monetisable video: public domain or attribution-only.
+_COMMONS_OK = ("cc0", "public domain", "pdm", "cc by", "cc-by", "attribution")
+_COMMONS_BAD = ("nc", "nd", "noncommercial", "gfdl", "sampling", "-sa", "share-alike")
+
+
+def _commons_license_ok(info: dict) -> bool:
+    meta = info.get("extmetadata", {})
+    short = str(meta.get("LicenseShortName", {}).get("value", "")).lower()
+    terms = str(meta.get("UsageTerms", {}).get("value", "")).lower()
+    text = f"{short} {terms}"
+    if not short and not terms:
+        return False
+    if any(t in text for t in _COMMONS_BAD):
+        return False
+    return any(t in text for t in _COMMONS_OK)
 
 
 def from_procedural(seed: int, style: str, w: int, h: int) -> bytes:
@@ -166,7 +196,7 @@ def generate(style: str, prompt: str, seed: int, w: int, h: int) -> tuple[bytes 
     data = from_pollinations(full, seed, w, h)
     if data:
         return data, "pollinations"
-    data = from_commons(prompt or style, w, h)
+    data = from_commons(prompt or style, w, h, seed)
     if data:
         return data, "commons"
     return from_procedural(seed, style, w, h), "procedural"

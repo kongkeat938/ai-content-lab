@@ -10,8 +10,9 @@ The join is deliberate — a compilation is not a playlist. Each piece is master
 on its own, then the parts are concatenated with a few seconds of silence between
 them, so the listener hears a pause for a breath rather than a cut.
 
-Everything here is free: edge-tts for the voice, the synthesiser in
-`make_bed.py` for the bed, ffmpeg for the mix. No network beyond edge-tts.
+Everything here is free: edge-tts for the voice, ffmpeg for the mix. The bed is
+real instrumental music drawn from assets/music (the owner forbade the
+synthesised drone); when none is available the voice ships clean.
 
 Usage:
     python make_compilation.py --out work/night/compilation.mp3 \
@@ -19,8 +20,10 @@ Usage:
 """
 import argparse
 import glob
+import importlib.util
 import json
 import os
+import random
 import subprocess
 import sys
 
@@ -28,7 +31,26 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import make_audio  # noqa: E402
-import make_bed  # noqa: E402
+
+
+def music_beds() -> list[str]:
+    d = os.path.join(ROOT, "assets", "music")
+    if not os.path.isdir(d):
+        return []
+    return sorted(os.path.join(d, f) for f in os.listdir(d)
+                  if f.lower().endswith((".mp3", ".wav", ".m4a", ".ogg")))
+
+
+def is_music(path: str) -> bool:
+    """True when the bed passes the committed music test (not a sine drone)."""
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "_tmb", os.path.join(HERE, "test_music_beds.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return bool(mod.measure(path)["is_music"])
+    except Exception:  # noqa: BLE001 - never let a measurement fault mute the file
+        return False
 
 # How far the bed sits below the voice. Measured on the reference clip: a bed
 # 6-20 dB under the voice reads as "there is music" without ever fighting the
@@ -144,26 +166,54 @@ def sequence_to_length(parts: list, target_seconds: float) -> tuple:
     return seq, cycles
 
 
-def bed_for(seconds: float, work: str, seed_file: str | None = None) -> str:
-    """A seamless ambient bed, looped to the exact length of the voice track.
+def bed_for(seconds: float, work: str, seed_file: str | None = None,
+            key: str | None = None, ledger: str | None = None) -> str | None:
+    """A real instrumental bed, looped to the length of the voice track.
 
-    `seed_file` is the owner's real music -- the Flow Music export K supplies --
-    looped under the narration. With no file the bed is synthesised here, which is
-    the free fallback rather than the preferred sound.
+    The synthesised drone that used to stand here is gone. Measured 2026-11-09 it
+    fails the music test (tone_share 0.196, partials 5, env 0.34 -- one held low
+    tone) and the owner forbade that "hum". `seed_file` is the owner's own music;
+    otherwise a validator-passing bed is drawn from assets/music, and the `ledger`
+    records which build used which bed so two videos do not share one. When none
+    is available the caller is told to leave the voice clean, never to hum.
     """
     if seed_file:
         if not os.path.exists(seed_file):
             raise SystemExit(f"bed file not found: {seed_file}")
         seed = seed_file
     else:
-        seed = os.path.join(work, "bed_seed.wav")
-        if not os.path.exists(seed):
-            make_bed.write_wav(seed, make_bed.build(120.0, 110.0, -20.0))
+        pool = [p for p in music_beds() if is_music(p)]
+        if not pool:
+            return None
+        seed = _pick_unique_bed(pool, key, ledger)
     out = os.path.join(work, "bed.wav")
     run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1", "-i", seed,
          "-t", f"{seconds:.3f}", "-ar", "48000", "-ac", "2",
          "-c:a", "pcm_s16le", out])
     return out
+
+
+def _pick_unique_bed(pool: list[str], key: str | None, ledger: str | None) -> str:
+    """Pick a bed no other build has used yet, when a ledger and key are given."""
+    used: dict = {}
+    if ledger and os.path.exists(ledger):
+        try:
+            with open(ledger, encoding="utf-8") as fh:
+                used = json.load(fh).get("beds", {})
+        except (OSError, ValueError):
+            used = {}
+    if key:
+        free = [p for p in pool if used.get(os.path.basename(p), key) == key]
+        pick = free[0] if free else pool[hash(key) % len(pool)]
+        if ledger:
+            used[os.path.basename(pick)] = key
+            tmp = ledger + ".part"
+            os.makedirs(os.path.dirname(os.path.abspath(ledger)), exist_ok=True)
+            with open(tmp, "w", encoding="utf-8") as fh:
+                json.dump({"beds": used}, fh, ensure_ascii=False, indent=2)
+            os.replace(tmp, ledger)
+        return pick
+    return random.choice(pool)
 
 
 def mix(voice: str, bed: str, out: str) -> None:
@@ -192,7 +242,14 @@ def main() -> None:
     ap.add_argument("--bed", default="yes", choices=["yes", "no"])
     ap.add_argument("--bed-file", default=None,
                     help="real music to loop under the voice (e.g. a Flow Music "
-                         "export); omit to synthesise the free fallback bed")
+                         "export); omit to pick a validator-passing bed from "
+                         "assets/music. There is no synthesised fallback: the "
+                         "drone was forbidden, so a clean voice is used instead.")
+    ap.add_argument("--bed-ledger", default=None,
+                    help="JSON file recording which build used which bed, so two "
+                         "videos do not share one")
+    ap.add_argument("--key", default=None,
+                    help="this build's identity for the bed ledger (default: --out)")
     ap.add_argument("--minutes", type=float, default=0.0,
                     help="target length; repeat the pieces until reached "
                          "(a sleep file is meant to be left playing)")
@@ -238,10 +295,18 @@ def main() -> None:
     print(f"voice track: {total / 60:.1f} min")
 
     mixed = voice
+    bed_used = False
     if a.bed == "yes":
-        bed = bed_for(total, a.work, a.bed_file)
-        mixed = os.path.join(a.work, "mixed.wav")
-        mix(voice, bed, mixed)
+        bed = bed_for(total, a.work, a.bed_file, a.key or a.out, a.bed_ledger)
+        if bed:
+            mixed = os.path.join(a.work, "mixed.wav")
+            mix(voice, bed, mixed)
+            bed_used = True
+        else:
+            # No real music available: ship the clean narration rather than a hum.
+            print("no validator-passing bed in assets/music; shipping the voice "
+                  "without a bed (the owner forbade the synthesised drone)",
+                  file=sys.stderr)
 
     # Final master to the YouTube target, folded into one encode.
     make_audio.loudnorm2(mixed, a.out)
@@ -257,7 +322,7 @@ def main() -> None:
         "minutes": round(duration(a.out) / 60, 1),
         "lufs": lufs,
         "true_peak_dbfs": peak,
-        "bed": a.bed == "yes",
+        "bed": bed_used,
         "bed_under_voice_db": BED_UNDER_VOICE_DB,
         "voice": VOICE,
     }

@@ -109,6 +109,7 @@ jobs:
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
           git add content/*_shorts_remakes.json content/upload_log.json 2>/dev/null || true
+          git add content/art_ledger_${{ matrix.slug }}.json content/bed_ledger_${{ matrix.slug }}.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing to record"
             exit 0

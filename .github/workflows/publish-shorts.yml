@@ -90,13 +90,16 @@ jobs:
       - name: Record the new video ids
         if: always()
         run: |
-          if git diff --quiet "${{ matrix.manifest }}"; then
-            echo "no change to the manifest"
-            exit 0
-          fi
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
           git add "${{ matrix.manifest }}"
+          # The art/bed ledgers record which image and which bed each Short used,
+          # so the next clip cannot repeat them (the owner's no-repeat rule).
+          git add content/art_ledger_${{ matrix.channel }}.json content/bed_ledger_${{ matrix.channel }}.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to record"
+            exit 0
+          fi
           git commit -m "publish(${{ matrix.channel }}): record new Short ids"
           git pull --rebase --autostash origin main
           git push

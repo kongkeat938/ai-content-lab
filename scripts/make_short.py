@@ -21,7 +21,9 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -31,6 +33,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
 FONTS = os.path.join(ROOT, "assets", "fonts")
 VOICE = "th-TH-NiwatNeural"      # calm male narrator, the channel's voice
 # A slower read: the niche's winners run about a minute, and a slow read holds a
@@ -45,6 +49,22 @@ COMP_TH, COMP_RATIO = "-24dB", 6
 # A bed eats the headroom loudnorm needs to reach -14 LUFS in linear mode, so the
 # bed path adds this much gain before the limiter. Measured 2026-11-07.
 BED_GAIN_DB = 2.0
+# How far under the voice the bed sits. Measured 2026-11-09: the old fixed 0.18
+# (-14.9 dB) put a -22 LUFS bed at -36.9 LUFS -- ~16 LU below the voice, i.e.
+# effectively silent, which is why the owner could not hear the music at all.
+# Target the bed ~11 LU under the voice, computed from each file's own loudness so
+# a quiet bed and a loud bed land the same. Clamped so a very quiet file is not
+# blown up into hiss.
+BED_UNDER_VOICE_DB = 11.0
+BED_GAIN_MIN, BED_GAIN_MAX = 0.05, 0.60
+
+
+def bed_gain(music: str, voice_lufs: float) -> float:
+    bed_lufs = measure_audio(music)
+    if bed_lufs is None:
+        return 0.18
+    gain = 10 ** ((voice_lufs - BED_UNDER_VOICE_DB - bed_lufs) / 20.0)
+    return max(BED_GAIN_MIN, min(BED_GAIN_MAX, gain))
 
 
 def font(name: str, size: int) -> ImageFont.FreeTypeFont:
@@ -53,6 +73,20 @@ def font(name: str, size: int) -> ImageFont.FreeTypeFont:
 
 def run(cmd: list) -> None:
     subprocess.run(cmd, check=True, capture_output=True)
+
+
+def measure_audio(path: str) -> float | None:
+    """Integrated loudness (LUFS) of a file, or None if it cannot be read."""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", path,
+                        "-af", "ebur128=framelog=quiet", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    for line in r.stderr.splitlines():
+        if "I:" in line and "LUFS" in line:
+            try:
+                return float(line.split("I:")[1].split("LUFS")[0].strip())
+            except ValueError:
+                return None
+    return None
 
 
 async def speak(text: str, out: str) -> None:
@@ -273,9 +307,12 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
         # CC0 bed still covers the whole clip instead of dropping out mid-sentence.
         # normalize=0 keeps the voice at its own level; the default amix halves
         # every input, which dropped the mix ~0.6 LU below the music-less cut.
+        v_lufs = measure_audio(voice_mp3) or -20.0
+        vol = bed_gain(music, v_lufs)
+        print(f"  bed gain {vol:.3f} ({20 * math.log10(vol):.1f} dB)")
         run(["ffmpeg", "-y", "-i", voice_mp3, "-stream_loop", "-1", "-i", music,
              "-filter_complex",
-             "[1:a]volume=0.18[m];[0:a][m]amix=inputs=2:duration=first:"
+             f"[1:a]volume={vol:.4f}[m];[0:a][m]amix=inputs=2:duration=first:"
              "dropout_transition=0:normalize=0[a]",
              "-map", "[a]", "-ar", "48000", mixed])
     else:
@@ -289,11 +326,12 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
 
 
 def pick_art(art_dir: str, sid: str) -> str | None:
-    """Choose one still for a short, stable across rebuilds.
+    """Choose one still from a folder, stable across rebuilds.
 
-    Indexed by a hash of the id, not by list position, so adding an image or
-    rebuilding does not reshuffle which clip shows which picture -- the published
-    video keeps matching the file a reviewer already saw.
+    Kept for the remake rail and as a last resort. It is NOT how a new Short gets
+    its picture: a folder of ten stills shared by a hundred clips repeats every
+    image about ten times, which the owner forbade ("no two clips may share an
+    image, ever"). unique_art() generates one image per clip instead.
     """
     if not art_dir or not os.path.isdir(art_dir):
         return None
@@ -307,12 +345,61 @@ def pick_art(art_dir: str, sid: str) -> str | None:
     return os.path.join(art_dir, pool[h % len(pool)])
 
 
+def unique_art(d: str, sid: str, hook: str, art_style: str | None,
+               art_dir: str | None, ledger_path: str | None) -> str | None:
+    """One image that no other clip uses. Measured 2026-11-09: pick_art over a
+    10-still pool gave each ch4 image to ~5 of its 49 live Shorts, ch2 to ~11 of
+    104. The owner forbade repeats, so a new Short now gets a picture generated
+    from a seed of its own id, and the md5 of every image made is kept in a
+    committed ledger -- if a generation ever collides, it is re-seeded.
+
+    Cached at <d>/art.jpg so a rebuild of the same clip reuses the exact picture
+    the reviewer already saw (the render dir is stable for one id)."""
+    cache = os.path.join(d, "art.jpg")
+    if os.path.exists(cache):
+        return cache
+    if not art_style:
+        return pick_art(art_dir, sid)
+    import gen_cover_image as G
+    seed0 = int(hashlib.sha256(sid.encode("utf-8")).hexdigest()[:8], 16)
+    used = {}
+    if ledger_path and os.path.exists(ledger_path):
+        try:
+            with open(ledger_path, encoding="utf-8") as fh:
+                used = json.load(fh).get("md5", {})
+        except (OSError, ValueError):
+            used = {}
+    for bump in range(8):
+        data, source = G.generate(art_style, hook or "", seed0 + bump, 1080, 1920)
+        if not data:
+            continue
+        md5 = hashlib.md5(data).hexdigest()
+        if used.get(md5, sid) == sid:      # unused, or already ours
+            os.makedirs(d, exist_ok=True)
+            with open(cache, "wb") as fh:
+                fh.write(data)
+            if ledger_path:
+                used[md5] = sid
+                tmp = ledger_path + ".part"
+                os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
+                with open(tmp, "w", encoding="utf-8") as fh:
+                    json.dump({"md5": used}, fh, ensure_ascii=False, indent=2)
+                os.replace(tmp, ledger_path)
+            print(f"  art {sid}: {source} seed {seed0 + bump} md5 {md5[:8]}")
+            return cache
+    return pick_art(art_dir, sid)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--scripts", default=os.path.join(ROOT, "content", "ch2_shorts", "scripts.json"))
     ap.add_argument("--out-dir", default=os.path.join(ROOT, "work", "ch2_shorts"))
     ap.add_argument("--art", help="background image (default: a dark gradient)")
     ap.add_argument("--art-dir", help="directory of stills; one is picked per short")
+    ap.add_argument("--art-style", help="generate a unique image per short with this "
+                    "gen_cover_image style (dharma|family); preferred over --art-dir")
+    ap.add_argument("--art-ledger", help="JSON file recording every generated image's "
+                    "md5, so a clip can never reuse another clip's picture")
     ap.add_argument("--music", help="optional bed to mix under the voice")
     ap.add_argument("--index", action="append", help="build only these ids")
     args = ap.parse_args()
@@ -323,7 +410,13 @@ def main() -> int:
         scripts = [s for s in scripts if s["id"] in args.index]
     os.makedirs(args.out_dir, exist_ok=True)
     for s in scripts:
-        art = args.art or pick_art(args.art_dir, s["id"])
+        if args.art:
+            art = args.art
+        elif args.art_style:
+            art = unique_art(os.path.join(args.out_dir, s["id"]), s["id"], s.get("hook", ""),
+                             args.art_style, args.art_dir, args.art_ledger)
+        else:
+            art = pick_art(args.art_dir, s["id"])
         build(s, args.out_dir, art, args.music)
     print(f"built {len(scripts)} short(s) in {args.out_dir}")
     return 0

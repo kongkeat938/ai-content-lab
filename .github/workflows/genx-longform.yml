@@ -131,6 +131,7 @@ jobs:
             --voice th-TH-NiwatNeural \
             --image-style dharma \
             --hook-file content/hooks/genx.md \
+            --bed-ledger content/bed_ledger_genx.json \
             --chapters \
             --image-prompt "serene calm Thai evening, soft warm light, quiet reflection, minimal"
 
@@ -187,7 +188,7 @@ jobs:
             --title "$TITLE" --receipt work/ch1_long/receipt.json
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"
-          git add content/ch1_publish.json
+          git add content/ch1_publish.json content/bed_ledger_genx.json
           git add assets/branding/genx/thumbs 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "manifest already current"

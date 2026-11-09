@@ -33,7 +33,11 @@ jobs:
         # silently for a day.
         run: pip install --quiet -r requirements.txt
       - name: fetch real beds
-        run: python3 scripts/fetch_music.py --out-dir assets/music --seconds 50
+        run: python3 scripts/fetch_music.py --out-dir assets/music --seconds 50 --per-query 3
+      - name: Guard the library is real music
+        # The owner's rule (2026-11-09): never ship the "hum". Every bed in the
+        # library, not just the ones fetched this run, must still measure as music.
+        run: python3 scripts/test_music_beds.py
       - name: commit the beds back
         run: |
           git config user.name "openhands"

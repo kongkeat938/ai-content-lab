@@ -66,7 +66,14 @@ def main() -> int:
                          "reviewed and reused, not buried in a workflow string.")
     ap.add_argument("--bed-file", default=None,
                     help="real music to loop under the narration (e.g. a Flow "
-                         "Music export); omit to synthesise the free fallback bed")
+                         "Music export); omit to pick a validator-passing bed from "
+                         "assets/music -- never a synthesised drone")
+    ap.add_argument("--bed-ledger", default=None,
+                    help="JSON file recording which build used which bed, so two "
+                         "videos do not share one")
+    ap.add_argument("--key", default=None,
+                    help="this build's identity for the bed ledger "
+                         "(default: the content directory name)")
     ap.add_argument("--chapters", action="store_true",
                     help="change the picture per piece (one card per chapter) "
                          "instead of one card looping for the whole file")
@@ -144,7 +151,9 @@ def main() -> int:
                    "--work", a.work, "--minutes", str(a.minutes),
                    "--voice", a.voice or "th-TH-NiwatNeural",
                    *(["--hook", hook_text] if hook_text else []),
-                   *(["--bed-file", a.bed_file] if a.bed_file else [])]),
+                   *(["--bed-file", a.bed_file] if a.bed_file else []),
+                   *(["--bed-ledger", a.bed_ledger] if a.bed_ledger else []),
+                   "--key", a.key or os.path.basename(a.content)]),
     ]
     if not a.skip_video:
         if a.chapters:
