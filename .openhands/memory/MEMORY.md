@@ -8,7 +8,28 @@ before publishing to a new channel, deleting history, or renaming.
 it must stay short. Full detail lives in `.openhands/memory/2026-11-DD.md` (daily logs),
 `.openhands/memory/ARCHIVE-MEMORY-2026-11-09.md` (the old 75 KB index), and `docs/`.
 
-## 🟠 2026-11-09 — the TRACKING system was lying (3 defects fixed; `docs/STATUS-2026-11-09.md`)
+## 🎯 WHAT ACTUALLY GATES THE BUSINESS (measured 2026-11-09; `docs/DECISION-2026-11-09.md`)
+- **YPP watch-hours = long-form ONLY.** Shorts never count toward the 4,000-h bar. Steer by
+  **long-form watch-hours/week + `retention@2min`**, never by raw views (a Shorts-heavy channel
+  looked 92× closer than it was).
+- **The constraint is the first 2 minutes, not upload volume.** dharma's 120-min file keeps
+  102% at 1% of the file (~1.2 min) then **28.9% at 2% (~2.4 min)** — 71% leave. Uploads use
+  ~2.8 h/day of a 6-8-clip capacity, so more volume is noise.
+- **The Shorts→long-form funnel is dead:** genx 27,014 Shorts views → **2** long-form views;
+  dharma long-form views come from **subscribers**, not Shorts. A playlist link in the tail does
+  nothing. **Concentrate on dharma** (96% of all long-form watch time); genx/ch4 long-form wait.
+- **Winning content is specific + actionable** ("นอนไม่หลับ? ลองทำท่านี้ 10 วินาที"), not abstract
+  reassurance. The dharma hook now opens with a concrete action; guard `scripts/test_hook_concrete.py`.
+- **Review the decision 2026-11-16** (after ~2 new long-form uploads).
+
+## 🟠 2026-11-09 — the TRACKING system was lying (defects fixed; `docs/STATUS-2026-11-09.md`)
+0. **The progress report inflated YPP watch-hours up to 92×.** `progress.py` compared a
+   **channel-level** total against YPP's 4,000-h bar, which counts **long-form only** (Shorts have
+   a separate path — 10M views/90 days — and their watch time does not count). Measured 28 d:
+   genx **1.3 h** long-form vs **120.2 h** mixed (report said 39% of the bar; truth **0.4%**);
+   total 46.2 vs 219.9. **Fix:** `analytics.py` splits by `creatorContentType` (values are
+   lowercase **`shorts` / `videoOnDemand`**) → `longform_watch_hours`; `progress.py` reports
+   long-form + a `retention@2min` column. Guard `scripts/test_progress_honesty.py`.
 1. **Learning loop blind on a spent Data API quota.** `studio_ai.py` + `video_review.py` read
    Analytics (own quota, works) but fetch titles from Data API `videos.list`, which **403s most
    days** → fell back to `"(title unavailable)"`. Measured: every winner on all 3 channels
