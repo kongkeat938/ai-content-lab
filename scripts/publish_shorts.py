@@ -342,6 +342,11 @@ def commit(path: str, message: str) -> None:
     gitc = ["git", "-c", "user.name=openhands", "-c", "user.email=openhands@all-hands.dev"]
     try:
         subprocess.run(["git", "add", os.path.relpath(path, ROOT)], cwd=ROOT, check=True)
+        # Nothing staged is the normal case for a sweep-only run; do not report it
+        # as a failure (the caller prints its own "nothing to record").
+        if subprocess.run(["git", "diff", "--cached", "--quiet"],
+                          cwd=ROOT).returncode == 0:
+            return
         subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT, check=True)
         # Union-merge the append-only ledgers, so a racing job's records are kept
         # instead of leaving conflict markers that lose a live upload id.
