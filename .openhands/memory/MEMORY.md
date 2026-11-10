@@ -138,3 +138,20 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - **Measured:** panel of 6 answered in **15.3 s**. Evidence `.stockwork/PANEL-EVIDENCE-2026-11-09.md`.
 - **Pod tooling:** `ffmpeg`/`ffprobe` via `pip install static-ffmpeg` (no root); copy binaries to
   `~/bin` and add to PATH, or the media tests fail with FileNotFoundError.
+
+## 🔁 Posting loop = post → wait 2-3h → read → adapt (2026-11-09)
+- K's rule: ONE clip, wait 2-3 h, look at how it did, then the next. Good → keep the
+  shape; bad → change it. Never a burst, never repeat a loser. `scripts/pace.py`:
+  `gate()` (2h gap + grade) + `order()` (good keeps the winning shape, bad flips to
+  the other). `publish_shorts` records `posted_at`+`shape`; `foreman` posts per_run 1.
+- **Bar = the channel's upper quartile, NOT the median.** Half of dharma sits at 0
+  views, so a median bar called "2 views in 3h" good. Top quarter 2026-11-09 = 2.2
+  views/h. On a channel with a zero-view floor, compare to the *good* clips.
+- Views: Data API `videos.list` (fresh, minutes) when quota allows; else Analytics
+  API (separate quota, survives a spent Data API) but lags 1-2 days → grades the
+  baseline, not the newest. Neither → `unknown` → keep the shape (never invent).
+- `posted_at` backfilled on 233 existing Shorts from git history
+  (`scripts/backfill_posted_at.py`, needs `--unshallow`; run locally, commit).
+- Guard `scripts/test_pace.py`. Doc `docs/POSTING-LOOP-2026-11-09.md`.
+- **Gotcha:** publish-shorts CI short-circuits on the daily cap *before* the gate, so
+  CI green ≠ pace ran; the guard test is the proof.
