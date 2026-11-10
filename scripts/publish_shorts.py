@@ -506,7 +506,7 @@ def main() -> int:
     # post's reception verdict; pace.order uses it to keep a winning shape or
     # change a losing one. Falls back to the static winning-first order if pace is
     # unavailable, so the rail never depends on the extra call.
-    verdict, last_shape, have_pace = "unknown", None, False
+    verdict, last_shape, have_pace, stalled = "unknown", None, False, False
     try:
         import pace
         have_pace = True
@@ -516,7 +516,13 @@ def main() -> int:
             print(rec["reason"])
             return 0
         verdict, last_shape = rec["verdict"], rec["last_shape"]
+        stalled = bool(rec.get("stall", {}).get("stalled"))
         print(f"  last post: {rec['reason']}")
+        if stalled:
+            # The feed had stopped showing this channel; this run is the changed
+            # probe (a new voice), so the clip must not reuse the old build.
+            print("  stalled channel: this is the changed probe -- building fresh, "
+                  "new voice")
         rec["at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
         pace._write_reception(args.channel, rec)
     except Exception as exc:                       # noqa: BLE001 -- never block on the gate
@@ -564,9 +570,10 @@ def main() -> int:
     rc = 0
     for s in todo:
         sid = s["id"]
-        # Build if needed (CI has no prebuilt file).
+        # Build if needed (CI has no prebuilt file). A stalled channel's clip is the
+        # changed probe, so it is always rebuilt (new voice), never a cached file.
         out = os.path.join(work, sid, f"short_{sid}.mp4")
-        if not os.path.exists(out):
+        if stalled or not os.path.exists(out):
             print(f"building {sid} ...")
             cmd = [sys.executable, os.path.join(HERE, "make_short.py"),
                    "--scripts", spec["scripts"], "--index", sid,
@@ -584,6 +591,8 @@ def main() -> int:
                 cmd += ["--music", bed]
             if spec.get("cta_mid"):
                 cmd += ["--cta-mid"]
+            if stalled:
+                cmd += ["--probe"]
             r = subprocess.run(cmd, capture_output=True, text=True)
             if r.returncode != 0:
                 print(f"  build failed: {r.stderr[-400:]}", file=sys.stderr)
@@ -636,7 +645,8 @@ def main() -> int:
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
                               "title": body["snippet"]["title"],
                               "posted_at": posted_at,
-                              "shape": hook_shape(s, spec.get("cues"))}
+                              "shape": hook_shape(s, spec.get("cues")),
+                              **({"probe": True, "probe_voice": "alt"} if stalled else {})}
         save(man, spec["manifest"])   # record before anything else can fail
         note_upload(args.channel)     # the cap counts this on the next run
         commit(spec["manifest"], f"publish({args.channel}): record Short {sid}")
