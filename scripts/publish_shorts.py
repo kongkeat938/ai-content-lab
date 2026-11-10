@@ -396,6 +396,18 @@ def winning_first(todo: list, cues) -> list:
     return sorted(todo, key=lambda s: 0 if any(c in s["hook"] for c in cues) else 1)
 
 
+def hook_shape(script: dict, cues) -> str:
+    """The shape label stored on each published Short: cue vs plain.
+
+    Mirrors pace.hook_shape so the manifest records the same label the gate grades
+    against. Kept local because pace is imported inside a try (the rail must run
+    even when the gate cannot), and the upload path needs this label regardless.
+    """
+    if cues and any(c in script.get("hook", "") for c in cues):
+        return "cue"
+    return "plain"
+
+
 def pick_bed(music_dir: str | None, sid: str, mood: str | None = None,
              ledger_path: str | None = None) -> str | None:
     """Choose a bed for a short, preferring one that matches the channel's mood.
