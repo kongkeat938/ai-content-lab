@@ -1,4 +1,4 @@
-# Channel health — 2026-11-10T12:55:20+00:00
+# Channel health — 2026-11-10T13:41:55+00:00
 
 - long videos live: **9** ['night_120', 'k_tone_01', 'night_110', 'night_money_01', 'night_sleep_01', 'night_auto_202645', 'night_dharma_01', 'night_middleway_01', 'night_auto_202646']
 - thumbnails queued: 13
@@ -8,28 +8,28 @@
 - genx: 77 live of 102 in the pool (25 waiting)
 
 ## rails
-- account-watch: last success 74 min ago; last success 1.2 h ago
-- ch2-playlists: last success 1070 min ago; last success 17.8 h ago
-- ch4-longform: last success 5570 min ago; last success 92.8 h ago
-- ch4-realign: last success 194 min ago; last success 3.2 h ago
-- check-duplicates: last success 1375 min ago; last success 22.9 h ago
-- counter-ledger: last success 194 min ago; last success 3.2 h ago
-- fetch music: last success 2000 min ago; last success 33.3 h ago
-- foreman: last None 1 min ago; last success 1.2 h ago
-- genx-longform: last success 3046 min ago; last success 50.8 h ago
-- grow-shorts-pool: last success 536 min ago; last success 8.9 h ago
-- link-shorts: last success 315 min ago; last success 5.2 h ago
-- night-compilation: last success 1371 min ago; last success 22.8 h ago
-- polish-all: last cancelled 74 min ago; last success 13.5 h ago
-- progress: last success 1170 min ago; last success 19.5 h ago
-- publish-batch: last success 562 min ago; last success 9.4 h ago
-- publish-ch1: last success 319 min ago; last success 5.3 h ago
-- publish-ch4: last success 10 min ago; last success 0.2 h ago
-- publish-shorts: last None 1 min ago; last success 0.3 h ago
-- selftest: last success 74 min ago; last success 1.2 h ago
-- set-thumbnails: last success 173 min ago; last success 2.9 h ago
-- short doors: last success 1526 min ago; last success 25.4 h ago
-- studio-ai: last success 547 min ago; last success 9.1 h ago
-- watch-hours: last success 1234 min ago; last success 20.6 h ago
+- account-watch: last success 1 min ago; last success 0.0 h ago
+- ch2-playlists: last success 1116 min ago; last success 18.6 h ago
+- ch4-longform: last success 5617 min ago; last success 93.6 h ago
+- ch4-realign: last success 241 min ago; last success 4.0 h ago
+- check-duplicates: last success 1422 min ago; last success 23.7 h ago
+- counter-ledger: last success 44 min ago; last success 0.7 h ago
+- fetch music: last success 2047 min ago; last success 34.1 h ago
+- foreman: last None 1 min ago; last success 0.8 h ago
+- genx-longform: last None 42 min ago; last success 51.6 h ago
+- grow-shorts-pool: last success 583 min ago; last success 9.7 h ago
+- link-shorts: last None 0 min ago; last success 6.0 h ago
+- night-compilation: last success 1417 min ago; last success 23.6 h ago
+- polish-all: last cancelled 121 min ago; last success 14.3 h ago
+- progress: last None 0 min ago; last success 20.3 h ago
+- publish-batch: last success 609 min ago; last success 10.1 h ago
+- publish-ch1: last success 366 min ago; last success 6.1 h ago
+- publish-ch4: last success 56 min ago; last success 0.9 h ago
+- publish-shorts: last None 0 min ago; last success 0.8 h ago
+- selftest: last None 3 min ago; last success 2.0 h ago
+- set-thumbnails: last None 0 min ago; last success 3.7 h ago
+- short doors: last success 1573 min ago; last success 26.2 h ago
+- studio-ai: last success 594 min ago; last success 9.9 h ago
+- watch-hours: last success 1281 min ago; last success 21.4 h ago
 
 ## all rails fresh
