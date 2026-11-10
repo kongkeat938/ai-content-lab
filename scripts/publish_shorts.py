@@ -119,6 +119,12 @@ CHANNELS = {
         # a specific relationship plus a physical act measured 460-1,083 views
         # against 1-6 for the classical-tale shape. Publish these first.
         "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
+        # ch4 experiment (2026-11-09, five-advisor panel): the channel watched to
+        # the end (59.5%) but converted 1.79 subs/1k vs ch1's 5.38 and got 0
+        # shares/comments, because the subscribe ask sat at the tail after the
+        # viewer had swiped. Speak it after the story's peak instead. Revert if
+        # subs/1k does not rise in ~3 days (the pace loop measures the verdict).
+        "cta_mid": True,
         "tail": ("\n\nรวมเรื่องเล่าครอบครัวทุกตอน → "
                  "https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n"
                  "#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"),
@@ -564,6 +570,8 @@ def main() -> int:
                            bed_ledger_path(args.channel))
             if bed:
                 cmd += ["--music", bed]
+            if spec.get("cta_mid"):
+                cmd += ["--cta-mid"]
             r = subprocess.run(cmd, capture_output=True, text=True)
             if r.returncode != 0:
                 print(f"  build failed: {r.stderr[-400:]}", file=sys.stderr)

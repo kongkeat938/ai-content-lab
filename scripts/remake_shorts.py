@@ -234,6 +234,8 @@ def main() -> int:
                         ps.bed_ledger_path(args.channel))
             if bed:
                 cmd += ["--music", bed]
+            if spec.get("cta_mid"):
+                cmd += ["--cta-mid"]
             r = subprocess.run(cmd, capture_output=True, text=True)
             if r.returncode != 0:
                 print(f"  build failed: {r.stderr[-400:]}", file=sys.stderr)
