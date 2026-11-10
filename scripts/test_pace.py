@@ -101,10 +101,10 @@ def test_gate_end_to_end() -> None:
                {"id": "04", "video_id": "last", "hook": "คืนนี้ลองทำแบบนี้"}]
 
     def fake_stats(_tok, _ids):
-        return {"old1": {"views": 480, "published_at": None},
-                "old2": {"views": 400, "published_at": None},
-                "old3": {"views": 300, "published_at": None},
-                "last": {"views": 300, "published_at": None}}   # 100/h >> baseline
+        return {"old1": {"views": 480, "likes": 4, "comments": 1, "published_at": None},
+                "old2": {"views": 400, "likes": 3, "comments": 0, "published_at": None},
+                "old3": {"views": 300, "likes": 2, "comments": 1, "published_at": None},
+                "last": {"views": 300, "likes": 5, "comments": 1, "published_at": None}}  # 100/h >> baseline
 
     orig_stats, orig_av = pace.stats, pace.analytics_views
     pace.stats, pace.analytics_views = fake_stats, lambda *a, **k: {}
@@ -114,6 +114,9 @@ def test_gate_end_to_end() -> None:
                          cues=("ลอง", "คืนนี้"))
         if good["verdict"] != "good" or good["last_shape"] != "cue":
             fail(f"a fast clip did not grade good: {good}")
+        # Same-day engagement proxy must be read in the same call (K, 2026-11-10).
+        if good.get("likes") != 5 or good.get("engagement_per_1k") != 20.0:
+            fail(f"gate did not report same-day likes/comments: {good}")
         # Same last clip, but the channel's steady rate is now higher -> bad.
         def slow_stats(_tok, _ids):
             d = fake_stats(_tok, _ids)

@@ -91,10 +91,13 @@ def access_token(env: str) -> str:
 
 
 def stats(token: str, ids: list[str]) -> dict:
-    """Current view count + publish time for up to 50 video ids, in one call.
+    """Current view count, likes, comments + publish time for up to 50 ids, one call.
 
-    Returns {} on a spent quota (403) rather than raising: the gate must degrade to
-    "unknown", never invent a grade, and never break the publish rail.
+    Likes and comments come back in the same request as the view count, so a young
+    channel can read engagement the same day instead of waiting 1-2 days for the
+    Analytics subscriber number (K, 2026-11-10: a new channel must be read in hours,
+    not days). Returns {} on a spent quota (403) rather than raising: the gate must
+    degrade to "unknown", never invent a grade, and never break the publish rail.
     """
     if not ids:
         return {}
@@ -109,8 +112,11 @@ def stats(token: str, ids: list[str]) -> dict:
         return {}
     out = {}
     for it in items:
+        st = it.get("statistics", {})
         out[it["id"]] = {
-            "views": int(it.get("statistics", {}).get("viewCount", 0)),
+            "views": int(st.get("viewCount", 0)),
+            "likes": int(st.get("likeCount", 0)),
+            "comments": int(st.get("commentCount", 0)),
             "published_at": it.get("snippet", {}).get("publishedAt"),
         }
     return out
@@ -347,13 +353,21 @@ def gate(slug: str, manifest_path: str, min_gap: float = MIN_GAP_HOURS,
             base.append(w / age)
     baseline = _quantile(base, GOOD_QUANTILE)
     verdict = grade(per_hour, baseline, len(base))
+    # Same-day conversion proxy: likes + comments per 1k views, from the Data API
+    # call we already make. A young channel can act on this in hours; the Analytics
+    # subscriber number lags 1-2 days.
+    row = live.get(entry["video_id"], {})
+    likes, comments = row.get("likes"), row.get("comments")
+    eng = round(1000 * (likes + comments) / this_views, 1) if (this_views and likes is not None) else None
+    tail = f", likes {likes} comments {comments} ({eng}/1k)" if eng is not None else ""
     out.update({"verdict": verdict, "views": this_views,
+                "likes": likes, "comments": comments, "engagement_per_1k": eng,
                 "per_hour": round(per_hour, 2),
                 "baseline_per_hour": round(baseline, 2),
                 "baseline_clips": len(base),
                 "reason": (f"last post {this_views} views in {hours:.1f}h "
                            f"({per_hour:.1f}/h vs channel top-quarter "
-                           f"{baseline:.1f}/h) -> {verdict}")})
+                           f"{baseline:.1f}/h){tail} -> {verdict}")})
     return out
 
 
