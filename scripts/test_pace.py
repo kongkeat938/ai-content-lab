@@ -198,6 +198,27 @@ def test_gate_stall() -> None:
     print("  gate: stalled channel pauses, then one changed probe is allowed")
 
 
+def test_probe_voice() -> None:
+    """A withheld channel's probe must SOUND different, not repeat the same voice.
+
+    The five-advisor panel's recovery step is "change the voice/template", so the
+    probe has to be a real alternative: make_short exposes VOICE_ALT and a --probe
+    flag, and the rail must pass --probe (and rebuild, not reuse) on a stalled run.
+    """
+    import make_short
+    if make_short.VOICE_ALT == make_short.VOICE:
+        fail("VOICE_ALT is the same as VOICE; the probe would not change anything")
+    ms = open(os.path.join(HERE, "make_short.py"), encoding="utf-8").read()
+    if '"--probe"' not in ms or "args.voice = VOICE_ALT" not in ms:
+        fail("make_short does not turn --probe into the alternate voice")
+    ps = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
+    if 'cmd += ["--probe"]' not in ps:
+        fail("publish_shorts does not pass --probe on a stalled run")
+    if "if stalled or not os.path.exists(out):" not in ps:
+        fail("a stalled run would reuse the cached build instead of rebuilding the probe")
+    print("  probe: a stalled channel comes back with the alternate voice, rebuilt")
+
+
 def test_wiring() -> None:
     src = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
     if '"posted_at": posted_at' not in src:
@@ -217,6 +238,7 @@ def main() -> int:
     test_gate_end_to_end()
     test_stall()
     test_gate_stall()
+    test_probe_voice()
     test_wiring()
     print("OK: one clip, 2-3 h apart, shape kept when good and changed when bad")
     return 0

@@ -37,6 +37,11 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 FONTS = os.path.join(ROOT, "assets", "fonts")
 VOICE = "th-TH-NiwatNeural"      # calm male narrator, the channel's voice
+# The changed voice a withheld channel comes back with (2026-11-10). A five-advisor
+# panel was unanimous that kongkeat's feed stop came from the same voice + template
+# repeated 17-22 times a day; the recovery has to sound different, so a stalled
+# channel's probe clip uses this instead of VOICE. Female, so the change is audible.
+VOICE_ALT = "th-TH-PremwadeeNeural"
 # A slower read: the niche's winners run about a minute, and a slow read holds a
 # sleepy listener better than a clipped one.
 RATE = "-15%"
@@ -93,7 +98,7 @@ def measure_audio(path: str) -> float | None:
     return None
 
 
-async def speak(text: str, out: str) -> None:
+async def speak(text: str, out: str, voice: str = VOICE) -> None:
     """Synthesise the line, retrying a dropped connection.
 
     edge-tts occasionally returns NoAudioReceived on a line that works on the
@@ -103,7 +108,7 @@ async def speak(text: str, out: str) -> None:
     last = None
     for attempt in range(4):
         try:
-            await edge_tts.Communicate(text, VOICE, rate=RATE).save(out)
+            await edge_tts.Communicate(text, voice, rate=RATE).save(out)
             if os.path.exists(out) and os.path.getsize(out) > 0:
                 return
             last = "empty file"
@@ -248,7 +253,7 @@ def spoken_sequence(script: dict, cta_mid: bool = False) -> list[str]:
 
 
 def build(script: dict, out_dir: str, art: str | None, music: str | None,
-          cta_mid: bool = False) -> str:
+          cta_mid: bool = False, voice: str | None = None) -> str:
     sid = script["id"]
     d = os.path.join(out_dir, sid)
     os.makedirs(d, exist_ok=True)
@@ -275,7 +280,7 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None,
         if tts_fish and tts_fish.available():
             tts_fish.synth(spoken, voice_mp3)
         else:
-            asyncio.run(speak(spoken, voice_mp3))
+            asyncio.run(speak(spoken, voice_mp3, voice or VOICE))
     dur = duration(voice_mp3)
 
     # Captions: one PNG per line, shown for its share of the audio. The order
@@ -433,8 +438,15 @@ def main() -> int:
     ap.add_argument("--cta-mid", action="store_true",
                     help="speak the CTA after the story's peak instead of at the tail "
                          "(ch4 experiment: a tail CTA lands after the viewer swiped)")
+    ap.add_argument("--voice", default=None,
+                    help=f"edge-tts voice (default {VOICE})")
+    ap.add_argument("--probe", action="store_true",
+                    help=f"build the changed clip a withheld channel comes back with: "
+                         f"use {VOICE_ALT} instead of {VOICE}, so the recovery is audible")
     ap.add_argument("--index", action="append", help="build only these ids")
     args = ap.parse_args()
+    if args.probe and not args.voice:
+        args.voice = VOICE_ALT
 
     with open(args.scripts, encoding="utf-8") as fh:
         scripts = json.load(fh)
@@ -449,7 +461,7 @@ def main() -> int:
                              args.art_style, args.art_dir, args.art_ledger)
         else:
             art = pick_art(args.art_dir, s["id"])
-        build(s, args.out_dir, art, args.music, cta_mid=args.cta_mid)
+        build(s, args.out_dir, art, args.music, cta_mid=args.cta_mid, voice=args.voice)
     print(f"built {len(scripts)} short(s) in {args.out_dir}")
     return 0
 
