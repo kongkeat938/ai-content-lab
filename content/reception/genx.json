@@ -1,0 +1,22 @@
+{
+  "history": [
+    {
+      "allowed": true,
+      "verdict": "unknown",
+      "last_shape": null,
+      "last_video_id": "OJwllaiwgpg",
+      "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+      "hours_since_last": 12.61,
+      "at": "2026-11-10T05:41:48+00:00"
+    }
+  ],
+  "latest": {
+    "allowed": true,
+    "verdict": "unknown",
+    "last_shape": null,
+    "last_video_id": "OJwllaiwgpg",
+    "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+    "hours_since_last": 12.61,
+    "at": "2026-11-10T05:41:48+00:00"
+  }
+}
