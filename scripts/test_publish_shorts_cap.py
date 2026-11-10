@@ -68,8 +68,22 @@ def main() -> int:
         fail(f"foreman posts {m.group(1)} Shorts per dispatch; K's rule is one at a "
              "time (post, wait 2-3 h, read the result)")
 
+    # The upload path labels every Short with hook_shape(), which lives in pace and
+    # is imported inside a try (so the rail still runs when the gate cannot). That
+    # made a NameError on the real upload path (measured 2026-11-10: genx Publish
+    # step failed with "name 'hook_shape' is not defined"). publish_shorts must
+    # define it at module scope, not rely on the guarded import.
+    import ast
+    tree = ast.parse(src)
+    top = {n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+    if "hook_shape" not in top:
+        fail("publish_shorts.py does not define hook_shape() at module scope; the "
+             "upload path will NameError when pace is unavailable")
+    if not re.search(r"hook_shape\(", src.split("def hook_shape", 1)[1]):
+        fail("hook_shape() is defined but never called")
+
     print(f"OK: per-run default {default}, min gap {gap}h, no self-triggering manifest, "
-          f"foreman posts {m.group(1)}/dispatch")
+          f"foreman posts {m.group(1)}/dispatch, hook_shape defined locally")
     return 0
 
 
