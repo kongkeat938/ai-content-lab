@@ -249,6 +249,19 @@ def test_tension_parity() -> None:
     print("  tension: kongkeat holds flat hooks, the two copies match, other channels untouched")
 
 
+def test_ch4_insights_tension() -> None:
+    """kongkeat's learned topics must carry tension, or the generator is steered
+    back to the flat scenes that got the channel's feed withdrawn (2026-11-10)."""
+    import gen_short_scripts as gen
+    import json
+    path = os.path.join(ROOT, "content", "insights", "ch4.json")
+    topics = json.load(open(path, encoding="utf-8")).get("topics", [])
+    flat = [t for t in topics if not gen._TENSION.search(t)]
+    if flat:
+        fail(f"ch4 insights topics lack tension: {flat}")
+    print(f"  insights: all {len(topics)} ch4 topics carry the tension marker")
+
+
 def test_wiring() -> None:
     src = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
     if '"posted_at": posted_at' not in src:
@@ -270,6 +283,7 @@ def main() -> int:
     test_gate_stall()
     test_probe_voice()
     test_tension_parity()
+    test_ch4_insights_tension()
     test_wiring()
     print("OK: one clip, 2-3 h apart, shape kept when good and changed when bad")
     return 0

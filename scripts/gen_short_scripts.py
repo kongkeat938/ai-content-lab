@@ -328,7 +328,13 @@ def main() -> int:
         try:
             with open(ins_path, encoding="utf-8") as fh:
                 blob = json.load(fh)
-            learned = [t for t in blob.get("topics", []) if not _overlaps(t, seen, 8)]
+            # Drop learned subjects that lack the channel's hook marker: measured
+            # 2026-11-10, kongkeat's insights still listed the flat scenes (coffee,
+            # housework) that got its feed withdrawn, and putting them first steered
+            # the batch back to the losing shape.
+            _req = cfg.get("require")
+            learned = [t for t in blob.get("topics", [])
+                       if not _overlaps(t, seen, 8) and (not _req or _req.search(t))]
             rules = [r for r in blob.get("rules", []) if isinstance(r, str)][:3]
         except (json.JSONDecodeError, OSError):
             learned = []
@@ -360,6 +366,17 @@ def main() -> int:
         seen_hooks = {s["hook"] for s in fresh}
         fresh += [s for s in again if s["hook"] not in seen_hooks]
 
+    # De-duplicate within the batch: measured 2026-11-10 the same subject came back
+    # three times in one run (three coffee hooks, three house-cleaning hooks), and a
+    # channel that posts the same story shape back to back is what reads as spam.
+    kept: list[dict] = []
+    for s in fresh:
+        if any(_overlaps(s["hook"], k["hook"], 12) for k in kept):
+            continue
+        kept.append(s)
+        if len(kept) >= args.count:
+            break
+    fresh = kept
     next_id = max([int(s["id"]) for s in existing] + [0]) + 1
     added = []
     for s in fresh[:args.count]:

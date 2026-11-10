@@ -326,6 +326,24 @@ QUESTION = (
     "(บรรยาย 20-120 นาที) คั่นด้วย ' | ' — ธีมที่คนนอนไม่หลับอยากฟังจริง\n"
     "- ขึ้นต้นด้วย 'TOPICS:' แล้วตามด้วยหัวข้อ Shorts ใหม่ 8 หัวข้อ คั่นด้วย ' | '")
 
+# Measured 2026-11-10: kongkeat's feed was withdrawn while its pool was full of
+# flat warm scenes, so when the panel proposes its next subjects they must carry a
+# tension, not another picture. The generator rejects a flat hook regardless; this
+# keeps the *subjects* from steering it back to the shape that lost the feed.
+TOPICS_HINT = {
+    "kongkeat": ("หัวข้อ Shorts ใหม่ 8 หัวข้อ ที่มี 'ปมตึง' ในครอบครัว: เป็นคำถาม "
+                 "(ทำไม...), ความลับที่ถูกปิดบัง, การจากลา/การสูญเสีย, หรือความผิดหวัง "
+                 "(ห้ามเป็นฉากอบอุ่นราบเรียบ เช่น ทำกับข้าวด้วยกัน)"),
+}
+
+
+def question_for(channel: str) -> str:
+    hint = TOPICS_HINT.get(channel)
+    if not hint:
+        return QUESTION
+    return QUESTION.replace(
+        "หัวข้อ Shorts ใหม่ 8 หัวข้อ คั่นด้วย ' | '", hint + " คั่นด้วย ' | '")
+
 
 def parse_topics(text: str) -> list[str]:
     """Pull the generator's next subjects out of a panel answer."""
@@ -412,7 +430,7 @@ def main() -> int:
     answers: dict[str, str] = {}
     if a.panel:
         print("\n== panel ==")
-        answers = ask_panel(QUESTION, "ข้อมูลจริง:\n" + text)
+        answers = ask_panel(question_for(a.channel), "ข้อมูลจริง:\n" + text)
         for name, ans in answers.items():
             print(f"\n### {name}\n{ans}")
             text += f"\n\n### {name}\n{ans}"
