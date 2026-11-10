@@ -164,3 +164,9 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - แก้: `make_short.spoken_sequence(..., cta_mid)` + `--cta-mid` เฉพาะ spec `cta_mid:True`
   (= kongkeat). revert = ลบ cta_mid. guard `test_cta_mid.py`. ยังไม่ตัดสิน: รอ ~3 วัน.
 - **บทเรียนวัด:** Shorts แปลงซับด้วย engagement (share/comment/อารมณ์) ไม่ใช่ retention อย่างเดียว.
+
+## 🐛 Durable bug pattern (2026-11-10)
+- **symbol ที่ใช้ในโค้ดต้องไม่ถูกครอบโดย import ที่อยู่ใน try/guard.** `publish_shorts.py`
+  import `pace` ใน try (ตั้งใจ) แต่ path อัปโหลดเรียก `pace.hook_shape` → NameError ทำให้
+  publish job ตายเงียบ ๆ (genx FAIL, ch4/ch2 ผ่านเพราะไม่ได้เข้า path นั้น). นิยาม
+  `hook_shape` ที่ module scope + guard `test_publish_shorts_cap.py`.
