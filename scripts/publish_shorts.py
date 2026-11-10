@@ -380,6 +380,10 @@ def winning_first(todo: list, cues) -> list:
     whichever shape happened to be generated first. The winning shape is known
     (docs/HOOKS-MEASURED.md), so order by it: a stable sort keeps the id order
     inside each group. A channel with no cues keeps the old behaviour.
+
+    This is the *static* default. `pace.order()` refines it with the last post's
+    measured reception (good -> keep the winning shape, bad -> change it), so the
+    callers use pace when it is available and fall back to this.
     """
     if not cues:
         return todo
@@ -472,7 +476,6 @@ def main() -> int:
         return 0
 
     todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
-    todo = winning_first(todo, spec.get("cues"))
     # Hold the channel to a slow drip regardless of how often this was triggered.
     already = uploads_in_last_24h(args.channel, spec["manifest"])
     room = max(DAILY_CAP - already, 0)
@@ -480,11 +483,33 @@ def main() -> int:
         print(f"daily cap reached ({already}/{DAILY_CAP} in the last 24h) -- "
               "waiting, a steady drip beats a flood")
         return 0
-    since = hours_since_last_upload(args.channel, spec["manifest"])
-    if since is not None and since < MIN_GAP_HOURS:
-        print(f"only {since:.1f}h since the last upload (need {MIN_GAP_HOURS}h) -- "
-              "spacing the posts out, that is what keeps the feed showing them")
-        return 0
+    # K's rule (2026-11-09): wait 2-3 h between posts, and grade the last post
+    # before making the next one. pace.gate owns that gate and returns the last
+    # post's reception verdict; pace.order uses it to keep a winning shape or
+    # change a losing one. Falls back to the static winning-first order if pace is
+    # unavailable, so the rail never depends on the extra call.
+    verdict, last_shape, have_pace = "unknown", None, False
+    try:
+        import pace
+        have_pace = True
+        rec = pace.gate(args.channel, spec["manifest"], token=access_token(spec),
+                        scripts=scripts, cues=spec.get("cues"))
+        if not rec["allowed"]:
+            print(rec["reason"])
+            return 0
+        verdict, last_shape = rec["verdict"], rec["last_shape"]
+        print(f"  last post: {rec['reason']}")
+        rec["at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        pace._write_reception(args.channel, rec)
+    except Exception as exc:                       # noqa: BLE001 -- never block on the gate
+        since = hours_since_last_upload(args.channel, spec["manifest"])
+        if since is not None and since < MIN_GAP_HOURS:
+            print(f"only {since:.1f}h since the last upload (need {MIN_GAP_HOURS}h) -- "
+                  "spacing the posts out, that is what keeps the feed showing them")
+            return 0
+        print(f"  (pace unavailable: {exc}; using the static order)", file=sys.stderr)
+    todo = (pace.order(todo, spec.get("cues"), verdict, last_shape)
+            if have_pace else winning_first(todo, spec.get("cues")))
     if args.per_run:
         todo = todo[:min(args.per_run, room)]
     done = [s["id"] for s in scripts if man["shorts"].get(s["id"], {}).get("video_id")]
@@ -587,8 +612,11 @@ def main() -> int:
             rc = 1
             continue
         vid = response["id"]
+        posted_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
-                              "title": body["snippet"]["title"]}
+                              "title": body["snippet"]["title"],
+                              "posted_at": posted_at,
+                              "shape": hook_shape(s, spec.get("cues"))}
         save(man, spec["manifest"])   # record before anything else can fail
         note_upload(args.channel)     # the cap counts this on the next run
         commit(spec["manifest"], f"publish({args.channel}): record Short {sid}")
