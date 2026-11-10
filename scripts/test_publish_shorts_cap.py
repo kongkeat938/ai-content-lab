@@ -57,7 +57,19 @@ def main() -> int:
             fail(f"push.paths lists the workflow's own output manifest: {stripped} "
                  "(each publish would re-trigger the next)")
 
-    print(f"OK: per-run default {default}, min gap {gap}h, no self-triggering manifest")
+    # K's rule (2026-11-09): one clip, wait, then read the result. The foreman must
+    # never dispatch a run that posts more than one, or the "wait and check" step
+    # has nothing to check -- the burst is what it exists to prevent.
+    fm = open(os.path.join(HERE, "foreman.py"), encoding="utf-8").read()
+    m = re.search(r'publish-shorts",\s*\{"per_run":\s*"(\d+)"', fm)
+    if not m:
+        fail("foreman.py does not dispatch publish-shorts with a per_run value")
+    if int(m.group(1)) > 1:
+        fail(f"foreman posts {m.group(1)} Shorts per dispatch; K's rule is one at a "
+             "time (post, wait 2-3 h, read the result)")
+
+    print(f"OK: per-run default {default}, min gap {gap}h, no self-triggering manifest, "
+          f"foreman posts {m.group(1)}/dispatch")
     return 0
 
 

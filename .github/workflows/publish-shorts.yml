@@ -101,6 +101,9 @@ jobs:
           # The art/bed ledgers record which image and which bed each Short used,
           # so the next clip cannot repeat them (the owner's no-repeat rule).
           git add content/art_ledger_${{ matrix.channel }}.json content/bed_ledger_${{ matrix.channel }}.json 2>/dev/null || true
+          # The reception ledger records how the last post did, so the next run
+          # keeps a winning shape or changes a losing one (K's loop, pace.py).
+          git add content/reception/${{ matrix.channel }}.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing to record"
             exit 0

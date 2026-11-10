@@ -203,8 +203,12 @@ def main() -> int:
     # Only dispatch when a channel both has material and can actually upload it;
     # while every channel is capped the job would short-circuit on the same note,
     # so dispatching it just spends a runner for nothing.
+    #
+    # per_run is 1, not 2: K's rule (2026-11-09) is one clip, then wait 2-3 h and
+    # read the result before the next. A run that posts two is a burst by
+    # definition, and bursts are what the zero-view clusters have in common.
     if any(waiting[s] and not capped[s] for s in waiting):
-        plan.append(("publish-shorts", {"per_run": "2"}))
+        plan.append(("publish-shorts", {"per_run": "1"}))
 
     # 4. Refill a pool before it empties: ask Gemini when fewer than 8 remain.
     if any(n < 8 for n in waiting.values()):
