@@ -170,3 +170,16 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
   import `pace` ใน try (ตั้งใจ) แต่ path อัปโหลดเรียก `pace.hook_shape` → NameError ทำให้
   publish job ตายเงียบ ๆ (genx FAIL, ch4/ch2 ผ่านเพราะไม่ได้เข้า path นั้น). นิยาม
   `hook_shape` ที่ module scope + guard `test_publish_shorts_cap.py`.
+
+## 🚨 Feed suppression vs weak hook (2026-11-10) — ดู `docs/CH4-STALL-2026-11-10.md`
+- **ch4 kongkeat: Shorts feed หยุดโชว์ทั้งช่อง** (ไม่ใช่ subs ไม่แปลง). feed views 11-01..06=4,340
+  → 11-07..10=6; คลิปใหม่ 37 ตัว = 0-2 วิว (คลิปเก่า 8-242). สถานะช่องสะอาด ไม่มี strike.
+  genx/dharma flood หนักกว่า (26/49 ต่อวัน) ยังรอด → **flood อย่างเดียวไม่พอ**; ตัวเหตุคือ
+  **เสียงเดียว+เทมเพลตเดิม 17-22 คลิป/วัน** บนช่องใหม่ (trust ต่ำ) → อ่านเป็น spam.
+- **เช็คก่อนสรุป:** "คลิปใหม่~0 วิวทุกตัว" = **reach ถูกถอด** ไม่ใช่ hook อ่อน → ดู **feed-level
+  daily views** ก่อนเสมอ. panel 5/5: หยุดโพสต์ 3-5 วัน, **ห้ามลบคลิป**, กลับมา 1-2/วัน+เปลี่ยน shape.
+- **ลูป:** `pace.detect_stall()` (5 คลิปใหม่สุด ≤5 วิว = ดับ) → `gate()` pause จน `STALL_COOLDOWN_H=20h`
+  แล้วยอม 1 changed probe. quota หมด=unknown ไม่นับ stall; คลิปมี reach=เคลียร์.
+- **K's cadence rule:** ช่องใหม่ต้องวัด **เป็นชั่วโมง ไม่ใช่ข้ามวัน**; รอ 3/5/7 วันได้เฉพาะช่องที่มี
+  subs เยอะแล้ว. ใช้ **likes+comments จาก Data API** (มาพร้อม viewCount ใน call เดียว) เป็น
+  same-day proxy → `gate()` รายงาน `engagement_per_1k`.
