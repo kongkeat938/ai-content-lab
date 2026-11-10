@@ -215,7 +215,8 @@ def main() -> int:
                         "capped_until": rec.get("reset_at") if capped else None}
 
     stale = []
-    if "_error" not in runs:
+    blind = "_error" in runs
+    if not blind:
         for name, every in EXPECTED.items():
             e = runs.get(name)
             # publish-batch only has work when a long video is due; a long quiet
@@ -241,11 +242,12 @@ def main() -> int:
         "shorts": shorts,
         "thumbnails_queued": len(thumbs["thumbnails"]),
         "stale": stale,
+        "blind": blind,
     }
 
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
-        return 1 if stale else 0
+        return 1 if (stale or blind) else 0
 
     lines = [f"# Channel health — {report['generated']}", ""]
     lines.append(f"- long videos live: **{len(live_long)}** {live_long}")
@@ -275,7 +277,11 @@ def main() -> int:
             lines.append(f"- {name}: last {e['last_status']} {last:.0f} min ago; "
                          f"last success {'never' if a is None else f'{a/60:.1f} h ago'}")
     lines.append("")
-    if stale:
+    if blind:
+        lines.append("## rails UNKNOWN — could not read run history")
+        lines.append("- this is a blind report, not a fresh one: the run history could not "
+                     "be read, so no rail's freshness is known")
+    elif stale:
         lines.append("## STALE")
         lines += [f"- {s}" for s in stale]
     else:
@@ -286,9 +292,11 @@ def main() -> int:
     if args.write:
         with open(os.path.join(ROOT, "docs", "HEALTH.md"), "w", encoding="utf-8") as fh:
             fh.write(text)
-    if args.alert:
+    if args.alert and not blind:
+        # Never clear an alert on a blind read: "could not read" is not "all fresh",
+        # and closing the issue here would silence a real alert during an outage.
         upsert_alert(stale, report["generated"])
-    return 1 if stale else 0
+    return 1 if (stale or blind) else 0
 
 
 if __name__ == "__main__":
