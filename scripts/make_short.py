@@ -57,6 +57,10 @@ BED_GAIN_DB = 2.0
 # blown up into hiss.
 BED_UNDER_VOICE_DB = 11.0
 BED_GAIN_MIN, BED_GAIN_MAX = 0.05, 0.60
+# Where a mid-clip CTA sits, as a fraction of the story lines. 0.6 lands it just
+# past the peak but before the wind-down, which is where a five-advisor panel put
+# it for ch4 (2026-11-09). See build().
+CTA_MID_RATIO = 0.6
 
 
 def bed_gain(music: str, voice_lufs: float) -> float:
@@ -227,14 +231,38 @@ def normalise(src: str, out: str, gain_db: float = 0.0) -> None:
          "-ar", "48000", "-c:a", "pcm_s16le", out])
 
 
-def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str:
+def spoken_sequence(script: dict, cta_mid: bool = False) -> list[str]:
+    """The caption/voice order: hook, story lines, and the CTA.
+
+    Default keeps the CTA last. `cta_mid` drops it in after the story's peak
+    (CTA_MID_RATIO through the lines) -- the ch4 experiment. Kept separate from
+    build() so the placement is unit-tested without running ffmpeg.
+    """
+    seq = [script["hook"], *script["lines"]]
+    if cta_mid:
+        pos = 1 + round(len(script["lines"]) * CTA_MID_RATIO)
+        seq.insert(min(pos, len(seq)), script["cta"])
+    else:
+        seq.append(script["cta"])
+    return seq
+
+
+def build(script: dict, out_dir: str, art: str | None, music: str | None,
+          cta_mid: bool = False) -> str:
     sid = script["id"]
     d = os.path.join(out_dir, sid)
     os.makedirs(d, exist_ok=True)
 
     # Spoken text: hook, then the lines, then the CTA. Blank lines become the
     # pause edge-tts reads between them, so the read breathes.
-    spoken = "\n".join([script["hook"], *script["lines"], script["cta"]])
+    #
+    # cta_mid moves the CTA to just after the story's peak (K's ch4 experiment,
+    # 2026-11-09). Measured: ch4 watched to the end (59.5% avg) but converted
+    # 1.79 subs/1k vs ch1's 5.38 and 0 shares/comments -- a subscribe ask at the
+    # tail lands after the viewer has swiped. A five-advisor panel put the CTA
+    # mid-clip; this is that change, kept to the channel the numbers flag.
+    seq = spoken_sequence(script, cta_mid)
+    spoken = "\n".join(seq)
     voice_mp3 = os.path.join(d, "voice.mp3")
     if not os.path.exists(voice_mp3):
         # K's cloned voice when it is configured (see tts_fish.py), the house
@@ -250,8 +278,9 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None) -> str
             asyncio.run(speak(spoken, voice_mp3))
     dur = duration(voice_mp3)
 
-    # Captions: one PNG per line, shown for its share of the audio.
-    shown = [script["hook"], *script["lines"], script["cta"]]
+    # Captions: one PNG per line, shown for its share of the audio. The order
+    # must match `seq` so a mid-clip CTA shows where it is spoken.
+    shown = seq
     cards = []
     for i, text in enumerate(shown):
         p = os.path.join(d, f"cap_{i:02d}.png")
@@ -401,6 +430,9 @@ def main() -> int:
     ap.add_argument("--art-ledger", help="JSON file recording every generated image's "
                     "md5, so a clip can never reuse another clip's picture")
     ap.add_argument("--music", help="optional bed to mix under the voice")
+    ap.add_argument("--cta-mid", action="store_true",
+                    help="speak the CTA after the story's peak instead of at the tail "
+                         "(ch4 experiment: a tail CTA lands after the viewer swiped)")
     ap.add_argument("--index", action="append", help="build only these ids")
     args = ap.parse_args()
 
@@ -417,7 +449,7 @@ def main() -> int:
                              args.art_style, args.art_dir, args.art_ledger)
         else:
             art = pick_art(args.art_dir, s["id"])
-        build(s, args.out_dir, art, args.music)
+        build(s, args.out_dir, art, args.music, cta_mid=args.cta_mid)
     print(f"built {len(scripts)} short(s) in {args.out_dir}")
     return 0
 
