@@ -132,6 +132,69 @@ def test_gate_end_to_end() -> None:
     print("  gate: real counts grade good above the median and bad below it")
 
 
+def test_stall() -> None:
+    """The feed can stop showing a channel entirely -- that is not 'bad reception'.
+
+    Measured 2026-11-10: kongkeat's last 37 clips sat at 0-2 views (feed off) while
+    its first 14 held 40-242. A weak hook still gets *some* feed views; all-flat is
+    reach removed, and posting more of the same deepens it (five-advisor panel,
+    unanimous). detect_stall must tell the two apart.
+    """
+    def entries(n):
+        return [(f"{i:02d}", {"video_id": f"v{i}", "posted_at": _iso(3 + i)})
+                for i in range(1, n + 1)]
+
+    flat = {f"v{i}": 0 for i in range(1, 6)}          # newest five, all zero
+    r = pace.detect_stall(entries(6), flat)
+    if not r["stalled"]:
+        fail(f"five flat clips did not read as a feed stall: {r}")
+    if r.get("last_hours") is None:
+        fail("a stall did not report how long the feed has been off")
+
+    mixed = {"v6": 120, "v5": 0, "v4": 0, "v3": 0, "v2": 0}
+    r = pace.detect_stall(entries(6), mixed)
+    if r["stalled"]:
+        fail("a clip with real reach did not clear the stall; the channel is fine")
+
+    r = pace.detect_stall(entries(3), {f"v{i}": 0 for i in range(1, 4)})
+    if r["stalled"]:
+        fail("stalled on too few clips; three flat clips is noise, not a verdict")
+
+    # A spent quota (no view counts) must not be read as suppression.
+    r = pace.detect_stall(entries(6), {})
+    if r["stalled"]:
+        fail("read a spent quota (no view data) as a feed stall")
+    print("  stall: five flat clips stall, real reach clears, unknowns never stall")
+
+
+def test_gate_stall() -> None:
+    """gate() must pause a stalled channel, then allow ONE changed probe after a while."""
+    def manifest(age_h):
+        return _write_manifest({f"{i:02d}": {"video_id": f"v{i}", "posted_at": _iso(age_h + i)}
+                                for i in range(1, 7)})
+
+    flat = {f"v{i}": 0 for i in range(1, 7)}
+    orig_stats, orig_av = pace.stats, pace.analytics_views
+    pace.stats, pace.analytics_views = (lambda *a, **k: {k2: {"views": v, "published_at": None}
+                                                         for k2, v in flat.items()}), (lambda *a, **k: {})
+    try:
+        recent = manifest(3.0)          # last clip 3 h ago, feed off
+        r = pace.gate("kongkeat", recent, token="x")
+        if r["allowed"]:
+            fail(f"gate kept posting to a stalled channel: {r}")
+        if r["verdict"] != "bad":
+            fail("a stall did not read as a change-the-shape verdict")
+        os.unlink(recent)
+        old = manifest(30.0)            # last clip 30 h ago, past the cooldown
+        r2 = pace.gate("kongkeat", old, token="x")
+        if not r2["allowed"] or r2["verdict"] != "bad":
+            fail(f"gate did not allow a single changed probe after the cooldown: {r2}")
+        os.unlink(old)
+    finally:
+        pace.stats, pace.analytics_views = orig_stats, orig_av
+    print("  gate: stalled channel pauses, then one changed probe is allowed")
+
+
 def test_wiring() -> None:
     src = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
     if '"posted_at": posted_at' not in src:
@@ -149,6 +212,8 @@ def main() -> int:
     test_order()
     test_grade()
     test_gate_end_to_end()
+    test_stall()
+    test_gate_stall()
     test_wiring()
     print("OK: one clip, 2-3 h apart, shape kept when good and changed when bad")
     return 0

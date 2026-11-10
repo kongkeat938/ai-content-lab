@@ -48,6 +48,14 @@ MIN_GAP_HOURS = 2.0          # the floor of K's 2-3 h window; the 30-min foreman
 MIN_BASELINE_CLIPS = 3       # below this the median is noise, so the verdict is unknown
 BASELINE_MIN_AGE_H = 12.0    # only clips older than this inform the steady rate
 GOOD_QUANTILE = 0.75         # "good" = at least the channel's upper quartile (see _quantile)
+# The feed-suppression guard (2026-11-10). A new channel can be *withheld* by the
+# Shorts feed, not merely ignored: kongkeat's feed views fell from 4,340 in six days
+# to 6 in four, and its last 37 clips sat at 0-2 views while its first 14 held
+# 40-242. That is reach removed, not a weak hook, and repeating the same clip makes
+# it worse. A clip the feed never showed sits at <= this many views.
+SUPPRESS_VIEWS = 5
+STALL_LOOKBACK = 5           # this many flat clips in a row = the feed stopped
+STALL_COOLDOWN_H = 20.0      # after this pause, post ONE changed clip as a probe
 
 RECEPTION_DIR = os.path.join(ROOT, "content", "reception")
 
@@ -201,6 +209,49 @@ def grade(per_hour: float, baseline: float, n_baseline: int) -> str:
     return "good" if per_hour >= baseline else "bad"
 
 
+def detect_stall(entries: list, views: dict, now_dt=None, lookback: int = STALL_LOOKBACK,
+                 threshold: int = SUPPRESS_VIEWS) -> dict:
+    """Has the Shorts feed stopped showing this channel at all?
+
+    Distinct from "bad reception": a bad clip still gets *some* feed views. A
+    suppressed channel's newest clips sit at ~0 views, because the feed is not
+    showing them, and posting more of the same is the one thing that deepens the
+    suppression (a five-advisor panel was unanimous, 2026-11-10). So this reads the
+    newest `lookback` clips: if they are ALL at or under `threshold`, the feed is
+    off and the caller should pause and change shape, not keep posting.
+
+    `entries` are (sid, manifest-entry) pairs oldest-first; `views` maps video_id to
+    a current view count. A clip with no view count (spent quota) is skipped, not
+    counted as zero -- an unknown is not evidence of suppression.
+    """
+    now_dt = now_dt or now()
+    counted, last_ts = [], None
+    for sid, v in reversed(entries):
+        w = views.get(v.get("video_id"))
+        if w is None:
+            continue
+        counted.append((sid, w))
+        if len(counted) >= lookback:
+            break
+    if len(counted) < lookback:
+        return {"stalled": False, "flat": len(counted), "reason": "too few clips to judge"}
+    if any(w > threshold for _, w in counted):
+        return {"stalled": False, "flat": sum(1 for _, w in counted if w <= threshold)}
+    # Every recent clip is flat. The newest clip's age tells us how long the feed
+    # has been off; past the cooldown we allow one changed probe.
+    last_sid = counted[0][0]
+    for sid, v in reversed(entries):
+        if sid == last_sid:
+            ts = v.get("posted_at")
+            if ts:
+                last_ts = parse(ts)
+            break
+    hours = (now_dt - last_ts).total_seconds() / 3600.0 if last_ts else None
+    return {"stalled": True, "flat": len(counted), "last_hours": round(hours, 1) if hours else None,
+            "reason": (f"the Shorts feed has not shown the last {lookback} clips "
+                       f"(all <= {threshold} views) -- reach is removed, not weak")}
+
+
 def gate(slug: str, manifest_path: str, min_gap: float = MIN_GAP_HOURS,
          token: str | None = None, scripts: list | None = None, cues=()) -> dict:
     """Decide whether the next Short is due, and grade the last one.
@@ -264,6 +315,23 @@ def gate(slug: str, manifest_path: str, min_gap: float = MIN_GAP_HOURS,
         # spent. Unknown means "keep the shape" downstream, never "change it".
         out["reason"] = ("the last post is not measurable yet (fresh window / "
                          "spent quota) -- keeping the current shape")
+        return out
+    # Reach guard first: if the feed has stopped showing the channel, a weak-hook
+    # grade is beside the point, and posting more of the same deepens the block.
+    stall = detect_stall(entries, views)
+    out["stall"] = stall
+    if stall["stalled"]:
+        age = stall.get("last_hours")
+        if age is not None and age >= STALL_COOLDOWN_H:
+            out["verdict"] = "bad"      # probe: post ONE changed clip, then re-read
+            out["reason"] = (f"{stall['reason']}; paused {age:.0f}h -- posting one "
+                             "changed clip to test whether the feed returns")
+        else:
+            out["allowed"] = False
+            out["verdict"] = "bad"
+            since = f" (last clip {age:.0f}h ago)" if age is not None else ""
+            out["reason"] = (f"{stall['reason']}{since} -- do not repeat the shape "
+                             "that got the channel withheld")
         return out
     per_hour = this_views / max(hours, 0.1)
     base = []
