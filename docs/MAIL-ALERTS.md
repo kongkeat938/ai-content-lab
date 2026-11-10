@@ -1,11 +1,14 @@
-# Account watch — 2026-11-10T17:42+00:00
+# Account watch — 2026-11-10T19:42+00:00
 
 ## Channel health (Data API — always available)
 - **dharma**: cannot check — 403 {
   "error": {
     "code": 403,
     "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
-- **genx**: clean
+- **genx**: cannot check — 403 {
+  "error": {
+    "code": 403,
+    "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
 - **aeris-music**: out of scope (handed to another AI) — not watched
 - **kongkeat-story**: cannot check — 403 {
   "error": {
