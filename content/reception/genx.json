@@ -26,15 +26,66 @@
       "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
       "hours_since_last": 14.4,
       "at": "2026-11-10T07:29:38+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "9vGEUGcHElQ",
+      "reason": "last post 0 views in 2.2h (0.0/h vs channel top-quarter 7.9/h) -> bad",
+      "hours_since_last": 2.2,
+      "stall": {
+        "stalled": false,
+        "flat": 1
+      },
+      "views": 0,
+      "per_hour": 0.0,
+      "baseline_per_hour": 7.89,
+      "baseline_clips": 49,
+      "channel": "genx",
+      "at": "2026-11-10T09:41:56+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "9vGEUGcHElQ",
+      "reason": "last post 0 views in 2.3h (0.0/h vs channel top-quarter 7.9/h) -> bad",
+      "hours_since_last": 2.29,
+      "stall": {
+        "stalled": false,
+        "flat": 1
+      },
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "engagement_per_1k": null,
+      "per_hour": 0.0,
+      "baseline_per_hour": 7.88,
+      "baseline_clips": 49,
+      "channel": "genx",
+      "at": "2026-11-10T09:47:21+00:00"
     }
   ],
   "latest": {
     "allowed": true,
-    "verdict": "unknown",
+    "verdict": "bad",
     "last_shape": null,
-    "last_video_id": "OJwllaiwgpg",
-    "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 14.4,
-    "at": "2026-11-10T07:29:38+00:00"
+    "last_video_id": "9vGEUGcHElQ",
+    "reason": "last post 0 views in 2.3h (0.0/h vs channel top-quarter 7.9/h) -> bad",
+    "hours_since_last": 2.29,
+    "stall": {
+      "stalled": false,
+      "flat": 1
+    },
+    "views": 0,
+    "likes": 0,
+    "comments": 0,
+    "engagement_per_1k": null,
+    "per_hour": 0.0,
+    "baseline_per_hour": 7.88,
+    "baseline_clips": 49,
+    "channel": "genx",
+    "at": "2026-11-10T09:47:21+00:00"
   }
 }

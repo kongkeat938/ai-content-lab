@@ -1,0 +1,36 @@
+{
+  "history": [
+    {
+      "allowed": false,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "LR_daweuu7g",
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak (last clip 14h ago) -- do not repeat the shape that got the channel withheld",
+      "hours_since_last": 14.03,
+      "stall": {
+        "stalled": true,
+        "flat": 5,
+        "last_hours": 14.0,
+        "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+      },
+      "channel": "kongkeat",
+      "at": "2026-11-10T09:41:52+00:00"
+    }
+  ],
+  "latest": {
+    "allowed": false,
+    "verdict": "bad",
+    "last_shape": null,
+    "last_video_id": "LR_daweuu7g",
+    "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak (last clip 14h ago) -- do not repeat the shape that got the channel withheld",
+    "hours_since_last": 14.03,
+    "stall": {
+      "stalled": true,
+      "flat": 5,
+      "last_hours": 14.0,
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+    },
+    "channel": "kongkeat",
+    "at": "2026-11-10T09:41:52+00:00"
+  }
+}
