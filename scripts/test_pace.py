@@ -219,6 +219,36 @@ def test_probe_voice() -> None:
     print("  probe: a stalled channel comes back with the alternate voice, rebuilt")
 
 
+def test_tension_parity() -> None:
+    """The tension rule is defined twice; the two copies must stay identical.
+
+    publish_shorts keeps a local copy so the rail never imports the generator (the
+    same reason hook_shape is local). If they drift, the generator would accept a
+    hook the rail then holds back -- or worse, the rail would publish a flat one.
+    """
+    import gen_short_scripts as gen
+    import publish_shorts
+    ps = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
+    if "_TENSION" not in ps or "require_hook" not in ps:
+        fail("publish_shorts lost the tension rule or its require_hook wiring")
+    if gen._TENSION.pattern != publish_shorts._TENSION.pattern:
+        fail("the two _TENSION copies have drifted; keep them byte-identical")
+    # A flat scene must be rejected; a tension hook accepted.
+    flat = {"hook": "บ่ายวันเสาร์พ่อจูงมือฉันไปนั่งพับนกกระดาษในสวนหลังบ้าน"}
+    tens = {"hook": "คืนที่พ่อจากไปฉันพบจดหมายวางนิ่งอยู่บนโต๊ะไม้ตัวเดิม"}
+    if publish_shorts._TENSION.search(flat["hook"]):
+        fail("the flat-scene hook is no longer rejected")
+    if not publish_shorts._TENSION.search(tens["hook"]):
+        fail("a tension hook is being rejected")
+    spec = publish_shorts.CHANNELS["kongkeat"]
+    if spec.get("require_hook") is not publish_shorts._TENSION:
+        fail("kongkeat does not require the tension hook on the publish rail")
+    if publish_shorts.CHANNELS["genx"].get("require_hook") or \
+       publish_shorts.CHANNELS["dharma"].get("require_hook"):
+        fail("the tension rule leaked onto a healthy channel")
+    print("  tension: kongkeat holds flat hooks, the two copies match, other channels untouched")
+
+
 def test_wiring() -> None:
     src = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
     if '"posted_at": posted_at' not in src:
@@ -239,6 +269,7 @@ def main() -> int:
     test_stall()
     test_gate_stall()
     test_probe_voice()
+    test_tension_parity()
     test_wiring()
     print("OK: one clip, 2-3 h apart, shape kept when good and changed when bad")
     return 0

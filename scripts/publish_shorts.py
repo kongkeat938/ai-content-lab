@@ -57,6 +57,17 @@ LONG_PLAYLIST = "PLBpZCGnd7Q5Y"   # "หลับลึกทั้งคืน 
 
 # One rail, several channels. The body below reads these rather than the module
 # constants, so adding a channel is a data change, not a code change.
+# The hook marker a channel can require (kongkeat, 2026-11-10). Measured: its flat
+# "concrete scene" hooks held only 13.7% mid-retention and the Shorts feed stopped
+# showing the channel, while genx/dharma tension hooks (a question, a secret, a
+# loss) held 62-68%. Kept as a local copy of gen_short_scripts._TENSION so the rail
+# never depends on the generator import; test_pace guards the two against drift.
+_TENSION = re.compile(
+    r"ทำไม|ทำไมถึง|หรือเปล่า|ใช่ไหม|ความลับ|ปิดบัง|ซ่อน|ไม่เคยบอก|ไม่รู้ว่า|รู้ทีหลัง|"
+    r"เพิ่งรู้|เพิ่งเข้าใจ|จากไป|จากเรา|ทิ้งไว้|ไม่บอกลา|วันสุดท้าย|ครั้งสุดท้าย|"
+    r"เสียใจ|ผิดหวัง|เสียสละ|ร้องไห้|น้ำตา|ไม่มี.*อีกแล้ว|ไม่เหลือ|ไม่ทัน|สายไป|"
+    r"คำโกหก|คำสัญญา|ไม่กล้า|กลั้น|อดทน")
+
 CHANNELS = {
     "dharma": {
         "scripts": SCRIPTS, "manifest": MANIFEST, "channel_id": CHANNEL_ID,
@@ -115,10 +126,16 @@ CHANNELS = {
         "tags": ["เรื่องเล่า", "อบอุ่นใจ", "ครอบครัว", "ความทรงจำ", "เรื่องเล่าอบอุ่นใจ",
                  "คิดถึงบ้าน", "พ่อแม่", "Shorts"],
         "category": "24",
-        # The channel pivoted to family moments (docs/STORY-CHANNEL-PIVOT.md):
-        # a specific relationship plus a physical act measured 460-1,083 views
-        # against 1-6 for the classical-tale shape. Publish these first.
+        # The channel pivoted to family moments (docs/STORY-CHANNEL-PIVOT.md), but
+        # measured 2026-11-10 a warm "concrete scene" alone is not enough: it held
+        # only 13.7% mid-retention and the feed stopped showing the channel. The hook
+        # must now also carry a tension marker (see require_hook below).
         "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
+        # Measured 2026-11-10: the flat "concrete scene" hooks kept only 13.7%
+        # mid-retention (genx 62% / dharma 68%) and the Shorts feed stopped showing
+        # the channel. Only publish a hook that carries a tension marker; the pool's
+        # flat leftovers stay held back until they are rewritten.
+        "require_hook": _TENSION,
         # ch4 experiment (2026-11-09, five-advisor panel): the channel watched to
         # the end (59.5%) but converted 1.79 subs/1k vs ch1's 5.38 and got 0
         # shares/comments, because the subscribe ask sat at the tail after the
@@ -534,6 +551,16 @@ def main() -> int:
         print(f"  (pace unavailable: {exc}; using the static order)", file=sys.stderr)
     todo = (pace.order(todo, spec.get("cues"), verdict, last_shape)
             if have_pace else winning_first(todo, spec.get("cues")))
+    # A channel can require a hook marker (kongkeat's tension rule, 2026-11-10).
+    # The pool still holds flat scripts from the old rule; the feed stopped showing
+    # the channel once they ran, so the rail must not spend its slots on them.
+    req = spec.get("require_hook")
+    if req:
+        held = [s for s in todo if not req.search(s.get("hook", ""))]
+        todo = [s for s in todo if req.search(s.get("hook", ""))]
+        if held:
+            print(f"  holding {len(held)} clip(s) whose hook lacks the measured "
+                  f"tension marker (flat scenes: the shape that got the channel withheld)")
     if args.per_run:
         todo = todo[:min(args.per_run, room)]
     done = [s["id"] for s in scripts if man["shorts"].get(s["id"], {}).get("video_id")]

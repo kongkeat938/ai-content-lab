@@ -36,6 +36,18 @@ MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-prev
 # the only funnel that exists, so the broken-promise shape is forbidden there.
 _BROKEN_CTA = re.compile(r"คลิปเต็ม|คลิปยาว|วิดีโอตัวเต็ม|คลิปต่อ|เรื่องเต็ม|คลิปถัดไป")
 
+# A tension marker for the hook (measured 2026-11-10). kongkeat's flat "concrete
+# scene" hooks (a warm description with no pull) kept only 13.7% mid-retention and
+# the Shorts feed stopped showing the channel, while genx/dharma hooks -- a
+# question, a hidden truth, a loss -- held 62-68%. A hook must now carry one of
+# these, not just a picture. Kept deliberately broad so it catches the shape
+# (a question, a secret, a departure, a let-down) without demanding exact words.
+_TENSION = re.compile(
+    r"ทำไม|ทำไมถึง|หรือเปล่า|ใช่ไหม|ความลับ|ปิดบัง|ซ่อน|ไม่เคยบอก|ไม่รู้ว่า|รู้ทีหลัง|"
+    r"เพิ่งรู้|เพิ่งเข้าใจ|จากไป|จากเรา|ทิ้งไว้|ไม่บอกลา|วันสุดท้าย|ครั้งสุดท้าย|"
+    r"เสียใจ|ผิดหวัง|เสียสละ|ร้องไห้|น้ำตา|ไม่มี.*อีกแล้ว|ไม่เหลือ|ไม่ทัน|สายไป|"
+    r"คำโกหก|คำสัญญา|ไม่กล้า|กลั้น|อดทน")
+
 CHANNELS = {
     "dharma": {
         "path": os.path.join(ROOT, "content", "ch2_shorts", "scripts.json"),
@@ -127,15 +139,25 @@ CHANNELS = {
     "kongkeat-story": {
         "path": os.path.join(ROOT, "content", "ch4_shorts", "scripts.json"),
         "angles": [
-            "แม่ทำกับข้าวให้กินด้วยกัน", "พ่อกอดลูกในวันที่สอบตก", "พี่สาวเย็บกระดุมให้",
-            "พี่ชายต้มน้ำเกลือให้ล้างแผล", "ยายสอนทำกับข้าวคืนแรก", "แม่รออยู่หน้าบ้าน",
-            "พ่อแบกกระเป๋าไปส่งที่สถานี", "ป้าให้เงินใส่ซองตอนไปสอบ", "น้าพาไปหาหมอ",
-            "พ่อสอนขี่จักรยาน", "แม่ตื่นมาเช็ดตัวตอนเป็นไข้", "พี่ชายยอมอดขนมให้",
-            "ตาช่วยซ่อมรองเท้าให้", "แม่เย็บชุดนักเรียนให้", "พ่อปั่นจักรยานไปส่งโรงเรียน",
-            "พี่สาวแบ่งขนมครึ่งหนึ่ง", "ยายเล่าเรื่องเก่าให้ฟัง", "แม่ซ่อนเงินไว้ในกระเป๋าเสื้อ",
-            "พ่ออุ้มขึ้นบ่าไปดูงานวัด", "พี่ชายยืนรอรับที่ป้ายรถ",
+            "ความลับที่แม่ปิดบังเรื่องเงินในบ้าน", "คืนที่พ่อจากไปโดยไม่บอกลา",
+            "วันที่ฉันเข้าใจความเสียสละของแม่ที่สายไป", "ความจริงที่ยายเพิ่งเล่าในวันสุดท้าย",
+            "คำพูดของพ่อที่ฉันเพิ่งเข้าใจตอนท่านไม่อยู่แล้ว", "วันที่พี่สาวเลือกครอบครัวแทนความฝัน",
+            "ความผิดหวังที่ซ่อนอยู่ใต้รอยยิ้มของแม่", "จดหมายที่พ่อทิ้งไว้ก่อนจากไป",
+            "ทำไมคนที่เสียสละให้บ้านมากที่สุด ถึงถูกมองข้ามเสมอ", "ความเงียบในมื้อเย็นที่ไม่มีพ่อ",
+            "วันสุดท้ายที่ฉันได้กอดยาย", "เรื่องที่แม่ไม่เคยบอกใครเรื่องงานของพ่อ",
+            "ตอนที่ฉันรู้ว่าบ้านไม่เหลืออะไรแล้ว", "รอยยิ้มของแม่ที่กลบความเหนื่อยทั้งชีวิต",
+            "คำขอร้องสุดท้ายของพ่อที่ฉันยังไม่ได้ทำ", "วันที่พี่ชายต้องเลือกระหว่างฉันกับอนาคตตัวเอง",
+            "ความจริงในกล่องไม้เก่าของตา", "ตอนที่แม่ร้องไห้คนเดียวในครัว",
+            "ทำไมเราถึงรู้ค่าของคนที่จากไปแล้วเสมอ", "คำโกหกครั้งสุดท้ายที่พ่อบอกเพื่อปกป้องฉัน",
         ],
         "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
+        # The measured hook floor for this channel. Measured 2026-11-10: the flat
+        # "concrete scene" hooks (the old rule) kept only 13.7% mid-retention vs
+        # genx 62% / dharma 68%, and the feed stopped showing the channel. A hook
+        # must now carry a tension marker (a question, a hidden truth, a loss, a
+        # let-down), not just a warm description. Enforced in valid(), so a draft
+        # cannot drift back to the flat shape.
+        "require": _TENSION,
         # The channel has no reachable long-form (its 120-min files get 1-3 views),
         # so a "go watch the full clip" CTA sends viewers to a dead end. Enforced by
         # valid(), not just asked for in the prompt.
@@ -151,10 +173,15 @@ CHANNELS = {
 
 กติกา:
 - lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
-- hook บังคับ: ต้องเป็น "ช่วงเวลาครอบครัวที่เจาะจง" มีคำเรียกความสัมพันธ์ (พ่อ/แม่/พี่/ยาย/ตา)
-  และ "การกระทำทางกาย" ที่เห็นภาพ เช่น "คืนนั้นแม่ทำกับข้าวให้เขากินด้วยกัน"
-  ห้ามเขียนฮุกกว้าง ๆ แบบนิทาน/ตำนาน/เทพนิยาย เด็ดขาด
-  (วัดจริง: ช่วงเวลาครอบครัวเจาะจงได้ 460-1,083 วิว; เรื่องคลาสสิกได้ 1-6 วิว)
+- hook บังคับ: ต้องเปิดด้วย "ปมตึง" ในครอบครัว ภายใน 12 คำแรก มีคำเรียกความสัมพันธ์
+  (พ่อ/แม่/พี่/ยาย/ตา) และต้องมีปมอย่างน้อยหนึ่งอย่าง: เป็นคำถาม (ทำไม...), ความลับที่ถูกปิดบัง,
+  การจากลา/การสูญเสีย, หรือความผิดหวัง/ความเสียใจ
+  ตัวอย่างที่ดี: "ทำไมลูกที่เสียสละให้บ้านมากที่สุด ถึงเป็นคนที่พ่อแม่เกรงใจน้อยที่สุด"
+                "พ่อพับนกกระดาษทิ้งไว้ ก่อนจะจากเราไปโดยไม่บอกลาสักคำ"
+  ห้ามเขียนฮุกที่เป็นแค่การบรรยายฉากอบอุ่นราบเรียบ เช่น "บ่ายวันเสาร์พ่อจูงมือไปพับนกกระดาษ"
+  (วัดจริง 2026-11-10: ฮุกบรรยายฉากได้ opening 104% แต่ดูต่อกลางเรื่องเพียง 13.7%;
+   ฮุกที่มีปมตึงของช่องอื่นได้กลางเรื่อง 62-68%)
+- โครงเรื่อง: เปิดด้วยปม/คำถาม -> เผยความจริงทีละนิด -> เฉลยอบอุ่นกินใจตอนจบ (หักมุมได้)
 - เรื่องสั้นจบในคลิปเดียว จุดจบอบอุ่น กินใจ ไม่เทศนา
 - cta: ชวนติดตามอย่างเดียว ห้ามสัญญาว่า "มีคลิปเต็ม/คลิปยาว/วิดีโอตัวเต็ม/ไปดูต่อ"
   เพราะช่องนี้ยังไม่มีคลิปยาวที่คนดูถึง ให้เขียนแบบ "กดติดตามเพื่อรับเรื่องอบอุ่นใจแบบนี้ทุกวัน"
@@ -204,7 +231,7 @@ _PREACHY = re.compile(
     r"สิ่งสำคัญคือ|บทเรียนที่ได้|ข้อเตือนใจ")
 
 
-def valid(s: dict, cues=(), forbid=None) -> bool:
+def valid(s: dict, cues=(), forbid=None, require=None) -> bool:
     if not isinstance(s, dict):
         return False
     if not s.get("hook") or not isinstance(s.get("lines"), list) or not s.get("cta"):
@@ -224,6 +251,11 @@ def valid(s: dict, cues=(), forbid=None) -> bool:
     # The measured winning hook shape must be present, or the pool drifts back to
     # the shape that got 74-173 views/day. See docs/HOOKS-MEASURED.md.
     if cues and not any(c in s["hook"] for c in cues):
+        return False
+    # The channel's hook floor (a tension marker). Measured 2026-11-10: without it
+    # kongkeat's pool filled with flat scenes and its feed stopped showing the
+    # channel, so a draft that lacks the marker is rejected before it is rendered.
+    if require and not require.search(s["hook"]):
         return False
     return True
 
@@ -318,12 +350,13 @@ def main() -> int:
                    + "\n- ".join(rules))
         print(f"  applying {len(rules)} rules learned from the video review")
     forbid = cfg.get("forbid_cta")
-    fresh = [s for s in ask(key, prompt) if valid(s, cues, forbid)]
+    require = cfg.get("require")
+    fresh = [s for s in ask(key, prompt) if valid(s, cues, forbid, require)]
     # Gemini sometimes ignores the hook rule; ask once more before giving up, so
     # a thin batch does not silently leave the pool short.
     if len(fresh) < args.count:
         print(f"  only {len(fresh)}/{args.count} passed the hook check; asking again")
-        again = [s for s in ask(key, prompt) if valid(s, cues, forbid)]
+        again = [s for s in ask(key, prompt) if valid(s, cues, forbid, require)]
         seen_hooks = {s["hook"] for s in fresh}
         fresh += [s for s in again if s["hook"] not in seen_hooks]
 
@@ -349,7 +382,7 @@ def main() -> int:
                     res = panel_vet(args.channel, {"hook": s["hook"], "lines": s["lines"],
                                                    "cta": s["cta"]}, args.vet_rounds, key)
                     ch = res["chosen"]
-                    if valid(ch, cues, forbid):
+                    if valid(ch, cues, forbid, require):
                         s.update(hook=ch["hook"], lines=ch["lines"], cta=ch["cta"])
                         s["vetted"] = True
                 except Exception as e:  # noqa: BLE001
