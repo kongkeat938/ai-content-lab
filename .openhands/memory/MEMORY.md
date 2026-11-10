@@ -183,3 +183,18 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - **K's cadence rule:** ช่องใหม่ต้องวัด **เป็นชั่วโมง ไม่ใช่ข้ามวัน**; รอ 3/5/7 วันได้เฉพาะช่องที่มี
   subs เยอะแล้ว. ใช้ **likes+comments จาก Data API** (มาพร้อม viewCount ใน call เดียว) เป็น
   same-day proxy → `gate()` รายงาน `engagement_per_1k`.
+
+## 🎣 ต้นเหตุวิว 0 ที่แท้จริง = hook ไม่มีปม + เนื้อหารูปแบบเดียวซ้ำ (2026-11-10)
+- **ตัววัดที่ชี้ถูก = mid-retention ไม่ใช่ views.** วัดต่อช่อง: genx mid 62% · dharma 68% ·
+  **kongkeat 13.7%** (เปิด 104% แต่ร่วง). คลิปยาวเท่ากัน (~45 วิ) → ต่างที่ **hook**.
+- kongkeat hook = ฉากอบอุ่นแบน ("พ่อจูงมือไปพับนกกระดาษ"); genx/dharma = คำถาม/ความจริงกระแทกใจ.
+  **`gen_short_scripts.py` บังคับ hook แบบฉากแบนเอง** (prompt + angles) → พูลแบน 51 คลิป → feed ถอด.
+- **panel 5/6 เอกฉันท์:** เปลี่ยนกฎเป็น **"บริบทครอบครัว + ปมตึง" (คำถาม/ความลับ/การจากลา/ความผิดหวัง)
+  ใน 3 วิแรก**. แก้: `_TENSION` regex ใน `valid()` + `require_hook` ใน `publish_shorts` (rail **กัก**
+  คลิปแบน ไม่โพสต์) + rubric `panel_script`. guard `test_pace.test_tension_parity`.
+- **กับดักซ้ำ:** `content/insights/<ch>.json` "topics" ถูก generator ใช้ **ก่อน** angles → ถ้า topics
+  เป็นรูปแบบที่แย่ จะฉีดความซ้ำกลับ. generator กรอง learned topic ด้วย `require` marker; `studio_ai`
+  `question_for`/`TOPICS_HINT` ทำ panel ขอหัวข้อแบบถูก; เพิ่ม dedupe ในแบตช์ (overlap 12 ตัวอักษร).
+- **บทเรียน durable:** วิวใหม่~0 ทุกตัว = feed suppression; เหตุ = เนื้อหาซ้ำ + hook ไม่มีปม. อย่าเพิ่งสรุป
+  ว่า "conversion ต่ำ" — เช็ค mid-retention + รูปแบบ hook ก่อน. **ข้อสรุปที่ถูกต้องต้องเปลี่ยน *สิ่งที่
+  สร้างคลิป* (กฎ hook) ไม่ใช่แค่ cadence.**
