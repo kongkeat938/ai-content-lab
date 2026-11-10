@@ -155,3 +155,12 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - Guard `scripts/test_pace.py`. Doc `docs/POSTING-LOOP-2026-11-09.md`.
 - **Gotcha:** publish-shorts CI short-circuits on the daily cap *before* the gate, so
   CI green ≠ pace ran; the guard test is the proof.
+
+## 📉 ch4 (kongkeat): วิวขึ้นแต่ซับไม่ขยับ (2026-11-09) — ดู conversion ไม่ใช่ retention
+- K ถาม. วัดจริง 30d: ch4 subs/1k=**1.79** shares=**0** comments=**0** vs genx 5.38/79/15
+  -- แต่ retention พอ ๆ กัน (59.5% vs 69.5%) → **retention หลอกได้** ตัวที่ฟ้องคือ conversion.
+  วิว steady + 96.6% จาก Shorts feed → ไม่ใช่ reach/แบน แต่ "ดูแล้วไม่ผูกพัน".
+- **Panel 5/6 เอกฉันท์:** CTA ท้ายคลิป → คนปัดหนีไปก่อน. ย้าย CTA ไป**กลางคลิปหลังจุดพีค**.
+- แก้: `make_short.spoken_sequence(..., cta_mid)` + `--cta-mid` เฉพาะ spec `cta_mid:True`
+  (= kongkeat). revert = ลบ cta_mid. guard `test_cta_mid.py`. ยังไม่ตัดสิน: รอ ~3 วัน.
+- **บทเรียนวัด:** Shorts แปลงซับด้วย engagement (share/comment/อารมณ์) ไม่ใช่ retention อย่างเดียว.
