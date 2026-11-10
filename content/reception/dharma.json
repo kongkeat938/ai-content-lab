@@ -38,27 +38,24 @@
       "baseline_clips": 49,
       "channel": "dharma",
       "at": "2026-11-10T09:47:24+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "unknown",
+      "last_shape": null,
+      "last_video_id": "nIIfzYfxblA",
+      "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+      "hours_since_last": 21.58,
+      "at": "2026-11-10T17:15:06+00:00"
     }
   ],
   "latest": {
     "allowed": true,
-    "verdict": "good",
+    "verdict": "unknown",
     "last_shape": null,
     "last_video_id": "nIIfzYfxblA",
-    "reason": "last post 149 views in 14.1h (10.6/h vs channel top-quarter 4.4/h), likes 1 comments 0 (6.7/1k) -> good",
-    "hours_since_last": 14.11,
-    "stall": {
-      "stalled": false,
-      "flat": 0
-    },
-    "views": 149,
-    "likes": 1,
-    "comments": 0,
-    "engagement_per_1k": 6.7,
-    "per_hour": 10.56,
-    "baseline_per_hour": 4.42,
-    "baseline_clips": 49,
-    "channel": "dharma",
-    "at": "2026-11-10T09:47:24+00:00"
+    "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+    "hours_since_last": 21.58,
+    "at": "2026-11-10T17:15:06+00:00"
   }
 }
