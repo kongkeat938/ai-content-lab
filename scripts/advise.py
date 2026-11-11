@@ -222,6 +222,12 @@ def _read_key_file() -> str:
 
 
 ADVISORS = {
+    # A short alias the light panel asks for. Measured 2026-11-11: four scripts
+    # (studio_ai, video_review, diagnose_videos, panel_scorecard) asked for
+    # "gemini" -- which was not a key here -- and every one of them skipped it
+    # silently, so the "panel" ran on pollinations alone (or on nothing when
+    # pollinations 400'd). Keep the alias so a plain name always resolves.
+    "gemini": lambda p: ask_gemini(p, ("gemini-3.5-flash-lite",)),
     # fast, free, seconds -- the default team
     "gemini-3.5": lambda p: ask_gemini(p, ("gemini-3.5-flash-lite",)),
     "gemini-3.1": lambda p: ask_gemini(p, ("gemini-3.1-flash-lite",)),
@@ -245,6 +251,25 @@ FAST = ["gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview", "openroute
 FAST_PLUS = FAST
 BROAD = FAST + ["pollinations"]
 DEEP = ["openhands", "openhands-claude", "openhands-gpt"]
+
+# The small panel the learning loop and the graders ask: one Google model plus one
+# other vendor, so a decision is never one model's opinion. Defined here, next to
+# the registry, so a script cannot name an advisor that does not exist (the bug
+# that silently emptied this panel, 2026-11-11).
+LIGHT = ["gemini", "pollinations"]
+
+
+def advisor(name: str):
+    """The callable for `name`, or a loud error if the name is not registered.
+
+    A name missing from the registry is a wiring bug, not a dead vendor, so it
+    must fail here rather than be skipped: `.get(name)` + `continue` is exactly
+    how the light panel quietly lost its Google advisor for days.
+    """
+    fn = ADVISORS.get(name)
+    if fn is None:
+        raise KeyError(f"unknown advisor {name!r}; known: {sorted(ADVISORS)}")
+    return fn
 
 
 def main() -> int:

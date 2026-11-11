@@ -305,12 +305,12 @@ def ask_panel(question: str, extra: str) -> dict[str, str]:
     sys.path.insert(0, HERE)
     import advise  # noqa: PLC0415 - local module, imported lazily
     out: dict[str, str] = {}
-    for name in ("gemini", "pollinations"):
-        fn = advise.ADVISORS.get(name)
-        if not fn:
-            continue
+    for name in advise.LIGHT:
         try:
-            out[name] = fn(f"{extra}\n\n{question}\n\n{advise.SYSTEM}").strip()
+            out[name] = advise.advisor(name)(
+                f"{extra}\n\n{question}\n\n{advise.SYSTEM}").strip()
+        except KeyError:
+            raise  # an unregistered name is a wiring bug, not a dead vendor
         except Exception as exc:  # noqa: BLE001 - a dead advisor must not stop the run
             out[name] = f"(unavailable: {str(exc)[:160]})"
     return out
@@ -330,19 +330,88 @@ QUESTION = (
 # flat warm scenes, so when the panel proposes its next subjects they must carry a
 # tension, not another picture. The generator rejects a flat hook regardless; this
 # keeps the *subjects* from steering it back to the shape that lost the feed.
+#
+# Keyed by the Studio id this tool is called with ("ch4"), not by the generator's
+# own name ("kongkeat"/"kongkeat-story"). Measured 2026-11-11: it was keyed
+# "kongkeat" while question_for is always called with the Studio id, so the hint
+# was never sent, the panel proposed flat scenes, and the guard test went red.
 TOPICS_HINT = {
-    "kongkeat": ("หัวข้อ Shorts ใหม่ 8 หัวข้อ ที่มี 'ปมตึง' ในครอบครัว: เป็นคำถาม "
-                 "(ทำไม...), ความลับที่ถูกปิดบัง, การจากลา/การสูญเสีย, หรือความผิดหวัง "
-                 "(ห้ามเป็นฉากอบอุ่นราบเรียบ เช่น ทำกับข้าวด้วยกัน)"),
+    "ch4": ("หัวข้อ Shorts ใหม่ 8 หัวข้อ ที่มี 'ปมตึง' ในครอบครัว: เป็นคำถาม "
+            "(ทำไม...), ความลับที่ถูกปิดบัง, การจากลา/การสูญเสีย, หรือความผิดหวัง "
+            "(ห้ามเป็นฉากอบอุ่นราบเรียบ เช่น ทำกับข้าวด้วยกัน)"),
 }
 
 
+def channel_names(channel: str) -> set:
+    """Every name a channel is known by: its Studio id and its generator name.
+
+    The names live in three spellings ("ch4", "kongkeat", "kongkeat-story") across
+    the scripts; resolving both directions keeps a lookup from missing by
+    accident (the bug that hid the tension hint for a day, 2026-11-11).
+    """
+    alias = GEN_ALIAS.get(channel, channel)
+    names = {channel, alias}
+    names |= {k for k, v in GEN_ALIAS.items() if v in names}
+    return names
+
+
 def question_for(channel: str) -> str:
-    hint = TOPICS_HINT.get(channel)
+    # Resolve through the alias too, so the hint is found whether the caller
+    # names the channel by its Studio id ("ch4") or its generator name.
+    hint = next((TOPICS_HINT[n] for n in channel_names(channel) if n in TOPICS_HINT), None)
     if not hint:
         return QUESTION
     return QUESTION.replace(
         "หัวข้อ Shorts ใหม่ 8 หัวข้อ คั่นด้วย ' | '", hint + " คั่นด้วย ' | '")
+
+
+def required_hook(channel: str):
+    """The hook marker the generator enforces for this channel, or None.
+
+    Read the generator's own rule instead of keeping a third copy that can drift
+    (publish_shorts already keeps a second copy, held identical by test_pace).
+    """
+    alias = GEN_ALIAS.get(channel, channel)
+    try:
+        import gen_short_scripts as gen  # noqa: PLC0415 - local module, lazily
+        return (gen.CHANNELS.get(alias) or {}).get("require")
+    except Exception:  # noqa: BLE001 - a missing rule must not stop the loop
+        return None
+
+
+def fallback_topics(channel: str, req) -> list[str]:
+    """Curated subjects that carry the required marker.
+
+    Used when the panel returns nothing usable, so a rule-bound channel's file is
+    never written empty of on-rule subjects (the generator would then have to
+    invent them).
+    """
+    if not req:
+        return []
+    alias = GEN_ALIAS.get(channel, channel)
+    try:
+        import gen_short_scripts as gen  # noqa: PLC0415
+        angles = (gen.CHANNELS.get(alias) or {}).get("angles", [])
+    except Exception:  # noqa: BLE001
+        return []
+    return [a for a in angles if req.search(a)][:5]
+
+
+def filter_topics(channel: str, topics: list[str]) -> list[str]:
+    """Keep only subjects that carry the channel's required hook marker.
+
+    A channel that enforces a tension hook (kongkeat) must not have flat scenes
+    written into its insights: the generator drops them anyway, but the committed
+    file is also what the panel and the next batch read back, and a flat subject
+    sitting there is how the loop steers itself back to the shape that lost the
+    feed. If nothing survives, fall back to the channel's own on-rule subjects so
+    the file is never empty of usable ones.
+    """
+    req = required_hook(channel)
+    if not req:
+        return topics
+    kept = [t for t in topics if req.search(t)]
+    return kept or fallback_topics(channel, req)
 
 
 def parse_topics(text: str) -> list[str]:
@@ -387,6 +456,10 @@ def write_insights(channel: str, per_video: list[dict], answers: dict[str, str],
             break
     if not topics:
         topics = winners[:5]
+    # A channel that enforces a hook marker must not have off-rule subjects
+    # written: the panel can drift, and a flat subject in the file steers the
+    # next batch back to the losing shape (see filter_topics).
+    topics = filter_topics(channel, topics)
     themes: list[str] = []
     for ans in answers.values():
         for t in parse_themes(ans):

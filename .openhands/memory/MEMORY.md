@@ -85,6 +85,16 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
   (`scripts/git_union_merge.py`, `.gitattributes merge=unionjson`) for the append-only ledgers.
   Guard `test_union_merge.py`. Any new rail that commits a ledger needs both.
 
+- **A key that misses is skipped silently (2026-11-11):** `advise.ADVISORS` had no plain
+  `"gemini"` key, but 4 scripts asked for it and each did `.get(name)` + `continue` → the
+  light "panel" ran on **pollinations alone** (or nothing on a 400) for days. Fixed: `"gemini"`
+  alias, one shared `advise.LIGHT` team, and `advise.advisor()` that **raises** on an unknown
+  name. Guards in `test_advise_panel.py`. Same class as `studio_ai.TOPICS_HINT` being keyed
+  `"kongkeat"` while called with `"ch4"` → the tension hint never reached the panel → flat
+  topics → `test_pace` red. Fix + `test_insights_wiring.py` (both guards **proved to FAIL on
+  the pre-fix code**). Lesson: a guard that checks only the *output file* misses the *wiring*;
+  `.get()+continue` on a config key is a silent killer — make it loud.
+
 ## 🗂️ Where things are
 - **Automation:** GitHub Actions only (the pod is recycled when idle). watchdog (self-chaining) →
   foreman (dispatches what is due) → rails. Health: `scripts/health.py` → `docs/HEALTH.md` + issue.
@@ -110,91 +120,3 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
   ch2 08:40) -- the genx-longform 04:47 tick would defer forever.
 - Still to measure: whether the trailer lifts ch4 subs (Data API `subscriberCount` is
   quota-gated; a 403 at any hour before 08:00 UTC is expected, not an outage).
-
-## 🧑⚖️ Advisor team: 5 fast vendors by default (2026-11-09; `2026-11-09.md`)
-- `scripts/advise.py` default team = **`FAST`** = 4 Gemini models + **OpenRouter**
-  (5 advisors, two vendors, seconds). `--broad` adds Pollinations (a 6th vendor but
-  **~66 s** and 400s on long prompts — a slow panelist drags every decision); `--deep`
-  adds 3 OpenHands conversations (~20 min). `FAST_PLUS` kept as an alias of `FAST`.
-  K's rule: **≥5 independent advisors, never a person**; K: **ทีมเร็วมีคุณภาพ**.
-- `scripts/panel_bench.py` measures each advisor on 5 checkable probes (math, logic,
-  exact-format, Thai, counting) + latency. Measured 2026-11-09: all 5/5; median
-  gemini-3.5 0.5s · gemini-3.1 0.6s · openrouter 1.3s · gemini-flash 1.5s ·
-  gemini-preview ~1-4s (high variance) · pollinations 65.7s. Re-run it before trusting
-  a vendor's speed.
-- **Bug fixed:** `FAST` listed `gemini-latest` but `ADVISORS` only had `gemini-flash`, so a
-  slot silently became "(unknown advisor)" and still counted. `scripts/test_advise_panel.py`
-  now fails if any panel name is missing from `ADVISORS`.
-- **OpenRouter (free, genuinely new vendor):** key at `~/.pod-openrouter-key` (override with
-  `OPENROUTER_API_KEY`). `ask_openrouter()` tries free slugs in order + backoff on 429/5xx.
-  Working free models from the pod: `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free`,
-  `cohere/north-mini-code:free`, `nvidia/nemotron-3.5-lightning:free`. Google free slugs
-  (`google/gemma-4-*:free`) 429 on the shared pool; `meta-llama/llama-3.3-70b:free` is now paid.
-- **Recovering an OpenRouter key:** the UI **masks** the value forever; the internal API is
-  Clerk-gated (a raw session cookie does not authenticate `/api/v1/keys`). The only plaintext
-  is the **clipboard** after the create-key modal's copy button → create the key in headless
-  chromium (playwright + `/usr/bin/chromium`), log in with email+password and the 6-digit email
-  code read via Gmail IMAP, then `navigator.clipboard.readText()`. See `.stockwork/or_*.py`.
-- **Measured:** panel of 6 answered in **15.3 s**. Evidence `.stockwork/PANEL-EVIDENCE-2026-11-09.md`.
-- **Pod tooling:** `ffmpeg`/`ffprobe` via `pip install static-ffmpeg` (no root); copy binaries to
-  `~/bin` and add to PATH, or the media tests fail with FileNotFoundError.
-
-## 🔁 Posting loop = post → wait 2-3h → read → adapt (2026-11-09)
-- K's rule: ONE clip, wait 2-3 h, look at how it did, then the next. Good → keep the
-  shape; bad → change it. Never a burst, never repeat a loser. `scripts/pace.py`:
-  `gate()` (2h gap + grade) + `order()` (good keeps the winning shape, bad flips to
-  the other). `publish_shorts` records `posted_at`+`shape`; `foreman` posts per_run 1.
-- **Bar = the channel's upper quartile, NOT the median.** Half of dharma sits at 0
-  views, so a median bar called "2 views in 3h" good. Top quarter 2026-11-09 = 2.2
-  views/h. On a channel with a zero-view floor, compare to the *good* clips.
-- Views: Data API `videos.list` (fresh, minutes) when quota allows; else Analytics
-  API (separate quota, survives a spent Data API) but lags 1-2 days → grades the
-  baseline, not the newest. Neither → `unknown` → keep the shape (never invent).
-- `posted_at` backfilled on 233 existing Shorts from git history
-  (`scripts/backfill_posted_at.py`, needs `--unshallow`; run locally, commit).
-- Guard `scripts/test_pace.py`. Doc `docs/POSTING-LOOP-2026-11-09.md`.
-- **Gotcha:** publish-shorts CI short-circuits on the daily cap *before* the gate, so
-  CI green ≠ pace ran; the guard test is the proof.
-
-## 📉 ch4 (kongkeat): วิวขึ้นแต่ซับไม่ขยับ (2026-11-09) — ดู conversion ไม่ใช่ retention
-- K ถาม. วัดจริง 30d: ch4 subs/1k=**1.79** shares=**0** comments=**0** vs genx 5.38/79/15
-  -- แต่ retention พอ ๆ กัน (59.5% vs 69.5%) → **retention หลอกได้** ตัวที่ฟ้องคือ conversion.
-  วิว steady + 96.6% จาก Shorts feed → ไม่ใช่ reach/แบน แต่ "ดูแล้วไม่ผูกพัน".
-- **Panel 5/6 เอกฉันท์:** CTA ท้ายคลิป → คนปัดหนีไปก่อน. ย้าย CTA ไป**กลางคลิปหลังจุดพีค**.
-- แก้: `make_short.spoken_sequence(..., cta_mid)` + `--cta-mid` เฉพาะ spec `cta_mid:True`
-  (= kongkeat). revert = ลบ cta_mid. guard `test_cta_mid.py`. ยังไม่ตัดสิน: รอ ~3 วัน.
-- **บทเรียนวัด:** Shorts แปลงซับด้วย engagement (share/comment/อารมณ์) ไม่ใช่ retention อย่างเดียว.
-
-## 🐛 Durable bug pattern (2026-11-10)
-- **symbol ที่ใช้ในโค้ดต้องไม่ถูกครอบโดย import ที่อยู่ใน try/guard.** `publish_shorts.py`
-  import `pace` ใน try (ตั้งใจ) แต่ path อัปโหลดเรียก `pace.hook_shape` → NameError ทำให้
-  publish job ตายเงียบ ๆ (genx FAIL, ch4/ch2 ผ่านเพราะไม่ได้เข้า path นั้น). นิยาม
-  `hook_shape` ที่ module scope + guard `test_publish_shorts_cap.py`.
-
-## 🚨 Feed suppression vs weak hook (2026-11-10) — ดู `docs/CH4-STALL-2026-11-10.md`
-- **ch4 kongkeat: Shorts feed หยุดโชว์ทั้งช่อง** (ไม่ใช่ subs ไม่แปลง). feed views 11-01..06=4,340
-  → 11-07..10=6; คลิปใหม่ 37 ตัว = 0-2 วิว (คลิปเก่า 8-242). สถานะช่องสะอาด ไม่มี strike.
-  genx/dharma flood หนักกว่า (26/49 ต่อวัน) ยังรอด → **flood อย่างเดียวไม่พอ**; ตัวเหตุคือ
-  **เสียงเดียว+เทมเพลตเดิม 17-22 คลิป/วัน** บนช่องใหม่ (trust ต่ำ) → อ่านเป็น spam.
-- **เช็คก่อนสรุป:** "คลิปใหม่~0 วิวทุกตัว" = **reach ถูกถอด** ไม่ใช่ hook อ่อน → ดู **feed-level
-  daily views** ก่อนเสมอ. panel 5/5: หยุดโพสต์ 3-5 วัน, **ห้ามลบคลิป**, กลับมา 1-2/วัน+เปลี่ยน shape.
-- **ลูป:** `pace.detect_stall()` (5 คลิปใหม่สุด ≤5 วิว = ดับ) → `gate()` pause จน `STALL_COOLDOWN_H=20h`
-  แล้วยอม 1 changed probe. quota หมด=unknown ไม่นับ stall; คลิปมี reach=เคลียร์.
-- **K's cadence rule:** ช่องใหม่ต้องวัด **เป็นชั่วโมง ไม่ใช่ข้ามวัน**; รอ 3/5/7 วันได้เฉพาะช่องที่มี
-  subs เยอะแล้ว. ใช้ **likes+comments จาก Data API** (มาพร้อม viewCount ใน call เดียว) เป็น
-  same-day proxy → `gate()` รายงาน `engagement_per_1k`.
-
-## 🎣 ต้นเหตุวิว 0 ที่แท้จริง = hook ไม่มีปม + เนื้อหารูปแบบเดียวซ้ำ (2026-11-10)
-- **ตัววัดที่ชี้ถูก = mid-retention ไม่ใช่ views.** วัดต่อช่อง: genx mid 62% · dharma 68% ·
-  **kongkeat 13.7%** (เปิด 104% แต่ร่วง). คลิปยาวเท่ากัน (~45 วิ) → ต่างที่ **hook**.
-- kongkeat hook = ฉากอบอุ่นแบน ("พ่อจูงมือไปพับนกกระดาษ"); genx/dharma = คำถาม/ความจริงกระแทกใจ.
-  **`gen_short_scripts.py` บังคับ hook แบบฉากแบนเอง** (prompt + angles) → พูลแบน 51 คลิป → feed ถอด.
-- **panel 5/6 เอกฉันท์:** เปลี่ยนกฎเป็น **"บริบทครอบครัว + ปมตึง" (คำถาม/ความลับ/การจากลา/ความผิดหวัง)
-  ใน 3 วิแรก**. แก้: `_TENSION` regex ใน `valid()` + `require_hook` ใน `publish_shorts` (rail **กัก**
-  คลิปแบน ไม่โพสต์) + rubric `panel_script`. guard `test_pace.test_tension_parity`.
-- **กับดักซ้ำ:** `content/insights/<ch>.json` "topics" ถูก generator ใช้ **ก่อน** angles → ถ้า topics
-  เป็นรูปแบบที่แย่ จะฉีดความซ้ำกลับ. generator กรอง learned topic ด้วย `require` marker; `studio_ai`
-  `question_for`/`TOPICS_HINT` ทำ panel ขอหัวข้อแบบถูก; เพิ่ม dedupe ในแบตช์ (overlap 12 ตัวอักษร).
-- **บทเรียน durable:** วิวใหม่~0 ทุกตัว = feed suppression; เหตุ = เนื้อหาซ้ำ + hook ไม่มีปม. อย่าเพิ่งสรุป
-  ว่า "conversion ต่ำ" — เช็ค mid-retention + รูปแบบ hook ก่อน. **ข้อสรุปที่ถูกต้องต้องเปลี่ยน *สิ่งที่
-  สร้างคลิป* (กฎ hook) ไม่ใช่แค่ cadence.**

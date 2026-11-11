@@ -28,7 +28,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from advise import ADVISORS  # noqa: E402
+from advise import ADVISORS, LIGHT  # noqa: E402
 
 # The numbers here are the real measured channel state, so a grounded answer can
 # be checked against a fact rather than an opinion.
@@ -107,9 +107,8 @@ def main() -> int:
     ap.add_argument("--out", help="write a markdown report here")
     args = ap.parse_args()
 
-    fast = ["gemini", "pollinations"]
     names = ([n.strip() for n in args.only.split(",") if n.strip()]
-             or (list(ADVISORS) if args.all else fast))
+             or (list(ADVISORS) if args.all else LIGHT))
 
     print(f"Scoring {len(names)} advisors: {', '.join(names)}\n")
     rows: list[dict] = []

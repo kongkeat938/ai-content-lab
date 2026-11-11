@@ -278,12 +278,12 @@ def ask_panel(items: list[dict]) -> dict[str, str]:
          "   ถัดไป คั่นแต่ละข้อด้วย ' | ' (กฎต้องเป็นคำสั่งที่ทำตามได้จริง)")
     payload = "\n".join(lines)
     out: dict[str, str] = {}
-    for name in ("gemini", "pollinations"):
-        fn = advise.ADVISORS.get(name)
-        if not fn:
-            continue
+    for name in advise.LIGHT:
         try:
-            out[name] = fn(f"{payload}\n\n{q}\n\n{advise.SYSTEM}").strip()
+            out[name] = advise.advisor(name)(
+                f"{payload}\n\n{q}\n\n{advise.SYSTEM}").strip()
+        except KeyError:
+            raise  # an unregistered name is a wiring bug, not a dead vendor
         except Exception as exc:  # noqa: BLE001
             out[name] = f"(unavailable: {str(exc)[:160]})"
     return out
