@@ -87,8 +87,8 @@ jobs:
           # brand) at a fixed :21 minute. --alert opens a GitHub issue for the
           # live ones (recent), which is where the alert will be seen.
           echo "### Channel audit" >> "$GITHUB_STEP_SUMMARY"
-          python3 scripts/audit_channels.py --limit 25 --write --alert > work/channel_audit.txt 2>&1
-          echo "exit=$?" >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/audit_channels.py --limit 25 --write --alert 2>&1 | tee work/channel_audit.txt
+          echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_STEP_SUMMARY"
           grep -E "DEFECT:|^==|no defects|videos=|rogue alert" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Commit the report
