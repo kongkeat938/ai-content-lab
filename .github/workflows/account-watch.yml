@@ -90,9 +90,9 @@ jobs:
           # brand) at a fixed :21 minute. --alert opens a GitHub issue for the
           # live ones (recent), which is where the alert will be seen.
           echo "### Channel audit" >> "$GITHUB_STEP_SUMMARY"
-          python3 scripts/audit_channels.py --limit 25 --write --alert 2>&1 | tee work/channel_audit.txt
+          python3 scripts/audit_channels.py --limit 25 --write --alert --hide-live-rogue 2>&1 | tee work/channel_audit.txt
           echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_STEP_SUMMARY"
-          grep -E "DEFECT:|^==|no defects|videos=|rogue alert" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
+          grep -E "DEFECT:|^==|no defects|videos=|rogue alert|hid |commented" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Commit the report
         if: ${{ github.event.inputs.commit != 'false' }}
@@ -100,6 +100,7 @@ jobs:
           git config user.name openhands
           git config user.email openhands@all-hands.dev
           git add docs/MAIL-ALERTS.md content/mail_watch_state.json docs/CHANNEL-AUDIT-LATEST.md
+          [ -f content/rogue_hidden.json ] && git add content/rogue_hidden.json || true
           git diff --staged --quiet || git commit -m "chore(watch): refresh the account alert + channel audit reports"
           git pull --rebase --autostash origin main
           bash scripts/git_push_retry.sh

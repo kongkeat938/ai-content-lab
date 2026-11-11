@@ -206,10 +206,19 @@ def alert_live_rogue(report: dict) -> None:
     health.py. The issue clears itself when no live rogue upload remains.
     """
     live = {}
+    measured = False
     for slug, r in report.items():
+        if r.get("channel"):
+            measured = True
         hits = [x for x in (r.get("defects") or []) if "LIVE rogue upload" in x]
         if hits:
             live[slug] = hits
+    if not measured:
+        # Every channel errored (typically the daily read quota is spent). The
+        # audit measured NOTHING, so it must not close the alert -- a transient
+        # 403 is not "the rogue stream is gone".
+        print("rogue alert: nothing measured (all channels errored); issue left as is")
+        return
     repo = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
     title = "Channel audit: a live upload stream outside the rails"
     try:
@@ -251,6 +260,103 @@ def alert_live_rogue(report: dict) -> None:
         print(f"rogue alert step skipped: {exc}")
 
 
+def _live_rogue_ids(defects: list) -> list:
+    """The (video_id, title) of each LIVE rogue upload named in a defect list."""
+    out = []
+    for d in defects:
+        m = re.match(r"video (\S+) is UNRECORDED.*LIVE rogue upload outside the rails: (.*)$", d)
+        if m:
+            out.append((m.group(1), m.group(2)))
+    return out
+
+
+def merge_hidden(ledger: list, hidden: list) -> list:
+    """Add newly-hidden videos to the ledger, skipping ones already recorded.
+
+    Idempotent so a re-run does not append the same clip twice -- the ledger is
+    the record of what we paused, and it must not grow on every audit.
+    """
+    have = {h["video_id"] for h in ledger}
+    for h in hidden:
+        if h["video_id"] not in have:
+            ledger.append(h)
+            have.add(h["video_id"])
+    return ledger
+
+
+def hide_live_rogue(report: dict) -> None:
+    """Pause each LIVE rogue clip (privacyStatus=private) -- reversible, no delete.
+
+    Measured 2026-11-11: a second stream inserts clips our code never writes at a
+    fixed :21 minute. These were never recorded in any manifest, so they are not
+    ours to keep. `private` stops the damage in one call and is reversible; a
+    delete is not, and a delete driven by a manifest diff could remove a real
+    video, so this NEVER deletes and NEVER touches the historical backlog (those
+    are handled by find_defects' age split). The token holds the `youtube` scope
+    needed for videos.update. Every clip paused is written to a ledger, so a
+    later run skips it and the decision is auditable.
+    """
+    root = os.path.dirname(HERE)
+    ledger_path = os.path.join(root, "content", "rogue_hidden.json")
+    try:
+        ledger = json.load(open(ledger_path, encoding="utf-8")).get("hidden", [])
+    except (OSError, ValueError):
+        ledger = []
+    already = {h["video_id"] for h in ledger}
+    newly = []
+    for slug, r in report.items():
+        ch = r.get("channel") or {}
+        ch_id = ch.get("id")
+        for vid, title in _live_rogue_ids(r.get("defects") or []):
+            if vid in already:
+                continue
+            try:
+                yt = client_for(slug, ch_id)
+                yt.videos().update(part="status", body={
+                    "id": vid, "status": {"privacyStatus": "private"}}).execute()
+            except Exception as exc:
+                print(f"  hide FAILED for {vid}: {exc}")
+                continue
+            print(f"  hid {vid} ({slug}) -- was: {title[:50]}")
+            newly.append({"video_id": vid, "channel": slug, "channel_id": ch_id,
+                          "title": title, "hidden_at": f"{datetime.now(timezone.utc):%Y-%m-%dT%H:%M:%SZ}",
+                          "reason": "live rogue upload outside the rails"})
+            already.add(vid)
+    if newly:
+        merge_hidden(ledger, newly)
+        os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
+        json.dump({"hidden": ledger}, open(ledger_path, "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=2)
+        print(f"  recorded {len(newly)} in {ledger_path}")
+        _comment_hidden(newly)
+
+
+def _comment_hidden(newly: list) -> None:
+    """Say on the alert issue which clips were paused, so the action is visible."""
+    repo = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
+    title = "Channel audit: a live upload stream outside the rails"
+    try:
+        listed = subprocess.run(["gh", "issue", "list", "--repo", repo, "--state", "open",
+                                 "--search", title, "--json", "number,title"],
+                                capture_output=True, text=True, check=True)
+        existing = next((i for i in json.loads(listed.stdout or "[]")
+                         if i["title"] == title), None)
+        if not existing:
+            return
+        body = "\n".join(
+            [f"Measured {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC. Paused "
+             f"{len(newly)} live rogue clip(s) with `privacyStatus=private` "
+             "(reversible; no delete, backlog untouched):", ""]
+            + [f"- {h['channel']}: {h['video_id']} -- {h['title'][:60]}" for h in newly]
+            + ["", "Reversible with `videos.update(privacyStatus=public)`; the ledger is "
+               "`content/rogue_hidden.json`."])
+        subprocess.run(["gh", "issue", "comment", str(existing["number"]),
+                        "--repo", repo, "--body", body], check=True)
+        print(f"  commented the take-down on issue #{existing['number']}")
+    except Exception as exc:
+        print(f"  hide comment skipped: {exc}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--slug", default=None)
@@ -259,6 +365,8 @@ def main() -> int:
                     help="also write docs/CHANNEL-AUDIT-LATEST.md")
     ap.add_argument("--alert", action="store_true",
                     help="open/update a GitHub issue when a LIVE rogue upload is found")
+    ap.add_argument("--hide-live-rogue", action="store_true",
+                    help="pause (private, reversible) each LIVE rogue clip; never deletes")
     a = ap.parse_args()
 
     reg = json.load(open(os.path.join(os.path.dirname(HERE), "channels.json"),
@@ -276,6 +384,12 @@ def main() -> int:
             yt = client_for(c["slug"], c["channel_id"])
         except SystemExit as e:
             print(f"  no token: {e}")
+            report[c["slug"]] = {"error": str(e)}
+            continue
+        except Exception as e:  # a spent read quota, a network blip, etc.
+            # One channel's failure must not stop the others (the alert would
+            # then see only a partial fleet). Record it and move on.
+            print(f"  channel unreachable: {e}")
             report[c["slug"]] = {"error": str(e)}
             continue
         ch = channel_report(yt, c["slug"])
@@ -297,6 +411,11 @@ def main() -> int:
     print(f"\nwrote {out}")
     if a.write:
         doc = os.path.join(os.path.dirname(HERE), "docs", "CHANNEL-AUDIT-LATEST.md")
+        if not any("channel" in r for r in report.values()):
+            # Nothing measured (usually the read quota is spent). Keep the last
+            # good report rather than overwriting it with a page of errors.
+            print("nothing measured; leaving the last good audit report in place")
+            return 0
         with open(doc, "w", encoding="utf-8") as fh:
             fh.write(f"# Channel audit -- {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC\n\n")
             fh.write("Measured live from the Data API. A video listed as \"in NO "
@@ -319,6 +438,8 @@ def main() -> int:
         print(f"wrote {doc}")
     if a.alert:
         alert_live_rogue(report)
+    if a.hide_live_rogue:
+        hide_live_rogue(report)
     return 0
 
 
