@@ -56,6 +56,16 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - New guards: `test_manifest_qa.py`, `test_night_queued.py` (suite 24).
 
 ## 🧭 Still-true durable facts (details in daily logs / `docs/`)
+- **A PUT to `brandingSettings.channel` REPLACES the whole object** — writing only the trailer
+  wipes description/keywords/defaultLanguage. `channel_overhaul.set_trailer` now merges; a rail
+  must read the live object before any brandingSettings PUT. (2026-11-11: all 3 channels read
+  `defaultLanguage='en'`, no description; fixed + `channel-branding.yml` keeps it a standing
+  invariant, foreman-driven, health-watched.)
+- **A video on the channel that no manifest names = an upload OUTSIDE the rails.** It is invisible
+  to pace/cap/gap guards. `audit_channels.py` flags it (+ old-brand titles); `account-watch` runs
+  it daily → `docs/CHANNEL-AUDIT-LATEST.md`. (2026-11-11: ch4 clips carry the old brand
+  `เรื่องเล่าการ์ตูน`, `lang=en-US`, cat 27, published at `:21` — rails run at `:44`. ch1 also
+  has recent unrecorded uploads. **Still unresolved — not in-repo code.**)
 - **2026-11-09 defects fixed:** (a) the progress report inflated YPP hours up to 92× — it compared
   channel totals to the long-form bar; `analytics.py` now splits by `creatorContentType`
   (`shorts`/`videoOnDemand`); (b) learning loop went blind when the Data API `videos.list` quota was
