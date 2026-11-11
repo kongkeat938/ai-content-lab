@@ -56,6 +56,17 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - New guards: `test_manifest_qa.py`, `test_night_queued.py` (suite 24).
 
 ## 🧭 Still-true durable facts (details in daily logs / `docs/`)
+- **ak decides; do not wait for K (K, 2026-11-11).** On any decision: presence of mind →
+  order the events → find the causes → weigh pros/cons and the effect on the goal → take the
+  fullest data to the panel → choose the most-gain/least-harm option → **act**. Escalate only
+  a genuine human-at-a-browser unknown (e.g. OAuth re-consent).
+- **A guard that only writes its success marker on SUCCESS cannot end a loop it will never
+  satisfy.** `remove-bad-cut` tried to delete the 57-min dharma cut `HkbSguA53ro` ~37×/day:
+  the guarded delete refuses `views > 5`, views rose 0→53, and `.done` was written only on a
+  real delete → a refused delete looked like a pending one and retried forever. Fix:
+  `delete_video.py --unpublish` (private, reversible, not gated on views) writes `.done` on
+  the skip path too. **Prefer reversible (private) over irreversible (delete) for a bad cut**;
+  the panel agreed (docs/DECISION-2026-11-11d.md).
 - **A rogue upload stream exists on the channels — NOT in-repo code.** Measured 2026-11-11:
   videos appear that no manifest names, carrying `defaultAudioLanguage=en-US`, category **27**
   and the old brand `เรื่องเล่าการ์ตูน` at a fixed **`:21`** minute (our rails run `:44`, write
