@@ -39,15 +39,24 @@
       "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
       "hours_since_last": 2.43,
       "at": "2026-11-10T19:43:07+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "unknown",
+      "last_shape": null,
+      "last_video_id": "2F_mbXZiht8",
+      "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+      "hours_since_last": 8.0,
+      "at": "2026-11-11T03:44:06+00:00"
     }
   ],
   "latest": {
     "allowed": true,
     "verdict": "unknown",
     "last_shape": null,
-    "last_video_id": "uwTebpxQUpI",
+    "last_video_id": "2F_mbXZiht8",
     "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 2.43,
-    "at": "2026-11-10T19:43:07+00:00"
+    "hours_since_last": 8.0,
+    "at": "2026-11-11T03:44:06+00:00"
   }
 }
