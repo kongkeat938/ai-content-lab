@@ -44,6 +44,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install the YouTube client
+        run: pip install --quiet google-api-python-client google-auth-oauthlib
+
       - name: Watch the accounts
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}

@@ -92,6 +92,11 @@ def main() -> int:
     if not re.search(r"GH_TOKEN:\s*\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}", step):
         fail("the account-watch audit step does not pass GH_TOKEN; `gh` cannot "
              "open the rogue-upload issue and the alert fails silently")
+    # audit_channels.py imports googleapiclient; without an install step the job
+    # dies with ModuleNotFoundError and no issue is opened (measured 2026-11-11).
+    if "google-api-python-client" not in wf:
+        fail("account-watch never installs google-api-python-client; the audit "
+             "raises ModuleNotFoundError and the alert never opens")
 
     print("OK: the audit names an unrecorded video, an old-brand title, splits "
           "the live rogue stream from the historical backlog, and the alert is wired")
