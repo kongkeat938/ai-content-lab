@@ -106,6 +106,13 @@ def words(title: str, keyword: str, n: int = 3) -> list[str]:
 
 
 def draw(im: Image.Image, lines: list[str]) -> Image.Image:
+    # A title that yields no card words must still render a thumbnail, not raise
+    # (a bare max() over an empty list is what killed the polish-all job). With
+    # nothing to draw, return the framed, colour-graded cover untouched.
+    if not lines:
+        im = ImageEnhance.Color(im).enhance(1.12)
+        im = ImageEnhance.Contrast(im).enhance(1.1)
+        return im
     im = ImageEnhance.Color(im).enhance(1.12)
     im = ImageEnhance.Contrast(im).enhance(1.1)
     im = im.filter(ImageFilter.GaussianBlur(0.4))
@@ -248,7 +255,15 @@ def main() -> int:
         kw = c.get("keyword", "")
         out = os.path.join(OUTDIR, f"{vid}.jpg")
         style = "family" if args.channel == "kongkeat" else "dharma"
-        path = build(vid, title, kw, out, gen_art=args.gen_art, style=style)
+        # One unrenderable video must not abort the whole pass. A title that
+        # yields no card words used to raise here (measured 2026-11-10: the
+        # polish-all job died on "max() iterable argument is empty"), which also
+        # dropped every later video in the batch.
+        try:
+            path = build(vid, title, kw, out, gen_art=args.gen_art, style=style)
+        except Exception as exc:  # noqa: BLE001
+            print(f"  {vid}: build failed -- {type(exc).__name__}: {exc}")
+            continue
         if not path:
             print(f"  {vid}: no frame available")
             continue

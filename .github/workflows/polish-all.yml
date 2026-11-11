@@ -78,6 +78,11 @@ jobs:
           done
 
       - name: Commit the ledgers and any new thumbnails
+        # always(): a crash part-way through the pass must not throw away the
+        # titles and thumbnails that already succeeded. The ledgers are
+        # incremental (they skip what is done), so committing partial progress is
+        # exactly what lets the next tick resume.
+        if: always()
         run: |
           git config user.name "openhands"
           git config user.email "openhands@all-hands.dev"

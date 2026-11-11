@@ -38,6 +38,11 @@ def make(art, out, lines):
     im = cover(Image.open(art).convert("RGB"), W, H)
     im = ImageEnhance.Color(im).enhance(1.12)
     im = ImageEnhance.Contrast(im).enhance(1.1)
+    # No lines means no text block: render the graded cover, never raise (the
+    # bare max() below would raise on an empty list).
+    if not lines:
+        im.save(out, quality=92)
+        return out
 
     # bottom-to-top gradient scrim so big text always reads
     scrim = Image.new("L", (W, H), 0)
