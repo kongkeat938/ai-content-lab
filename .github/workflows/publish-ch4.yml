@@ -1,6 +1,6 @@
 name: publish-ch4
 
-# Uploads finished, verified ch4 (เรื่องเล่าการ์ตูน) long-form with the YouTube Data
+# Uploads finished, verified ch4 (เรื่องเล่าอบอุ่นใจ) long-form with the YouTube Data
 # API -- no browser, no human. Same rail as publish-batch, a different manifest.
 #
 # Privacy comes from each entry in content/ch4_publish.json (ak sets it; the

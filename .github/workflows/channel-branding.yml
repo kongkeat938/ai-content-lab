@@ -1,0 +1,67 @@
+name: channel-branding
+
+# Keeps every channel's public branding (description, keywords, defaultLanguage
+# 'th', and the Thai localizations name) applied through the YouTube Data API --
+# no browser, no Studio, no one at a machine.
+#
+# Why a rail (measured 2026-11-11): all three channels read defaultLanguage='en'
+# with no description and (on ch4) no keywords. The cause was a trailer PUT:
+# channel_overhaul.set_trailer wrote brandingSettings.channel with ONLY the
+# trailer, and a PUT replaces the whole object, so it wiped the description,
+# keywords and language that set_channel_name had written. set_channel_name then
+# skipped on the title alone and never restored them. ch4 is now self-healing,
+# but the rename rail runs daily and this one makes the branding a standing
+# invariant on all three channels, not a one-off ch4 fix.
+#
+# Order matters: run this BEFORE the trailer rails so a later trailer write (now
+# non-destructive) is not the last writer of a fresh description.
+#
+# The quota resets at 08:00 UTC; a tick before that defers. Every write is
+# idempotent (a channel already carrying the target description/language is
+# skipped), so a late tick just finishes the job. Foreman drives it daily too.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true to only print what would change"
+        default: "false"
+  schedule:
+    - cron: "2 8 * * *"   # 08:02 UTC, just after the reset, before the trailer rails
+  push:
+    paths:
+      - "scripts/set_channel_name.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: channel-branding
+  cancel-in-progress: false
+
+jobs:
+  branding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+      YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+      YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+      YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+      YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply each channel's branding
+        run: |
+          for slug in genx dharma kongkeat-story; do
+            echo "== $slug =="
+            if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+              python3 scripts/set_channel_name.py --channel "$slug"
+            else
+              python3 scripts/set_channel_name.py --channel "$slug" --apply
+            fi
+          done

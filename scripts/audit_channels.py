@@ -23,6 +23,7 @@ import os
 import re
 import sys
 from collections import Counter
+from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -99,7 +100,39 @@ def recent_videos(yt, uploads: str, limit: int = 20) -> list:
     return out
 
 
-def find_defects(ch: dict, pls: list, vids: list) -> list:
+def recorded_ids(channel_id: str) -> set:
+    """Every video id this repo has recorded for a channel.
+
+    A video the channel owns but no manifest names was uploaded by something
+    OUTSIDE these rails -- a manual Studio upload, or a second tool. That is the
+    one class of upload the pace/cap/gap guards cannot see, so the audit must
+    name it (measured 2026-11-11: ch4 had 97 uploads against 57 recorded, and 25
+    carried a brand token no code here writes).
+    """
+    root = os.path.dirname(HERE)
+    ids = set()
+    for name in os.listdir(os.path.join(root, "content")):
+        if not name.endswith(".json"):
+            continue
+        try:
+            d = json.load(open(os.path.join(root, "content", name), encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        if not isinstance(d, dict) or d.get("channel_id") != channel_id:
+            continue
+        for v in (d.get("shorts") or {}).values():
+            if isinstance(v, dict) and v.get("video_id"):
+                ids.add(v["video_id"])
+        for v in (d.get("videos") or []):
+            if isinstance(v, dict) and v.get("video_id"):
+                ids.add(v["video_id"])
+    return ids
+
+
+OLD_BRAND = "เรื่องเล่าการ์ตูน"
+
+
+def find_defects(ch: dict, pls: list, vids: list, recorded: set | None = None) -> list:
     d = []
     if not ch.get("description"):
         d.append("channel has NO description")
@@ -128,6 +161,11 @@ def find_defects(ch: dict, pls: list, vids: list) -> list:
             d.append(f"video {v['id']} description links no video: {t[:50]}")
         if re.search(r"#\w+", t) and "Shorts" not in t:
             d.append(f"video {v['id']} title has hashtags but is not marked Shorts: {t[:50]}")
+        if recorded is not None and v["id"] not in recorded:
+            d.append(f"video {v['id']} is on the channel but in NO manifest "
+                     f"(an upload outside the rails): {t[:50]}")
+        if OLD_BRAND in t:
+            d.append(f"video {v['id']} still carries the old brand {OLD_BRAND!r}: {t[:50]}")
     for t, n in titles.items():
         if n > 1:
             d.append(f"{n} videos share the title: {t[:60]}")
@@ -138,6 +176,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--slug", default=None)
     ap.add_argument("--limit", type=int, default=20)
+    ap.add_argument("--write", action="store_true",
+                    help="also write docs/CHANNEL-AUDIT-LATEST.md")
     a = ap.parse_args()
 
     reg = json.load(open(os.path.join(os.path.dirname(HERE), "channels.json"),
@@ -160,9 +200,10 @@ def main() -> int:
         ch = channel_report(yt, c["slug"])
         pls = playlists(yt)
         vids = recent_videos(yt, ch.get("uploads_playlist"), a.limit)
+        recorded = recorded_ids(c["channel_id"])
         print(f"  {ch.get('title')}  subs={ch.get('subs')} videos={ch.get('videos')} "
               f"views={ch.get('views')} playlists={len(pls)}")
-        defects = find_defects(ch, pls, vids)
+        defects = find_defects(ch, pls, vids, recorded)
         for x in defects:
             print(f"    DEFECT: {x}")
         if not defects:
@@ -173,6 +214,28 @@ def main() -> int:
     os.makedirs(os.path.dirname(out), exist_ok=True)
     json.dump(report, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     print(f"\nwrote {out}")
+    if a.write:
+        doc = os.path.join(os.path.dirname(HERE), "docs", "CHANNEL-AUDIT-LATEST.md")
+        with open(doc, "w", encoding="utf-8") as fh:
+            fh.write(f"# Channel audit -- {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC\n\n")
+            fh.write("Measured live from the Data API. A video listed as \"in NO "
+                     "manifest\" was uploaded by something outside these rails.\n\n")
+            for slug, r in report.items():
+                if "error" in r:
+                    fh.write(f"## {slug}\n\n- error: {r['error']}\n\n")
+                    continue
+                ch = r["channel"]
+                fh.write(f"## {slug} ({ch.get('title')})\n\n")
+                fh.write(f"- subs={ch.get('subs')} videos={ch.get('videos')} "
+                         f"views={ch.get('views')} playlists={r['playlists']} "
+                         f"checked={r['checked_videos']}\n")
+                if r["defects"]:
+                    for x in r["defects"]:
+                        fh.write(f"- DEFECT: {x}\n")
+                else:
+                    fh.write("- no defects found\n")
+                fh.write("\n")
+        print(f"wrote {doc}")
     return 0
 
 

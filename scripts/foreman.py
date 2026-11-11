@@ -357,6 +357,14 @@ def main() -> int:
     if pl_age is None or pl_age > 24 * 60:
         plan.append(("ch2-playlists", {}))
 
+    # 5h2. The channel branding (2026-11-11). A trailer PUT replaced the whole
+    #     brandingSettings object and wiped every channel's description and
+    #     defaultLanguage; this rail restores them and runs before the trailer
+    #     rails. Drive it daily so the branding stays an invariant.
+    br_age = last_success_min("channel-branding", ids)
+    if br_age is None or br_age > 24 * 60:
+        plan.append(("channel-branding", {}))
+
     # 5i. Delete rails that are still pending. remove-bad-cut carries only a
     #     schedule, so GitHub's cron could miss it; drive it from the chain until
     #     the video's .done marker appears, then stop dispatching it.

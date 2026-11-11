@@ -156,8 +156,21 @@ def set_trailer(tok: str, ch_id: str, video_id: str, title: str, dry: bool) -> N
     print(f"  trailer  -> {video_id}  \"{title}\"")
     if dry:
         return
+    # A PUT replaces the WHOLE brandingSettings.channel object, so writing only the
+    # trailer wipes the description, keywords and defaultLanguage that
+    # set_channel_name wrote. Measured 2026-11-11: all three channels read
+    # defaultLanguage='en' with no description/keywords -- the signature of a
+    # trailer PUT that landed after the rename. Read the live object, change only
+    # the trailer and the tab, and write the rest back untouched.
+    live = api(f"https://www.googleapis.com/youtube/v3/channels?part=brandingSettings&mine=true", tok)
+    if "items" not in live:
+        print(f"           FAILED to read brandingSettings: {live}")
+        return
+    ch = dict((live["items"][0].get("brandingSettings") or {}).get("channel") or {})
+    ch["unsubscribedTrailer"] = video_id
+    ch["defaultTab"] = "featured"
     r = api("https://www.googleapis.com/youtube/v3/channels?part=brandingSettings", tok, "PUT",
-            {"id": ch_id, "brandingSettings": {"channel": {"unsubscribedTrailer": video_id, "defaultTab": "featured"}}})
+            {"id": ch_id, "brandingSettings": {"channel": ch}})
     print(f"           {'ok' if 'error' not in r else 'FAILED ' + str(r)}")
 
 
