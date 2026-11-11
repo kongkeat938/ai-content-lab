@@ -69,7 +69,21 @@ def utc_hour() -> int:
 
 
 def workflow_ids() -> dict:
-    return {w["name"]: w["id"] for w in gh(f"/repos/{REPO}/actions/workflows")["workflows"]}
+    """Every workflow id, paging past the default 30-per-page limit.
+
+    Measured 2026-11-11: with 32 workflows the default first page held only 30,
+    so `watchdog` was missing from the map. The foreman then planned to dispatch
+    it and printed "watchdog: no such workflow", exiting 1 -- exactly when the
+    chain is quiet and the watchdog is the rail that must revive it.
+    """
+    out, page = {}, 1
+    while True:
+        d = gh(f"/repos/{REPO}/actions/workflows?per_page=100&page={page}")
+        for w in d.get("workflows", []):
+            out[w["name"]] = w["id"]
+        if len(d.get("workflows", [])) < 100:
+            return out
+        page += 1
 
 
 def recent(name: str, ids: dict) -> list:
