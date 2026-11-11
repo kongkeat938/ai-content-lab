@@ -175,6 +175,29 @@ def main() -> int:
         return 0
 
     planned = todo[:min(args.per_run, room)] if room else []
+    # The feed guard (2026-11-11). The daily cap and the 2-hour gap pace a HEALTHY
+    # channel; neither knows the feed has stopped showing this one. A remake is a
+    # fresh upload of the SAME shape, so posting it to a withheld channel deepens
+    # the block (five-advisor panel, 2026-11-10). Use the same guard publish_shorts
+    # uses, so a remake day and a normal day cannot disagree about a stalled channel.
+    if planned and not args.force:
+        try:
+            import pace
+            rows = pace.stats(ps.access_token(spec),
+                              [v["video_id"] for v in man["shorts"].values()
+                               if v.get("video_id")][-50:])
+            stall = pace.detect_stall(
+                [(k, v) for k, v in man["shorts"].items() if v.get("video_id")],
+                {vid: r["views"] for vid, r in rows.items()})
+        except Exception as exc:  # noqa: BLE001 -- a quota miss must not fake a stall
+            print(f"  (pace unavailable: {exc}; using the cap and gap only)",
+                  file=sys.stderr)
+        else:
+            if stall.get("stalled"):
+                print(f"the Shorts feed has stopped showing this channel "
+                      f"({stall['reason']}) -- holding remakes until it recovers "
+                      "(still sweeping any pending old-clip move)")
+                planned = []      # skip the upload; the old-clip sweep below still runs
     pending = [v for v in rem["shorts"].values() if v.get("old_privacy_pending")]
     if not planned and not pending:
         if room == 0:

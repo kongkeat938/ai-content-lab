@@ -48,15 +48,54 @@
       "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
       "hours_since_last": 8.0,
       "at": "2026-11-11T03:44:06+00:00"
+    },
+    {
+      "allowed": false,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "cWpAuYX_QTk",
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak (last clip 9h ago) -- do not repeat the shape that got the channel withheld",
+      "hours_since_last": 9.34,
+      "stall": {
+        "stalled": true,
+        "flat": 5,
+        "last_hours": 9.3,
+        "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+      },
+      "channel": "kongkeat",
+      "at": "2026-11-11T13:05:06+00:00"
+    },
+    {
+      "allowed": false,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "cWpAuYX_QTk",
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak (last clip 10h ago) -- do not repeat the shape that got the channel withheld",
+      "hours_since_last": 9.45,
+      "stall": {
+        "stalled": true,
+        "flat": 5,
+        "last_hours": 9.5,
+        "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+      },
+      "channel": "kongkeat",
+      "at": "2026-11-11T13:11:57+00:00"
     }
   ],
   "latest": {
-    "allowed": true,
-    "verdict": "unknown",
+    "allowed": false,
+    "verdict": "bad",
     "last_shape": null,
-    "last_video_id": "2F_mbXZiht8",
-    "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 8.0,
-    "at": "2026-11-11T03:44:06+00:00"
+    "last_video_id": "cWpAuYX_QTk",
+    "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak (last clip 10h ago) -- do not repeat the shape that got the channel withheld",
+    "hours_since_last": 9.45,
+    "stall": {
+      "stalled": true,
+      "flat": 5,
+      "last_hours": 9.5,
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+    },
+    "channel": "kongkeat",
+    "at": "2026-11-11T13:11:57+00:00"
   }
 }
