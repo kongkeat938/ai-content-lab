@@ -69,13 +69,31 @@ jobs:
           python3 scripts/pc1_health.py --write >> "$GITHUB_STEP_SUMMARY" 2>&1
           cat docs/MAIL-ALERTS.md >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Audit the channels for rogue uploads
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: |
+          set +e
+          # A video on the channel that no manifest names was uploaded by
+          # something outside these rails -- the one upload class the pace, cap
+          # and gap guards cannot see. Measured 2026-11-11: ch4 had 25 titles
+          # carrying a brand token no code here writes. This names them so the
+          # second uploader cannot stay invisible.
+          echo "### Channel audit" >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/audit_channels.py --limit 25 --write > work/channel_audit.txt 2>&1
+          echo "exit=$?" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "DEFECT:|^==|no defects|videos=" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Commit the report
         if: ${{ github.event.inputs.commit != 'false' }}
         run: |
           git config user.name openhands
           git config user.email openhands@all-hands.dev
-          git add docs/MAIL-ALERTS.md content/mail_watch_state.json
-          git diff --staged --quiet || git commit -m "chore(watch): refresh the account alert report"
+          git add docs/MAIL-ALERTS.md content/mail_watch_state.json docs/CHANNEL-AUDIT-LATEST.md
+          git diff --staged --quiet || git commit -m "chore(watch): refresh the account alert + channel audit reports"
           git pull --rebase --autostash origin main
           bash scripts/git_push_retry.sh

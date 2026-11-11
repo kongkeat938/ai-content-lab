@@ -65,6 +65,7 @@ EXPECTED = {
     "selftest": 2880,            # foreman gate 20 h
     "counter-ledger": 2880,      # foreman gate 20 h
     "ch2-playlists": 2880,       # foreman gate 24 h
+    "channel-branding": 2880,    # foreman gate 24 h (branding is a standing invariant)
     "fetch music": 11520,        # foreman gate 6 d
     "short doors": 11520,        # foreman gate 6 d
 }

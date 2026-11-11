@@ -44,6 +44,26 @@ TOKEN_URL = "https://oauth2.googleapis.com/token"
 # The name is the promise the content can keep: family memory, warm, adult
 # listener. See docs/PANEL-2026-11-07-ch4-CONSENSUS.md.
 TARGET = {
+    "genx": {
+        "token": "YT_CH1_REFRESH_TOKEN",
+        "lang": "th",
+        "loc": "th_TH",
+        "title": "ตาต้า GenX — ปรัชญาชีวิต",
+        "description": "ข้อคิดและปรัชญาชีวิตสำหรับคนวัยทำงาน 25–35 — ฟังเพลิน ๆ ให้ใจเบาลง "
+                       "ได้มุมมองใหม่กับเรื่องที่แบกมาทั้งวัน เหมาะเปิดตอนพัก ตอนขับรถ หรือก่อนนอน",
+        "keywords": "ปรัชญาชีวิต,ข้อคิด,แง่คิด,กำลังใจ,คนวัยทำงาน,ปล่อยวาง,ความสุข,รักตัวเอง,"
+                    "คิดมาก,จิตสงบ,ฟังเพลิน,GenX",
+    },
+    "dharma": {
+        "token": "YT_CH2_REFRESH_TOKEN",
+        "lang": "th",
+        "loc": "th_TH",
+        "title": "Farmmer — ธรรมะก่อนนอน",
+        "description": "เสียงบรรยายธรรมะก่อนนอน ช่วยกล่อมจิตใจให้สงบ ปล่อยวางเรื่องกังวลและความเครียด "
+                       "เหมาะกับคนที่นอนไม่หลับและคิดมากตอนกลางคืน เปิดทิ้งไว้ได้ทั้งคืน",
+        "keywords": "ธรรมะก่อนนอน,นอนไม่หลับ,ปล่อยวาง,สมาธิ,คลายเครียด,ฟังก่อนนอน,หลับลึก,"
+                    "ธรรมะ,จิตสงบ,หายใจ,ผ่อนคลาย,Farmmer",
+    },
     "kongkeat-story": {
         "token": "YT_CH4_REFRESH_TOKEN",
         "lang": "th",        # defaultLanguage value
@@ -96,9 +116,17 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
         ok = loc_th == t["title"]
         print(f"   target {t['title']!r} -> {'OK' if ok else 'NOT YET'}")
         return 0 if ok else 2
-    if loc_th == t["title"]:
-        print("   already renamed -- skip")
+    if loc_th == t["title"] and default_lang == t["lang"] \
+            and chb.get("description") and chb.get("keywords"):
+        print("   already renamed and branded -- skip")
         return 0
+    if loc_th == t["title"]:
+        # The name landed but the branding did not (measured 2026-11-11: a trailer
+        # PUT replaces the whole brandingSettings.channel object, so it wiped the
+        # description, keywords and defaultLanguage). Re-apply them instead of
+        # skipping on the title alone.
+        print("   name is set but description/keywords/defaultLanguage are not -- "
+              "restoring them")
 
     # The API's own rules, read from the channels.update reference (2026-11-07):
     #   * `part` accepts exactly ONE of brandingSettings | invideoPromotion |
@@ -114,10 +142,10 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
         print("   dry-run: not writing")
         return 0
 
-    if default_lang != t["lang"]:
+    if default_lang != t["lang"] or not chb.get("description") or not chb.get("keywords"):
         # Call 1: part=brandingSettings. The channel title MUST be echoed back
         # unchanged (channelTitleUpdateForbidden otherwise), so we carry the whole
-        # object and change only defaultLanguage -- this keeps banner/desc/keywords.
+        # object and set defaultLanguage, description and keywords together.
         new_channel = dict(chb)
         new_channel["title"] = live_title
         new_channel["defaultLanguage"] = t["lang"]
@@ -127,9 +155,10 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
         if "image" in item.get("brandingSettings", {}):
             payload["brandingSettings"]["image"] = item["brandingSettings"]["image"]
         res = api(tok, "PUT", f"{CH_URL}?part=brandingSettings", payload)
-        got = res.get("brandingSettings", {}).get("channel", {}).get("defaultLanguage")
-        print(f"   set defaultLanguage -> {got!r}  {'OK' if got == t['lang'] else 'FAILED'}")
-        if got != t["lang"]:
+        got = res.get("brandingSettings", {}).get("channel", {})
+        print(f"   set defaultLanguage -> {got.get('defaultLanguage')!r}  "
+              f"{'OK' if got.get('defaultLanguage') == t['lang'] else 'FAILED'}")
+        if got.get("defaultLanguage") != t["lang"]:
             return 1
 
     # Call 2: part=localizations. This is the actual rename.
