@@ -84,6 +84,14 @@ def main() -> int:
              "rogue upload would be measured but never reach anyone")
     if "issues: write" not in wf:
         fail("account-watch lacks issues:write; the rogue-upload alert cannot open")
+    # `gh` needs a token, or the alert silently fails to open (measured
+    # 2026-11-11: the step ran green but issue #22 was never updated because the
+    # audit step had no GH_TOKEN). Check the audit step itself, not the file, so a
+    # token on another step cannot mask the gap.
+    step = wf.split("Audit the channels", 1)[-1].split("\n      - name:", 1)[0]
+    if not re.search(r"GH_TOKEN:\s*\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}", step):
+        fail("the account-watch audit step does not pass GH_TOKEN; `gh` cannot "
+             "open the rogue-upload issue and the alert fails silently")
 
     print("OK: the audit names an unrecorded video, an old-brand title, splits "
           "the live rogue stream from the historical backlog, and the alert is wired")

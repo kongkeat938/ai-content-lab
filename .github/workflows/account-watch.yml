@@ -72,6 +72,7 @@ jobs:
 
       - name: Audit the channels for rogue uploads
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
