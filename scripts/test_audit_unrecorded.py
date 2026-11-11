@@ -97,6 +97,14 @@ def main() -> int:
     if "google-api-python-client" not in wf:
         fail("account-watch never installs google-api-python-client; the audit "
              "raises ModuleNotFoundError and the alert never opens")
+    # The take-down must actually run, and the ledger must be persisted, or a
+    # rogue clip reappears live on the next audit with no record it was paused.
+    if "--hide-live-rogue" not in wf:
+        fail("account-watch does not pass --hide-live-rogue; live rogue clips are "
+             "reported but never paused")
+    if "content/rogue_hidden.json" not in wf:
+        fail("account-watch does not commit content/rogue_hidden.json; the ledger "
+             "of paused clips would not persist")
 
     print("OK: the audit names an unrecorded video, an old-brand title, splits "
           "the live rogue stream from the historical backlog, and the alert is wired")
