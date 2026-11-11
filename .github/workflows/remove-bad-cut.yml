@@ -55,7 +55,8 @@ jobs:
                   print(f"{vid}: already deleted (marker present)")
                   continue
               r = subprocess.run([sys.executable, "scripts/delete_video.py",
-                                  "--slug", e["slug"], "--video", vid, "--yes"])
+                                  "--slug", e["slug"], "--video", vid,
+                                  "--unpublish", "--yes"])
               rc = rc or r.returncode
           sys.exit(rc)
           PY
