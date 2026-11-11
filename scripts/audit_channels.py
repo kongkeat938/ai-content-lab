@@ -157,8 +157,10 @@ def find_defects(ch: dict, pls: list, vids: list, recorded: set | None = None) -
         d.append("channel has NO keywords")
     if ch.get("default_language") != "th":
         d.append(f"defaultLanguage is {ch.get('default_language')!r}, expected 'th'")
-    if ch.get("country") != "TH":
-        d.append(f"country is {ch.get('country')!r}, expected 'TH'")
+    # No country check: measured 2026-11-11, brandingSettings.channel.country is
+    # not writable through the Data API -- a PUT with country='TH' returns 200 but
+    # the field stays null on every channel. A check that can never be satisfied
+    # is noise, so it is dropped rather than left to fire forever.
     if not pls:
         d.append("channel has NO playlists -- a series cannot be followed")
     if ch.get("videos") and int(ch["videos"]) == 0:
