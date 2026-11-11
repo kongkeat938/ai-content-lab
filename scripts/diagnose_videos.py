@@ -220,11 +220,8 @@ def ask_panel(channel: str, rows: list[dict], counts: dict) -> dict:
     # CI run for 20 minutes waiting on a slow poll is worse than no diagnosis. The
     # numbers carry the finding; the panel only phrases it.
     out: dict[str, str] = {}
-    for name in ("gemini", "pollinations"):
-        fn = advise.ADVISORS.get(name)
-        if not fn:
-            continue
-        res = _with_timeout(fn, (q,), 90)
+    for name in advise.LIGHT:
+        res = _with_timeout(advise.advisor(name), (q,), 90)
         if res is None:
             out[name] = "(timed out)"
             continue
