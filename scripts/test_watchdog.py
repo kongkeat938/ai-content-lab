@@ -151,6 +151,41 @@ def main() -> int:
              "the condition-gated exemption)")
 
     print("OK: every foreman-driven rail is watched by health.py")
+
+    # 7. workflow_ids() must not rely on the API's 30-per-page default. Measured
+    #    2026-11-11 the repo has 32 workflows, so the default first page omitted
+    #    `watchdog`; the foreman then planned to dispatch it and exited 1 with
+    #    "watchdog: no such workflow" -- exactly when the chain is quiet and the
+    #    watchdog is the rail that revives it. The static reachability check above
+    #    cannot catch this; it needs a run.
+    sys.path.insert(0, HERE)
+    import foreman as fm  # noqa: E402
+
+    paths = []
+
+    def fake_gh(path, method="GET", body=None):
+        paths.append(path)
+        if "per_page=100" not in path:
+            # What the API really does with no per_page: 30 items, then a next page.
+            page = int(re.search(r"page=(\d+)", path).group(1)) if "page=" in path else 1
+            names = ["w%d" % i for i in range(page * 30, min(page * 30 + 30, 32))]
+            return {"workflows": [{"name": n, "id": i} for i, n in enumerate(names)]}
+        page = int(re.search(r"page=(\d+)", path).group(1))
+        if page == 1:
+            return {"workflows": [{"name": f"w{i}", "id": i} for i in range(100)]}
+        return {"workflows": [{"name": "watchdog", "id": 999}]}
+
+    fm.gh = fake_gh
+    ids = fm.workflow_ids()
+    if not any("per_page=100" in p for p in paths):
+        fail("workflow_ids() does not request per_page=100; with >30 workflows "
+             "the default first page omits some and the foreman exits 1 on a "
+             "dispatch it cannot resolve")
+    if ids.get("watchdog") != 999:
+        fail("workflow_ids() did not follow the next page; a workflow past the "
+             "first 100 would be invisible to the foreman")
+
+    print("OK: workflow_ids() requests per_page=100 and pages past it")
     return 0
 
 
