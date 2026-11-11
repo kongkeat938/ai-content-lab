@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: account-watch
@@ -80,13 +81,14 @@ jobs:
           set +e
           # A video on the channel that no manifest names was uploaded by
           # something outside these rails -- the one upload class the pace, cap
-          # and gap guards cannot see. Measured 2026-11-11: ch4 had 25 titles
-          # carrying a brand token no code here writes. This names them so the
-          # second uploader cannot stay invisible.
+          # and gap guards cannot see. Measured 2026-11-11: a second stream
+          # inserts clips our code never writes (en-US, category 27, the old
+          # brand) at a fixed :21 minute. --alert opens a GitHub issue for the
+          # live ones (recent), which is where the alert will be seen.
           echo "### Channel audit" >> "$GITHUB_STEP_SUMMARY"
-          python3 scripts/audit_channels.py --limit 25 --write > work/channel_audit.txt 2>&1
+          python3 scripts/audit_channels.py --limit 25 --write --alert > work/channel_audit.txt 2>&1
           echo "exit=$?" >> "$GITHUB_STEP_SUMMARY"
-          grep -E "DEFECT:|^==|no defects|videos=" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
+          grep -E "DEFECT:|^==|no defects|videos=|rogue alert" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Commit the report
         if: ${{ github.event.inputs.commit != 'false' }}
