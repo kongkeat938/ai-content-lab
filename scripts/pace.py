@@ -315,15 +315,13 @@ def gate(slug: str, manifest_path: str, min_gap: float = MIN_GAP_HOURS,
     if not views:
         out["reason"] = "no view source (both API quotas spent); graded the gap only"
         return out
-    this_views = views.get(entry["video_id"])
-    if this_views is None:
-        # The last post is too fresh for the Analytics window and the Data API is
-        # spent. Unknown means "keep the shape" downstream, never "change it".
-        out["reason"] = ("the last post is not measurable yet (fresh window / "
-                         "spent quota) -- keeping the current shape")
-        return out
-    # Reach guard first: if the feed has stopped showing the channel, a weak-hook
-    # grade is beside the point, and posting more of the same deepens the block.
+    # Reach guard FIRST, before the "is the last post measurable yet" test. The
+    # stall reads the last five clips that HAVE view data, so a newest post too
+    # fresh to be measured (or a spent Data API quota on its id) must not skip the
+    # check. Returning "unknown -> keep posting" on an unmeasurable newest post is
+    # exactly how a withheld channel kept getting posted to: measured 2026-11-11,
+    # kongkeat's newest post was always unmeasurable, so the stall branch was never
+    # reached and the rail posted 5 clips in ~10 h while the feed was off.
     stall = detect_stall(entries, views)
     out["stall"] = stall
     if stall["stalled"]:
@@ -338,6 +336,14 @@ def gate(slug: str, manifest_path: str, min_gap: float = MIN_GAP_HOURS,
             since = f" (last clip {age:.0f}h ago)" if age is not None else ""
             out["reason"] = (f"{stall['reason']}{since} -- do not repeat the shape "
                              "that got the channel withheld")
+        return out
+    this_views = views.get(entry["video_id"])
+    if this_views is None:
+        # The last post is too fresh for the Analytics window and the Data API is
+        # spent, and the channel is not stalled (checked above). Unknown means
+        # "keep the shape" downstream, never "change it".
+        out["reason"] = ("the last post is not measurable yet (fresh window / "
+                         "spent quota) -- keeping the current shape")
         return out
     per_hour = this_views / max(hours, 0.1)
     base = []

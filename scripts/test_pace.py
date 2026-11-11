@@ -198,6 +198,38 @@ def test_gate_stall() -> None:
     print("  gate: stalled channel pauses, then one changed probe is allowed")
 
 
+def test_gate_stall_unmeasurable_newest() -> None:
+    """An unmeasurable NEWEST post must not skip the stall pause.
+
+    Measured 2026-11-11: kongkeat's newest post was always too fresh for the
+    Analytics window and the Data API quota on its id was spent, so `views` had no
+    row for it. The old gate tested "is the newest post measurable yet?" and
+    returned "keep posting" BEFORE reading the stall -- so the rail posted 5 clips
+    in ~10 h while the feed was off. The stall reads the last five clips that DO
+    have view data, so an unmeasurable newest post must not bypass it.
+    """
+    # Insertion order is oldest-first, so 06 is the newest and 01 the oldest.
+    def manifest(age_h):
+        return _write_manifest({f"{i:02d}": {"video_id": f"v{i}",
+                                             "posted_at": _iso(age_h + (7 - i))}
+                                for i in range(1, 7)})
+    flat = {f"v{i}": 0 for i in range(1, 6)}     # v6 (newest) deliberately absent
+    orig_stats, orig_av = pace.stats, pace.analytics_views
+    pace.stats = lambda *a, **k: {k2: {"views": v, "published_at": None}
+                                  for k2, v in flat.items()}
+    pace.analytics_views = lambda *a, **k: {}
+    try:
+        recent = manifest(3.0)
+        r = pace.gate("kongkeat", recent, token="x")
+        if r["allowed"]:
+            fail(f"gate posted to a stalled channel whose newest post was "
+                 f"unmeasurable: {r}")
+        os.unlink(recent)
+    finally:
+        pace.stats, pace.analytics_views = orig_stats, orig_av
+    print("  gate: an unmeasurable newest post does not skip the stall pause")
+
+
 def test_probe_voice() -> None:
     """A withheld channel's probe must SOUND different, not repeat the same voice.
 
@@ -281,6 +313,7 @@ def main() -> int:
     test_gate_end_to_end()
     test_stall()
     test_gate_stall()
+    test_gate_stall_unmeasurable_newest()
     test_probe_voice()
     test_tension_parity()
     test_ch4_insights_tension()

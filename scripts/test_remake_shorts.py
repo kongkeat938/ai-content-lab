@@ -50,6 +50,15 @@ def main() -> int:
         if need not in src:
             fail(f"remake_shorts.py does not reuse the rail's {need}")
 
+    # The feed guard (2026-11-11): a remake is a fresh upload of the SAME shape, so
+    # a channel the Shorts feed has stopped showing must be held back, not remade
+    # into the block. The cap and gap do not know about a withheld channel.
+    if "pace.detect_stall" not in src:
+        fail("remake_shorts.py does not check the feed stall before uploading; a "
+             "withheld channel would be remade into the block")
+    if "args.force" not in src:
+        fail("remake_shorts.py has no --force escape for a deliberate owner remake")
+
     if 'default="unlist-low"' not in src:
         fail("--old must default to unlist-low, so a still-earning clip is not hidden")
     if "set_privacy" not in src or "privacyStatus" not in src:

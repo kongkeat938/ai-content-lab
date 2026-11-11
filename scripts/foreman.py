@@ -337,6 +337,23 @@ def main() -> int:
             if since is not None and since < ps.MIN_GAP_HOURS:
                 print(f"  {slug}: {len(left)} remake(s) queued but last upload {since:.1f}h ago")
                 continue
+            # A withheld channel (the Shorts feed stopped showing it) must not be
+            # remade at all: a remake is the same shape, so it deepens the block.
+            # The rail enforces this too; skipping the dispatch here saves the run.
+            try:
+                import pace
+                rows = pace.stats(ps.access_token(ps.CHANNELS[slug]),
+                                  [v["video_id"] for v in man["shorts"].values()
+                                   if v.get("video_id")][-50:])
+                stall = pace.detect_stall(
+                    [(k, v) for k, v in man["shorts"].items() if v.get("video_id")],
+                    {vid: r["views"] for vid, r in rows.items()})
+                if stall.get("stalled"):
+                    print(f"  {slug}: {len(left)} remake(s) queued but the feed has "
+                          "stopped showing the channel -- not remaking")
+                    continue
+            except Exception as exc:  # noqa: BLE001 -- a quota miss must not fake a stall
+                print(f"  {slug}: remake stall check skipped ({str(exc)[:80]})")
             plan.append(("remake shorts", {"channel": slug, "per_run": "1"}))
             break
 
