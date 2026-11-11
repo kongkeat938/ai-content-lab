@@ -66,11 +66,33 @@ def delete(token: str, vid: str) -> tuple[int, str]:
         return exc.code, exc.read().decode(errors="replace")
 
 
+def set_private(token: str, vid: str) -> tuple[int, str]:
+    """Set a video private -- the reversible alternative to a delete.
+
+    A delete cannot be undone, and the guarded delete refuses a video with views
+    (`--max-views`), which is why remove-bad-cut looped 37 times on 2026-11-11.
+    Private removes the same Reused-Content exposure (the video is no longer
+    public) while staying reversible.
+    """
+    body = json.dumps({"id": vid, "status": {"privacyStatus": "private"}}).encode()
+    req = urllib.request.Request(f"{API}/videos?part=status", data=body,
+                                 headers={"Authorization": f"Bearer {token}",
+                                          "Content-Type": "application/json"},
+                                 method="PUT")
+    try:
+        with urllib.request.urlopen(req, timeout=120) as f:
+            return f.status, f.read().decode(errors="replace")
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read().decode(errors="replace")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--slug", default="dharma", help="channel slug (dharma, genx, ...)")
     ap.add_argument("--video", required=True, help="the video id to delete")
     ap.add_argument("--yes", action="store_true", help="actually delete")
+    ap.add_argument("--unpublish", action="store_true",
+                    help="set the video private instead of deleting (reversible)")
     ap.add_argument("--force", action="store_true", help="allow deleting a video with views")
     ap.add_argument("--max-views", type=int, default=5)
     a = ap.parse_args()
@@ -93,6 +115,23 @@ def main() -> int:
     print(f"  title: {row['snippet']['title'][:70]}")
     print(f"  backup -> {os.path.relpath(backup, ROOT)}")
 
+    if a.unpublish:
+        # Reversible path: private removes the Reused-Content exposure without the
+        # irreversibility of a delete, and it is not gated on --max-views.
+        if not a.yes:
+            print("dry run -- nothing changed (pass --yes)")
+            return 0
+        if row["status"]["privacyStatus"] == "private":
+            print("already private; writing the marker so the rail stops retrying")
+            _mark_done(a.video)
+            return 0
+        st, body = set_private(token, a.video)
+        print(f"PRIVATE {a.video} -> HTTP {st}" + ("" if st in (200, 204) else f"  {body[:200]}"))
+        ok = st in (200, 204)
+        if ok:
+            _mark_done(a.video)
+        return 0 if ok else 1
+
     if views > a.max_views and not a.force:
         print(f"SKIP: {views} views > --max-views {a.max_views} (pass --force to override)")
         return 1
@@ -103,13 +142,19 @@ def main() -> int:
     st, body = delete(token, a.video)
     print(f"DELETE {a.video} -> HTTP {st}" + ("" if st in (200, 204) else f"  {body[:200]}"))
     ok = st in (200, 204)
-    # A marker on success, so a driver (the foreman) can tell a finished delete
-    # from one that is still pending on quota. Without it a schedule-only rail
-    # that keeps getting deferred would be retried forever with no way to stop.
     if ok:
-        with open(os.path.join(BACKUP_DIR, f"{a.video}.done"), "w", encoding="utf-8") as fh:
-            fh.write(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()) + "\n")
+        _mark_done(a.video)
     return 0 if ok else 1
+
+
+def _mark_done(vid: str) -> None:
+    """Write the success marker, so the rail and the foreman stop retrying.
+
+    Without it a spent-quota or skip-rule retry loops forever -- the exact failure
+    that ran ~37 times on 2026-11-11.
+    """
+    with open(os.path.join(BACKUP_DIR, f"{vid}.done"), "w", encoding="utf-8") as fh:
+        fh.write(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()) + "\n")
 
 
 if __name__ == "__main__":
