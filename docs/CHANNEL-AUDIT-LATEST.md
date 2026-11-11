@@ -1,4 +1,4 @@
-# Channel audit -- 2026-11-11 14:20 UTC
+# Channel audit -- 2026-11-11 15:45 UTC
 
 Measured live from the Data API. A video listed as "in NO manifest" was uploaded by something outside these rails.
 
@@ -43,12 +43,12 @@ Measured live from the Data API. A video listed as "in NO manifest" was uploaded
 ## dharma (Farmmer — ธรรมะก่อนนอน)
 
 - subs=111 videos=142 views=27621 playlists=4 checked=25
-- DEFECT: video l-YGxXly_fE is UNRECORDED and published 0.2d ago -- LIVE rogue upload outside the rails: คืนนี้อนุญาตให้ตัวเองหยุดคิด #Shorts
-- DEFECT: video tZxSdDV3b8g is UNRECORDED and published 1.0d ago -- LIVE rogue upload outside the rails: นอนไม่หลับคืนนี้ ลองวางมือไว้บนอก #Shorts
+- DEFECT: video l-YGxXly_fE is UNRECORDED and published 0.3d ago -- LIVE rogue upload outside the rails: คืนนี้อนุญาตให้ตัวเองหยุดคิด #Shorts
+- DEFECT: video tZxSdDV3b8g is UNRECORDED and published 1.1d ago -- LIVE rogue upload outside the rails: นอนไม่หลับคืนนี้ ลองวางมือไว้บนอก #Shorts
 - DEFECT: video 2EVV-tcV6tg has NO tags: วิธีผ่อนคลายก่อนนอนให้หลับเร็ว #Shorts
 - DEFECT: video nIIfzYfxblA has NO tags: ธรรมะก่อนนอน: วางมือถือแล้วหายใจลึกๆ คลายเครียด #S
 - DEFECT: video 1XWqVnq1E_I has NO tags: วิธีแก้ให้นอนหลับง่ายขึ้นด้วยธรรมะก่อนนอน #Shorts
-- DEFECT: video 1XWqVnq1E_I is UNRECORDED and published 1.8d ago -- LIVE rogue upload outside the rails: วิธีแก้ให้นอนหลับง่ายขึ้นด้วยธรรมะก่อนนอน #Shorts
+- DEFECT: video 1XWqVnq1E_I is UNRECORDED and published 1.9d ago -- LIVE rogue upload outside the rails: วิธีแก้ให้นอนหลับง่ายขึ้นด้วยธรรมะก่อนนอน #Shorts
 - DEFECT: video QLUp6sV16fs has NO tags: นิทานธรรมะก่อนนอน ข้อคิดสอนใจฟังเพลิน #Shorts
 - DEFECT: video 3amQPFyYSu0 has NO tags: ท่านอนแก้เครียด นอนหงายวางมือบนอกจิตสงบ #Shorts
 - DEFECT: video A85TRhY1S9E has NO tags: นิทานธรรมะก่อนนอน ฟังแล้วปล่อยวางความทุกข์ #Shorts
@@ -77,21 +77,21 @@ Measured live from the Data API. A video listed as "in NO manifest" was uploaded
 ## kongkeat-story (เรื่องเล่าอบอุ่นใจ)
 
 - subs=11 videos=93 views=6011 playlists=2 checked=25
-- DEFECT: video vBEB2dIe7ls is UNRECORDED and published 0.0d ago -- LIVE rogue upload outside the rails: จดหมายในกล่องไม้เก่า | เรื่องเล่าการ์ตูน #Shorts
+- DEFECT: video vBEB2dIe7ls is UNRECORDED and published 0.1d ago -- LIVE rogue upload outside the rails: จดหมายในกล่องไม้เก่า | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video vBEB2dIe7ls still carries the old brand 'เรื่องเล่าการ์ตูน': จดหมายในกล่องไม้เก่า | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video 8Bk78uxlmXw is UNRECORDED and published 0.5d ago -- LIVE rogue upload outside the rails: เสื้อไหมพรมถักมือของแม่ | เรื่องเล่าการ์ตูน #Short
 - DEFECT: video 8Bk78uxlmXw still carries the old brand 'เรื่องเล่าการ์ตูน': เสื้อไหมพรมถักมือของแม่ | เรื่องเล่าการ์ตูน #Short
-- DEFECT: video o04srYxc0Ik is UNRECORDED and published 0.8d ago -- LIVE rogue upload outside the rails: เสียงเปียโนเก่าในห้องรับแขก | เรื่องเล่าการ์ตูน #S
+- DEFECT: video o04srYxc0Ik is UNRECORDED and published 0.9d ago -- LIVE rogue upload outside the rails: เสียงเปียโนเก่าในห้องรับแขก | เรื่องเล่าการ์ตูน #S
 - DEFECT: video o04srYxc0Ik still carries the old brand 'เรื่องเล่าการ์ตูน': เสียงเปียโนเก่าในห้องรับแขก | เรื่องเล่าการ์ตูน #S
-- DEFECT: video -LnerKinbTI is UNRECORDED and published 1.2d ago -- LIVE rogue upload outside the rails: รสชาติของความเงียบในครัวเก่า | เรื่องเล่าการ์ตูน #
+- DEFECT: video -LnerKinbTI is UNRECORDED and published 1.3d ago -- LIVE rogue upload outside the rails: รสชาติของความเงียบในครัวเก่า | เรื่องเล่าการ์ตูน #
 - DEFECT: video -LnerKinbTI still carries the old brand 'เรื่องเล่าการ์ตูน': รสชาติของความเงียบในครัวเก่า | เรื่องเล่าการ์ตูน #
 - DEFECT: video NlY4JYadlFE is UNRECORDED and published 1.7d ago -- LIVE rogue upload outside the rails: กรอบรูปไม้สีซีด | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video NlY4JYadlFE still carries the old brand 'เรื่องเล่าการ์ตูน': กรอบรูปไม้สีซีด | เรื่องเล่าการ์ตูน #Shorts
-- DEFECT: video nUHJSqwoa9A is UNRECORDED and published 2.0d ago -- LIVE rogue upload outside the rails: กรอบหน้าต่างบานเก่า | เรื่องเล่าการ์ตูน #Shorts
+- DEFECT: video nUHJSqwoa9A is UNRECORDED and published 2.1d ago -- LIVE rogue upload outside the rails: กรอบหน้าต่างบานเก่า | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video nUHJSqwoa9A still carries the old brand 'เรื่องเล่าการ์ตูน': กรอบหน้าต่างบานเก่า | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video lvsS-GJ_d3w is UNRECORDED and published 2.5d ago -- LIVE rogue upload outside the rails: นาฬิกาแขวนผนังเรือนเก่า | เรื่องเล่าการ์ตูน #Short
 - DEFECT: video lvsS-GJ_d3w still carries the old brand 'เรื่องเล่าการ์ตูน': นาฬิกาแขวนผนังเรือนเก่า | เรื่องเล่าการ์ตูน #Short
-- DEFECT: video S-fXQE6FHmg is UNRECORDED and published 2.8d ago -- LIVE rogue upload outside the rails: วิทยุเครื่องเก่าของพ่อ | เรื่องเล่าการ์ตูน #Shorts
+- DEFECT: video S-fXQE6FHmg is UNRECORDED and published 2.9d ago -- LIVE rogue upload outside the rails: วิทยุเครื่องเก่าของพ่อ | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video S-fXQE6FHmg still carries the old brand 'เรื่องเล่าการ์ตูน': วิทยุเครื่องเก่าของพ่อ | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video C1cAhaHVMtI is on the channel but in NO manifest (historical, pre-manifest): นาฬิกาตายบนผนังบ้าน | เรื่องเล่าการ์ตูน #Shorts
 - DEFECT: video C1cAhaHVMtI still carries the old brand 'เรื่องเล่าการ์ตูน': นาฬิกาตายบนผนังบ้าน | เรื่องเล่าการ์ตูน #Shorts
