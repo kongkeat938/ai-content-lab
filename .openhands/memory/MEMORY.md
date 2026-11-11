@@ -56,6 +56,23 @@ truncated. Full detail in `.openhands/memory/2026-11-DD.md`, `ARCHIVE-MEMORY-202
 - New guards: `test_manifest_qa.py`, `test_night_queued.py` (suite 24).
 
 ## 🧭 Still-true durable facts (details in daily logs / `docs/`)
+- **A rogue upload stream exists on the channels — NOT in-repo code.** Measured 2026-11-11:
+  videos appear that no manifest names, carrying `defaultAudioLanguage=en-US`, category **27**
+  and the old brand `เรื่องเล่าการ์ตูน` at a fixed **`:21`** minute (our rails run `:44`, write
+  `th`/cat 22–24). No git history ever wrote `en-US` or that brand; a repo grep finds only our 4
+  uploaders → the source is **external** (a legacy/leaked OAuth token on another publisher is the
+  panel's #1; 4-advisor panel unanimous). `audit_channels.py --alert` opens/self-clears a GitHub
+  issue (issue #22) and splits the **live** rogue stream (unrecorded, ≤ `RECENT_DAYS`) from the
+  **historical pre-manifest backlog** — a take-down must never hide legitimate old videos. Our
+  tokens hold the full `youtube` scope, so they *could* set a rogue clip private (reversible) —
+  but only after the source is confirmed; do NOT auto-delete or hide the backlog.
+- **Two silent CI failures are the real reason an alert "opens nothing":** (a) an alert step needs
+  `GH_TOKEN` (`gh` exits non-zero silently) and (b) the job needs `google-api-python-client`
+  installed (else `ModuleNotFoundError: googleapiclient`). Both were measured green-but-useless in
+  `account-watch` on 2026-11-11; `test_audit_unrecorded.py` now guards the workflow for `--alert`,
+  `issues: write`, `GH_TOKEN`, and the install step.
+- **`brandingSettings.channel.country` is NOT writable** via the Data API — a PUT with
+  `country='TH'` returns 200 but the field stays null on every channel. Don't audit for it.
 - **A PUT to `brandingSettings.channel` REPLACES the whole object** — writing only the trailer
   wipes description/keywords/defaultLanguage. `channel_overhaul.set_trailer` now merges; a rail
   must read the live object before any brandingSettings PUT. (2026-11-11: all 3 channels read
