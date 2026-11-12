@@ -43,8 +43,8 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day on a `views>5` skip). Prefer **reversible (private)** over delete; mark the skip path
   too (`delete_video.py --unpublish`).
-- **A PUT to `brandingSettings.channel` REPLACES the whole object** (wipes description/keywords/
-  language) → read live, merge. `country` is NOT writable.
+- **A PUT to `brandingSettings.channel` REPLACES the whole object** (wipes description/keywords)
+  → read live, merge. `country` is NOT writable.
 - **`--minutes` is a FLOOR:** an under-N set is heard twice. **`publish_at=slot` uploads
   PRIVATE** (YouTube flips it public at the slot) — intended, not stranded.
 - **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**; a pod 403 before
@@ -53,9 +53,9 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
   (`git_union_merge.py`, `.gitattributes merge=unionjson`) for append-only ledgers.
 - **Night rail:** `skip` ≠ `skip_pub`; an empty receipt is not a bad video; gate before queue
   (`test_manifest_qa.py`, `test_night_queued.py`). **A long hook kills retention** (cap 220).
-  **A rebuild of a LIVE key must not un-publish it** (2026-11-12: a rail edit changes the
-  fingerprint → rebuild of the same week key → the hand-off reset a published entry to `ready`;
-  fixed — a live entry's state is never downgraded, only `--forget` re-uploads).
+  **A rebuild of a LIVE key must not un-publish it** (a rail edit changes the fingerprint →
+  rebuild of the same week key reset a published entry to `ready`; now a live entry's state is
+  never downgraded, only `--forget` re-uploads).
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
   graded every intended 120-min file B (now two bands, 15-40 & 110-130); counter_ledger read a
   same-day dip as "went DOWN" (YouTube revises today → skip same-UTC-day); health flagged the
