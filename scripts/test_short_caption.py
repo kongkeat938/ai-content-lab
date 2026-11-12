@@ -77,18 +77,25 @@ def all_texts() -> list[tuple[str, bool]]:
 
 def frame_overflow(text: str, big: bool) -> tuple[bool, str]:
     lay = ms.caption_layout(text, big)
-    stroke = 6  # stroke_width used by caption_image
-    widest = lay["widest"] + 2 * stroke
-    fits_w = widest <= ms.W
-    fits_h = lay["y"] >= 0 and (lay["y"] + lay["total"]) <= ms.H
-    return fits_w and fits_h, f"widest={widest:.0f}/{ms.W} y={lay['y']} bottom={lay['y']+lay['total']}/{ms.H}"
+    stroke = ms.STROKE  # stroke_width used by caption_image
+    left = lay["x"]
+    right = left + lay["widest"] + 2 * stroke
+    top = lay["y"]
+    bottom = lay["y"] + lay["total"]
+    # inside the frame, and clear of the player UI (right button rail + bottom bar)
+    fits = (left >= 0 and right <= ms.W and top >= 0 and bottom <= ms.H
+            and right <= ms.SAFE_RIGHT * ms.W + 1
+            and bottom <= ms.SAFE_BOTTOM * ms.H + 1
+            and top >= ms.SAFE_TOP * ms.H - 1)
+    return fits, (f"x[{left},{right:.0f}] y[{top},{bottom}] "
+                  f"limits x<{ms.SAFE_RIGHT*ms.W:.0f} y<{ms.SAFE_BOTTOM*ms.H:.0f}")
 
 
 def _text_box(text: str, big: bool):
     """The tight glyph box caption_image draws into, from the shared layout."""
     lay = ms.caption_layout(text, big)
-    x0 = int((ms.W - lay["widest"]) / 2)
-    x1 = int((ms.W + lay["widest"]) / 2)
+    x0 = lay["x"]
+    x1 = lay["x"] + int(lay["widest"])
     return (max(0, x0), max(0, lay["y"]), min(ms.W, x1), min(ms.H, lay["y"] + lay["total"]))
 
 
@@ -136,6 +143,14 @@ def main() -> int:
             bad.append((text, why))
     check(f"all {len(texts)} captions stay in frame", not bad,
           "; ".join(f"{t[:20]}... ({w})" for t, w in bad[:3]))
+
+    print("the guard can fail: centred text would run under the player's button rail")
+    worst = max(texts, key=lambda tb: ms.caption_layout(tb[0], tb[1])["widest"])
+    lay = ms.caption_layout(worst[0], worst[1])
+    centred_right = (ms.W + lay["widest"]) / 2
+    check("a centred caption breaches SAFE_RIGHT (so the safe box is doing work)",
+          centred_right > ms.SAFE_RIGHT * ms.W,
+          f"centred right={centred_right:.0f} rail={ms.SAFE_RIGHT*ms.W:.0f}")
 
     print("the font is sized to the line (short fills, long stays punchy)")
     longest = max((t for t, big in texts if big), key=len)

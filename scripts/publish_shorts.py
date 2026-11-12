@@ -91,6 +91,12 @@ CHANNELS = {
                  f"ฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → "
                  f"https://www.youtube.com/playlist?list={LONG_PLAYLIST}\n\n"
                  "#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง"),
+        # The pinned comment (pin_cta_comment) -- the CTA that shows on the Shorts
+        # screen. Points at the durable playlist so one tap autoplays into the next
+        # long file (the conversion bridge the 2026-11-12 panel named).
+        "pin_cta": ("กดติดตามไว้ ไม่พลาดธรรมะก่อนนอนทุกคืน 🔔\n"
+                    f"ฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → "
+                    f"https://www.youtube.com/playlist?list={LONG_PLAYLIST}"),
     },
     "genx": {
         "scripts": os.path.join(ROOT, "content", "ch1_shorts", "scripts.json"),
@@ -112,6 +118,9 @@ CHANNELS = {
                  "https://www.youtube.com/playlist?list=PLXEV3B3DcgsU\n"
                  "ทุกตอนอยู่ในช่องเดียว → https://www.youtube.com/@tatagenxgeny\n\n"
                  "#ปรัชญาชีวิต #ข้อคิด #แง่คิด"),
+        "pin_cta": ("กดติดตามตาต้า GenX ไว้ ไม่พลาดข้อคิดดี ๆ 🔔\n"
+                    "รวมข้อคิดปรัชญาชีวิตไว้ให้แล้ว → "
+                    "https://www.youtube.com/playlist?list=PLXEV3B3DcgsU"),
     },
     "kongkeat": {
         "scripts": os.path.join(ROOT, "content", "ch4_shorts", "scripts.json"),
@@ -295,6 +304,59 @@ def note_upload(channel_id: str) -> None:
     keep.append(datetime.now(timezone.utc).isoformat(timespec="seconds"))
     log["channels"][channel_id] = keep
     _write_upload_log(log)
+
+
+
+def pin_cta_comment(yt, video_id: str, spec: dict, s: dict, privacy: str) -> str | None:
+    """Post the channel's call-to-action as a pinned comment under the Short.
+
+    The subscribe/long-form ask lives in the description, which a Shorts viewer
+    never opens. The comment is the one CTA surface that shows on the Shorts screen
+    itself, and pinning it keeps it at the top. Measured 2026-11-12: 1.93 subs per
+    1000 views (worst on the fleet) while the same Shorts get 1000+ views -- the
+    bridge from a viewer to a subscriber is the missing lever, not more reach. A
+    five-advisor panel named this (with the visual safe-zone) the highest-leverage
+    move. The link to the *playlist* is durable (it survives a deleted video) and
+    autoplays into the next long file, so one tap earns more watch-hours.
+
+    Best-effort: a comment is a bonus, never a reason to fail an upload that has
+    already succeeded, so every error is swallowed and returned as a note. Skipped
+    for a non-public video (a viewer cannot see the comment until it is public).
+    """
+    if privacy != "public":
+        return "skipped (not public yet)"
+    from googleapiclient.errors import HttpError
+    body = f"{s.get('cta', '').strip()}\n\n{spec.get('pin_cta', '')}".strip()
+    try:
+        res = yt.commentThreads().insert(
+            part="snippet",
+            body={"snippet": {"videoId": video_id,
+                              "topLevelComment": {"snippet": {"textOriginal": body[:10000]}}}},
+        ).execute()
+        cid = res["snippet"]["topLevelComment"]["id"]
+        # best-effort pin: a failed pin still leaves the comment at the top of a new
+        # video's thread, so it is not worth failing the upload over
+        try:
+            yt.comments().setModerationStatus(id=cid, moderationStatus="published").execute()
+        except HttpError:
+            pass
+        return f"pinned comment {cid}"
+    except HttpError as exc:
+        body = ""
+        try:
+            body = exc.content.decode("utf-8", "ignore") if exc.content else ""
+        except Exception:  # noqa: BLE001
+            body = str(exc)
+        if exc.status_code == 403 and ("scope" in body.lower()
+                                       or "insufficient" in body.lower()):
+            # Measured live 2026-11-12: the tokens carry only the `youtube` scope,
+            # so comment writes 403. The one-time fix is the owner's:
+            #   python3 scripts/yt_auth.py --scopes force-ssl --slug <ch>
+            # then update that channel's YT_CH*_REFRESH_TOKEN secret. Until then
+            # this is reported, never hidden, and never fails the upload.
+            return ("comment skipped: needs the force-ssl scope "
+                    "(owner: python3 scripts/yt_auth.py --scopes force-ssl)")
+        return f"comment failed ({exc.status_code})"
 
 
 def note_upload_limit(channel_id: str, detail: str = "") -> None:
@@ -689,9 +751,15 @@ def main() -> int:
             continue
         vid = response["id"]
         posted_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        # The CTA comment is best-effort and never blocks the record (which must be
+        # written before anything else can fail).
+        note = pin_cta_comment(yt, vid, spec, s, args.privacy)
+        if note:
+            print(f"  {note}")
         man["shorts"][sid] = {"video_id": vid, "url": f"https://youtu.be/{vid}",
                               "title": body["snippet"]["title"],
                               "posted_at": posted_at,
+                              "cta_note": note,
                               "shape": hook_shape(s, spec.get("cues")),
                               **({"probe": True, "probe_voice": "alt"} if stalled else {})}
         save(man, spec["manifest"])   # record before anything else can fail

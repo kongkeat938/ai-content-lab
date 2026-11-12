@@ -190,17 +190,29 @@ def wrap(draw: ImageDraw.ImageDraw, text: str, f: ImageFont.FreeTypeFont,
 # in a punchy number of lines -- a single fixed size looked either tiny or cramped.
 CAPTION_MAX_LINES = 4
 
+# The Shorts player draws its own UI over the video: the like/comment/share rail on
+# the right (~0.84W and in) and the channel bar at the bottom (~0.88H and down). A
+# caption that runs under them is hidden. Measured 2026-11-12: with centred text the
+# right edge reached 0.93W, so EVERY one of the 3551 captions in the pools ran under
+# the button rail. Captions are now left-aligned inside this safe box instead.
+SAFE_LEFT = 0.06          # fraction of W
+SAFE_RIGHT = 0.84         # text must end before the right-side rail
+SAFE_TOP = 0.10           # fraction of H
+SAFE_BOTTOM = 0.88        # text must end before the bottom channel bar
+STROKE = 6                # caption stroke width; reserved inside the safe box
+
 
 def caption_layout(text: str, big: bool) -> dict:
-    """The font size, wrapped lines, and the box for one caption.
+    """The font size, wrapped lines, and the safe box for one caption.
 
     Shared by caption_image() and the caption guard, so the guard measures the same
     geometry that gets drawn (the earlier duplication is exactly how the text came
-    to sit over bright art with nothing to catch it).
+    to sit over bright art and under the player UI, with nothing to catch it).
     """
     probe = Image.new("L", (W, H))
     d = ImageDraw.Draw(probe)
-    max_w = W - 160
+    left = int(SAFE_LEFT * W)
+    max_w = int(SAFE_RIGHT * W) - left - 2 * STROKE
     hi, lo = (120, 78) if big else (92, 62)
     size = hi
     f = font("Kanit-Bold.ttf", size)
@@ -212,16 +224,17 @@ def caption_layout(text: str, big: bool) -> dict:
     lh = int(size * 1.35)
     total = lh * len(lines)
     y = int(H * 0.66) if not big else int(H * 0.42)
-    y = max(140, min(y, H - 340 - total))
+    y = max(int(SAFE_TOP * H), min(y, int(SAFE_BOTTOM * H) - total))
     widest = max((d.textlength(ln, font=f) for ln in lines), default=0)
     return {"font": f, "size": size, "lines": lines, "lh": lh, "total": total,
-            "y": y, "widest": widest}
+            "y": y, "widest": widest, "x": left}
 
 
 def caption_image(text: str, out: str, big: bool = False, panel: bool = True) -> None:
     lay = caption_layout(text, big)
     f, size, lines = lay["font"], lay["size"], lay["lines"]
-    lh, total, y, widest = lay["lh"], lay["total"], lay["y"], lay["widest"]
+    lh, total, y, widest, left = (lay["lh"], lay["total"], lay["y"],
+                                  lay["widest"], lay["x"])
 
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
@@ -233,14 +246,14 @@ def caption_image(text: str, out: str, big: bool = False, panel: bool = True) ->
     pad_x, pad_y = int(size * 0.42), int(size * 0.30)
     if panel:
         d.rounded_rectangle(
-            [(W - widest) / 2 - pad_x, y - pad_y,
-             (W + widest) / 2 + pad_x, y + total + pad_y],
+            [left - pad_x, y - pad_y, left + widest + pad_x, y + total + pad_y],
             radius=int(size * 0.34), fill=(6, 10, 22, 172))
+    # a gold accent bar marks the block's left edge, the channel's signature
+    d.rectangle([left - pad_x, y + 4, left - pad_x + max(6, size // 12), y + total - 4],
+                fill=GOLD)
     for i, ln in enumerate(lines):
-        tw = d.textlength(ln, font=f)
-        x = (W - tw) / 2
-        d.text((x, y + i * lh), ln, font=f, fill=GOLD if big else WHITE,
-               stroke_width=6, stroke_fill=(0, 0, 0, 235))
+        d.text((left, y + i * lh), ln, font=f, fill=GOLD if big else WHITE,
+               stroke_width=STROKE, stroke_fill=(0, 0, 0, 235))
     im.save(out)
 
 
