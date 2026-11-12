@@ -43,16 +43,18 @@ BACKUP_DIR = os.path.join(ROOT, "content", "deleted")
 
 def _get(token: str, url: str) -> dict:
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+    last = ""
     for _ in range(4):
         try:
             with urllib.request.urlopen(req, timeout=60) as f:
                 return json.load(f)
         except urllib.error.HTTPError as exc:
+            last = f"HTTP {exc.code}: {exc.read().decode(errors='replace')[:200]}"
             if exc.code in (403, 429, 500, 503):
                 time.sleep(4)
                 continue
-            raise
-    raise SystemExit(f"gave up on {url}")
+            break
+    raise SystemExit(f"gave up on {url}\n  {last}")
 
 
 def uploads_playlist(token: str) -> str:
