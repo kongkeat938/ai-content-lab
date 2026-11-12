@@ -1,0 +1,9 @@
+# Channels whose content production is paused. One name per line; blank/# ignored.
+# A paused channel keeps its videos and playlists -- only new production stops
+# (Shorts, remakes, funnel linking, long-form builds, publishing).
+# kongkeat is a dead channel (measured 2026-11-12: +3 views/day, 0 subs for three
+# days, 0.5 long-form watch-hours in 28 days). Effort is worth more on dharma.
+# Re-enable: delete the two lines below and restore the crons commented in
+# ch4-longform.yml / publish-ch4.yml.
+kongkeat
+kongkeat-story

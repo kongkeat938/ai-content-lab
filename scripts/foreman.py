@@ -119,6 +119,19 @@ def main() -> int:
     ids = workflow_ids()
     plan: list[tuple[str, dict]] = []
 
+    # A paused channel (content/PAUSED) is a business decision: stop its content
+    # production, keep everything else. Measured 2026-11-12: kongkeat earned
+    # +3 views/day and 0 subs for three days and 0.5 long-form watch-hours in 28
+    # days -- effort is worth more on dharma. The scripts also refuse to run for a
+    # paused channel, so this only saves the CI.
+    paused = set()
+    try:
+        with open(os.path.join(ROOT, "content", "PAUSED"), encoding="utf-8") as fh:
+            paused = {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+    except OSError:
+        pass
+    ch4_paused = "kongkeat" in paused
+
     # 1. Covers: due whenever the manifest holds an entry whose thumbnail is not
     #    confirmed live. set_thumbnails is idempotent and defers on quota, so the
     #    cheap correct move is: if anything is queued and the rail has not run in
@@ -168,7 +181,10 @@ def main() -> int:
     lim4 = load("content/upload_limit.json", {}).get("channels", {}).get(pub4.get("channel_id"), {})
     capped4 = bool(lim4.get("reset_at")) and parse(lim4["reset_at"]) > now()
     if due4 and not capped4:
-        plan.append(("publish-ch4", {}))
+        if ch4_paused:
+            print("  ch4: long-form due but the channel is paused (content/PAUSED)")
+        else:
+            plan.append(("publish-ch4", {}))
     elif due4:
         print(f"  ch4: long-form due but upload-capped until {lim4['reset_at']}")
 
@@ -249,9 +265,13 @@ def main() -> int:
 
     # 5b. Keep the ch4 family rail fed too: a weekly build if the newest is over
     #     6 days old. generate=true so the scheduled path mints a fresh set.
-    c4_age = last_success_min("ch4-longform", ids)
-    if c4_age is None or c4_age > 6 * 24 * 60:
-        plan.append(("ch4-longform", {"generate": "true"}))
+    #     Skipped while the channel is paused (content/PAUSED).
+    if ch4_paused:
+        print("  ch4-longform: skipped, the channel is paused (content/PAUSED)")
+    else:
+        c4_age = last_success_min("ch4-longform", ids)
+        if c4_age is None or c4_age > 6 * 24 * 60:
+            plan.append(("ch4-longform", {"generate": "true"}))
 
     # 5b-ii. Keep the genx rail fed: genx had the most Shorts and no long-form at
     #        all (measured 2026-11-07), so its funnel pointed at an empty playlist.

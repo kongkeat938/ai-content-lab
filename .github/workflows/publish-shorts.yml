@@ -55,10 +55,20 @@ jobs:
             manifest: content/ch2_shorts.json
           - channel: genx
             manifest: content/ch1_shorts.json
-          - channel: kongkeat
-            manifest: content/ch4_shorts.json
+          # kongkeat REMOVED 2026-11-12 (content/PAUSED): the channel is dead
+          # (+3 views/day, 0 subs, 0.5 long-form watch-hours in 28 days). The
+          # "Refuse to publish a paused channel" step below fails the build if a
+          # paused channel is ever added back here while content/PAUSED still
+          # names it.
     steps:
       - uses: actions/checkout@v4
+
+      - name: Refuse to publish a paused channel
+        run: |
+          if grep -qx "${{ matrix.channel }}" content/PAUSED; then
+            echo "::error::${{ matrix.channel }} is paused (content/PAUSED) but is still in the matrix"
+            exit 1
+          fi
 
       - uses: actions/setup-python@v5
         with:

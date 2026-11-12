@@ -301,6 +301,16 @@ def main() -> int:
     ap.add_argument("--vet-rounds", type=int, default=2)
     args = ap.parse_args()
 
+    paused_path = os.path.join(ROOT, "content", "PAUSED")
+    try:
+        with open(paused_path, encoding="utf-8") as fh:
+            paused = {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+    except OSError:
+        paused = set()
+    if args.channel in paused:
+        print(f"{args.channel} is paused (content/PAUSED); not growing its pool")
+        return 0
+
     cfg = CHANNELS[args.channel]
     scripts_path = cfg["path"]
     key = os.environ.get("GEMINI_API_KEY")

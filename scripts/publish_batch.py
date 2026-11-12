@@ -205,6 +205,15 @@ def main() -> int:
     with open(args.manifest, encoding="utf-8") as fh:
         man = json.load(fh)
     slug = man["channel_slug"]
+    paused_path = os.path.join(ROOT, "content", "PAUSED")
+    try:
+        with open(paused_path, encoding="utf-8") as fh:
+            paused = {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+    except OSError:
+        paused = set()
+    if slug in paused:
+        print(f"{slug} is paused (content/PAUSED); nothing to publish")
+        return 0
     vids = man["videos"]
     if args.only:
         vids = [v for v in vids if v["key"] in args.only]

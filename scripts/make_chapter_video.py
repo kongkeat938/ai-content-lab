@@ -228,8 +228,12 @@ def build(audio: str, info: dict, images: str, out: str, title: str,
             # A clean loop is the strongest watch-time lever measured on these
             # channels: the top clips show averageViewPercentage > 100%. Fading the
             # tail to silence makes end->start seamless for a replay.
+            # The fade-IN is only 1 s: the spoken hook is the panel's #1 retention
+            # lever and a 4 s fade buried its first syllables (measured 2026-11-12:
+            # 71% leave a 120-min file within 2 min). A 120-min file is rarely
+            # replayed, so the loop seam does not need a long fade-in.
             fo = max(0.0, adur - 8.0)
-            chain = f"afade=t=in:st=0:d=4,afade=t=out:st={fo:.3f}:d=8"
+            chain = f"afade=t=in:st=0:d=1,afade=t=out:st={fo:.3f}:d=8"
             af = f"volume={gain_db:.2f}dB,{chain}" if gain_db else chain
             run(["ffmpeg", "-y", "-loglevel", "error", "-i", pic, "-i", audio,
                  "-map", "0:v", "-map", "1:a", "-t", f"{adur:.3f}", "-shortest",

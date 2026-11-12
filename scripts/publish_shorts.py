@@ -149,6 +149,22 @@ CHANNELS = {
 }
 
 
+def paused_channels() -> set:
+    """Channels whose content production is paused (content/PAUSED, one name per line).
+
+    A pause is a business decision (measured 2026-11-12: kongkeat = +3 views/day,
+    0 subs for three days, 0.5 long-form watch-hours in 28 days), so it must be
+    reversible from one file and impossible to forget. Names are the CHANNELS keys
+    here and the `slug`/`channel` values in the workflows.
+    """
+    path = os.path.join(ROOT, "content", "PAUSED")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+    except OSError:
+        return set()
+
+
 def access_token(spec: dict) -> str:
     cid, sec = os.environ.get("YT_CLIENT_ID"), os.environ.get("YT_CLIENT_SECRET")
     rt = os.environ.get(spec["token"])
@@ -491,6 +507,10 @@ def main() -> int:
     ap.add_argument("--privacy", default="public", choices=["private", "unlisted", "public"])
     ap.add_argument("--work", help="override the build dir (default: per channel)")
     args = ap.parse_args()
+
+    if args.channel in paused_channels():
+        print(f"{args.channel} is paused (content/PAUSED); nothing to publish")
+        return 0
 
     spec = CHANNELS[args.channel]
     work = args.work or spec["work"]
