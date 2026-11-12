@@ -68,6 +68,11 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`. Pages:
   kongkeat938.github.io/ai-content-lab/.
+- **Accounts (K, 2026-11-12):** 1 channel = 1 Google account — genx `kongkeat.938`, dharma
+  `farmmer.938`, kongkeat-story `kongkeat.p3` (each its own 19/day pool); `test_channel_accounts.py`
+  locks the map. **Delegation (K chose B):** `delegate_ready.py` measures a delegated credential;
+  `docs/DELEGATE-2026-11-12.md` = K's one-time Brand-Account invite, then the team cuts a rogue
+  grant with no K (no API key can rotate the GCP client secret — 403; Google ties a grant to a person).
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
 - **Comment writes need `force-ssl`** (all 3 tokens = `youtube` scope only → `commentThreads.insert`
