@@ -70,6 +70,7 @@ detail in `topics/`, daily logs, `docs/`.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
 - **Comment writes need `force-ssl`** (all 3 tokens = `youtube` scope only → `commentThreads.insert`
-  403s; owner fix `yt_auth.py --scopes force-ssl --slug <ch>`). **Shorts caption safe box**
-  L0.06/R0.84/T0.10/B0.88 — centred text hit 0.93W under the button rail; guard `test_short_caption`;
-  conversion lever = pinned CTA comment (`test_shorts_cta_comment`).
+  403s; owner fix `yt_auth.py --scopes force-ssl --slug <ch>`). **Text must fit its frame:**
+  Shorts captions safe box L0.06/R0.84/T0.10/B0.88 (centred hit 0.93W under the button rail,
+  `test_short_caption`); poster titles wrap+shrink to 130px ≤3 lines (`test_poster_fit`).
+  Conversion lever = pinned CTA comment (`test_shorts_cta_comment`).
