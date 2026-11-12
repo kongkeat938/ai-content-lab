@@ -35,10 +35,10 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
-  `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. `audit_channels.py --alert`
-  splits **live** (≤3 d) vs **backlog**; `--hide-live-rogue` pauses live (private, reversible).
-  Delete parked-**private** only — never unlisted (a live shared link; `private-delete.yml`
-  @08:14Z, needs the reset). The root is the token: K must revoke + re-consent.
+  `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. Auto: `rogue-guard` hides a
+  live clip within the hour (30-min, foreman+health), `private-delete` deletes the parked
+  **private** set after the reset — never unlisted (a live shared link). Title runs touch only
+  recorded clips. Root is the token: K must revoke + re-consent (browser-only, no API path).
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day on a `views>5` skip). Prefer **reversible (private)** over delete; mark the skip path
   too (`delete_video.py --unpublish`).
