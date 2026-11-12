@@ -175,12 +175,19 @@ def apply_qa_gate(entry: dict, receipt: dict) -> None:
         print(f"  QA gate skipped ({exc})")
         return
     entry["qa"] = qa
-    if qa["blocked"] and not entry.get("video_id"):
+    if entry.get("video_id"):
+        # An already-live video is never un-published by a re-grade. The only way
+        # to re-upload a key is --forget, which clears the video_id first. Without
+        # this, a rebuild of a published key (e.g. a fade-in fix changing the
+        # fingerprint) reset a live entry to ready -- measured 2026-11-12:
+        # night_auto_202646 flipped published -> ready beside its live video_id.
+        print(f"  QA grade {qa['grade']} -- already live; state kept")
+        return
+    if qa["blocked"]:
         entry["state"] = "blocked"
         print(f"  QA VETO (grade {qa['grade']}): " + "; ".join(qa["reasons"]))
         return
-    if not entry.get("video_id"):
-        entry["state"] = "ready"
+    entry["state"] = "ready"
     print(f"  QA grade {qa['grade']} -- publishable")
 
 
@@ -189,20 +196,27 @@ def queue_entry(vids: list, entry: dict, receipt: dict) -> str:
 
     Ordering matters: apply_qa_gate() must run BEFORE this, so a passing (re)grade
     clears an earlier veto. A prior hit's state and qa are copied into the entry
-    only to preserve the upload record when the current run cannot re-grade -- a
-    skipped build with no receipt. Otherwise the fresh verdict wins. Getting this
-    backwards shipped state=blocked with qa=null over a fresh grade B (measured
-    2026-11-09), because the gate then edited an entry no longer in the manifest.
+    when it cannot be re-graded -- a skipped build with no receipt -- AND whenever
+    the key is already live, so a rebuild never un-publishes a video. Otherwise the
+    fresh verdict wins. Getting the first part backwards shipped state=blocked with
+    qa=null over a fresh grade B (measured 2026-11-09), because the gate then edited
+    an entry no longer in the manifest.
     """
     hit = next((v for v in vids if v.get("key") == entry["key"]), None)
     if not hit:
         vids.append(entry)
         return "added"
-    if "video_id" in hit:
+    live = "video_id" in hit
+    if live:
         entry["video_id"] = hit["video_id"]
-    if not receipt:
+    # A live video is never un-published by a rebuild of its key: the recorded
+    # state wins so a fresh entry cannot downgrade published -> ready (measured
+    # 2026-11-12: a rebuilt night_auto_202646 was flipped to ready beside its live
+    # video_id). With no receipt (a skipped build) the state and qa are preserved
+    # for the same reason.
+    if live or not receipt:
         entry["state"] = hit.get("state", entry.get("state", "ready"))
-        if "qa" in hit:
+        if not receipt and "qa" in hit:
             entry["qa"] = hit["qa"]
     hit.update(entry)
     return "updated"

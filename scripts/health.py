@@ -71,6 +71,27 @@ EXPECTED = {
     "short doors": 11520,        # foreman gate 6 d
 }
 
+# A paused channel (content/PAUSED) stops its own rails on purpose, so those rails
+# go quiet and must not read as a fault -- a paused rail reported as "never
+# succeeded" is the same class of false alarm this file keeps learning about. The
+# short-pool check for the channel is suppressed the same way.
+PAUSED_RAILS = {
+    "kongkeat": ["publish-ch4", "ch4-longform"],
+    "kongkeat-story": ["publish-ch4", "ch4-longform"],
+}
+
+
+def paused_channels() -> set:
+    p = os.path.join(ROOT, "content", "PAUSED")
+    if not os.path.exists(p):
+        return set()
+    with open(p, encoding="utf-8") as fh:
+        return {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+
+
+def paused_rail_names(paused: set) -> set:
+    return {r for ch in paused for r in PAUSED_RAILS.get(ch, [])}
+
 
 def gh(path: str) -> dict:
     req = urllib.request.Request(f"https://api.github.com{path}",
@@ -234,10 +255,15 @@ def main() -> int:
 
     stale = []
     unreadable = []
+    paused_rails = paused_rail_names(paused_channels())
     blind = "_error" in runs
     if not blind:
         for name, every in EXPECTED.items():
             e = runs.get(name)
+            if name in paused_rails:
+                # Its channel is paused on purpose (content/PAUSED), so this rail
+                # SHOULD be quiet. Do not report it as stale or unreadable.
+                continue
             if e and e.get("unreadable"):
                 # A transient empty read is not a dead rail; flag it as a gap,
                 # not a fault, so the alert does not cry wolf.
@@ -294,6 +320,9 @@ def main() -> int:
     else:
         for name in sorted(EXPECTED):
             e = runs.get(name)
+            if name in paused_rails:
+                lines.append(f"- {name}: paused (content/PAUSED) — quiet on purpose")
+                continue
             if not e:
                 lines.append(f"- {name}: **never ran**")
                 continue

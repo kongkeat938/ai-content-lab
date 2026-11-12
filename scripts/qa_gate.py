@@ -22,7 +22,8 @@ Hard gates (any failure caps the grade at D):
 
 Soft gates (affect the grade, do not veto on their own):
   * chapter cadence -- a picture change every few minutes is what the panel asked
-  * length inside the 15-35 minute band where a listener actually stays
+  * length inside an intended band (15-40 min clip, or the 110-130 min sleep file)
+    where a listener actually stays
 
     python3 scripts/qa_gate.py --receipt work/night/receipt.json
     python3 scripts/qa_gate.py --receipt work/night/receipt.json --json
@@ -41,9 +42,11 @@ MAX_CARD_SEC = 8 * 60
 # The spoken promise must land inside this window -- long enough to be a sentence,
 # short enough that the viewer is still there when it ends.
 HOOK_MIN_SEC, HOOK_MAX_SEC = 2.0, 30.0
-# Where a listener actually stays. Inside = full marks; outside = a warning, not a
-# veto, because a deliberately long sleep file is a legitimate format.
-LEN_OK_MIN, LEN_OK_MAX = 15 * 60, 40 * 60
+# The two formats this operation ships on purpose, both "where a listener stays":
+# the 15-40 min talk/teaching clip and the 110-130 min sleep file (build_night.py
+# --minutes 120 -- that long file IS the format, not a defect). A length inside
+# either band is full marks; outside both is a warning, never a veto.
+LEN_OK_BANDS = ((15 * 60, 40 * 60), (110 * 60, 130 * 60))
 # The night rail deliberately ships a 120-minute sleep file (build_night.py
 # --minutes 120) -- that IS the format, not a defect. The old ceiling of 90 min
 # vetoed every such build (measured 2026-11-09: a verified 120.5-min file was
@@ -100,9 +103,10 @@ def grade(receipt: dict) -> dict:
 
     # --- soft gates ---------------------------------------------------------
     if duration:
-        if not (LEN_OK_MIN <= duration <= LEN_OK_MAX):
-            warnings.append(f"length {duration/60:.1f} min is outside the 15-35 min "
-                            "band where a listener stays")
+        if not any(lo <= duration <= hi for lo, hi in LEN_OK_BANDS):
+            bands = " or ".join(f"{lo//60}-{hi//60} min" for lo, hi in LEN_OK_BANDS)
+            warnings.append(f"length {duration/60:.1f} min is outside the "
+                            f"{bands} bands where a listener stays")
         if not (LEN_WARN_MIN <= duration <= LEN_WARN_MAX):
             reasons.append(f"length {duration/60:.1f} min is far from any usable format")
 

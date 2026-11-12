@@ -105,6 +105,29 @@ def main() -> int:
     ng = qa_gate.grade(night)
     if ng["blocked"]:
         fail(f"the intended 120-minute night build was vetoed: {ng['reasons']}")
+    # ...and it must not be *warned* either: a 120-min sleep file is the intended
+    # format, so flagging every one of them (grade B forever) is a false alarm.
+    if any("min" in w and "outside" in w for w in ng["warnings"]):
+        fail(f"the intended 120-minute night build drew a length false alarm: {ng['warnings']}")
+
+    # The length check must sweep the source, not hardcode one band: every band the
+    # gate declares must be accepted, and a length just outside a band must warn.
+    for lo, hi in qa_gate.LEN_OK_BANDS:
+        for dur in (lo, (lo + hi) / 2, hi):
+            r = dict(good_receipt())
+            r["video_info"] = dict(r["video_info"], duration_sec=dur,
+                                   chapter_seconds=[min(90.0, dur)] * max(2, int(dur // 90)))
+            g2 = qa_gate.grade(r)
+            if any("outside the" in w for w in g2["warnings"]):
+                fail(f"a length inside a declared band ({dur/60:.1f} min) was warned: "
+                     f"{g2['warnings']}")
+
+    # ...and a length outside every band still warns, so the check is not vacuous.
+    between = dict(good_receipt())
+    between["video_info"] = dict(between["video_info"], duration_sec=60 * 60,
+                                 chapter_seconds=[300.0] * 12)
+    if not any("outside the" in w for w in qa_gate.grade(between)["warnings"]):
+        fail("a 60-minute file (outside every intended band) drew no length warning")
 
     # But a file nothing like the format (200 min) is still vetoed.
     absurd = {

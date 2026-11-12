@@ -20,6 +20,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import add_release_to_manifest as A  # noqa: E402
+import qa_gate  # noqa: E402
 
 FAILS = []
 
@@ -65,6 +66,21 @@ def main() -> int:
     A.apply_qa_gate(e, receipt(40.3))
     check("a published entry keeps its state", e["state"] == "published", e["state"])
 
+    # 5b. A *passing* re-grade of an already-live key must not reset it to ready
+    #     either -- that is the 2026-11-12 defect: a rebuilt published key
+    #     (night_auto_202646) was flipped published -> ready beside its live
+    #     video_id, which is one --forget away from a duplicate upload.
+    e = {"state": "published", "video_id": "abc"}
+    A.apply_qa_gate(e, receipt(12.0))
+    check("a live video is not reset to ready by a re-grade",
+          e["state"] == "published", e["state"])
+    vids = [{"key": "k", "state": "published", "video_id": "abc"}]
+    entry = {"key": "k", "state": "ready", "duration_sec": 7208.3}
+    A.apply_qa_gate(entry, receipt(12.0))
+    A.queue_entry(vids, entry, receipt(12.0))
+    check("the manifest merge keeps a live video published",
+          vids[0]["state"] == "published", vids[0]["state"])
+
     # 6. The ordering bug: a fresh grade B must beat the hit's stale state=blocked.
     #    apply_qa_gate then queue_entry is the only correct order; reversed, the
     #    merge copies state=blocked and qa=null back over the new verdict.
@@ -72,9 +88,11 @@ def main() -> int:
     entry = {"key": "k", "state": "ready", "duration_sec": 7208.3, "video_url": "new"}
     A.apply_qa_gate(entry, receipt(12.0))
     A.queue_entry(vids, entry, receipt(12.0))
+    want = qa_gate.grade(receipt(12.0))["grade"]
+    got = (vids[0].get("qa") or {}).get("grade")
     check("a re-grade clears the stale blocked state in the manifest",
-          vids[0]["state"] == "ready" and (vids[0].get("qa") or {}).get("grade") == "B",
-          f'{vids[0]["state"]}/{vids[0].get("qa", {}).get("grade") if vids[0].get("qa") else None}')
+          vids[0]["state"] == "ready" and got == want,
+          f'{vids[0]["state"]}/{got} (want {want})')
 
     # 7. Without a receipt the upload record is preserved (skip path).
     vids = [{"key": "k", "state": "published", "qa": {"grade": "B"}, "video_id": "abc"}]
