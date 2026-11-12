@@ -57,11 +57,10 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
   fingerprint → rebuild of the same week key → the hand-off reset a published entry to `ready`;
   fixed — a live entry's state is never downgraded, only `--forget` re-uploads).
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
-  graded every intended 120-min file B ("15-35 min band" — now two bands, 15-40 & 110-130);
-  counter_ledger read a same-day dip as "went DOWN" (YouTube revises today — skip same-UTC-day);
-  health flagged the paused rails as "never succeeded" (now reads `content/PAUSED`).
-- **Mail is on the cloud, not PC1** (PC1 dead — do NOT retry). `IMAP_ACCOUNTS` holds only
-  kongkeat.938@gmail.com.
+  graded every intended 120-min file B (now two bands, 15-40 & 110-130); counter_ledger read a
+  same-day dip as "went DOWN" (YouTube revises today → skip same-UTC-day); health flagged the
+  paused rails as "never succeeded" (now reads `content/PAUSED`).
+- **Mail is on the cloud, not PC1** (PC1 dead — do NOT retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs are flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not
   promise a "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` now wired (after 08:00Z).
 
