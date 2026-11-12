@@ -1,11 +1,10 @@
 # Project Memory — ak (ai-content-lab)
 
-**Agent `ak`** (was AX, 2026-10-31). Owner **K**: Thai replies, **measured evidence, not
-claims**. ak decides — take a decision to the **panel**, not to K (order: presence of mind →
-order the events → causes → pros/cons vs the goal → panel → most-gain/least-harm → act).
-**This file is a MAP, not a log** — injected every session and the tail is truncated. Keep it
-under ~6,000 chars (guard `scripts/test_memory_budget.py`); full detail lives in `topics/`,
-`.openhands/memory/2026-11-DD.md`, `docs/`.
+**Agent `ak`** (was AX, 2026-10-31). Owner **K**: Thai replies, **measured evidence, not claims**.
+ak decides — take a decision to the **panel**, not to K (presence of mind → order events → causes
+→ pros/cons vs the goal → panel → most-gain/least-harm → act). **This file is a MAP, not a log**
+(injected every session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`);
+detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts do not count). Steer by long-form
@@ -14,13 +13,12 @@ under ~6,000 chars (guard `scripts/test_memory_budget.py`); full detail lives in
 - **The first 2 minutes is the binding constraint, not volume** (dharma keeps 102%@1% then
   **28.9%@2%**, target ≥40%). More volume is noise; content must be specific + actionable.
   **Fade-in 4s→1s** (2026-11-12, `make_chapter_video`/`make_night_video`): a 4s fade buried the
-  spoken hook's first syllables — measured **+12 dB** in the opening second after the cut (tail
-  fade-out kept for the loop). **The hook is the lever, not the loop seam.**
+  hook's first syllables — measured **+12 dB** in the opening second after the cut. **The hook is
+  the lever, not the loop seam.**
 - **Watch-time/view rises with length:** dharma's 120-min (5% completion) ≈ **6.0 min/view** vs
   its 17-min (27%) ≈ 4.6 — keep videos long; the completion % is a distraction. **kongkeat is
-  PAUSED** (2026-11-12: +3 views/day, 0 subs, 0.5 long-form watch-hours in 28 days) via
-  `content/PAUSED` (both names `kongkeat` + `kongkeat-story`) → Shorts/remake/grow/publish/long-
-  form skipped; guard `scripts/test_paused_channel.py`; reverse = empty the file + restore crons.
+  PAUSED** (2026-11-12: +3 views/day, 0 subs, 0.5 watch-hours in 28 d) via `content/PAUSED` (both
+  names) → its rails skipped; guard `test_paused_channel.py`; reverse = empty the file.
   Plan: `docs/GROWTH-PLAN-2026-11-12.md`.
 
 ## 🔑 Durable principles (K)
@@ -39,11 +37,9 @@ under ~6,000 chars (guard `scripts/test_memory_budget.py`); full detail lives in
   watched; every new scheduled rail needs a foreman rule.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
-- **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand
-  `เรื่องเล่าการ์ตูน` at `:21` (our rails: `th`/cat 22–24 at `:44`). Source = external leaked
-  token. `audit_channels.py --alert` opens/clears issue #22, splits **live** (≤3 d) vs
-  **historical backlog**; `--hide-live-rogue` pauses live ones (private, reversible). Never
-  delete/hide the backlog.
+- **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
+  `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. `audit_channels.py --alert`
+  splits **live** (≤3 d) vs **backlog**; `--hide-live-rogue` pauses live (private, reversible).
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day on a `views>5` skip). Prefer **reversible (private)** over delete; mark the skip path
   too (`delete_video.py --unpublish`).
@@ -70,13 +66,14 @@ under ~6,000 chars (guard `scripts/test_memory_budget.py`); full detail lives in
   promise a "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` now wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
-- `topics/00-pipeline-and-channel-facts.md`, `01-pipeline-build-and-measure.md`,
-  `02-gates-and-traps.md`, `03-pc1-and-storage.md`, `04-no-browser-api-path.md`,
-  `05-durable-traps.md` — the deep set.
-- `docs/DECISION-*.md` (goals), `docs/PANEL-*.md`+`docs/CONSULT-*.md` (decisions),
-  `docs/HEALTH.md`, `docs/CHANNEL-AUDIT-LATEST.md`. Daily logs: `.openhands/memory/2026-11-DD.md`.
+- `topics/00-..05-*.md` (deep set) · `docs/DECISION-*` (goals) · `docs/PANEL-*`/`CONSULT-*`
+  (decisions) · `docs/HEALTH.md` · `docs/CHANNEL-AUDIT-LATEST.md` · logs `.openhands/memory/2026-11-DD.md`.
 - **Automation:** GitHub Actions only (watchdog → foreman → rails); `scripts/health.py`; kill
   switch `content/STOP`. **Publishing:** `content/<ch>_publish.json`+`_shorts.json`,
   `DAILY_CAP=3`, `content/upload_log.json`. Pages: kongkeat938.github.io/ai-content-lab/.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
+- **Comment writes need `force-ssl`** (all 3 tokens = `youtube` scope only → `commentThreads.insert`
+  403s; owner fix `yt_auth.py --scopes force-ssl --slug <ch>`). **Shorts caption safe box**
+  L0.06/R0.84/T0.10/B0.88 — centred text hit 0.93W under the button rail; guard `test_short_caption`;
+  conversion lever = pinned CTA comment (`test_shorts_cta_comment`).
