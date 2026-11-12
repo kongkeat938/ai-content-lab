@@ -31,6 +31,17 @@ an incomplete PCSEV stated honestly beats a finished-looking claim.
 - **Never hardcode** the set a "threshold vs cadence" guard checks — sweep the source
   (this is why the false-alarm bug survived in `link-shorts`/`set-thumbnails`).
 - **A generator that can drop a piece must FAIL**, not write a partial set.
+- **Memory is a map, not a log (K, 2026-11-11).** `MEMORY.md` is injected every session and its
+  tail is truncated, so it must stay short (budget 6,000 chars; guard
+  `scripts/test_memory_budget.py`, fails > 9,000). Keep only invariants and traps as one-liners;
+  move detail to `.openhands/memory/topics/` or a daily log. A session that ends must leave
+  `MEMORY.md` no longer than it found it.
+
+## Decide without waiting (K, 2026-11-11)
+Take a decision to the **panel**, not to K: presence of mind → order the events → find the
+causes → weigh pros/cons and the effect on the goal → panel (`scripts/advise.py`) → choose the
+most-gain/least-harm option → **act**. Escalate only a genuine human-at-a-browser unknown (e.g.
+OAuth re-consent). Prefer a reversible move (private) over an irreversible one (delete).
 
 ## Pod environment
 Recycled often: reinstall `ffmpeg` + `pip install -r requirements.txt` each session; re-export
