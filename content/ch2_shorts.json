@@ -673,6 +673,14 @@
       "posted_at": "2026-11-12T17:43:42+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "112": {
+      "video_id": "GL3RJpQ1Hgs",
+      "url": "https://youtu.be/GL3RJpQ1Hgs",
+      "title": "ลองเปิดเสียงธรรมะนี้คลอเบาๆ ข้างหมอนเพื่อผ่อนคลาย #Shorts",
+      "posted_at": "2026-11-12T22:12:56+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
