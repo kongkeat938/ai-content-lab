@@ -665,6 +665,14 @@
       "title": "ลองคว่ำหน้าจอมือถือแล้วสูดหายใจลึกสามครั้งคืนนี้ #Shorts",
       "posted_at": "2026-11-11T19:47:27+00:00",
       "shape": "cue"
+    },
+    "111": {
+      "video_id": "7Iew3C7qnu0",
+      "url": "https://youtu.be/7Iew3C7qnu0",
+      "title": "คืนนี้ลองทำตามนี้เพื่อสลัดความเครียดแล้วเข้าสู่ภวังค์หลับ #Shorts",
+      "posted_at": "2026-11-12T17:43:42+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
