@@ -58,8 +58,8 @@ detail in `topics/`, daily logs, `docs/`.
   graded every intended 120-min file B (now two bands, 15-40 & 110-130); counter_ledger read a
   same-day dip as "went DOWN" (skip same-UTC-day); health flagged paused rails (now reads `PAUSED`).
 - **Mail is on the cloud, not PC1** (PC1 dead — do NOT retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
-- **ch4 subs are flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not
-  promise a "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` now wired (after 08:00Z).
+- **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
+  "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` now wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/00-..05-*.md` (deep set) · `docs/DECISION-*` (goals) · `docs/PANEL-*`/`CONSULT-*`
