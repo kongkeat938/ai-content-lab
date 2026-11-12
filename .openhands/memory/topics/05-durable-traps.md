@@ -50,7 +50,9 @@ index. Newest first. Every item here was measured, not assumed.
   `receipt.json` to the Release and the hand-off downloads it.
 - **A long hook kills retention:** `content/hooks/dharma.md` was 361 chars → **40.3 s** (edge-tts
   Thai ≈ 9 chars/s) matching 28.9%@2:00; now 171 chars (~19 s). Cap in `test_hook_concrete.py`
-  (220). ⚠️ the fingerprint does NOT include the hook file → a hook edit alone won't rebuild.
+  (220). **CORRECTED 2026-11-12:** the fingerprint DOES include the hook file
+  (`night-compilation.yml` hashes `content/hooks/dharma.md`; genx/ch4 likewise), so a hook edit
+  DOES trigger a rebuild — the earlier note claiming otherwise was stale.
 - **`publish_at=slot` uploads PRIVATE**; YouTube flips it public at 19:30 Bangkok (12:30Z).
 
 ## 2026-11-09 defects fixed
