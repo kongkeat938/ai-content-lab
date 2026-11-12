@@ -60,9 +60,10 @@ def main() -> int:
     rows = [vid("a", "public"), vid("b", "private"), vid("c", "unlisted"),
             vid("d", "private", future), vid("e", "private", past)]
     doomed = {v["id"] for v in pv.parked_only(rows)}
-    check("the parked clips are the ones deleted", doomed == {"b", "c", "e"}, str(doomed))
+    check("private parked clips are the ones deleted", doomed == {"b", "e"}, str(doomed))
     check("the scheduled release is NOT deleted", "d" not in doomed)
     check("a public video is NOT deleted", "a" not in doomed)
+    check("an unlisted clip is NOT deleted by default", "c" not in doomed)
 
     print("the guard can fail: it is not vacuously true")
     # If kind() ignored publishAt, the scheduled release would look parked and be deleted.

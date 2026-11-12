@@ -16,6 +16,9 @@ on:
       remove:
         description: "true to delete the PARKED videos (default: list only)"
         default: "false"
+      include_unlisted:
+        description: "true to also delete unlisted clips (default: private only)"
+        default: "false"
       confirm:
         description: "type DELETE to actually delete; anything else is a dry run"
         default: ""
@@ -45,6 +48,7 @@ jobs:
         run: |
           ARGS=""
           for s in ${{ inputs.slugs }}; do ARGS="$ARGS --slug $s"; done
+          if [ "${{ inputs.include_unlisted }}" = "true" ]; then ARGS="$ARGS --include-unlisted"; fi
           if [ "${{ inputs.remove }}" = "true" ] && [ "${{ inputs.confirm }}" = "DELETE" ]; then
             ARGS="$ARGS --delete --yes"
           fi
