@@ -94,6 +94,25 @@ jobs:
           echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_STEP_SUMMARY"
           grep -E "DEFECT:|^==|no defects|videos=|rogue alert|hid |commented" work/channel_audit.txt >> "$GITHUB_STEP_SUMMARY" || true
 
+      - name: Delegation readiness (can the team act without K?)
+        continue-on-error: true
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+          YT_CH1_ALT_REFRESH_TOKEN: ${{ secrets.YT_CH1_ALT_REFRESH_TOKEN }}
+          YT_CH2_ALT_REFRESH_TOKEN: ${{ secrets.YT_CH2_ALT_REFRESH_TOKEN }}
+          YT_CH4_ALT_REFRESH_TOKEN: ${{ secrets.YT_CH4_ALT_REFRESH_TOKEN }}
+        run: |
+          set +e
+          # K chose B (2026-11-12): a second account as manager, so the team can cut
+          # a rogue grant with no human. This reports, live, whether that delegated
+          # credential exists yet -- a channel with none is a real gap, named not hidden.
+          echo "### Delegation readiness" >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/delegate_ready.py | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Commit the report
         if: ${{ github.event.inputs.commit != 'false' }}
         run: |
