@@ -416,6 +416,14 @@ def main() -> int:
     if pd_age is None or pd_age > 20 * 60:
         plan.append(("private-delete", {}))
 
+    # 5k. Pause any LIVE rogue clip within the hour. rogue-guard runs the audit's
+    #     --hide-live-rogue (private, reversible) and clears its own issue; the
+    #     schedule alone can be missed, so drive it from the chain too. A spent
+    #     quota is a clean no-op.
+    rg_age = last_success_min("rogue-guard", ids)
+    if rg_age is None or rg_age > 60:
+        plan.append(("rogue-guard", {}))
+
     # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
     #    any push runs the foreman, so a broken chain repairs itself on the next
     #    commit instead of staying dead until someone notices.

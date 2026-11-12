@@ -68,6 +68,7 @@ EXPECTED = {
     "ch2-playlists": 2880,       # foreman gate 24 h
     "channel-branding": 2880,    # foreman gate 24 h (branding is a standing invariant)
     "private-delete": 2880,      # foreman gate 20 h (clears the parked private clips)
+    "rogue-guard": 300,          # */30 cron + chain; pause a rogue clip within the hour
     "fetch music": 11520,        # foreman gate 6 d
     "short doors": 11520,        # foreman gate 6 d
 }
