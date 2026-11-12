@@ -100,6 +100,81 @@ LAYOUTS = [
     ("lm", 128, 42, 0.72, "left"),
 ]
 
+# Text is wrapped and shrunk to stay inside this margin. Measured 2026-11-12: a
+# single-line title at 176px is 5862px wide against a 1920px frame, so a long title
+# ran off both edges -- the real rails pass short titles ("ปรัชญาชีวิต"), so it never
+# bit, but nothing stopped it. The same blind spot the Shorts captions had.
+SAFE = 130            # min margin from either frame edge, px
+TITLE_MAX_LINES = 3
+SUB_MAX_LINES = 2
+
+
+def _halign(side: str) -> str:
+    return {"left": "l", "center": "m", "right": "r"}[side]
+
+
+def wrap_lines(d: ImageDraw.ImageDraw, text: str, f: ImageFont.FreeTypeFont,
+               max_w: float) -> list[str]:
+    """Greedy character wrap -- Thai has no word spaces, so wrap on characters."""
+    if not text:
+        return []
+    lines: list[str] = []
+    cur = ""
+    for ch in text:
+        if ch == "\n":
+            lines.append(cur)
+            cur = ""
+            continue
+        if not cur or d.textlength(cur + ch, font=f) <= max_w:
+            cur += ch
+        else:
+            lines.append(cur)
+            cur = ch
+    if cur or not lines:
+        lines.append(cur)
+    return lines
+
+
+def fit_text(d: ImageDraw.ImageDraw, text: str, name: str, size: int,
+             max_w: float, max_lines: int, floor: int):
+    """Shrink the font until the text wraps into at most `max_lines` lines."""
+    s = size
+    f = font(name, s)
+    lines = wrap_lines(d, text, f, max_w)
+    while s > floor and len(lines) > max_lines:
+        s -= 4
+        f = font(name, s)
+        lines = wrap_lines(d, text, f, max_w)
+    return f, s, lines
+
+
+def text_layout(title: str, subtitle: str, layout: int, chapter: str = "") -> dict:
+    """Wrapped lines + block geometry for a poster, shared with the guard.
+
+    One source of truth: build() draws exactly this, and the guard measures exactly
+    this, so a title that would overflow is caught before it ships.
+    """
+    _anchor, tsize, ssize, rule_y, side = LAYOUTS[layout % len(LAYOUTS)]
+    max_w = W - 2 * SAFE
+    d = ImageDraw.Draw(Image.new("L", (W, H)))
+    ft, ts, tlines = fit_text(d, title, "Kanit-Bold.ttf", tsize, max_w, TITLE_MAX_LINES, 60)
+    fs, ss, slines = fit_text(d, subtitle, "Prompt-Regular.ttf", ssize, max_w, SUB_MAX_LINES, 24)
+    if chapter:
+        fc, cs, clines = fit_text(d, chapter, "Kanit-Regular.ttf", 30, max_w, 1, 20)
+    else:
+        fc, cs, clines = None, 0, []
+    t_lh = int(ts * 1.22)
+    s_lh = int(ss * 1.35)
+    block_h = t_lh * len(tlines) + (16 + s_lh * len(slines) if slines else 0)
+    center_y = int(H * rule_y)
+    top = center_y - block_h // 2
+    x = W // 2 if side == "center" else (SAFE if side == "left" else W - SAFE)
+    return {"side": side, "halign": _halign(side), "x": x, "max_w": max_w,
+            "title_lines": tlines, "title_font": ft, "title_size": ts, "title_lh": t_lh,
+            "sub_lines": slines, "sub_font": fs, "sub_size": ss, "sub_lh": s_lh,
+            "chapter_lines": clines, "chapter_font": fc, "chapter_size": cs,
+            "center_y": center_y, "block_h": block_h, "top": top, "bottom": top + block_h}
+
 
 def build(image_path: str, out: str, title: str, subtitle: str,
           layout: int, chapter: str = "", index: str = "") -> None:
@@ -108,38 +183,37 @@ def build(image_path: str, out: str, title: str, subtitle: str,
     im = vignette(im)
     d = ImageDraw.Draw(im, "RGBA")
 
-    anchor, tsize, ssize, rule_y, side = LAYOUTS[layout % len(LAYOUTS)]
-    f_title = font("Kanit-Bold.ttf", tsize)
-    f_sub = font("Prompt-Regular.ttf", ssize)
-    f_small = font("Kanit-Regular.ttf", 30)
+    lay = text_layout(title, subtitle, layout, chapter)
+    x, ha = lay["x"], lay["halign"]
     f_idx = font("Kanit-Bold.ttf", 34)
 
     # letterbox bars
     d.rectangle([0, 0, W, BAR], fill=(0, 0, 0))
     d.rectangle([0, H - BAR, W, H], fill=(0, 0, 0))
 
-    y = int(H * rule_y)
-    if side == "center":
-        x = W // 2
-    elif side == "left":
-        x = 130
+    # short rule above the title block
+    ry = lay["top"] - 34
+    if ha == "m":
+        d.line([(x - 90, ry), (x + 90, ry)], fill=(212, 175, 95, 220), width=3)
+    elif ha == "l":
+        d.line([(x, ry), (x + 180, ry)], fill=(212, 175, 95, 220), width=3)
     else:
-        x = W - 130
+        d.line([(x - 180, ry), (x, ry)], fill=(212, 175, 95, 220), width=3)
 
-    # short rule above the title
-    if side == "center":
-        d.line([(x - 90, y - 52), (x + 90, y - 52)], fill=(212, 175, 95, 220), width=3)
-    elif side == "left":
-        d.line([(x, y - 52), (x + 180, y - 52)], fill=(212, 175, 95, 220), width=3)
-    else:
-        d.line([(x - 180, y - 52), (x, y - 52)], fill=(212, 175, 95, 220), width=3)
+    ty = lay["top"]
+    for i, ln in enumerate(lay["title_lines"]):
+        draw_text(d, (x, ty + i * lay["title_lh"] + lay["title_lh"] // 2), ln,
+                  lay["title_font"], (247, 243, 236), anchor=f"{ha}m",
+                  stroke=2, stroke_fill=(10, 8, 6))
+    sy = ty + lay["title_lh"] * len(lay["title_lines"]) + 16
+    for i, ln in enumerate(lay["sub_lines"]):
+        draw_text(d, (x, sy + i * lay["sub_lh"] + lay["sub_lh"] // 2), ln,
+                  lay["sub_font"], (198, 190, 178), anchor=f"{ha}m")
 
-    draw_text(d, (x, y), title, f_title, (247, 243, 236), anchor=anchor,
-              stroke=2, stroke_fill=(10, 8, 6))
-    draw_text(d, (x, y + tsize + 16), subtitle, f_sub, (198, 190, 178), anchor=anchor)
-
-    if chapter:
-        draw_text(d, (x, H - BAR - 44), chapter, f_small, (170, 164, 154), anchor=anchor)
+    if lay["chapter_lines"]:
+        for ln in lay["chapter_lines"]:
+            draw_text(d, (x, H - BAR - 44), ln, lay["chapter_font"],
+                      (170, 164, 154), anchor=f"{ha}m")
 
     if index:
         d.text((W - 60, 34), index, font=f_idx, fill=(212, 175, 95), anchor="ra")
