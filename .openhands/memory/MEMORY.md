@@ -10,10 +10,9 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
 - **YPP watch-hours = long-form ONLY** (Shorts do not count). Steer by long-form
   watch-hours/week + `retention@2min`, never raw views. **dharma = 96% of long-form watch
   time → concentrate there.** Review 2026-11-16.
-- **The first 2 minutes is the binding constraint, not volume** (dharma keeps 102%@1% then
-  **28.9%@2%**, target ≥40%). More volume is noise; content must be specific + actionable.
-  **Fade-in 4s→1s** (2026-11-12): a 4s fade buried the hook's first syllables — measured
-  **+12 dB** in the opening second after the cut. **The hook is the lever, not the loop seam.**
+- **The first 2 minutes is the binding constraint, not volume** (dharma 102%@1% → **28.9%@2%**,
+  target ≥40%). **Fade-in 4s→1s** measured **+12 dB** in the opening second — the hook is the
+  lever, not the loop seam.
 - **Watch-time/view rises with length:** dharma's 120-min (5% completion) ≈ **6.0 min/view** vs
   its 17-min (27%) ≈ 4.6 — keep videos long; the completion % is a distraction. **kongkeat is
   PAUSED** (2026-11-12: +3 views/day, 0 subs, 0.5 watch-hours in 28 d) via `content/PAUSED` (both
@@ -38,6 +37,8 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
 - **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
   `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. `audit_channels.py --alert`
   splits **live** (≤3 d) vs **backlog**; `--hide-live-rogue` pauses live (private, reversible).
+  Delete parked-**private** only — never unlisted (a live shared link; `private-delete.yml`
+  @08:14Z, needs the reset). The root is the token: K must revoke + re-consent.
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day on a `views>5` skip). Prefer **reversible (private)** over delete; mark the skip path
   too (`delete_video.py --unpublish`).
@@ -57,9 +58,9 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
   graded every intended 120-min file B (now two bands, 15-40 & 110-130); counter_ledger read a
   same-day dip as "went DOWN" (skip same-UTC-day); health flagged paused rails (now reads `PAUSED`).
-- **Mail is on the cloud, not PC1** (PC1 dead — do NOT retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
+- **Mail on the cloud, not PC1** (PC1 dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
-  "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` now wired (after 08:00Z).
+  "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`CONSULT-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md`
