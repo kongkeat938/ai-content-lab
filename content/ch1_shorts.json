@@ -506,6 +506,14 @@
       "title": "คุณมีสิทธิ์ที่จะวางความพยายามลงเพื่อพักใจบ้างในวันนี้ #Shorts",
       "posted_at": "2026-11-12T07:49:40+00:00",
       "shape": "cue"
+    },
+    "84": {
+      "video_id": "lphfMtjA2fA",
+      "url": "https://youtu.be/lphfMtjA2fA",
+      "title": "คุณอนุญาตให้ตัวเองเลือกความสบายใจมากกว่าความถูกใจคนอื่น #Shorts",
+      "posted_at": "2026-11-12T17:43:45+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
