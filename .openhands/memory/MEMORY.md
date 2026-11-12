@@ -4,7 +4,7 @@
 ak decides — take a decision to the **panel**, not to K (order events → causes → pros/cons vs
 goal → panel → most-gain/least-harm → act). **This file is a MAP, not a log** (injected every
 session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`); detail in
-`topics/` + daily logs + `docs/`.
+`topics/`, logs, `docs/`.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts do not count). Steer by long-form
@@ -56,8 +56,8 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
   rebuild of the same week key reset a published entry to `ready`; now a live entry's state is
   never downgraded, only `--forget` re-uploads).
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
-  graded every intended 120-min file B (now two bands, 15-40 & 110-130); counter_ledger read a
-  same-day dip as "went DOWN" (skip same-UTC-day); health flagged paused rails (now reads `PAUSED`).
+  graded every 120-min file B (two bands 15-40 & 110-130); counter_ledger read a same-day dip as
+  DOWN (skip same-UTC-day); health flagged paused rails (now reads `PAUSED`).
 - **Mail on the cloud, not PC1** (PC1 dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` wired (after 08:00Z).
