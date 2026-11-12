@@ -12,7 +12,10 @@ under ~6,000 chars (guard `scripts/test_memory_budget.py`); full detail lives in
   watch-hours/week + `retention@2min`, never raw views. **dharma = 96% of long-form watch
   time → concentrate there.** Review 2026-11-16.
 - **The first 2 minutes is the binding constraint, not volume** (dharma keeps 102%@1% then
-  **28.9%@2%**). More volume is noise; content must be specific + actionable.
+  **28.9%@2%**, target ≥40%). More volume is noise; content must be specific + actionable.
+- **Watch-time/view rises with length:** dharma's 120-min (5% completion) ≈ **6.0 min/view** vs
+  its 17-min (27%) ≈ 4.6 — keep videos long; the completion % is a distraction. **kongkeat is
+  dead** (+3 views/day, 0 subs) → pause candidate. Plan: `docs/GROWTH-PLAN-2026-11-12.md`.
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
