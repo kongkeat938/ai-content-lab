@@ -124,6 +124,10 @@ def main() -> int:
     ap.add_argument("--work", help="override the build dir (default: per channel)")
     args = ap.parse_args()
 
+    if args.channel in ps.paused_channels():
+        print(f"{args.channel} is paused (content/PAUSED); nothing to remake")
+        return 0
+
     spec = ps.CHANNELS[args.channel]
     work = args.work or spec["work"]
     scripts = ps.load(spec["scripts"], [])

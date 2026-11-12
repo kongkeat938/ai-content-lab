@@ -80,6 +80,17 @@ def main() -> int:
     ap.add_argument("--only", action="append", help="video id to link (repeatable)")
     args = ap.parse_args()
 
+    paused = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                          "content", "PAUSED")
+    try:
+        with open(paused, encoding="utf-8") as fh:
+            names = {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+    except OSError:
+        names = set()
+    if args.channel in names:
+        print(f"{args.channel} is paused (content/PAUSED); nothing to link")
+        return 0
+
     token_env, channel_id = CHANNELS[args.channel]
     playlist_id, lead = PLAYLIST[args.channel]
     url = f"https://www.youtube.com/playlist?list={playlist_id}"

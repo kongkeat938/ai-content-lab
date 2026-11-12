@@ -59,11 +59,17 @@ jobs:
           - slug: genx
             manifest: content/ch1_shorts.json
             token: YT_CH1_REFRESH_TOKEN
-          - slug: kongkeat
-            manifest: content/ch4_shorts.json
-            token: YT_CH4_REFRESH_TOKEN
+          # kongkeat REMOVED 2026-11-12 (content/PAUSED): the channel is dead.
+          # The tripwire below fails the build if a paused slug is added back.
     steps:
       - uses: actions/checkout@v4
+
+      - name: Refuse to remake a paused channel
+        run: |
+          if grep -qx "${{ matrix.slug }}" content/PAUSED; then
+            echo "::error::${{ matrix.slug }} is paused (content/PAUSED) but is still in the matrix"
+            exit 1
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
