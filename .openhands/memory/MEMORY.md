@@ -62,8 +62,8 @@ detail in `topics/`, daily logs, `docs/`.
   "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` now wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
-- `topics/00-..05-*.md` (deep set) · `docs/DECISION-*` (goals) · `docs/PANEL-*`/`CONSULT-*`
-  (decisions) · `docs/HEALTH.md` · `docs/CHANNEL-AUDIT-LATEST.md` · logs `.openhands/memory/2026-11-DD.md`.
+- `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`CONSULT-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md`
+  · logs `.openhands/memory/2026-11-DD.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`. Pages:
   kongkeat938.github.io/ai-content-lab/.
