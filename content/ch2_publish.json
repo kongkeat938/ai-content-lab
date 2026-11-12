@@ -249,9 +249,9 @@
     },
     {
       "key": "night_auto_202646",
-      "state": "published",
-      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-1196b250e156-a74f6e/video.mp4",
-      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-1196b250e156-a74f6e/compilation.mp3",
+      "state": "ready",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-189d1ae73400-a74f6e/video.mp4",
+      "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-189d1ae73400-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_auto_202646.jpg",
       "duration_sec": 7208.3,
       "title": "ธรรมะก่อนนอน 120 นาที หลับลึกถึงเช้า ปล่อยวางความเครียดทั้งวัน จิตสงบ",
@@ -283,7 +283,7 @@
           "chapters": 27,
           "longest_card_min": 4.8,
           "hook_sec": 19.8,
-          "true_peak_dbfs": -3.1
+          "true_peak_dbfs": -3.6
         }
       },
       "video_id": "mlC98KMKxRc",
