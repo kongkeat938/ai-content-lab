@@ -126,3 +126,13 @@ index. Newest first. Every item here was measured, not assumed.
   DOWN". Skip the monotonic check only within one UTC day; a cross-day drop is still a violation.
 - **health** flagged paused rails (`publish-ch4`/`ch4-longform`) as "never succeeded". It now
   reads `content/PAUSED` and reports them as "paused (quiet on purpose)".
+
+## Shorts visuals had no guard; the "strange image" was the Commons fallback (2026-11-12)
+- Shorts art = Pollinations AI (seeded per clip) -> when rate-limited it fell back to a
+  RANDOM Wikimedia Commons photo unrelated to the script. Panel: drop it, use a branded
+  gradient (`from_procedural`). Commons is out of `gen_cover_image.generate()` now.
+- The Shorts caption hook sat at 0.42H while the backdrop scrim starts at 0.55H -> the one
+  line that must read landed on bright art (~1.4:1). Fixed with a dark panel (6.5:1).
+  Guards: `test_short_caption.py` (in-frame sweep + contrast over the brightest art),
+  `test_cover_image_source.py` (no Commons fallback). Long-form had qa_gate; Shorts had
+  none -- a format with no guard drifts.

@@ -163,6 +163,7 @@ def from_procedural(seed: int, style: str, w: int, h: int) -> bytes:
     palettes = {
         "dharma": [(14, 18, 46), (26, 34, 74), (52, 44, 92), (120, 96, 60)],
         "family": [(60, 34, 22), (110, 62, 34), (176, 120, 62), (232, 196, 132)],
+        "genx": [(28, 27, 26), (58, 54, 48), (120, 104, 80), (214, 196, 160)],
     }
     cols = palettes.get(style, palettes["dharma"])
     im = Image.new("RGB", (w, h), cols[0])
@@ -191,14 +192,21 @@ def from_procedural(seed: int, style: str, w: int, h: int) -> bytes:
 
 
 def generate(style: str, prompt: str, seed: int, w: int, h: int) -> tuple[bytes | None, str]:
+    """Pick one image for a video: the AI generator, else the branded gradient.
+
+    A random Wikimedia photo is deliberately NOT used as a fallback (2026-11-12):
+    a five-advisor panel was unanimous that an off-theme stock photo reads as
+    "cheap / pulled from nowhere" and breaks the calm mood, while a branded
+    gradient reads as a design choice. So a rate-limited generator now lands on
+    from_procedural() -- a seeded gradient in the channel palette -- instead of a
+    random photo. from_commons() is kept for a future on-theme licensed source but
+    is no longer in the chain.
+    """
     style_cues = STYLES.get(style, "")
     full = f"{prompt}, {style_cues}" if prompt else style_cues
     data = from_pollinations(full, seed, w, h)
     if data:
         return data, "pollinations"
-    data = from_commons(prompt or style, w, h, seed)
-    if data:
-        return data, "commons"
     return from_procedural(seed, style, w, h), "procedural"
 
 
