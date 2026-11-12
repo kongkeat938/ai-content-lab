@@ -48,6 +48,10 @@ index. Newest first. Every item here was measured, not assumed.
    → the fresh verdict never reached the manifest. Gate first, then `queue_entry()`.
 - **An empty receipt is not a bad video** (`grade({})=blocked` = false veto); the build uploads
   `receipt.json` to the Release and the hand-off downloads it.
+- **A transient empty run list is not a dead rail** (2026-11-12): `health.py` read
+  set-thumbnails as "never succeeded" while it had 29 successes — a proxy/rate blip returned an
+  empty page. Now a workflow whose runs-page comes back empty is retried, then marked
+  `unreadable` (a gap, exit 0) — never "never succeeded". Guard `test_health_blind.py`.
 - **A long hook kills retention:** `content/hooks/dharma.md` was 361 chars → **40.3 s** (edge-tts
   Thai ≈ 9 chars/s) matching 28.9%@2:00; now 171 chars (~19 s). Cap in `test_hook_concrete.py`
   (220). **CORRECTED 2026-11-12:** the fingerprint DOES include the hook file
