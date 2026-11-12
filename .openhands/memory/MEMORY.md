@@ -25,6 +25,7 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
   **live API > real output file (ffprobe/ebur128) > a test that can FAIL > a committed doc**.
   Best = a **counter with an invariant** (`scripts/counter_ledger.py`).
+- **Times to K = Thai (UTC+7), 24-hour `HH:MM`** (never raw UTC, never 12-hour) — AGENTS.md.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies silently on a spent quota → use
   **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Advisor panel:
