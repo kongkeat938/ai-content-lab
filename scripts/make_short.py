@@ -185,16 +185,57 @@ def wrap(draw: ImageDraw.ImageDraw, text: str, f: ImageFont.FreeTypeFont,
     return lines
 
 
-def caption_image(text: str, out: str, big: bool = False) -> None:
-    im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(im)
-    size = 96 if big else 78
+# Caption block: the hook is the hook line (big), the rest are story lines. The
+# font is chosen per line so a short line fills the frame and a long one still fits
+# in a punchy number of lines -- a single fixed size looked either tiny or cramped.
+CAPTION_MAX_LINES = 4
+
+
+def caption_layout(text: str, big: bool) -> dict:
+    """The font size, wrapped lines, and the box for one caption.
+
+    Shared by caption_image() and the caption guard, so the guard measures the same
+    geometry that gets drawn (the earlier duplication is exactly how the text came
+    to sit over bright art with nothing to catch it).
+    """
+    probe = Image.new("L", (W, H))
+    d = ImageDraw.Draw(probe)
+    max_w = W - 160
+    hi, lo = (120, 78) if big else (92, 62)
+    size = hi
     f = font("Kanit-Bold.ttf", size)
-    lines = wrap(d, text, f, W - 160)
+    lines = wrap(d, text, f, max_w)
+    while size > lo and len(lines) > CAPTION_MAX_LINES:
+        size -= 4
+        f = font("Kanit-Bold.ttf", size)
+        lines = wrap(d, text, f, max_w)
     lh = int(size * 1.35)
     total = lh * len(lines)
     y = int(H * 0.66) if not big else int(H * 0.42)
-    y = min(y, H - 340 - total)
+    y = max(140, min(y, H - 340 - total))
+    widest = max((d.textlength(ln, font=f) for ln in lines), default=0)
+    return {"font": f, "size": size, "lines": lines, "lh": lh, "total": total,
+            "y": y, "widest": widest}
+
+
+def caption_image(text: str, out: str, big: bool = False, panel: bool = True) -> None:
+    lay = caption_layout(text, big)
+    f, size, lines = lay["font"], lay["size"], lay["lines"]
+    lh, total, y, widest = lay["lh"], lay["total"], lay["y"], lay["widest"]
+
+    im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    # A dark rounded panel behind the block guarantees the text reads whatever the
+    # backdrop's brightness is. Measured 2026-11-12: the big hook sits at 0.42H but
+    # the backdrop scrim only starts at 0.55H, so the hook landed on bright art
+    # (mean luminance up to 195 of 255) where white-on-art is ~1.3:1 -- unreadable.
+    # The panel is sized to the text, so the rest of the frame stays bright.
+    pad_x, pad_y = int(size * 0.42), int(size * 0.30)
+    if panel:
+        d.rounded_rectangle(
+            [(W - widest) / 2 - pad_x, y - pad_y,
+             (W + widest) / 2 + pad_x, y + total + pad_y],
+            radius=int(size * 0.34), fill=(6, 10, 22, 172))
     for i, ln in enumerate(lines):
         tw = d.textlength(ln, font=f)
         x = (W - tw) / 2
