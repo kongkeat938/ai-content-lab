@@ -67,6 +67,15 @@ def main() -> int:
     check("exit code is zero", rc2 == 0, f"rc={rc2}")
     check("report says all rails fresh", "all rails fresh" in out2, out2[-200:])
 
+    print("a transient empty read is a gap, not a dead rail (no false 'never succeeded')")
+    gap = dict(fresh)
+    gap["set-thumbnails"] = {"unreadable": True}
+    rc3, out3 = run_main(gap)
+    check("exit code stays zero", rc3 == 0, f"rc={rc3}")
+    check("does NOT say 'never succeeded'", "never succeeded" not in out3, out3[-300:])
+    check("names the transient read gap", "unreadable" in out3, out3[-300:])
+    check("still reports fresh", "fresh" in out3, out3[-300:])
+
     print()
     if FAILS:
         print(f"FAIL: {len(FAILS)} check(s) failed: {FAILS}")

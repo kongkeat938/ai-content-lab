@@ -21,6 +21,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
@@ -119,7 +120,23 @@ def last_runs() -> dict:
             continue
         items = runs.get("workflow_runs", [])
         if not items:
-            continue
+            # A workflow that has runs cannot return an empty list; a transient
+            # empty page (proxy blip, rate limit) does. Retry once, and if it is
+            # still empty mark it UNREADABLE -- never "never succeeded", which
+            # would cry wolf on a rail that is fine (measured 2026-11-12:
+            # set-thumbnails read as "never succeeded" while it had 29 successes).
+            for _ in range(2):
+                time.sleep(1.0)
+                try:
+                    items = gh(f"/repos/{REPO}/actions/workflows/{wid}/runs?per_page=30"
+                               ).get("workflow_runs", [])
+                except Exception:
+                    items = []
+                if items:
+                    break
+            if not items:
+                out[name] = {"unreadable": True}
+                continue
         last = items[0]
         success = next((r for r in items if r["conclusion"] == "success"), None)
         out[name] = {"last": last["created_at"], "last_status": last["conclusion"],
@@ -216,10 +233,16 @@ def main() -> int:
                         "capped_until": rec.get("reset_at") if capped else None}
 
     stale = []
+    unreadable = []
     blind = "_error" in runs
     if not blind:
         for name, every in EXPECTED.items():
             e = runs.get(name)
+            if e and e.get("unreadable"):
+                # A transient empty read is not a dead rail; flag it as a gap,
+                # not a fault, so the alert does not cry wolf.
+                unreadable.append(name)
+                continue
             # publish-batch only has work when a long video is due; a long quiet
             # gap between long videos is the plan, not a fault.
             if name == "publish-batch" and not due_long:
@@ -243,6 +266,7 @@ def main() -> int:
         "shorts": shorts,
         "thumbnails_queued": len(thumbs["thumbnails"]),
         "stale": stale,
+        "unreadable": unreadable,
         "blind": blind,
     }
 
@@ -273,6 +297,10 @@ def main() -> int:
             if not e:
                 lines.append(f"- {name}: **never ran**")
                 continue
+            if e.get("unreadable"):
+                lines.append(f"- {name}: run history unreadable this pass (transient; "
+                             "not counted as stale)")
+                continue
             a = age_min(e.get("last_success"))
             last = age_min(e["last"])
             lines.append(f"- {name}: last {e['last_status']} {last:.0f} min ago; "
@@ -285,6 +313,9 @@ def main() -> int:
     elif stale:
         lines.append("## STALE")
         lines += [f"- {s}" for s in stale]
+    elif unreadable:
+        lines.append("## all rails fresh (some run history unreadable this pass)")
+        lines += [f"- {n}: transient read gap, not stale" for n in unreadable]
     else:
         lines.append("## all rails fresh")
 
