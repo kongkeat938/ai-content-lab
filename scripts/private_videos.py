@@ -102,8 +102,14 @@ def kind(v: dict) -> str:
 
 
 def parked_only(rows: list[dict]) -> list[dict]:
-    """The videos a delete should remove: non-public and NOT a future schedule."""
-    return [v for v in rows if kind(v) == "parked"]
+    """The videos a delete should remove: `private` and NOT a future schedule.
+
+    Unlisted is deliberately excluded: the owner asked to remove what shows as
+    "private" (`ส่วนตัว`), and unlisted clips (`ไม่เป็นสาธารณะ`) may still be live
+    links someone shared -- one carries >1000 views. Pass --include-unlisted to
+    widen the set on purpose.
+    """
+    return [v for v in rows if kind(v) == "parked" and v["status"]["privacyStatus"] == "private"]
 
 
 def delete(token: str, vid: str) -> tuple[int, str]:
@@ -131,6 +137,8 @@ def main() -> int:
     ap.add_argument("--slug", action="append", required=True,
                     help="channel slug; repeat for more than one")
     ap.add_argument("--delete", action="store_true", help="delete the PARKED videos")
+    ap.add_argument("--include-unlisted", action="store_true",
+                    help="also delete unlisted clips (default: private only)")
     ap.add_argument("--yes", action="store_true", help="confirm a delete")
     a = ap.parse_args()
 
@@ -162,15 +170,16 @@ def main() -> int:
             print(f"    {k:9} {v['id']}  {row['privacy']:7} views={row['views']:>6}  "
                   f"{row['publishedAt']}  {s['title'][:52]}")
         if a.delete:
-            parked = [r for r in report[slug] if r["kind"] == "parked"]
+            doomed = [v for v in rows
+                      if kind(v) == "parked"
+                      and (a.include_unlisted or v["status"]["privacyStatus"] == "private")]
             if not a.yes:
-                print(f"  dry run: would delete {len(parked)} parked (pass --yes)")
+                print(f"  dry run: would delete {len(doomed)} parked (pass --yes)")
                 continue
-            for r in parked:
-                v = next(x for x in rows if x["id"] == r["id"])
+            for v in doomed:
                 b = backup(v)
-                st, body = delete(token, r["id"])
-                print(f"    DELETE {r['id']} -> HTTP {st}  (backup {os.path.relpath(b, ROOT)})"
+                st, body = delete(token, v["id"])
+                print(f"    DELETE {v['id']} -> HTTP {st}  (backup {os.path.relpath(b, ROOT)})"
                       + ("" if st in (200, 204) else f"  {body[:160]}"))
                 if st not in (200, 204):
                     rc = 1
