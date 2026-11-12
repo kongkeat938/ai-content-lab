@@ -43,6 +43,33 @@ def main() -> int:
     if r["ok"] or not any("genx.views went DOWN" in v for v in r["violations"]):
         fail(f"a decreasing counter was not flagged as a violation: {r}")
 
+    # Two reads on the SAME UTC day: YouTube revises today's row as it fills in, so
+    # a few units down is partial data, not a broken counter -- not a violation, but
+    # the skip must be announced, not silent. (Measured 2026-11-12: dharma 27139 ->
+    # 27137 in an hour.) The timestamps are pinned to one day so the test cannot
+    # flake across midnight.
+    today = datetime.now(timezone.utc).date().isoformat()
+    same = [{"measured_at": f"{today}T01:00:00+00:00",
+             "counters": {"genx": {"views": 1000, "watch_min": 5000, "subs_gained": 10},
+                          "dharma": {"views": 500, "watch_min": 2500, "subs_gained": 5},
+                          "kongkeat": {"views": 200, "watch_min": 1000, "subs_gained": 2}}},
+            {"measured_at": f"{today}T09:00:00+00:00",
+             "counters": {"genx": {"views": 1000, "watch_min": 5000, "subs_gained": 10},
+                          "dharma": {"views": 498, "watch_min": 2490, "subs_gained": 5},
+                          "kongkeat": {"views": 200, "watch_min": 1000, "subs_gained": 2}}}]
+    r = cl.check(same)
+    if not r["ok"]:
+        fail(f"a same-day re-measure was called a violation: {r['violations']}")
+    if not any("same-day" in f for f in r["flags"]):
+        fail(f"the same-day skip was not announced: {r['flags']}")
+
+    # ...but the SAME decrease one day later is a real violation, not excused.
+    yday = (datetime.now(timezone.utc) - timedelta(days=1)).date().isoformat()
+    cross = [dict(same[0], measured_at=f"{yday}T09:00:00+00:00"), same[1]]
+    r = cl.check(cross)
+    if r["ok"] or not any("dharma.views went DOWN" in v for v in r["violations"]):
+        fail(f"a cross-day decrease was excused by the same-day skip: {r}")
+
     # A healthy growing series -- clean, and not flagged as stalled.
     grow = [entry({"genx": 1000, "dharma": 500, "kongkeat": 200}, 5.0),
             entry({"genx": 1500, "dharma": 800, "kongkeat": 350}, 0.0)]

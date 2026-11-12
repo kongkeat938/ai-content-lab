@@ -94,6 +94,19 @@ def main() -> int:
         finally:
             ps.ROOT = old
 
+    print("health.py treats a paused channel's rails as quiet on purpose")
+    import health as H
+    pr = H.paused_rail_names(H.paused_channels())
+    check("health reads the same PAUSED list",
+          {"kongkeat", "kongkeat-story"} <= H.paused_channels(), str(H.paused_channels()))
+    check("health knows publish-ch4 + ch4-longform are paused",
+          {"publish-ch4", "ch4-longform"} <= pr, str(pr))
+    # A mapping to a rail health does not watch would be silently dead.
+    check("every paused rail is a watched rail", pr <= set(H.EXPECTED),
+          str(pr - set(H.EXPECTED)))
+    # No pause file -> nothing suppressed, so the skip cannot be a blanket one.
+    check("no pause file -> no suppressed rails", H.paused_rail_names(set()) == set())
+
     print()
     if FAILS:
         print(f"FAIL: {len(FAILS)} check(s) failed: {FAILS}")

@@ -109,3 +109,20 @@ index. Newest first. Every item here was measured, not assumed.
 - `unsubscribedTrailer` was never wired (`channel_overhaul.py --only playlists` everywhere); now
   ch2/ch4 run the full overhaul, ch1's trailer lives in publish-ch1; `test_repo_hygiene` forbids
   `--only playlists`. Must run **after** the 08:00 UTC reset (ch1 08:07, ch4 08:05, ch2 08:40).
+
+## A rebuild of a LIVE key must not un-publish it (2026-11-12)
+- The night rail keys a weekly build by ISO week (`night_auto_<YYWW>`); the fingerprint
+  includes the rail's own scripts, so ANY rail edit (e.g. the fade-in fix) forces a rebuild of
+  the same key. If that key is already published, the hand-off must NOT reset `state=ready`
+  beside the live `video_id` — one `--forget` away from a duplicate upload. Fix:
+  `apply_qa_gate`/`queue_entry` never downgrade a live entry; only `--forget` clears the id.
+  publish-batch's `video_id` guard is the backstop (measured: "already live … skipping").
+- Corollary: a guard that hardcodes a set goes stale. `test_qa_gate` now sweeps `LEN_OK_BANDS`.
+
+## Two false-alarm classes fixed the same day (2026-11-12)
+- **qa_gate** flagged every intended 120-min file ("outside the 15-35 min band") → grade B
+  forever. The intended formats are 15-40 AND 110-130 min. Text/constant must match the code.
+- **counter_ledger** read a same-UTC-day dip (YouTube revises today's row) as "counter went
+  DOWN". Skip the monotonic check only within one UTC day; a cross-day drop is still a violation.
+- **health** flagged paused rails (`publish-ch4`/`ch4-longform`) as "never succeeded". It now
+  reads `content/PAUSED` and reports them as "paused (quiet on purpose)".

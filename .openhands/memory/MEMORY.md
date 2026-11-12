@@ -57,6 +57,13 @@ under ~6,000 chars (guard `scripts/test_memory_budget.py`); full detail lives in
   (`git_union_merge.py`, `.gitattributes merge=unionjson`) for append-only ledgers.
 - **Night rail:** `skip` ≠ `skip_pub`; an empty receipt is not a bad video; gate before queue
   (`test_manifest_qa.py`, `test_night_queued.py`). **A long hook kills retention** (cap 220).
+  **A rebuild of a LIVE key must not un-publish it** (2026-11-12: a rail edit changes the
+  fingerprint → rebuild of the same week key → the hand-off reset a published entry to `ready`;
+  fixed — a live entry's state is never downgraded, only `--forget` re-uploads).
+- **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
+  graded every intended 120-min file B ("15-35 min band" — now two bands, 15-40 & 110-130);
+  counter_ledger read a same-day dip as "went DOWN" (YouTube revises today — skip same-UTC-day);
+  health flagged the paused rails as "never succeeded" (now reads `content/PAUSED`).
 - **Mail is on the cloud, not PC1** (PC1 dead — do NOT retry). `IMAP_ACCOUNTS` holds only
   kongkeat.938@gmail.com.
 - **ch4 subs are flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not

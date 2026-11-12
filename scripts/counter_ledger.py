@@ -122,14 +122,33 @@ def check(series: list[dict]) -> dict:
     def counters(entry: dict) -> dict:
         return entry.get("counters") or {}
 
-    for ch in CHANNELS:
-        p, l = counters(prev).get(ch) or {}, counters(last).get(ch) or {}
-        if "error" in l or "error" in p:
-            continue
-        for c in METRICS:
-            if c in p and c in l and l[c] < p[c]:
-                violations.append(f"{ch}.{c} went DOWN: {p[c]} -> {l[c]} "
-                                  "(a lifetime counter cannot decrease)")
+    def day(entry: dict):
+        try:
+            t = datetime.fromisoformat(str(entry.get("measured_at")).replace("Z", "+00:00"))
+            if t.tzinfo is None:
+                t = t.replace(tzinfo=timezone.utc)
+            return t.astimezone(timezone.utc).date()
+        except Exception:  # noqa: BLE001
+            return None
+
+    # YouTube Analytics revises the CURRENT day's row as the day fills in, so two
+    # reads on the same UTC day can legitimately show a lifetime counter a few
+    # units lower (measured 2026-11-12: dharma 27139 -> 27137 in 1 hour). That is
+    # partial data, not a broken counter, so the monotonic check runs only across
+    # different days -- where a decrease really is impossible.
+    same_day = day(prev) is not None and day(prev) == day(last)
+    if same_day:
+        flags.append("same-day re-measure: the monotonic check is skipped for today "
+                     "(YouTube revises the current day's row)")
+    else:
+        for ch in CHANNELS:
+            p, l = counters(prev).get(ch) or {}, counters(last).get(ch) or {}
+            if "error" in l or "error" in p:
+                continue
+            for c in METRICS:
+                if c in p and c in l and l[c] < p[c]:
+                    violations.append(f"{ch}.{c} went DOWN: {p[c]} -> {l[c]} "
+                                      "(a lifetime counter cannot decrease)")
 
     # Staleness: compare the newest reading against the newest one that is at least
     # STALL_DAYS old, so "has it moved in the last N days" is a real comparison.
