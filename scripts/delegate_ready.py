@@ -23,11 +23,14 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-# channel -> (primary secret, delegated secret)
+# channel -> (primary secret, delegated secret, the Google account that owns it)
+# The three channels are on THREE SEPARATE Google accounts (K, 2026-11-12), so each
+# carries its own 19/day upload pool and its own manager grant. This map is locked by
+# scripts/test_channel_accounts.py against scripts/mail_watch.py and channels.json.
 CHANNELS = {
-    "genx": ("YT_CH1_REFRESH_TOKEN", "YT_CH1_ALT_REFRESH_TOKEN"),
-    "dharma": ("YT_CH2_REFRESH_TOKEN", "YT_CH2_ALT_REFRESH_TOKEN"),
-    "kongkeat-story": ("YT_CH4_REFRESH_TOKEN", "YT_CH4_ALT_REFRESH_TOKEN"),
+    "genx": ("YT_CH1_REFRESH_TOKEN", "YT_CH1_ALT_REFRESH_TOKEN", "ch1@example.invalid"),
+    "dharma": ("YT_CH2_REFRESH_TOKEN", "YT_CH2_ALT_REFRESH_TOKEN", "ch2@example.invalid"),
+    "kongkeat-story": ("YT_CH4_REFRESH_TOKEN", "YT_CH4_ALT_REFRESH_TOKEN", "ch4@example.invalid"),
 }
 TOKEN = "https://oauth2.googleapis.com/token"
 
@@ -67,9 +70,9 @@ def main() -> int:
                     help="exit 1 unless every channel is READY")
     a = ap.parse_args()
     gaps = []
-    for ch, (pkey, akey) in CHANNELS.items():
+    for ch, (pkey, akey, email) in CHANNELS.items():
         v, d = status(os.environ.get(pkey), os.environ.get(akey))
-        print(f"  {v:14} {ch}: {d}")
+        print(f"  {v:14} {ch:16} [{email}]: {d}")
         if v != "READY":
             gaps.append(ch)
     print()
