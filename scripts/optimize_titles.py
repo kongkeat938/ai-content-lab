@@ -190,6 +190,19 @@ def _seconds(iso: str) -> int:
     return h * 3600 + mi * 60 + s
 
 
+def only_recorded(vids: list[dict], recorded: set, allow_unrecorded: bool = False) -> list[dict]:
+    """Keep only clips a manifest names -- a clip no manifest names is NOT ours.
+
+    Measured 2026-11-12: the rogue stream uploads clips our code never writes, and
+    a title run that swept the uploads playlist re-titled 9 of them. Editing a
+    video we do not own is wrong on its own and it pollutes the title ledger with
+    clips that have no baseline. `allow_unrecorded` is a deliberate override.
+    """
+    if allow_unrecorded:
+        return vids
+    return [v for v in vids if v["id"] in recorded]
+
+
 def apply_title(vid: str, title: str, category: str, token: str) -> str:
     body = {"id": vid, "snippet": {"title": title, "categoryId": category}}
     req = urllib.request.Request(API + "videos?part=snippet", data=json.dumps(body).encode(),
@@ -212,6 +225,8 @@ def main() -> int:
     ap.add_argument("--sleep", type=float, default=1.5,
                     help="seconds between videos, to stay under the advisor rate limit")
     ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--allow-unrecorded", action="store_true",
+                    help="also re-title clips NO manifest names (the rogue stream) -- normally off")
     args = ap.parse_args()
 
     token = access_token(CHANNELS[args.channel][0])
@@ -235,6 +250,18 @@ def main() -> int:
     vids = [v for v in vids if v["id"] not in applied_ids]
     if before != len(vids):
         print(f"(skipped {before - len(vids)} already-changed)")
+
+    # A clip no manifest names is not ours to re-title. Measured 2026-11-12: the
+    # rogue stream's clips were swept in by the uploads listing and re-titled
+    # (9 of 17), which edits a video we do not own and pollutes the ledger with
+    # clips that have no baseline to judge against.
+    if not args.allow_unrecorded:
+        from audit_channels import recorded_ids
+        rec = recorded_ids(CHANNELS[args.channel][1])
+        n0 = len(vids)
+        vids = only_recorded(vids, rec)
+        if n0 != len(vids):
+            print(f"(skipped {n0 - len(vids)} clip(s) no manifest names -- not ours)")
     theme = THEMES.get(args.channel, "")
 
     print(f"=== {args.channel}: {len(vids)} videos\n")
