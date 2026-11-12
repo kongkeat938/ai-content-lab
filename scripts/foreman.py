@@ -407,6 +407,15 @@ def main() -> int:
            for e in dels):
         plan.append(("remove-bad-cut", {}))
 
+    # 5j. Clear the parked PRIVATE videos once a day. private-delete carries only a
+    #     schedule, so drive it from the chain: it re-lists live and deletes only
+    #     `private` clips with no future publishAt (never a scheduled release). It
+    #     defers cleanly on a spent quota, so a tick before the 08:00 UTC reset is
+    #     harmless and the next one clears the set.
+    pd_age = last_success_min("private-delete", ids)
+    if pd_age is None or pd_age > 20 * 60:
+        plan.append(("private-delete", {}))
+
     # 6. Self-heal the timer. If the watchdog chain has gone quiet, revive it --
     #    any push runs the foreman, so a broken chain repairs itself on the next
     #    commit instead of staying dead until someone notices.
