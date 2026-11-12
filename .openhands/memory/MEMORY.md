@@ -4,7 +4,7 @@
 ak decides — take a decision to the **panel**, not to K (presence of mind → order events → causes
 → pros/cons vs the goal → panel → most-gain/least-harm → act). **This file is a MAP, not a log**
 (injected every session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`);
-detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
+detail in `topics/`, daily logs, `docs/`.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts do not count). Steer by long-form
