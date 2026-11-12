@@ -28,8 +28,8 @@ prints this table. Do not edit the table here — edit that file and run
 
 | ch | handle | direction | goal | length | quota | account |
 |---|---|---|---|---|---|---|
-| ch1 | `@tatagenxgeny` | ช่องปรัชญา | พูดปรัชญาที่คนฟังจนจบ | ~11 นาที | — | openhands-1 |
-| ch2 | `@Farmmer-n9t` | ช่องธรรมะก่อนนอน | หลับก่อนจบ กลับมาทุกคืน | 10–12 นาที | — (rail ต้นแบบ) | openhands-1 |
+| ch1 | `@tatagenxgeny` | ช่องปรัชญา | พูดปรัชญาที่คนฟังจนจบ | ~11 นาที | — | kongkeat.938@gmail.com |
+| ch2 | `@Farmmer-n9t` | ช่องธรรมะก่อนนอน | หลับก่อนจบ กลับมาทุกคืน | 10–12 นาที | — (rail ต้นแบบ) | farmmer.938@gmail.com |
 | ch3 | `@aerismusicth` | ~~ช่องสร้างศิลปินเพลง~~ **ยกเลิก 2026-10-30** | — | 3–4 นาที | AiPASS เพลง 10/เดือน | handed to another AI |
 | ch4 | `@kongkeatpratumma` | ช่องละคร · การ์ตูนอะนิเมะ — เรื่องเล่าการ์ตูน | ซีรี่ส์ที่ติดตามตอนต่อตอน | 10–25 นาที | AiPASS วิดีโอ 10/เดือน ≈ 50 วิ | kongkeat.p3 |
 
