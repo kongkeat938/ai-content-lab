@@ -31,10 +31,9 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
   `scripts/advise.py` (≥5, multi-vendor). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
 - **A guard must be able to FAIL;** never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL. `.get()+continue` on a config key is a silent killer — make it loud.
-- **Repo hygiene** (each has a failing test, `test_repo_hygiene.py`): every rail that pushes to
-  main runs `git pull --rebase` first; any file two workflows commit needs a writer-side guard;
-  every health threshold must exceed the REAL cadence; every foreman-dispatched rail must be
-  watched; every new scheduled rail needs a foreman rule.
+- **Repo hygiene** (failing test `test_repo_hygiene.py`): rails that push run `git pull --rebase`;
+  a shared-ledger writer needs a guard; health thresholds must exceed the REAL cadence; every
+  foreman-dispatched rail must be watched + every new scheduled rail needs a foreman rule.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
