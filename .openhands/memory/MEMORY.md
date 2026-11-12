@@ -67,9 +67,9 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
 ## 🗺️ Topic map (read on demand)
 - `topics/00-..05-*.md` (deep set) · `docs/DECISION-*` (goals) · `docs/PANEL-*`/`CONSULT-*`
   (decisions) · `docs/HEALTH.md` · `docs/CHANNEL-AUDIT-LATEST.md` · logs `.openhands/memory/2026-11-DD.md`.
-- **Automation:** GitHub Actions only (watchdog → foreman → rails); `scripts/health.py`; kill
-  switch `content/STOP`. **Publishing:** `content/<ch>_publish.json`+`_shorts.json`,
-  `DAILY_CAP=3`, `content/upload_log.json`. Pages: kongkeat938.github.io/ai-content-lab/.
+- **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
+  **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`. Pages:
+  kongkeat938.github.io/ai-content-lab/.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
 - **Comment writes need `force-ssl`** (all 3 tokens = `youtube` scope only → `commentThreads.insert`
