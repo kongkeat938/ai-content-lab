@@ -26,6 +26,9 @@ If a step cannot be completed yet (e.g. it needs a human at a machine), **say so
 an incomplete PCSEV stated honestly beats a finished-looking claim.
 
 ## Durable rules
+- **Times are Thailand time (Asia/Bangkok, UTC+7), 24-hour (K, 2026-11-11).** When you name a
+  time to K, write it as Thai local `HH:MM` (e.g. `00:30`, `17:30`) — never raw UTC and never
+  12-hour. Convert UTC schedules once at the point of writing (e.g. cron `30 17 * * *` = `00:30`).
 - **A guard must be able to FAIL.** A test that only checks the happy path proves nothing.
 - **An LLM is not a primary source.** Read the vendor's own rule, or measure live.
 - **Never hardcode** the set a "threshold vs cadence" guard checks — sweep the source
