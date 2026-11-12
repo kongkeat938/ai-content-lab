@@ -5,3 +5,4 @@ content/*_shorts_remakes.json       merge=unionjson
 content/art_ledger_*.json           merge=unionjson
 content/bed_ledger_*.json           merge=unionjson
 content/reception/*.json            merge=unionjson
+content/rogue_hidden.json            merge=unionjson
