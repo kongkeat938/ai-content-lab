@@ -12,14 +12,12 @@ detail lives in `topics/`, `.openhands/memory/2026-11-DD.md`, `docs/`.
   time → concentrate there.** Review 2026-11-16.
 - **The first 2 minutes is the binding constraint, not volume** (dharma keeps 102%@1% then
   **28.9%@2%**, target ≥40%). More volume is noise; content must be specific + actionable.
-  **Fade-in 4s→1s** (2026-11-12, `make_chapter_video`/`make_night_video`): a 4s fade buried the
-  hook's first syllables — measured **+12 dB** in the opening second after the cut. **The hook is
-  the lever, not the loop seam.**
+  **Fade-in 4s→1s** (2026-11-12): a 4s fade buried the hook's first syllables — measured
+  **+12 dB** in the opening second after the cut. **The hook is the lever, not the loop seam.**
 - **Watch-time/view rises with length:** dharma's 120-min (5% completion) ≈ **6.0 min/view** vs
   its 17-min (27%) ≈ 4.6 — keep videos long; the completion % is a distraction. **kongkeat is
   PAUSED** (2026-11-12: +3 views/day, 0 subs, 0.5 watch-hours in 28 d) via `content/PAUSED` (both
   names) → its rails skipped; guard `test_paused_channel.py`; reverse = empty the file.
-  Plan: `docs/GROWTH-PLAN-2026-11-12.md`.
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
