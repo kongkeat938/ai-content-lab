@@ -2,6 +2,11 @@
 
 Owner **K** (Thai) wants **measured evidence, not claims**. Answer in Thai. Agent name `ak`.
 
+**Project = `yt938-2`** (one project): run 3 Thai YouTube channels toward YPP.
+**Read `docs/PROJECT-MAP.md` FIRST** — it names the goal, the live rails, the one login
+path and where truth lives. **Search the map before creating anything; never make a
+second copy of a thing under a new name** (K, 2026-11-13). New file → add it to the map.
+
 ## PCSEV is mandatory (K, 2026-11-08)
 Every problem K is shown MUST be framed as five steps:
 
