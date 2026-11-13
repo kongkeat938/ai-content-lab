@@ -45,6 +45,13 @@ an incomplete PCSEV stated honestly beats a finished-looking claim.
   move detail to `.openhands/memory/topics/` or a daily log. A session that ends must leave
   `MEMORY.md` no longer than it found it.
 
+## ak has its own profile and mailbox (K, 2026-11-13)
+ak **owns** a mailbox — use it for a free signup instead of asking K. It lives in the KV vault,
+recorded in `docs/AK-IDENTITY.md` and reachable with `scripts/ak_mail.py` (`new|show|inbox|read`).
+The old one died with PC1 because the note lived only in the `ax-workspace` repo — keep this copy
+current. Rules: **ak never signs up as K**, and if a service demands a phone number ak cannot own,
+**stop and ask K** (guard `scripts/test_ak_identity.py`).
+
 ## Decide without waiting (K, 2026-11-11)
 Take a decision to the **panel**, not to K: presence of mind → order the events → find the
 causes → weigh pros/cons and the effect on the goal → panel (`scripts/advise.py`) → choose the
