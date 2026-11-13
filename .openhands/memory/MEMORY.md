@@ -3,6 +3,8 @@
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
 **panel** (`advise.py`), not K. **This file is a MAP** (injected each session, tail truncated):
 keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
+**Project = `yt938-2`; read `docs/PROJECT-MAP.md` before creating anything. Search first —
+never make a second copy of a thing under a new name (K, 2026-11-13; `test_project_map.py`).**
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count). Steer by long-form watch-hours/week +
@@ -27,10 +29,9 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   writer needs a guard; health thresholds must exceed the REAL cadence; every rail watched.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
-- **Rogue upload stream (NOT ours):** clips no manifest names, `en-US`/cat 27/old brand at
-  `:21` (ours `th`/cat 22–24 at `:44`) = external leaked token. `rogue-guard` hides each
-  (reversible); `private-delete` clears parked after the reset. Root = the token: revoke +
-  re-consent — **Option B lets the team do it with no K**.
+- **Rogue upload stream (NOT ours):** clips no manifest names (`en-US`/cat 27/old brand at `:21`;
+  ours `th`/cat 22–24 at `:44`) = external leaked token. `rogue-guard` hides each (reversible);
+  root = revoke + re-consent — **Option B lets the team do it with no K**.
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day). Prefer **reversible (private)** over delete; mark the skip path.
 - **A PUT to `brandingSettings.channel` REPLACES the whole object** → read live, merge.
@@ -45,9 +46,8 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate graded
   120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
 - **We were blind to a take-down** (2026-11-13): the audit diffed only channel→manifest, so a REMOVED
-  video vanished silently (genx had a guidelines **warning**). `find_removed` diffs manifest→uploads
-  (`test_audit_removed`). **Mail is on the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` =
-  kongkeat.938 only.
+  video vanished silently. `find_removed` diffs manifest→uploads (`test_audit_removed`). **Mail is on
+  the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
@@ -60,18 +60,17 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 - **Accounts:** 1 channel = 1 Google account — genx `kongkeat.938`, dharma `farmmer.938`, ch4
   `kongkeat.p3` (own 19/day pool each); `test_channel_accounts.py`. Invite = **Studio → การตั้งค่า →
   สิทธิ์ → เชิญ**.
-- **Delegation (Option B, 2026-11-13):** genx+dharma → `aerismusic8@gmail.com` **Manager**
-  (accepted); `YT_CH{1,2}_ALT_REFRESH_TOKEN` set. **`delegate_ready.py` now needs TWO legs**
-  (token exchanges AND a probe upload) — measured 2026-11-13 both = **LIMITED**
-  (`uploadLimitExceeded`), so the delegate still cannot publish. kongkeat-story = **BLOCKED**
-  (no owner session; K login forbidden). Detail → `topics/05`.
+- **Delegation (Option B):** genx+dharma → `aerismusic8@gmail.com` **Manager**; `delegate_ready.py`
+  needs TWO legs (token AND probe upload) — 2026-11-13 = **LIMITED** (`uploadLimitExceeded`, the
+  **API path only** — the web Studio upload form opens fine). kongkeat-story = **BLOCKED**.
+  Detail → `topics/05`. Login path: `pod_account_login.py --from-secret` (secret
+  `OWNER_LOGIN_PASSWORDS`, now set) — never type the password, never ask K.
 - **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ"; a pending
   row **vanishes** on reload if the save failed → verify by reloading สิทธิ์. **Driving Studio: CDP
   `Input.dispatchMouseEvent` works; JS `.click()` and raw XTest do not.**
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
-- **Remote-in (2026-11-13):** **Browser Live View** (`browser_live.py`, port **12000**, work-1) = the
-  tab only over CDP (lighter, no X/RFB; **no OS-level dialogs**); **noVNC** (`start_novnc.sh`, 12001,
-  work-2) = fallback. Panel ranked CDP>VNC>Xpra>Guac>WebRTC for this pod. Detail → `topics/05`.
+- **Remote-in:** **Browser Live View** (`browser_live.py`, port **12000**, work-1) = the tab only over
+  CDP (lighter; **no OS dialogs**); **noVNC** (`start_novnc.sh`, 12001, work-2) = fallback. Detail → `topics/05`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); **text must fit its frame**
   (`test_short_caption`, `test_poster_fit`); pinned CTA comment = the conversion lever.

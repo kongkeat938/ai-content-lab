@@ -163,3 +163,22 @@ index. Newest first. Every item here was measured, not assumed.
 - Cannot show OS-level dialogs (native file picker, basic-auth) → keep noVNC (12001) as fallback.
 - Guard `scripts/test_browser_live.py` (fake CDP; proves the guard can FAIL). Panel 4/5 ranked
   CDP > VNC > Xpra > Guacamole > WebRTC for a non-root, no-GPU, recycled pod.
+
+## Repo hygiene: the mess K complained about (2026-11-13)
+K (2026-11-13): *"อย่ามั่ว — อะไรที่เคยทำได้อยู่แล้วไม่ควรทำซ้ำ; ค้นความจำก่อนตัดสิน; อย่าเก็บทับด้วยชื่อใหม่"*.
+Whole-repo audit anchored to the ONE project goal `yt938-2` (YPP). Measured, then fixed:
+- **5 orphan scripts** (zero references anywhere): `pod_mail_login`, `backfill_short_links`,
+  `gen_branding_art`, `probe_advisors`, `studio_drive` -> moved to `scripts/legacy/` (archive, not
+  delete). `pod_mail_login` was a **duplicate login path**; the ONE path is
+  `pod_account_login.py --from-secret` + `fetch_secret.py`.
+- **`docs/AGENTS.md`** was a stale copy (last touched 2026-11-10; root is live) -> deleted; root
+  `AGENTS.md` is the only one.
+- **The login churn had a cause ak had missed:** `pod_account_login.py --from-secret` reads the repo
+  secret **`OWNER_LOGIN_PASSWORDS`**, which did NOT exist -> ak typed the password by hand. Fixed:
+  set the secret (JSON map of owner email -> password). `fetch_secret.py OWNER_LOGIN_PASSWORDS`
+  now decrypts it on the pod (146 chars measured), so a recycle can be re-logged-in with no K.
+  The ONLY unavoidable human step is the Google 2FA "tap Yes" on a NEW device.
+- **Guard added:** `test_project_map.py` — fails if a `scripts/*.py` (non-test, non-legacy) is
+  referenced nowhere, or if `docs/PROJECT-MAP.md` is missing. It must be able to FAIL.
+- **The map:** `docs/PROJECT-MAP.md` = the single anchor (goal, live rails, one login path, where
+  truth lives, conventions, archive list). Read it before creating anything.
