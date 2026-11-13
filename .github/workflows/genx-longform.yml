@@ -75,12 +75,13 @@ jobs:
           THEME="${{ inputs.title }}"
           if [ -z "$CONTENT" ]; then
             if [ "$GEN" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
-              # One fresh set a week keeps the rail fed. The directory is dated per
-              # ISO week and reused if it already has pieces, so a re-run of the
-              # same week reuses the committed set instead of asking Gemini for a
-              # different one -- which would fingerprint differently and publish a
-              # near-duplicate.
-              CONTENT="content/ch1_auto_$(date -u +%G%V)"
+              # One fresh set PER RUN, not per ISO week. Measured 2026-11-13: the
+              # directory was dated `%G%V`, so a second run in the same week reused
+              # the committed set and produced nothing new -- the rail could build
+              # only one set a week, capping the long-form cadence. The run number is
+              # stable across a re-run (a retry reuses its set, so no near-duplicate)
+              # and distinct across runs.
+              CONTENT="content/ch1_auto_$(date -u +%G%V)_r${GITHUB_RUN_NUMBER:-0}"
               if ls "$CONTENT"/*.txt >/dev/null 2>&1; then
                 echo "$CONTENT already has pieces; reusing it"
               else
