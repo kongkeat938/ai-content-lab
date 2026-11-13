@@ -514,6 +514,14 @@
       "posted_at": "2026-11-12T17:43:45+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "85": {
+      "video_id": "HdWV3ckl9sM",
+      "url": "https://youtu.be/HdWV3ckl9sM",
+      "title": "คุณมีสิทธิ์หยุดเสียเวลากับสิ่งนี้ #Shorts",
+      "posted_at": "2026-11-13T08:38:57+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
