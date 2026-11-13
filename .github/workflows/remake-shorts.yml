@@ -59,8 +59,11 @@ jobs:
           - slug: genx
             manifest: content/ch1_shorts.json
             token: YT_CH1_REFRESH_TOKEN
-          # kongkeat REMOVED 2026-11-12 (content/PAUSED): the channel is dead.
-          # The tripwire below fails the build if a paused slug is added back.
+          - slug: kongkeat
+            manifest: content/ch4_shorts.json
+            token: YT_CH4_REFRESH_TOKEN
+          # kongkeat RESTORED 2026-11-13 (UNPAUSED, K: "ลุย ch4"). The tripwire
+          # below fails the build if a paused slug is added back.
     steps:
       - uses: actions/checkout@v4
 
