@@ -121,12 +121,21 @@ if ! python3 -c "import socket,sys;s=socket.socket();s.settimeout(2);sys.exit(0 
 fi
 
 if ! running "remote-debugging-port=9222"; then
+  # Thai glyphs render as boxes ("สี่เหลี่ยม", K 2026-11-12) without a Thai font; the base
+  # image ships only DejaVu. Install on the fly, like ffmpeg.
+  if ! fc-list 2>/dev/null | grep -qiE "thai|tlwg"; then
+    echo "installing Thai fonts"
+    (sudo apt-get update -qq && sudo apt-get install -y -qq fonts-thai-tlwg fonts-noto-core) >/dev/null 2>&1 \
+      || apt-get install -y -qq fonts-thai-tlwg >/dev/null 2>&1 || true
+    fc-cache -f >/dev/null 2>&1 || true
+  fi
   echo "starting chromium (CDP on 9222)"
   setsid env DISPLAY="$DISPLAY_NUM" chromium \
     --no-sandbox --disable-dev-shm-usage \
     --remote-debugging-port=9222 --remote-allow-origins='*' \
     --user-data-dir="$CHROME_PROFILE" \
     --window-size=1440,900 --start-maximized \
+    --lang=th-TH \
     --no-first-run --no-default-browser-check \
     "https://accounts.google.com/signin" >"$LOG_DIR/chromium.log" 2>&1 </dev/null &
   sleep 6
