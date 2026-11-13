@@ -132,6 +132,21 @@ def mint_access_token(refresh_token: str, clients: list[tuple[str, str]]) -> str
     return None
 
 
+def whoami(access_token: str) -> str:
+    """The channel this token actually owns -- identity of the delegated account."""
+    try:
+        req = urllib.request.Request(
+            "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true",
+            headers={"Authorization": f"Bearer {access_token}"})
+        with urllib.request.urlopen(req, timeout=30) as fh:
+            items = json.loads(fh.read().decode()).get("items", [])
+        if items:
+            return f"{items[0]['snippet']['title']} ({items[0]['id']})"
+    except Exception:
+        pass
+    return "unknown"
+
+
 def probe_upload(access_token: str) -> tuple[bool, str]:
     """Insert a tiny private video and delete it. (upload_ok, detail).
 
@@ -202,8 +217,9 @@ def status(primary: str | None, alt: str | None,
         return "NOT-DELEGATED", "delegated credential does not exchange (invalid_grant or wrong client)"
     if channel_id is None:
         return "LIMITED", "credential exchanges; upload not probed (pass a channel id to prove it)"
+    ident = whoami(token)
     ok, detail = probe_upload(token)
-    return ("READY" if ok else "LIMITED"), detail
+    return ("READY" if ok else "LIMITED"), f"[{ident}] {detail}"
 
 
 def main() -> int:
