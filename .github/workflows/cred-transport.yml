@@ -38,6 +38,7 @@ jobs:
           GEMINI_VALUE: ${{ secrets.GEMINI_API_KEY }}
           YT_CLIENT_ID_VALUE: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET_VALUE: ${{ secrets.YT_CLIENT_SECRET }}
+          OWNER_LOGIN_VALUE: ${{ secrets.OWNER_LOGIN_PASSWORDS }}
         run: |
           pip install --quiet cryptography
           python3 - <<'PY'
@@ -51,6 +52,7 @@ jobs:
               "GEMINI_API_KEY": os.environ.get("GEMINI_VALUE", ""),
               "YT_CLIENT_ID": os.environ.get("YT_CLIENT_ID_VALUE", ""),
               "YT_CLIENT_SECRET": os.environ.get("YT_CLIENT_SECRET_VALUE", ""),
+              "OWNER_LOGIN_PASSWORDS": os.environ.get("OWNER_LOGIN_VALUE", ""),
           }
           value = table.get(wanted, "")
           if not value:
