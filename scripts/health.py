@@ -52,7 +52,7 @@ EXPECTED = {
     "publish-ch4": 1700,
     "watch-hours": 11520,        # weekly
     "check-duplicates": 11520,   # weekly Monday
-    "night-compilation": 11520,  # weekly Monday
+    "night-compilation": 11520,  # Mon+Thu crons (raised to 2/week 2026-11-13)
     "genx-longform": 11520,      # weekly Tuesday
     "ch4-longform": 11520,       # weekly Thursday
     # Driven only by the chain (no reliable cron). They were invisible to this
