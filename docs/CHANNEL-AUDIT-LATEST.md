@@ -1,4 +1,4 @@
-# Channel audit -- 2026-11-13 12:50 UTC
+# Channel audit -- 2026-11-13 14:49 UTC
 
 Measured live from the Data API. A video listed as "in NO manifest" was uploaded by something outside these rails.
 
@@ -20,7 +20,7 @@ Measured live from the Data API. A video listed as "in NO manifest" was uploaded
 
 ## dharma (Farmmer — ธรรมะก่อนนอน)
 
-- subs=116 videos=143 views=28136 playlists=4 checked=10
+- subs=119 videos=143 views=28136 playlists=4 checked=10
 - DEFECT: video E5q1EKPZSb0 has NO description: ท่านอนตะแคงขวา สุขภาพดีตามหลักธรรมะ #Shorts
 - DEFECT: video E5q1EKPZSb0 has NO tags: ท่านอนตะแคงขวา สุขภาพดีตามหลักธรรมะ #Shorts
 - DEFECT: video E5q1EKPZSb0 description links no video: ท่านอนตะแคงขวา สุขภาพดีตามหลักธรรมะ #Shorts
@@ -42,7 +42,6 @@ Measured live from the Data API. A video listed as "in NO manifest" was uploaded
 
 ## kongkeat-story (เรื่องเล่าอบอุ่นใจ)
 
-- subs=11 videos=90 views=6018 playlists=2 checked=10
-- DEFECT: video lvsS-GJ_d3w is on the channel but in NO manifest (historical, pre-manifest): นาฬิกาแขวนผนังเรือนเก่า | เรื่องเล่าการ์ตูน #Short
-- DEFECT: video lvsS-GJ_d3w still carries the old brand 'เรื่องเล่าการ์ตูน': นาฬิกาแขวนผนังเรือนเก่า | เรื่องเล่าการ์ตูน #Short
+- subs=11 videos=91 views=6018 playlists=2 checked=10
+- DEFECT: video 1zuI63MdHpQ is UNRECORDED and published 0.1d ago -- LIVE rogue upload outside the rails: นิทานสั้นก่อนนอน | ร่มใบไม้ของเจ้ากระรอกน้อย #Shor
 
