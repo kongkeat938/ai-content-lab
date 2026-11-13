@@ -122,7 +122,9 @@
         }
       },
       "video_id": "X2UiFPUnKIc",
-      "url": "https://youtu.be/X2UiFPUnKIc"
+      "url": "https://youtu.be/X2UiFPUnKIc",
+      "thumbnail_set": true,
+      "playlist_added": true
     }
   ]
 }
