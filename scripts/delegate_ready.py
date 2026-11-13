@@ -230,13 +230,21 @@ def main() -> int:
                     help="exchange only; do not write a probe video to YouTube")
     a = ap.parse_args()
     gaps = []
+    upload_blocked = False
     for ch, (pkey, akey, email) in CHANNELS.items():
         ch_id = None if a.no_probe else CHANNEL_IDS.get(ch)
         v, d = status(os.environ.get(pkey), os.environ.get(akey), channel_id=ch_id)
         print(f"  {v:14} {ch:16} [{email}]: {d}")
+        if "uploadLimitExceeded" in d:
+            upload_blocked = True
         if v != "READY":
             gaps.append(ch)
     print()
+    if upload_blocked:
+        # The block is on the delegate's OWN account, not our code: name the fix instead
+        # of leaving a bare failure, so the next reader knows what to do.
+        print("HINT: the delegate's own account has reached its upload allowance. Verify that "
+              "exact account at https://www.youtube.com/verify (phone) or wait out the daily cap.")
     if gaps:
         print(f"not READY: {', '.join(gaps)} -- containment rails still hold; "
               f"see docs/DELEGATE-2026-11-12.md")
