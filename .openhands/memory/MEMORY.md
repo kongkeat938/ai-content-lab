@@ -1,10 +1,8 @@
 # Project Memory — ak (ai-content-lab)
 
-**Agent `ak`** (was AX, 2026-10-31). Owner **K**: Thai replies, **measured evidence, not claims**.
-ak decides — take a decision to the **panel**, not to K (order events → causes → pros/cons vs
-goal → panel → most-gain/least-harm → act). **This file is a MAP, not a log** (injected every
-session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`); detail in
-`topics/`, logs, `docs/`.
+**Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
+**panel** (`advise.py`), not K. **This file is a MAP** (injected each session, tail truncated):
+keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts do not count). Steer by long-form
@@ -70,11 +68,15 @@ session, tail truncated). Keep under ~6,000 chars (guard `test_memory_budget.py`
   kongkeat938.github.io/ai-content-lab/.
 - **Accounts (K, 2026-11-12):** 1 channel = 1 Google account — genx `kongkeat.938`, dharma
   `farmmer.938`, kongkeat-story `kongkeat.p3` (each its own 19/day pool); `test_channel_accounts.py`
-  locks the map. **Delegation (K chose B):** `delegate_ready.py` measures a delegated credential;
-  `docs/DELEGATE-2026-11-12.md` = K's one-time Brand-Account invite, then the team cuts a rogue
-  grant with no K (no API key can rotate the GCP client secret — 403; Google ties a grant to a person).
+  locks the map. **genx is a DIRECT channel, not a Brand Account** → the Manager invite is
+  **Studio → การตั้งค่า → สิทธิ์**, not `myaccount/brandaccounts`. **Blocker:** Studio→สิทธิ์
+  triggers Google "ยืนยันว่าเป็นคุณ" (reauth) + SPA 401 from the pod IP; a synthetic click does
+  NOT clear it → **K must click it on the VNC screen**. `docs/HANDOFF-2026-11-12.md`.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
+- **VNC remote-in (K chose B, 2026-11-12):** ak drives headful chromium on Xvfb over CDP :9222;
+  K types passwords on noVNC (`start_novnc.sh`, port 12001). **Install Thai fonts**
+  (`fonts-thai-tlwg`) or text is boxes; start chromium `--lang=th-TH`. `remote_browser.py` = CDP driver.
 - **Comment writes need `force-ssl`** (all 3 tokens = `youtube` scope only → `commentThreads.insert`
   403s; owner fix `yt_auth.py --scopes force-ssl --slug <ch>`). **Text must fit its frame:**
   Shorts captions safe box L0.06/R0.84/T0.10/B0.88 (centred hit 0.93W under the button rail,
