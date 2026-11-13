@@ -77,6 +77,36 @@ def test_broad_is_default_plus_pollinations():
     assert advise.BROAD == advise.FAST + ["pollinations"]
 
 
+def test_default_panel_yields_five_real_voices_without_an_openrouter_key():
+    """Measured 2026-11-13: OPENROUTER_API_KEY was set but EMPTY, so the default
+    "five" advisors answered with only four (openrouter -> "(unavailable)") and K's
+    >=5 rule was broken while every existing guard still passed. resolve_team() must
+    substitute a keyless vendor so the panel keeps the voices it advertises."""
+    saved = os.environ.pop("OPENROUTER_API_KEY", None)
+    try:
+        team = advise.resolve_team(list(advise.FAST))
+    finally:
+        if saved is not None:
+            os.environ["OPENROUTER_API_KEY"] = saved
+    assert len(team) >= 5, f"panel lost a voice without a key: {team}"
+    assert len(set(team)) == len(team), f"duplicate panelist after substitution: {team}"
+    assert all(n in advise.ADVISORS for n in team), team
+    assert "openrouter" not in team, team
+    assert "pollinations" in team, team
+
+
+def test_resolve_team_keeps_openrouter_when_a_key_is_present():
+    saved = os.environ.get("OPENROUTER_API_KEY")
+    os.environ["OPENROUTER_API_KEY"] = "sk-or-test"
+    try:
+        assert advise.resolve_team(list(advise.FAST)) == advise.FAST
+    finally:
+        if saved is None:
+            os.environ.pop("OPENROUTER_API_KEY", None)
+        else:
+            os.environ["OPENROUTER_API_KEY"] = saved
+
+
 if __name__ == "__main__":
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
