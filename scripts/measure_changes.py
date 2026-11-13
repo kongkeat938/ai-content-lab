@@ -19,11 +19,15 @@ The honest design, used here:
 """
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import yt_duration
+
 import argparse
 import json
-import os
 import re
-import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -38,11 +42,7 @@ CHANGE_DAY = date(2026, 11, 6)  # the day titles + thumbnails + SEO were applied
 
 
 def secs(iso: str) -> int:
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
-    if not m:
-        return 0
-    h, mi, s = (int(x) if x else 0 for x in m.groups())
-    return h * 3600 + mi * 60 + s
+    return yt_duration.seconds(iso)
 
 
 def uploads(token: str) -> list[str]:

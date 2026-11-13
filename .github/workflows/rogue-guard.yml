@@ -53,8 +53,15 @@ jobs:
           YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
         run: |
           set +e
+          # No --write: docs/CHANNEL-AUDIT-LATEST.md is account-watch's report.
+          # Measured 2026-11-13: both rails regenerated it (rogue-guard every 30
+          # min, account-watch daily) and the file's first line is a timestamp, so
+          # whenever they overlapped the rebase conflicted and the push was
+          # rejected -- killing the run that hides rogue clips. One writer only;
+          # rogue-guard still hides clips, writes its own ledger, and --alert opens
+          # an issue on a defect.
           python3 scripts/audit_channels.py --limit 10 --hide-live-rogue --alert \
-            --write 2>&1 | tee work/rogue_guard.txt
+            2>&1 | tee work/rogue_guard.txt
           echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_STEP_SUMMARY"
           grep -E "hid |rogue alert|no defects|DEFECT:" work/rogue_guard.txt \
             >> "$GITHUB_STEP_SUMMARY" || true
@@ -64,8 +71,10 @@ jobs:
         run: |
           git config user.name openhands
           git config user.email openhands@all-hands.dev
+          # rogue_hidden.json only: the audit report belongs to account-watch
+          # (single writer -- see the audit step above).
           changed=0
-          for f in content/rogue_hidden.json docs/CHANNEL-AUDIT-LATEST.md; do
+          for f in content/rogue_hidden.json; do
             if [ -f "$f" ] && [ -n "$(git status --porcelain "$f" 2>/dev/null)" ]; then
               git add "$f"; changed=1
             fi
