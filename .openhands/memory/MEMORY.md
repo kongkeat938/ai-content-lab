@@ -9,56 +9,49 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   watch-hours/week + `retention@2min`, never raw views. **dharma = 96% of long-form watch
   time → concentrate there.** Review 2026-11-16.
 - **The first 2 minutes is the binding constraint, not volume** (dharma 102%@1% → **28.9%@2%**,
-  target ≥40%). **Fade-in 4s→1s** measured **+12 dB** in the opening second — the hook is the
-  lever, not the loop seam.
-- **Watch-time/view rises with length:** dharma's 120-min (5% completion) ≈ **6.0 min/view** vs
-  its 17-min (27%) ≈ 4.6 — keep videos long; the completion % is a distraction. **kongkeat is
-  PAUSED** (2026-11-12: +3 views/day, 0 subs, 0.5 watch-hours in 28 d) via `content/PAUSED` (both
-  names) → its rails skipped; guard `test_paused_channel.py`; reverse = empty the file.
+  target ≥40%). **Fade-in 4s→1s** = **+12 dB** in the opening second — the hook is the lever.
+- **Watch-time/view rises with length:** dharma's 120-min ≈ **6.0 min/view** vs its 17-min ≈ 4.6 —
+  keep videos long; the completion % is a distraction. **kongkeat PAUSED** via `content/PAUSED`
+  → rails skipped; `test_paused_channel.py`; reverse = empty the file.
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
   **live API > real output file (ffprobe/ebur128) > a test that can FAIL > a committed doc**.
   Best = a **counter with an invariant** (`scripts/counter_ledger.py`).
 - **Times to K = Thai (UTC+7), 24-hour `HH:MM`** (never raw UTC, never 12-hour) — AGENTS.md.
-- **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies silently on a spent quota → use
-  **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
-- **An LLM is not a primary source** — read the vendor's rule or measure live. Advisor panel:
-  `scripts/advise.py` (≥5, multi-vendor). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
+- **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → use **per-channel
+  secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
+- **An LLM is not a primary source** — read the vendor's rule or measure live. Panel `advise.py`
+  (≥5, multi-vendor). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
 - **A guard must be able to FAIL;** never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL. `.get()+continue` on a config key is a silent killer — make it loud.
-- **Repo hygiene** (failing test `test_repo_hygiene.py`): rails that push run `git pull --rebase`;
-  a shared-ledger writer needs a guard; health thresholds must exceed the REAL cadence; every
-  foreman-dispatched rail must be watched + every new scheduled rail needs a foreman rule.
+- **Repo hygiene** (`test_repo_hygiene.py`): pushing rails run `git pull --rebase`; a shared-ledger
+  writer needs a guard; health thresholds must exceed the REAL cadence; every foreman rail watched.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
   `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. Auto: `rogue-guard` hides a
   live clip within the hour (30-min, foreman+health), `private-delete` deletes the parked
-  **private** set after the reset — never unlisted (a live shared link). Title runs touch only
-  recorded clips. Root is the token: K must revoke + re-consent (browser-only, no API path).
+  **private** set after the reset (never unlisted). Root = the token: revoke + re-consent —
+  **Option B (2026-11-13) lets the team do it with no K** (`revoke_token.py`).
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
-  ×37/day on a `views>5` skip). Prefer **reversible (private)** over delete; mark the skip path
-  too (`delete_video.py --unpublish`).
-- **A PUT to `brandingSettings.channel` REPLACES the whole object** (wipes description/keywords)
-  → read live, merge. `country` is NOT writable.
-- **`--minutes` is a FLOOR:** an under-N set is heard twice. **`publish_at=slot` uploads
-  PRIVATE** (YouTube flips it public at the slot) — intended, not stranded.
-- **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**; a pod 403 before
-  then is expected. GITHUB_TOKEN push does NOT trigger a workflow → dispatch explicitly.
-- **Racing jobs lose records** → one concurrency group per channel + union merge driver
-  (`git_union_merge.py`, `.gitattributes merge=unionjson`) for append-only ledgers.
-- **Night rail:** `skip` ≠ `skip_pub`; an empty receipt is not a bad video; gate before queue
-  (`test_manifest_qa.py`, `test_night_queued.py`). **A long hook kills retention** (cap 220).
-  **A rebuild of a LIVE key must not un-publish it** (a rail edit changes the fingerprint →
-  rebuild of the same week key reset a published entry to `ready`; now a live entry's state is
-  never downgraded, only `--forget` re-uploads).
+  ×37/day). Prefer **reversible (private)** over delete; mark the skip path (`delete_video.py
+  --unpublish`).
+- **A PUT to `brandingSettings.channel` REPLACES the whole object** → read live, merge.
+- **`--minutes` is a FLOOR** (under-N set is heard twice). **`publish_at=slot` uploads PRIVATE**
+  (YouTube flips it public at the slot) — intended, not stranded.
+- **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**. GITHUB_TOKEN push
+  does NOT trigger a workflow → dispatch explicitly.
+- **Racing jobs lose records** → one concurrency group per channel + a union merge driver
+  (`git_union_merge.py`) for append-only ledgers.
+- **Night rail:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long hook
+  kills retention (cap 220); never downgrade a LIVE entry (`--forget`). `test_night_*.py`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
-  graded every 120-min file B (two bands 15-40 & 110-130); counter_ledger read a same-day dip as
-  DOWN (skip same-UTC-day); health flagged paused rails (now reads `PAUSED`).
-- **Mail on the cloud, not PC1** (PC1 dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
+  graded 120-min files B; counter_ledger read a same-day dip as DOWN (skip same-UTC-day); health
+  flagged paused rails (now reads `PAUSED`).
+- **Mail on the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
-  "full clip" (`test_ch4_cta.py`); `unsubscribedTrailer` wired (after 08:00Z).
+  "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`CONSULT-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md`
@@ -69,16 +62,16 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 - **Accounts (K, 2026-11-12):** 1 channel = 1 Google account — genx `kongkeat.938`, dharma
   `farmmer.938`, kongkeat-story `kongkeat.p3` (each its own 19/day pool); `test_channel_accounts.py`
   locks the map. **genx is a DIRECT channel, not a Brand Account** → the Manager invite is
-  **Studio → การตั้งค่า → สิทธิ์**, not `myaccount/brandaccounts`. **Blocker:** Studio→สิทธิ์
-  triggers Google "ยืนยันว่าเป็นคุณ" (reauth) + SPA 401 from the pod IP; a synthetic click does
-  NOT clear it → **K must click it on the VNC screen**. `docs/HANDOFF-2026-11-12.md`.
+  **Studio → การตั้งค่า → สิทธิ์**. The reauth "ยืนยันว่าเป็นคุณ" wall needs K on the VNC screen once.
+- **Delegation (Option B, 2026-11-13):** genx has a second account `aerismusic8@gmail.com` as
+  **Manager** + a delegated token (`YT_CH1_ALT_REFRESH_TOKEN`); `delegate_ready.py` = `READY genx`.
+  **A refresh token is bound to the client that minted it:** the manager's is on client **B**
+  (`…-7g6258s…`, env `YT_ALT_CLIENT_ID/SECRET`) — 200s there, `401 unauthorized_client` on the
+  primary client **A** (`…-39ngdj…`); check each alt token with its own client.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
-- **VNC remote-in (K chose B, 2026-11-12):** ak drives headful chromium on Xvfb over CDP :9222;
-  K types passwords on noVNC (`start_novnc.sh`, port 12001). **Install Thai fonts**
-  (`fonts-thai-tlwg`) or text is boxes; start chromium `--lang=th-TH`. `remote_browser.py` = CDP driver.
-- **Comment writes need `force-ssl`** (all 3 tokens = `youtube` scope only → `commentThreads.insert`
-  403s; owner fix `yt_auth.py --scopes force-ssl --slug <ch>`). **Text must fit its frame:**
-  Shorts captions safe box L0.06/R0.84/T0.10/B0.88 (centred hit 0.93W under the button rail,
-  `test_short_caption`); poster titles wrap+shrink to 130px ≤3 lines (`test_poster_fit`).
-  Conversion lever = pinned CTA comment (`test_shorts_cta_comment`).
+- **VNC remote-in (2026-11-12):** ak drives headful chromium over CDP :9222; K types passwords
+  on noVNC (`start_novnc.sh`). Thai fonts (`fonts-thai-tlwg`) + `--lang=th-TH` or text is boxes.
+- **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl --slug <ch>`). **Text must fit
+  its frame** (`test_short_caption`, `test_poster_fit`). Conversion lever = pinned CTA comment
+  (`test_shorts_cta_comment`).
