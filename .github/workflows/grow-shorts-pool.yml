@@ -32,8 +32,11 @@ jobs:
             scripts: content/ch2_shorts/scripts.json
           - channel: genx
             scripts: content/ch1_shorts/scripts.json
-          # kongkeat-story REMOVED 2026-11-12 (content/PAUSED): the channel is
-          # dead. The tripwire below fails the build if it is added back.
+          - channel: kongkeat-story
+            scripts: content/ch4_shorts/scripts.json
+          # kongkeat-story RESTORED 2026-11-13 (UNPAUSED, K: "ลุย ch4"), so its
+          # pool keeps growing. The tripwire below fails the build if it is added
+          # back while content/PAUSED names it.
     steps:
       - uses: actions/checkout@v4
 

@@ -55,11 +55,13 @@ jobs:
             manifest: content/ch2_shorts.json
           - channel: genx
             manifest: content/ch1_shorts.json
-          # kongkeat REMOVED 2026-11-12 (content/PAUSED): the channel is dead
-          # (+3 views/day, 0 subs, 0.5 long-form watch-hours in 28 days). The
-          # "Refuse to publish a paused channel" step below fails the build if a
-          # paused channel is ever added back here while content/PAUSED still
-          # names it.
+          - channel: kongkeat
+            manifest: content/ch4_shorts.json
+          # kongkeat RESTORED 2026-11-13 (UNPAUSED, K: "ลุย ch4"). The channel was
+          # removed 2026-11-12 while content/PAUSED named it; it must be back or the
+          # team's new Shorts never reach the feed. The "Refuse to publish a paused
+          # channel" step below still fails the build if it is re-added to the
+          # matrix while content/PAUSED names it.
     steps:
       - uses: actions/checkout@v4
 
