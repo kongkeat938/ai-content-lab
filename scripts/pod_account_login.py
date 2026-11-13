@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -68,9 +69,15 @@ def password_for(user: str, args) -> str:
 
 
 def emails_on_page(c: g.Chrome) -> list[str]:
-    import re
     body = c.js("document.body.innerText") or ""
     return sorted(set(re.findall(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", body)))
+
+
+def accounts_state(c: g.Chrome) -> dict[str, bool]:
+    """Accounts the chooser lists. NOTE: it also lists accounts that are signed out,
+    and the marker is not reliably placed, so this is only a hint, not proof."""
+    c.nav("https://accounts.google.com/AccountChooser", settle=6)
+    return {m: True for m in emails_on_page(c)}
 
 
 def active_email(c: g.Chrome) -> str:
@@ -164,16 +171,16 @@ def login(c: g.Chrome, user: str, password: str, totp: str | None,
 
 
 def list_accounts(c: g.Chrome) -> None:
-    """Show every account this browser can reach, by walking the account chooser."""
-    c.nav("https://accounts.google.com/AccountChooser", settle=6)
-    mails = emails_on_page(c)
+    """Show every account this browser can reach, and whether it is really signed in."""
+    state = accounts_state(c)
     active = active_email(c)
-    if not mails:
+    if not state:
         print("no signed-in accounts detected (open noVNC and add one)")
         return
-    print("signed-in accounts (active marked *):")
-    for m in mails:
-        print(f" {'*' if m == active else ' '} {m}")
+    print("accounts the chooser knows (a hint -- it also lists signed-out ones):")
+    for m in sorted(state):
+        tag = " *" if m == active else "  "
+        print(f"{tag} {m}")
 
 
 def main() -> int:
