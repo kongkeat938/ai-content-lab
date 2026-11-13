@@ -155,19 +155,46 @@
         "flat": 0
       },
       "at": "2026-11-12T17:42:58+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "lphfMtjA2fA",
+      "reason": "last post 0 views in 14.9h (0.0/h vs channel top-quarter 3.8/h) -> bad",
+      "hours_since_last": 14.91,
+      "stall": {
+        "stalled": false,
+        "flat": 1
+      },
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "engagement_per_1k": null,
+      "per_hour": 0.0,
+      "baseline_per_hour": 3.78,
+      "baseline_clips": 49,
+      "at": "2026-11-13T08:38:19+00:00"
     }
   ],
   "latest": {
     "allowed": true,
-    "verdict": "unknown",
+    "verdict": "bad",
     "last_shape": null,
-    "last_video_id": "na1N-zr44bU",
-    "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 9.89,
+    "last_video_id": "lphfMtjA2fA",
+    "reason": "last post 0 views in 14.9h (0.0/h vs channel top-quarter 3.8/h) -> bad",
+    "hours_since_last": 14.91,
     "stall": {
       "stalled": false,
-      "flat": 0
+      "flat": 1
     },
-    "at": "2026-11-12T17:42:58+00:00"
+    "views": 0,
+    "likes": 0,
+    "comments": 0,
+    "engagement_per_1k": null,
+    "per_hour": 0.0,
+    "baseline_per_hour": 3.78,
+    "baseline_clips": 49,
+    "at": "2026-11-13T08:38:19+00:00"
   }
 }
