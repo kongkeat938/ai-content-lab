@@ -34,12 +34,14 @@ on:
       generate:
         description: "true to generate a fresh content set with Gemini"
         default: "false"
-  schedule:
-    # PAUSED 2026-11-12: kongkeat is a dead channel (measured +3 views/day, 0 subs,
-    # 0.5 long-form watch-hours in 28 days). The rail is kept runnable by hand, but
-    # its weekly cron is off so it stops spending CI and quota. Re-enable by
-    # removing "kongkeat" from content/PAUSED and restoring this cron.
-    # - cron: "37 3 * * 4"   # Thursdays 03:37 UTC -- the dharma rail owns Monday
+  # PAUSED 2026-11-12: kongkeat is a dead channel (measured +3 views/day, 0 subs,
+  # 0.5 long-form watch-hours in 28 days). The rail stays runnable by hand.
+  # The WHOLE `schedule:` key is commented out, not just its cron lines: a
+  # comment-only block parses as `schedule: null`, which makes GitHub reject the
+  # entire workflow (0 jobs, every run fails). Guard: test_workflow_yaml.py.
+  # Re-enable by removing "kongkeat" from content/PAUSED and restoring:
+  #   schedule:
+  #     - cron: "37 3 * * 4"   # Thursdays 03:37 UTC -- the dharma rail owns Monday
 
 permissions:
   contents: write
