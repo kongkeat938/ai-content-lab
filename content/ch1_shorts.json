@@ -530,6 +530,14 @@
       "posted_at": "2026-11-13T10:49:45+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "87": {
+      "video_id": "dnCaDuZ--R0",
+      "url": "https://youtu.be/dnCaDuZ--R0",
+      "title": "คุณมีสิทธิ์รู้สิ่งที่จะเกิดขึ้นถ้ายังฝืน #Shorts",
+      "posted_at": "2026-11-13T17:52:23+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
