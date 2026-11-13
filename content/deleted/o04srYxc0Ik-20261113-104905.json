@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "SYsHSZgY4cOP1ZVtBLgcGBuy-lQ",
+ "id": "o04srYxc0Ik",
+ "snippet": {
+  "publishedAt": "2026-11-10T18:21:31Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "เสียงเปียโนเก่าในห้องรับแขก | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "บ้านหลังเก่าเคยอบอวลไปด้วยเสียงเปียโนและรอยยิ้มของพ่อ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ความสัมพันธ์ในครอบครัว #การจากลา #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/o04srYxc0Ik/default.jpg?sqp=CKzU29cG&rs=AOn4CLBtgGAZgQWQLp9yMBm5G0N5Kt6vBg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/o04srYxc0Ik/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAp-D9w1RL6hpl1YY0JVeB_iphEyw",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/o04srYxc0Ik/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAD9sEKp4m-1mGryncoLpIZEOn0Zg",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/o04srYxc0Ik/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDEHv1chfj5yXi5ColzQVmBOwIq2A",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/o04srYxc0Ik/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCFEaNvDYS_3mmHVaNkbWK3ZkqDSQ",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การจากลา",
+   "การให้อภัย",
+   "ความสัมพันธ์ในครอบครัว",
+   "บทเรียนชีวิต",
+   "เรื่องเล่าสะเทือนใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เสียงเปียโนเก่าในห้องรับแขก | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "บ้านหลังเก่าเคยอบอวลไปด้วยเสียงเปียโนและรอยยิ้มของพ่อ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ความสัมพันธ์ในครอบครัว #การจากลา #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

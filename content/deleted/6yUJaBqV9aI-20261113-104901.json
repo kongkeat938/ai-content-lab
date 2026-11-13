@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "gf_ml-iojHOamgOSG6y6eAW_P_0",
+ "id": "6yUJaBqV9aI",
+ "snippet": {
+  "publishedAt": "2026-11-12T18:04:58Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "รอยยิ้มบนโต๊ะอาหาร | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "บนโต๊ะอาหารมีเพียงเสียงช้อนกระทบจานกระเบื้อง\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ครอบครัวและความรัก #การให้อภัย #ความอบอุ่น #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/6yUJaBqV9aI/default.jpg?sqp=CKzU29cG&rs=AOn4CLCJ17RRZxE1k-oZiriX9eRpM5jzCA",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/6yUJaBqV9aI/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAsjV5-WQrAN_UWctg8khpqLRptSQ",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/6yUJaBqV9aI/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCQjWnKa6iY0Ynw0NaTk7XL88jwvQ",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/6yUJaBqV9aI/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLAkfOtK01VVqP0uKkDpWBHAceDU-Q",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/6yUJaBqV9aI/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCQ6lpUK_E7gE3rrFryXREshTJ3fA",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การให้อภัย",
+   "ข้อคิดชีวิต",
+   "ครอบครัวและความรัก",
+   "ความอบอุ่น",
+   "เรื่องเล่าสะเทือนใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "รอยยิ้มบนโต๊ะอาหาร | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "บนโต๊ะอาหารมีเพียงเสียงช้อนกระทบจานกระเบื้อง\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ครอบครัวและความรัก #การให้อภัย #ความอบอุ่น #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

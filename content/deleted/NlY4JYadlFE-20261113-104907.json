@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "u6suAVdU8EAXeTtaFAYdllzoHz0",
+ "id": "NlY4JYadlFE",
+ "snippet": {
+  "publishedAt": "2026-11-09T22:20:54Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "กรอบรูปไม้สีซีด | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "บ้านหลังใหญ่เงียบเหงาลงตั้งแต่ลูกชายย้ายออกไปทำงานในเมือง\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ครอบครัว #ความรัก #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/NlY4JYadlFE/default.jpg?sqp=CKzU29cG&rs=AOn4CLCJSMnBEi95PXuVNQ9VYNMOSR2Clg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/NlY4JYadlFE/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDMJ9dhby3hrU16nI0LBNlA8N_8QA",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/NlY4JYadlFE/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLD_V2Yr-dMi4gt_vmrsDcSnGeND6Q",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/NlY4JYadlFE/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDacjryIFDH2dxP-apAYmzahHcQKA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/NlY4JYadlFE/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLD9CJBORaddaMduONX94MwgplEw2A",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การให้อภัย",
+   "ครอบครัว",
+   "ความรัก",
+   "สะท้อนชีวิต",
+   "เรื่องเล่าสะเทือนใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "กรอบรูปไม้สีซีด | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "บ้านหลังใหญ่เงียบเหงาลงตั้งแต่ลูกชายย้ายออกไปทำงานในเมือง\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ครอบครัว #ความรัก #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

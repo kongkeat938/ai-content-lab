@@ -1,0 +1,82 @@
+{
+ "kind": "youtube#video",
+ "etag": "3m9zO93_OPlFlewzrhOsQtkr1hw",
+ "id": "9bytRcx7SaY",
+ "snippet": {
+  "publishedAt": "2026-11-02T12:57:37Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "ธรรมะก่อนนอน 90 นาที ฟังเพลินหลับสบายตลอดคืน",
+  "description": "ปล่อยวางความเครียดและผ่อนคลายจิตใจก่อนนอนด้วยธรรมะก่อนนอน 90 นาที ฟังเพลินหลับสบายตลอดคืน ช่วยให้จิตใจสงบและนอนหลับได้อย่างสนิท พร้อมข้อคิดธรรมะสอนใจลึกซึ้ง #ธรรมะก่อนนอน #ฟังธรรมก่อนนอน #หลับสบาย",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/9bytRcx7SaY/default.jpg?sqp=CKzU29cG&rs=AOn4CLC7IKL2jmKK2tTsQzKoYk63atwOTg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/9bytRcx7SaY/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAhDv3t8q89DxuR8Pm0VPqMtdFQZQ",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/9bytRcx7SaY/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLB_ZkWNTxW0OQyTmnDSCYRC5F9_Gw",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/9bytRcx7SaY/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLCIU9R799rZBJnISVFfzrS1t2DrQw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/9bytRcx7SaY/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDk0hiQdaZoqIaPYBtOPFzhsyYZYQ",
+    "width": 1280,
+    "height": 720
+   },
+   "fhd": {
+    "url": "https://i9.ytimg.com/vi/9bytRcx7SaY/fhddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDdj8fQtDM7XHv4dn--WsYeOV2y4A",
+    "width": 1920,
+    "height": 1080
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "tags": [
+   "กล่อมสมองหลับลึก",
+   "ธรรมะ 90 นาที",
+   "ธรรมะก่อนนอน",
+   "ธรรมะก่อนนอน จิตสงบ",
+   "ธรรมะก่อนนอน ปล่อยวาง",
+   "ธรรมะคลายเครียด",
+   "ธรรมะสอนใจ",
+   "ฟังธรรมก่อนนอน",
+   "ฟังธรรมะก่อนนอน หลับสบาย",
+   "ฟังธรรมะยาวๆ",
+   "เสียงธรรมะหลับสบาย",
+   "เสียงอ่านธรรมะ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "ธรรมะก่อนนอน 90 นาที ฟังเพลินหลับสบายตลอดคืน",
+   "description": "ปล่อยวางความเครียดและผ่อนคลายจิตใจก่อนนอนด้วยธรรมะก่อนนอน 90 นาที ฟังเพลินหลับสบายตลอดคืน ช่วยให้จิตใจสงบและนอนหลับได้อย่างสนิท พร้อมข้อคิดธรรมะสอนใจลึกซึ้ง #ธรรมะก่อนนอน #ฟังธรรมก่อนนอน #หลับสบาย"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": true,
+  "publicStatsViewable": true,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "2",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

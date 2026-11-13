@@ -1,0 +1,68 @@
+{
+ "kind": "youtube#video",
+ "etag": "12leACZRNIENgbLH2uzMMHicWpw",
+ "id": "1XWqVnq1E_I",
+ "snippet": {
+  "publishedAt": "2026-11-09T18:50:57Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "วิธีนอนหลับง่ายขึ้นด้วยธรรมะก่อนนอน #Shorts",
+  "description": "",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/1XWqVnq1E_I/default.jpg?sqp=CKzU29cG&rs=AOn4CLBMR4x13zjNnJlQpZ6uRfsZf8g73w",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/1XWqVnq1E_I/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDSqab02r5H1JVhFulppLJCdEr6Xg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/1XWqVnq1E_I/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCQw1hW9d6mXf48wVGJ6p59_S2sDA",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/1XWqVnq1E_I/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLB6XWAShQubWZV4oGywhHQsq222PQ",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/1XWqVnq1E_I/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCijfpfS45Aog030oj3b1p_6HcXkA",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/1XWqVnq1E_I/sardefault.jpg?sqp=CKzU29cG&rs=AOn4CLDZNTnBmgVwSG1-Mm9D1cmesPkYxA",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "วิธีนอนหลับง่ายขึ้นด้วยธรรมะก่อนนอน #Shorts",
+   "description": ""
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "119",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

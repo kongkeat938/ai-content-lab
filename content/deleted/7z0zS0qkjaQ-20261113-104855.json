@@ -1,0 +1,68 @@
+{
+ "kind": "youtube#video",
+ "etag": "lWw8KqSB75QhTrARMKBCvABYKrA",
+ "id": "7z0zS0qkjaQ",
+ "snippet": {
+  "publishedAt": "2026-11-11T18:20:35Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "เมื่อเกราะป้องกันชีวิตเริ่มหนักเกินไป ข้อคิดวัยกลางคน #Shorts",
+  "description": "",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/7z0zS0qkjaQ/default.jpg?sqp=CKzU29cG&rs=AOn4CLBfZmf0BDEnFoh5S9okELk7UfwV8Q",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/7z0zS0qkjaQ/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAeggnHPf-AXYRdPYyy08ZALgs7aA",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/7z0zS0qkjaQ/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDV8ObOkBh_g75vFn-oWsA6LObbzg",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/7z0zS0qkjaQ/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDS6Zbh5BRL2ScYmA2r1jKodNPhuw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/7z0zS0qkjaQ/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDdxkYZKu5oH-CEyQdE2U2U_K54TA",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/7z0zS0qkjaQ/sardefault.jpg?sqp=CKzU29cG&rs=AOn4CLDrsL6oHkkUs2_BY8Ano-RtplJ6oQ",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เมื่อเกราะป้องกันชีวิตเริ่มหนักเกินไป ข้อคิดวัยกลางคน #Shorts",
+   "description": ""
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "58",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

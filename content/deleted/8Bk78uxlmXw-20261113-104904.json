@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "pLctk_XwUACaJEG5Qlsz9uRb-gw",
+ "id": "8Bk78uxlmXw",
+ "snippet": {
+  "publishedAt": "2026-11-11T03:21:03Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "เสื้อไหมพรมถักมือของแม่ | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "บ้านหลังเล็กอบอวลด้วยกลิ่นอายของความเหงาและวันเวลาที่ล่วงเลย\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ความรักในครอบครัว #การให้อภัย #คุณแม่และลูก #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/8Bk78uxlmXw/default.jpg?sqp=CKzU29cG&rs=AOn4CLC0BoygYxyFx2Az7JRlkzbJxTAQKw",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/8Bk78uxlmXw/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBEb87UjmL8IcD1FgHHlnqfaGtmiQ",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/8Bk78uxlmXw/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCBxQKisyBPF6_Zg0BuO9ldRoOhmw",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/8Bk78uxlmXw/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDb11vrjFt0DOd4aFp36ikbf_mggw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/8Bk78uxlmXw/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAwzJIJDfWtc3nIAQMfgjyfbeVogA",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การให้อภัย",
+   "ความรักในครอบครัว",
+   "คุณแม่และลูก",
+   "บทเรียนชีวิต",
+   "เรื่องเล่าสะเทือนใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เสื้อไหมพรมถักมือของแม่ | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "บ้านหลังเล็กอบอวลด้วยกลิ่นอายของความเหงาและวันเวลาที่ล่วงเลย\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ความรักในครอบครัว #การให้อภัย #คุณแม่และลูก #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

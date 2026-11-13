@@ -1,0 +1,68 @@
+{
+ "kind": "youtube#video",
+ "etag": "qDzGfvWsKTWBpktIqcp-LF9kVH4",
+ "id": "mRm1ndhqMow",
+ "snippet": {
+  "publishedAt": "2026-11-10T05:42:40Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "คุณมีสิทธิ์เป็นคนธรรมดา ไม่ต้องพิสูจน์ให้ใครเห็น #Shorts",
+  "description": "",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/mRm1ndhqMow/default.jpg?sqp=CKzU29cG&rs=AOn4CLBR-bjt7J87iejzBjpijf-yKU9KUw",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/mRm1ndhqMow/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCTe-WAbiv48UUamf9SjKjNfnb6kw",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/mRm1ndhqMow/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBGInJN9T36DTaH1TLed5vro-CNMQ",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/mRm1ndhqMow/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLB9D5ImFYFvEcW3_M7PU4L0ICV_VA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/mRm1ndhqMow/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLARFQ9cHEusWOZi2Kbge22xTU2wvA",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/mRm1ndhqMow/sardefault.jpg?sqp=CKzU29cG&rs=AOn4CLBhx-s-u-lPKlrr-YlGt5VZcZGpgg",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "categoryId": "22",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "คุณมีสิทธิ์เป็นคนธรรมดา ไม่ต้องพิสูจน์ให้ใครเห็น #Shorts",
+   "description": ""
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "303",
+  "likeCount": "13",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

@@ -1,0 +1,68 @@
+{
+ "kind": "youtube#video",
+ "etag": "cBlLBeDAT0efoasc5UhELcJvNLg",
+ "id": "LpGgxyuWBLc",
+ "snippet": {
+  "publishedAt": "2026-11-10T03:21:25Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "การไม่ฝืนคือความสุข ข้อคิดชีวิตวัยกลางคน #Shorts",
+  "description": "",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/LpGgxyuWBLc/default.jpg?sqp=CKzU29cG&rs=AOn4CLDE6TATc8udgxYWT7hiV_4B5-W0QQ",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/LpGgxyuWBLc/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLD64P1XXCjhh1voJqzwD8qxQ49xRA",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/LpGgxyuWBLc/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLC4YolHFzOGxTNPwUkKTL5QwznSUA",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/LpGgxyuWBLc/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDPlsbMidbKxNFqbK0XTU9CeuWbCA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/LpGgxyuWBLc/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLA5wTJGNj7pT3bVTojqrq9c6yubuw",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/LpGgxyuWBLc/sardefault.jpg?sqp=CKzU29cG&rs=AOn4CLAAGDvOxr7imRfW9u3xGABGS2oVyw",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "การไม่ฝืนคือความสุข ข้อคิดชีวิตวัยกลางคน #Shorts",
+   "description": ""
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "133",
+  "likeCount": "2",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "mljoyreJcxc6WDJ0SPwcV6uH9QU",
+ "id": "WMoE-d_7YKI",
+ "snippet": {
+  "publishedAt": "2026-11-12T22:20:49Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "คืนนี้ให้ราตรีพับเก็บเรื่องราว #Shorts",
+  "description": "แสงไฟค่อย ๆ หรี่ลงตามจังหวะเวลาของค่ำคืนนี้\n\nฟังธรรมะก่อนนอนแบบยาว ๆ ได้ทั้งคืนในช่อง Farmmer\n#ธรรมะก่อนนอน #หลับสบาย #ปล่อยวาง #ความสงบ #Shorts\n\n— ช่องพี่น้อง —\nkongkeat pratumma — เรื่องเล่าการ์ตูน\nhttps://www.youtube.com/@kongkeatpratumma\n\nฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLBpZCGnd7Q5Y\n\n#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/WMoE-d_7YKI/default.jpg?sqp=CKzU29cG&rs=AOn4CLDjlO4bFyvHYqV6fVLP-vjMS351Qw",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/WMoE-d_7YKI/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCKCGfyfVn-CC_khNYjbr6MlX244Q",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/WMoE-d_7YKI/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDKMOquzzsBklSVWzW7y_6ikvUQxQ",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/WMoE-d_7YKI/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLBxN8xvW5t5sWxHQtpt-LH0kK3iAQ",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/WMoE-d_7YKI/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAlCXx2r7u3iUiVJS73RLDzp2UfPg",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "tags": [
+   "ความสงบ",
+   "ธรรมะก่อนนอน",
+   "ปล่อยวาง",
+   "ราตรีสวัสดิ์",
+   "หลับสบาย"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "คืนนี้ให้ราตรีพับเก็บเรื่องราว #Shorts",
+   "description": "แสงไฟค่อย ๆ หรี่ลงตามจังหวะเวลาของค่ำคืนนี้\n\nฟังธรรมะก่อนนอนแบบยาว ๆ ได้ทั้งคืนในช่อง Farmmer\n#ธรรมะก่อนนอน #หลับสบาย #ปล่อยวาง #ความสงบ #Shorts\n\n— ช่องพี่น้อง —\nkongkeat pratumma — เรื่องเล่าการ์ตูน\nhttps://www.youtube.com/@kongkeatpratumma\n\nฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLBpZCGnd7Q5Y\n\n#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "330",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

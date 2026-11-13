@@ -1,0 +1,63 @@
+{
+ "kind": "youtube#video",
+ "etag": "LTYy8MktKJVNAPmh_o8s5b_Eisc",
+ "id": "HkbSguA53ro",
+ "snippet": {
+  "publishedAt": "2026-11-08T12:42:39Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "นิทานธรรมะสอนใจ ทางสายกลาง ดับทุกข์ ใจสงบ",
+  "description": "",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/HkbSguA53ro/default.jpg?sqp=CKzU29cG&rs=AOn4CLA2dvtpPKx1w3CVcqxyfD-kphfYyQ",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/HkbSguA53ro/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCBCJHiXDG-BgdA4sfqVbk-OfCOeg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/HkbSguA53ro/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBmogC65Okg1uV9uV_cVVT2Vgi0yQ",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/HkbSguA53ro/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLBlhb-CC5-8Wf2ff7PcYYZ25yBQwg",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/HkbSguA53ro/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDVZDIfcLRu4Qd51RJ9bNLDQQODsQ",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "categoryId": "22",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "นิทานธรรมะสอนใจ ทางสายกลาง ดับทุกข์ ใจสงบ",
+   "description": ""
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "68",
+  "likeCount": "1",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}
