@@ -28,8 +28,18 @@ ROOT = os.path.dirname(HERE)
 CHANNEL_CUES = {
     "dharma.md": ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ลองกด", "ปล่อยลมหายใจ"),
     "genx.md": ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ปล่อยลมหายใจ"),
-    "kongkeat.md": ("เรื่องของผู้ชาย", "มือที่คอยซ่อม", "กลับไปกอด"),
+    "kongkeat.md": ("กลับไปกอด", "มือที่คอยซ่อม", "เรื่องของผู้ชาย"),
 }
+
+# kongkeat's long-form died on a flat "warm scene" hook (measured 2026-11-10:
+# mid-retention 13.7% vs 62-68% on the channels whose hooks carry a tension
+# marker). So its hook must ALSO open a tension, not just show a warm image --
+# the cue alone let the losing shape back in. This is the exact lever that killed
+# the channel, so it is enforced, not asked for.
+_KONGKEAT_TENSION = re.compile(
+    r"ทำไม|ความลับ|ซ่อน|จากไป|จากเรา|ไม่บอกลา|ครั้งสุดท้าย|วันสุดท้าย|เพิ่งเข้าใจ|"
+    r"เพิ่งรู้|สายไป|เสียใจ|ไม่เคยบอก|ไม่เหลือ|ไม่ทัน|ร้องไห้|น้ำตา")
+TENSION_HOOKS = {"kongkeat.md": _KONGKEAT_TENSION}
 
 # The panel's other half of the lever: the promise must land fast. edge-tts Thai
 # speaks ~9 characters per second here, so 220 characters is ~24 s -- inside the
@@ -56,6 +66,11 @@ def main() -> int:
         if not any(c in hook for c in cues):
             fail(f"{fname} has no concrete cue (one of {cues}); the measured "
                  "lever is a concrete opening")
+        need = TENSION_HOOKS.get(fname)
+        if need and not need.search(hook):
+            fail(f"{fname} has no tension marker; its long-form died on a flat "
+                 "warm-scene hook (13.7% mid-retention), so the opening must carry "
+                 "a question, a hidden truth or a loss")
         chars = len(hook.strip())
         if chars > MAX_HOOK_CHARS:
             fail(f"{fname} is {chars} chars (~{chars/9:.0f}s spoken); it must be "
