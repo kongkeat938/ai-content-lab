@@ -98,23 +98,44 @@ def measure_audio(path: str) -> float | None:
     return None
 
 
+async def _synth(text: str, out: str, voice: str) -> None:
+    await edge_tts.Communicate(text, voice, rate=RATE).save(out)
+    if not (os.path.exists(out) and os.path.getsize(out) > 0):
+        raise RuntimeError("empty file")
+
+
 async def speak(text: str, out: str, voice: str = VOICE) -> None:
     """Synthesise the line, retrying a dropped connection.
 
     edge-tts occasionally returns NoAudioReceived on a line that works on the
     next try (observed in CI on 2026-11-03, which failed a whole build). It is a
     transient socket fault, not bad input, so retry rather than lose the clip.
+
+    Measured 2026-11-13: the alternate voice (VOICE_ALT, the stalled-channel
+    probe) returned NoAudioReceived on EVERY attempt for a given text while the
+    house voice synthesised the same text fine -- a per-voice refusal, not a
+    socket blip, so retrying the same voice cannot recover it and the whole
+    publish step failed (issues on ch4). After the retries the house voice is
+    tried as a fallback, so a clip is never lost; the probe's audible change is
+    given up only on the rare lines the alt voice refuses.
     """
     last = None
     for attempt in range(4):
         try:
-            await edge_tts.Communicate(text, voice, rate=RATE).save(out)
-            if os.path.exists(out) and os.path.getsize(out) > 0:
-                return
-            last = "empty file"
+            await _synth(text, out, voice)
+            return
         except Exception as exc:            # noqa: BLE001 -- the point is to swallow any TTS fault
             last = exc
         await asyncio.sleep(2 * (attempt + 1))
+    if voice != VOICE:
+        for attempt in range(2):
+            try:
+                await _synth(text, out, VOICE)
+                print(f"  voice {voice} returned no audio; fell back to {VOICE}")
+                return
+            except Exception as exc:        # noqa: BLE001
+                last = exc
+            await asyncio.sleep(2 * (attempt + 1))
     raise RuntimeError(f"TTS failed after 4 tries: {last}")
 
 
