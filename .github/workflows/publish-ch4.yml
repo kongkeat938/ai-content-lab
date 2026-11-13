@@ -21,13 +21,15 @@ on:
   push:
     paths:
       - "content/ch4_publish.json"
-  schedule:
-    # PAUSED 2026-11-12: kongkeat is a dead channel (measured +3 views/day, 0 subs,
-    # 0.5 long-form watch-hours in 28 days). Nothing is due to publish, and the
-    # rail stays runnable by hand. Re-enable by removing "kongkeat" from
-    # content/PAUSED and restoring these crons.
-    # - cron: "3 8 * * *"
-    # - cron: "23 */2 * * *"
+  # PAUSED 2026-11-12: kongkeat is a dead channel (measured +3 views/day, 0 subs,
+  # 0.5 long-form watch-hours in 28 days). Nothing is due to publish; the rail
+  # stays runnable by hand. The WHOLE `schedule:` key is commented out, not just
+  # its cron lines -- a comment-only block parses as `schedule: null`, which makes
+  # GitHub reject the entire workflow (0 jobs, every run fails). Guard:
+  # test_workflow_yaml.py. Re-enable by removing "kongkeat" from content/PAUSED:
+  #   schedule:
+  #     - cron: "3 8 * * *"
+  #     - cron: "23 */2 * * *"
 
 permissions:
   contents: write
