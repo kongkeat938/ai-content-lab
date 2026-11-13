@@ -15,6 +15,15 @@ set -u
 best_effort=0
 [ "${1:-}" = "--best-effort" ] && best_effort=1
 
+# The append-only JSON ledgers carry `merge=unionjson` in .gitattributes, but git
+# only uses a custom merge driver when it is registered in THIS repo's config.
+# Each workflow that commits a ledger registered it by hand; the ones that did not
+# (ch4-longform, measured 2026-11-13) fell back to a plain text merge, hit a
+# CONFLICT on content/bed_ledger_kongkeat.json, and stranded a finished video that
+# was already on a Release. Register it here, once, so every caller is covered.
+git config merge.unionjson.name "union json ledgers"
+git config merge.unionjson.driver "python3 scripts/git_union_merge.py %O %A %B"
+
 attempts=5
 for i in $(seq 1 "$attempts"); do
   if ! git pull --rebase --autostash origin main; then

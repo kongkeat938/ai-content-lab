@@ -49,13 +49,15 @@ own → **ask K**. **Workers** (`team.py run <role>`: researcher/scriptwriter/pa
   kills retention (cap 220); never downgrade a LIVE entry (`--forget`). `test_night_*.py`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate graded
   120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
-- **Pause is per channel** — prove the mechanism with a synthetic PAUSED (`test_paused_channel.py`),
-  so it passes whether or not a channel is paused today.
+- **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK** or the rail
+  looks healthy and produces nothing (2026-11-13 ch4). `test_rail_channels.py`: in matrix ⟺ not in
+  `content/PAUSED`; `test_paused_channel.py` proves the mechanism with a synthetic PAUSED.
+- **Never hardcode the set a guard sweeps:** `test_shorts_cta_comment` checked only dharma/genx, so
+  ch4 shipped with NO `pin_cta` (no funnel on the Shorts screen). Sweep `ps.CHANNELS`.
 - **We were blind to a take-down** (2026-11-13): the audit diffed only channel→manifest → `find_removed`
   (`test_audit_removed`). **Mail is on the cloud, not PC1** (dead); `IMAP_ACCOUNTS` = kongkeat.938 only.
-- **ch4 UNPAUSED 2026-11-13** (K: "ลุย ch4"): the flat-scene hook that killed it (13.7% mid-retention)
-  → a tension hook is **enforced** (`test_hook_concrete`) for the long-form hook AND the Shorts pool;
-  new scripts in `ch4_shorts/scripts.json`; no "full clip" CTA (`test_ch4_cta.py`).
+- **ch4 UNPAUSED 2026-11-13** (K: "ลุย ch4"): a tension hook is **enforced** (`test_hook_concrete`)
+  for the long-form hook AND the Shorts pool; no "full clip" CTA (`test_ch4_cta.py`).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md` · daily logs.

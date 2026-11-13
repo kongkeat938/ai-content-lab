@@ -174,9 +174,25 @@ def main() -> int:
              "skips the trailer: " + ", ".join(no_trailer) + " -- drop the --only "
              "so the channel gets an unsubscribedTrailer")
 
+    # 7. The union merge driver must be registered by the push helper itself.
+    #    .gitattributes maps the append-only ledgers to `merge=unionjson`, but git
+    #    only uses a custom driver when it is registered in the repo's own config.
+    #    Measured 2026-11-13: ch4-longform committed its manifest, then
+    #    git_push_retry.sh rebased into a CONFLICT on content/bed_ledger_kongkeat.json
+    #    (the driver was registered in publish-shorts/remake-shorts only) and the
+    #    finished, already-released video was never queued. Register it in the one
+    #    helper every rail calls, so no caller can miss it.
+    helper = open(os.path.join(ROOT, "scripts", "git_push_retry.sh"),
+                  encoding="utf-8").read()
+    if "merge.unionjson.driver" not in helper:
+        fail("scripts/git_push_retry.sh does not register the unionjson merge "
+             "driver -- a rail that commits an append-only ledger will conflict on "
+             "a racing push and strand its output; add "
+             "`git config merge.unionjson.driver \"python3 scripts/git_union_merge.py %O %A %B\"`")
+
     print(f"OK: no conflict markers, all JSON parses, every pushing workflow "
           f"rebases, releases carry the receipt, hooks are fingerprinted, trailers "
-          f"are wired ({len(tracked_files())} files)")
+          f"are wired, the union driver is registered ({len(tracked_files())} files)")
     return 0
 
 
