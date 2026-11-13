@@ -107,8 +107,14 @@ if ! running "x11vnc -display $DISPLAY_NUM" || \
   sleep 3
 fi
 
-if ! running "websockify --web=/usr/share/novnc"; then
-  echo "starting websockify + noVNC on :$PORT"
+# noVNC's viewer drops ("จอหลุด", K 2026-11-12) when the websocket server is not the one
+# serving the port -- e.g. a stale websockify left from an earlier run. Decide by the
+# LISTENING socket, not by process count: websockify forks a child, so `pgrep` sees two
+# for a single healthy instance.
+if ! python3 -c "import socket,sys;s=socket.socket();s.settimeout(2);sys.exit(0 if s.connect_ex(('127.0.0.1',$PORT))==0 else 1)"; then
+  echo "port $PORT not served; (re)starting websockify + noVNC"
+  pkill -9 -f "websockify --web=/usr/share/novnc" 2>/dev/null
+  sleep 2
   setsid websockify --web=/usr/share/novnc "$PORT" localhost:5900 \
     >"$LOG_DIR/websockify.log" 2>&1 </dev/null &
   sleep 3
