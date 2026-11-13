@@ -22,11 +22,15 @@ set.
 """
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import yt_duration
+
 import argparse
 import json
-import os
 import re
-import sys
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -72,11 +76,7 @@ def _json_of(text: str) -> dict:
 
 
 def _seconds(iso: str) -> int:
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
-    if not m:
-        return 0
-    h, mi, s = (int(x) if x else 0 for x in m.groups())
-    return h * 3600 + mi * 60 + s
+    return yt_duration.seconds(iso)
 
 
 def ask_gemini(prompt: str) -> dict:

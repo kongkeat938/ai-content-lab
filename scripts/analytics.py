@@ -17,9 +17,14 @@ channel tokens.
 """
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import yt_duration
+
 import argparse
 import json
-import os
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -91,7 +96,6 @@ def titles(token: str, ids: list[str]) -> dict:
 
 def durations(token: str, ids: list[str]) -> dict:
     """Map video id -> length in seconds, from the Data API's ISO-8601 duration."""
-    import re as _re
     out = {}
     for i in range(0, len(ids), 50):
         req = urllib.request.Request(
@@ -99,10 +103,8 @@ def durations(token: str, ids: list[str]) -> dict:
             + ",".join(ids[i:i + 50]), headers={"Authorization": f"Bearer {token}"})
         with urllib.request.urlopen(req, timeout=30) as fh:
             for it in json.load(fh).get("items", []):
-                m = _re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?",
-                              it["contentDetails"]["duration"])
-                h, mi, s = (int(x) if x else 0 for x in m.groups())
-                out[it["id"]] = h * 3600 + mi * 60 + s
+                out[it["id"]] = yt_duration.seconds(
+                    it["contentDetails"]["duration"])
     return out
 
 

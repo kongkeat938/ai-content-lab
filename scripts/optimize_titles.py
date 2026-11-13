@@ -22,11 +22,15 @@ against that baseline -- keep the change if views-per-day rises, revert if not.
 """
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import yt_duration
+
 import argparse
 import json
-import os
 import re
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -183,11 +187,7 @@ def fetch(name: str, token: str, limit: int, ids: list[str],
 
 
 def _seconds(iso: str) -> int:
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
-    if not m:
-        return 0
-    h, mi, s = (int(x) if x else 0 for x in m.groups())
-    return h * 3600 + mi * 60 + s
+    return yt_duration.seconds(iso)
 
 
 def only_recorded(vids: list[dict], recorded: set, allow_unrecorded: bool = False) -> list[dict]:

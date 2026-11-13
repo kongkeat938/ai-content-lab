@@ -19,11 +19,15 @@ videos.update costs 50 quota units; the 10,000-unit day allows 200 updates.
 """
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import yt_duration
+
 import argparse
 import json
-import os
 import re
-import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -68,9 +72,7 @@ def api(path: str, token: str, method: str = "GET", body: dict | None = None) ->
 
 
 def seconds(iso: str) -> int:
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso)
-    h, mn, s = (int(x or 0) for x in m.groups())
-    return h * 3600 + mn * 60 + s
+    return yt_duration.seconds(iso)
 
 
 def main() -> int:

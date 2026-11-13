@@ -20,11 +20,15 @@ this only touches clips that are actually missing a door.
 """
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import yt_duration
+
 import argparse
 import json
-import os
 import re
-import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -71,9 +75,7 @@ def yt_for(slug: str):
 
 
 def secs(iso: str) -> int:
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
-    h, mn, s = (int(x or 0) for x in m.groups())
-    return h * 3600 + mn * 60 + s
+    return yt_duration.seconds(iso)
 
 
 def uploads(yt) -> list[dict]:
