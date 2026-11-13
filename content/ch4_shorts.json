@@ -348,6 +348,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "81": {
+      "video_id": "Q9G8RWvF64M",
+      "url": "https://youtu.be/Q9G8RWvF64M",
+      "title": "เสียงหัวเราะกลางดึกของลูกและพ่อซ่อนความเสียใจอะไรไว้ #Shorts",
+      "posted_at": "2026-11-13T15:31:41+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
