@@ -40,6 +40,9 @@ jobs:
           YT_CLIENT_SECRET_VALUE: ${{ secrets.YT_CLIENT_SECRET }}
           YT_ALT_CLIENT_ID_VALUE: ${{ secrets.YT_ALT_CLIENT_ID }}
           YT_ALT_CLIENT_SECRET_VALUE: ${{ secrets.YT_ALT_CLIENT_SECRET }}
+          YT_CH1_ALT_REFRESH_TOKEN_VALUE: ${{ secrets.YT_CH1_ALT_REFRESH_TOKEN }}
+          YT_CH2_ALT_REFRESH_TOKEN_VALUE: ${{ secrets.YT_CH2_ALT_REFRESH_TOKEN }}
+          YT_CH4_ALT_REFRESH_TOKEN_VALUE: ${{ secrets.YT_CH4_ALT_REFRESH_TOKEN }}
           OWNER_LOGIN_VALUE: ${{ secrets.OWNER_LOGIN_PASSWORDS }}
         run: |
           pip install --quiet cryptography
@@ -56,6 +59,9 @@ jobs:
               "YT_CLIENT_SECRET": os.environ.get("YT_CLIENT_SECRET_VALUE", ""),
               "YT_ALT_CLIENT_ID": os.environ.get("YT_ALT_CLIENT_ID_VALUE", ""),
               "YT_ALT_CLIENT_SECRET": os.environ.get("YT_ALT_CLIENT_SECRET_VALUE", ""),
+              "YT_CH1_ALT_REFRESH_TOKEN": os.environ.get("YT_CH1_ALT_REFRESH_TOKEN_VALUE", ""),
+              "YT_CH2_ALT_REFRESH_TOKEN": os.environ.get("YT_CH2_ALT_REFRESH_TOKEN_VALUE", ""),
+              "YT_CH4_ALT_REFRESH_TOKEN": os.environ.get("YT_CH4_ALT_REFRESH_TOKEN_VALUE", ""),
               "OWNER_LOGIN_PASSWORDS": os.environ.get("OWNER_LOGIN_VALUE", ""),
           }
           value = table.get(wanted, "")
