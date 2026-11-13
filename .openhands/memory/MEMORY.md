@@ -6,6 +6,13 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 **Project = `yt938-2`; read `docs/PROJECT-MAP.md` before creating anything. Search first —
 never make a second copy of a thing under a new name (K, 2026-11-13; `test_project_map.py`).**
 
+## 🪪 ak's own identity (K, 2026-11-13: "ak มีโปรไฟล์และเมลของตัวเอง")
+ak **owns a mailbox** — use it for a free signup, never K's. Vault key `ak.identity.mailbox`
+(`scripts/ak_mail.py new|show|inbox|read`); recorded in `docs/AK-IDENTITY.md`
+(`test_ak_identity.py`). Rules: **ak never signs up as K**; a service demanding a phone number
+ak cannot own → **stop and ask K**. The old box died with PC1 because its note lived only in the
+`ax-workspace` repo — keep this copy current.
+
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count). Steer by long-form watch-hours/week +
   `retention@2min`, never raw views. **dharma = 96% of long-form watch time → concentrate there.**
