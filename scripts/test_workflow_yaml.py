@@ -9,10 +9,12 @@ WHOLE workflow: every run of ch4-longform.yml and publish-ch4.yml finished with
 was written silently killed both rails.
 
 A guard that can FAIL: it sweeps every workflow file (never a hardcoded set) and
-rejects a null-valued `schedule` (and a null `on`/`jobs`). A null `workflow_dispatch`
-or `push` is fine -- that is the normal spelling for "no inputs / no filters" -- so
-the guard deliberately does NOT flag those. Commenting the whole key out
-(`# schedule:`) is fine too; the key simply disappears.
+rejects a `schedule:` key whose block holds no list item (only comments/blank
+lines before the next key). Commenting the whole key out (`# schedule:`) is fine
+-- the key simply disappears.
+
+It parses by hand on purpose: requirements.txt does not pin PyYAML, so importing
+`yaml` would make this guard fail on a runner that lacks it.
 
     python3 scripts/test_workflow_yaml.py     # exit 0 = every workflow parses clean
 """
@@ -20,13 +22,51 @@ from __future__ import annotations
 
 import glob
 import os
+import re
 import sys
-
-import yaml
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 WORKFLOWS = os.path.join(ROOT, ".github", "workflows")
+
+SCHEDULE = re.compile(r"^(\s*)schedule\s*:\s*(#.*)?$")
+
+
+def _indent(line: str) -> int:
+    return len(line) - len(line.lstrip(" "))
+
+
+def check_schedule_block(name: str, text: str) -> list[str]:
+    """Return a problem if any `schedule:` block has no list item."""
+    problems: list[str] = []
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        m = SCHEDULE.match(line)
+        if not m:
+            continue
+        base = len(m.group(1))
+        has_item = False
+        for nxt in lines[i + 1:]:
+            if not nxt.strip() or nxt.lstrip().startswith("#"):
+                continue
+            # First real line after the key: it belongs to `schedule:` only if it
+            # is indented deeper than the key (a `- cron:` list item).
+            if _indent(nxt) > base and nxt.lstrip().startswith("-"):
+                has_item = True
+            break
+        if not has_item:
+            problems.append(
+                f"{name}:{i + 1}: `schedule:` has no cron entry (a comment-only "
+                "block parses as null and GitHub rejects the whole workflow) -- "
+                "comment out the `schedule:` key itself instead"
+            )
+    return problems
+
+
+def check_has_on(name: str, text: str) -> list[str]:
+    if re.search(r"(?m)^on\s*:", text) or re.search(r"""(?m)^['"]on['"]\s*:""", text):
+        return []
+    return [f"{name}: no top-level `on:` trigger -- GitHub rejects the workflow"]
 
 
 def main() -> int:
@@ -38,34 +78,9 @@ def main() -> int:
     problems: list[str] = []
     for path in files:
         name = os.path.relpath(path, ROOT)
-        try:
-            doc = yaml.safe_load(open(path, encoding="utf-8"))
-        except Exception as exc:  # noqa: BLE001 - report any parse error
-            problems.append(f"{name}: YAML will not parse: {exc}")
-            continue
-        if not isinstance(doc, dict):
-            problems.append(f"{name}: top level is not a mapping")
-            continue
-
-        # PyYAML turns the bare key `on` into the boolean True.
-        on = doc.get(True, doc.get("on"))
-        if on is None:
-            problems.append(f"{name}: no `on:` trigger -- GitHub rejects the workflow")
-        elif isinstance(on, dict):
-            # Only `schedule` is a hard error when null: a comment-only block there
-            # yields `schedule: null` and GitHub rejects the whole file (measured
-            # 2026-11-13). `workflow_dispatch: null` / `push: null` are the normal
-            # spelling for "no inputs / no filters" and must NOT be flagged.
-            if "schedule" in on and on["schedule"] is None:
-                problems.append(
-                    f"{name}: `on.schedule:` is null (a comment-only block) -- "
-                    "GitHub rejects the whole workflow; comment out the key "
-                    "itself instead"
-                )
-
-        for key in ("jobs",):
-            if key in doc and doc[key] is None:
-                problems.append(f"{name}: `{key}:` is null")
+        text = open(path, encoding="utf-8").read()
+        problems += check_has_on(name, text)
+        problems += check_schedule_block(name, text)
 
     if problems:
         print("malformed workflow(s):")
