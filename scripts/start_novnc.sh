@@ -36,6 +36,17 @@ fi
 PORT="${1:-12001}"
 DISPLAY_NUM=":99"
 SCREEN="1440x900x24"
+
+# The pod is recycled often, which wipes the apt packages this needs. Reinstall them
+# here so a start after a recycle does not fail with a black screen and no clue why.
+for bin in Xvfb x11vnc websockify chromium; do
+  command -v "$bin" >/dev/null 2>&1 || {
+    echo "installing $bin ..."
+    sudo apt-get update -qq >/dev/null 2>&1
+    sudo apt-get install -y -qq xvfb x11vnc websockify novnc chromium >/dev/null 2>&1
+    break
+  }
+done
 LOG_DIR="${HOME}/.novnc"
 VNC_PASS_FILE="${HOME}/.vnc/passwd"
 VNC_PASSWORD_FILE="${HOME}/.vnc/password"
