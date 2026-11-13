@@ -18,7 +18,7 @@ own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel (`a
   risks YouTube "repetitious content"; NEVER stitch high-view Shorts into a long-form (spam).
 - **The first 2 minutes is the binding constraint** (dharma 28.9%@2%, target ≥40%). **Fade-in 4s→1s**
   = **+12 dB** in the opening second — the hook is the lever.
-- **Watch-time/view rises with length:** 120-min ≈ **6.0 min/view** vs 17-min ≈ 4.6 — keep videos
+- **Watch-time/view rises with length:** 120-min ≈ **6.0** vs 17-min ≈ 4.6 min/view — keep videos
   long. **`content/PAUSED`** pauses a channel's rails (`test_paused_channel.py`).
 
 ## 🔑 Durable principles (K)
@@ -36,25 +36,26 @@ own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel (`a
   writer needs a guard; health thresholds must exceed the REAL cadence; every rail watched.
 
 ## 🧭 Traps still true (detail in `topics/05-durable-traps.md` + daily logs)
-- **Rogue upload stream (NOT ours):** clips no manifest names = leaked token; `rogue-guard` hides each; root = revoke + re-consent.
+- **Rogue stream (NOT ours):** clips no manifest names = leaked token; `rogue-guard` hides each; root = revoke + re-consent.
 - **A guard that only marks SUCCESS can't end a loop**; prefer private over delete. **A PUT to
   `brandingSettings.channel` REPLACES the object** → read, merge.
-- **`--minutes` is a FLOOR** (under-N set is heard twice). **`publish_at=slot` uploads PRIVATE**
-  (YouTube flips it public at the slot) — intended, not stranded.
 - **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**. A GITHUB_TOKEN push
   does NOT trigger a workflow → dispatch explicitly.
 - **Racing jobs lose records** → one concurrency group per channel + a union merge driver for
   append-only ledgers, REGISTERED in `git_push_retry.sh` (`test_push_retry_union.py`).
 - **Night rail:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long hook
   kills retention (cap 220); never downgrade a LIVE entry. **Content dir must be per-RUN
-  (`%G%V_r${GITHUB_RUN_NUMBER}`) and the learned theme must ROTATE, not always `themes[0]`** — else a
-  raised cadence is a no-op or repeats (`test_night_scripts.py`).
+  (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail (night + genx + ch4) and the learned theme
+  must ROTATE, not always `themes[0]`** — else a raised cadence is a no-op, repeats, or add/add
+  conflicts on the same weekly folder (`test_night_scripts.py`, `test_per_run_content_dir.py`).
+- **TTS voice fallback:** the alt Thai voice (VOICE_ALT `PremwadeeNeural`, the stalled-channel
+  probe) returns `NoAudioReceived` on EVERY retry for some texts while the house voice reads the
+  same text fine — a per-voice refusal, not a socket blip, so retrying the same voice never
+  recovers it. `speak()` falls back to VOICE (`test_tts_fallback.py`).
 - **Every new mechanism seeds a false alarm until the sweep learns it** (qa_gate graded 120-min B;
   counter_ledger read a dip as DOWN; health flagged paused rails).
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK** or the rail
   looks healthy and produces nothing (2026-11-13 ch4; `test_rail_channels.py`).
-- **Never hardcode the set a guard sweeps** (ch4 shipped with NO `pin_cta` because
-  `test_shorts_cta_comment` checked only dharma/genx): sweep `ps.CHANNELS`.
 - **Audit was blind to a take-down** (diffed only channel→manifest → `find_removed`). **Mail is on
   the cloud, not PC1** (dead); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 UNPAUSED 2026-11-13** (K: "ลุย ch4"): a tension hook is **enforced** (`test_hook_concrete`)
@@ -66,11 +67,10 @@ own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel (`a
   **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account — genx `kongkeat.938`, dharma `farmmer.938`, ch4
   `kongkeat.p3`; `test_channel_accounts.py`. Invite = Studio → สิทธิ์ → เชิญ.
-- **Delegation:** genx+dharma → Manager `aerismusic8@gmail.com`; `delegate_ready.py` needs a token +
-  probe upload (2026-11-13 LIMITED: `uploadLimitExceeded` API-only, web Studio works); kongkeat-story
-  BLOCKED. Login `pod_account_login.py --from-secret`. → `topics/05`.
-- **Inviting needs the OWNER's password** (K): **บันทึก** → Google "ยืนยันว่าเป็นคุณ"; a pending row
-  **vanishes** on reload if the save failed → verify by reloading. Studio: CDP mouse events work.
+- **Delegation:** genx+dharma → Manager `aerismusic8@gmail.com`; kongkeat-story BLOCKED (2026-11-13
+  `uploadLimitExceeded` API-only; web Studio works). → `topics/05`.
+- **Inviting needs the OWNER's password** (K): save → Google "ยืนยันว่าเป็นคุณ"; a pending row
+  **vanishes** on reload if the save failed → verify by reloading.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`; suite = run every `scripts/test_*.py`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); text must fit its frame;
