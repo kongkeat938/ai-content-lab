@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "VmcdGqL40oQfTsqUyz9hTTftzL4",
+ "id": "vBEB2dIe7ls",
+ "snippet": {
+  "publishedAt": "2026-11-11T13:21:08Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "จดหมายในกล่องไม้เก่า | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "บ้านเคยอบอุ่นด้วยเสียงหัวเราะของสองพี่น้อง\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ครอบครัว #การจากลา #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/vBEB2dIe7ls/default.jpg?sqp=CKzU29cG&rs=AOn4CLDEHw_hdnLNekKlOtJSAf2v5SIeFQ",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/vBEB2dIe7ls/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBSE79rL3OhAXbzEOAXheGThW1E-g",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/vBEB2dIe7ls/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAHaVC_eTxsWkzZgDTuAhqfCHkKwQ",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/vBEB2dIe7ls/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLD5cGml-gbLX-BH1ZQm1l7noH6ZxQ",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/vBEB2dIe7ls/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCt0GRtz9JPcxSt56bTEO702EK4Uw",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การจากลา",
+   "การให้อภัย",
+   "ครอบครัว",
+   "ความรัก",
+   "เรื่องเล่าสะเทือนใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "จดหมายในกล่องไม้เก่า | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "บ้านเคยอบอุ่นด้วยเสียงหัวเราะของสองพี่น้อง\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าสะเทือนใจ #ครอบครัว #การจากลา #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

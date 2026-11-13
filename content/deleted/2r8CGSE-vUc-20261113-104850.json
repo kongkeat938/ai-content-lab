@@ -1,0 +1,82 @@
+{
+ "kind": "youtube#video",
+ "etag": "hT9Mv2D7FZj2RMhDxlZ3SY2y0MA",
+ "id": "2r8CGSE-vUc",
+ "snippet": {
+  "publishedAt": "2026-10-25T02:13:29Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "มัทนะพาธา นิทานธรรมะสอนใจเรื่องความรักและการปล่อยวาง",
+  "description": "ฟังธรรมะสอนใจเรื่องความรักและการปล่อยวางจากวรรณคดีไทยอันทรงคุณค่า 'มัทนะพาธา' ที่จะช่วยให้คุณเข้าใจสัจธรรมของชีวิต ปล่อยวางความทุกข์ และนำพาจิตใจให้สงบสุขก่อนนอน หลับสบายตลอดคืน #มัทนะพาธา #นิทานธรรมะ #ธรรมะก่อนนอน",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/2r8CGSE-vUc/default.jpg?sqp=CKzU29cG&rs=AOn4CLAnmQ-DiQbR5lbvu8A4vGtSXVs4DA",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/2r8CGSE-vUc/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBVjWjFJwuEdrvvb86WIQ1e3KRIAg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/2r8CGSE-vUc/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDlsR90hnsFvlfc1NY1_ZWa18qgzg",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/2r8CGSE-vUc/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLAQWgfStg36ABRuqxXwrqSZE4lHaQ",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/2r8CGSE-vUc/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDYChkedMfYUBeFxoaKWiNvw0Wj9A",
+    "width": 1280,
+    "height": 720
+   },
+   "fhd": {
+    "url": "https://i9.ytimg.com/vi/2r8CGSE-vUc/fhddefault.jpg?sqp=CKzU29cG&rs=AOn4CLCC09UdQku3yUMGp7D3ZVQiHv-liw",
+    "width": 1920,
+    "height": 1080
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "tags": [
+   "การปล่อยวางความทุกข์",
+   "ข้อคิดความรัก",
+   "ธรรมะก่อนนอน",
+   "ธรรมะคลายเครียด",
+   "ธรรมะสอนชีวิต",
+   "ธรรมะสอนใจเรื่องความรัก",
+   "ธรรมะใจสงบ",
+   "นิทานคติสอนใจ",
+   "นิทานธรรมะ",
+   "ฟังธรรมะก่อนนอน",
+   "มัทนะพาธา",
+   "เรื่องเล่าธรรมะ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "มัทนะพาธา นิทานธรรมะสอนใจเรื่องความรักและการปล่อยวาง",
+   "description": "ฟังธรรมะสอนใจเรื่องความรักและการปล่อยวางจากวรรณคดีไทยอันทรงคุณค่า 'มัทนะพาธา' ที่จะช่วยให้คุณเข้าใจสัจธรรมของชีวิต ปล่อยวางความทุกข์ และนำพาจิตใจให้สงบสุขก่อนนอน หลับสบายตลอดคืน #มัทนะพาธา #นิทานธรรมะ #ธรรมะก่อนนอน"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": true,
+  "publicStatsViewable": true,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "3",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

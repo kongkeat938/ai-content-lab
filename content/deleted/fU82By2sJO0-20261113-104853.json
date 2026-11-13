@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "Ty0Ke-E04JR3KQvsZ4BgHUK59xI",
+ "id": "fU82By2sJO0",
+ "snippet": {
+  "publishedAt": "2026-11-13T08:17:57Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "ชีวิตครึ่งทางที่เริ่มเข้าใจความเงียบ #Shorts",
+  "description": "ผ่านร้อนผ่านหนาวมาจนถึงวันที่แรงกายเริ่มถดถอย\n\nฟังข้อคิดชีวิตแบบเต็ม ๆ ได้ในช่อง ตาต้า GenX Shop\n#วัยกลางคน #กำลังใจ #เหนื่อยล้า #ชีวิตทำงาน #Shorts\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน ฟังสบายทุกคืน\nhttps://www.youtube.com/@farmmer-n9t",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/fU82By2sJO0/default.jpg?sqp=CKzU29cG&rs=AOn4CLATPIsnLfdUXPkj8UgX1tTNLQUukQ",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/fU82By2sJO0/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDqYnhVzbr9axjSoPIg0RLtmByUSA",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/fU82By2sJO0/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBEAcUlgyL5aiOLt0cwXbvQ_N0pfA",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/fU82By2sJO0/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLBJhWbs9JBy5FK0W6jeq6YeCBwGcw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/fU82By2sJO0/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAQerfXDf1C8KlBJweOW71-Z6ahxg",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "tags": [
+   "กำลังใจ",
+   "ชีวิตทำงาน",
+   "พักผ่อน",
+   "วัยกลางคน",
+   "เหนื่อยล้า"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "ชีวิตครึ่งทางที่เริ่มเข้าใจความเงียบ #Shorts",
+   "description": "ผ่านร้อนผ่านหนาวมาจนถึงวันที่แรงกายเริ่มถดถอย\n\nฟังข้อคิดชีวิตแบบเต็ม ๆ ได้ในช่อง ตาต้า GenX Shop\n#วัยกลางคน #กำลังใจ #เหนื่อยล้า #ชีวิตทำงาน #Shorts\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน ฟังสบายทุกคืน\nhttps://www.youtube.com/@farmmer-n9t"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": true,
+  "publicStatsViewable": true,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "9",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

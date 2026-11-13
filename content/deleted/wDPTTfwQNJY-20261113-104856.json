@@ -1,0 +1,68 @@
+{
+ "kind": "youtube#video",
+ "etag": "4RAy-b1YDM-qc-n9Qn7FpKQ4FDM",
+ "id": "wDPTTfwQNJY",
+ "snippet": {
+  "publishedAt": "2026-11-10T07:22:32Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "เป็นคนธรรมดา ไม่ต้องพิสูจน์อะไรกับใคร #Shorts",
+  "description": "",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/wDPTTfwQNJY/default.jpg?sqp=CKzU29cG&rs=AOn4CLCyhWtxHk16PHQjZ6WG9wYbPtYCVg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/wDPTTfwQNJY/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLC9AuazvLOAYRqoVBri0Wpm4VppRQ",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/wDPTTfwQNJY/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLA8N3eFe00uKlw-iWaoVt_p76OG5Q",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/wDPTTfwQNJY/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLBsr6erkcRvmmq0i6v08r5zyJWrgQ",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/wDPTTfwQNJY/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAn1-4EgBH97EHI3fYOpYJupBcsfA",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/wDPTTfwQNJY/sardefault.jpg?sqp=CKzU29cG&rs=AOn4CLC1DpAJ_MJTqfEHtOXuS8hb5X-d_Q",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "categoryId": "22",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เป็นคนธรรมดา ไม่ต้องพิสูจน์อะไรกับใคร #Shorts",
+   "description": ""
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "1",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

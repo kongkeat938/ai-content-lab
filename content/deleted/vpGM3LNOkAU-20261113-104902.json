@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "YJMBEd6oeRkt4r5vuEjV7lrxJqo",
+ "id": "vpGM3LNOkAU",
+ "snippet": {
+  "publishedAt": "2026-11-12T08:20:45Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "เสื้อกันหนาวตัวสุดท้าย | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "ในตู้เสื้อผ้าเก่ามีกลิ่นอายของความทรงจำ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่า #ครอบครัว #ความรัก #การจากลา #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/vpGM3LNOkAU/default.jpg?sqp=CKzU29cG&rs=AOn4CLAGsA-HHBWbofJyOuqGhPcbfSotfQ",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/vpGM3LNOkAU/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAnJAOIPjaW_qYZhvk0T_dqmvlu_g",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/vpGM3LNOkAU/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLATQvlWFIL819J1enilWOmHk-h-GA",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/vpGM3LNOkAU/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLAdVva6rxemNGWA8zLmZBgJUMpc5Q",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/vpGM3LNOkAU/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAmVVq3_a9Fs_-3YZfc0fF1utmWGw",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การจากลา",
+   "ครอบครัว",
+   "ความรัก",
+   "เรื่องเล่า",
+   "ให้อภัย"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เสื้อกันหนาวตัวสุดท้าย | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "ในตู้เสื้อผ้าเก่ามีกลิ่นอายของความทรงจำ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่า #ครอบครัว #ความรัก #การจากลา #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "1",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

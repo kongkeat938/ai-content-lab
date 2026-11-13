@@ -1,0 +1,68 @@
+{
+ "kind": "youtube#video",
+ "etag": "Q6uTzoyq2ZjrlnxQlWfFKXPfv6k",
+ "id": "l-YGxXly_fE",
+ "snippet": {
+  "publishedAt": "2026-11-11T08:20:44Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "วิธีปล่อยวางความคิดก่อนนอน ให้ใจสงบ #Shorts",
+  "description": "ฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLBpZCGnd7Q5Y\n\n#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/l-YGxXly_fE/default.jpg?sqp=CKzU29cG&rs=AOn4CLDBwnd5je5Db_-b_17lBszizDbZGw",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/l-YGxXly_fE/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCIRk7Ik1sAt6ouw4zf-j_lBI6psw",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/l-YGxXly_fE/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAgVf5Ny5e63Si3ljIIbYepIgf90A",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/l-YGxXly_fE/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDIywKJqx4VU7Pk6Hpcaogpu7ElOw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/l-YGxXly_fE/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBA3Dss6qnQbBlvs6fbbnMJIY3jsQ",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/l-YGxXly_fE/sardefault.jpg?sqp=CKzU29cG&rs=AOn4CLChiW53U8ZXZZ7ZUQ5db_hjQbb69w",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "วิธีปล่อยวางความคิดก่อนนอน ให้ใจสงบ #Shorts",
+   "description": "ฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLBpZCGnd7Q5Y\n\n#ธรรมะก่อนนอน #นอนไม่หลับ #ปล่อยวาง"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "95",
+  "likeCount": "3",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

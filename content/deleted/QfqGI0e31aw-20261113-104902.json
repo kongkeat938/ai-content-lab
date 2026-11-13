@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "xh2El734tqU8t1D5EoIoAhZjius",
+ "id": "QfqGI0e31aw",
+ "snippet": {
+  "publishedAt": "2026-11-11T22:20:50Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "จดหมายในลิ้นชักไม้ | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "ในห้องนอนที่คุ้นเคย กลิ่นอายของพ่อยังคงอบอวลอยู่เสมอ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#ครอบครัว #ความรัก #การจากลา #ให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/QfqGI0e31aw/default.jpg?sqp=CKzU29cG&rs=AOn4CLCsL_oHaerRc2nuBv3gRuhOpA_gVA",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/QfqGI0e31aw/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDfKLcO7aQPGiR7dv3ELBC0PUsZdA",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/QfqGI0e31aw/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLC8p2ROgxQAnzAjXhsEN_R-1fCp-g",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/QfqGI0e31aw/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLBdHb3MIAe44K7u4FjFFeLxW4Y2iQ",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/QfqGI0e31aw/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLCPCYHyzs5QVrdimdHXSsKB-fNVMg",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การจากลา",
+   "ครอบครัว",
+   "ความรัก",
+   "เรื่องเล่าเตือนใจ",
+   "ให้อภัย"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "จดหมายในลิ้นชักไม้ | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "ในห้องนอนที่คุ้นเคย กลิ่นอายของพ่อยังคงอบอวลอยู่เสมอ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#ครอบครัว #ความรัก #การจากลา #ให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

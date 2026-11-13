@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "bbbK1vkRi4UkL0V3z9ugz-Ps-1o",
+ "id": "c-EE1dqjBFE",
+ "snippet": {
+  "publishedAt": "2026-11-12T13:20:59Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "เมื่อวันเวลาสอนให้เราเป็นแค่คนธรรมดา #Shorts",
+  "description": "เส้นทางที่ผ่านมาสอนให้เรารู้ว่าไม่ต้องสมบูรณ์แบบในทุกเรื่อง\n\nฟังข้อคิดชีวิตแบบเต็ม ๆ ได้ในช่อง ตาต้า GenX Shop\n#วัยกลางคน #กำลังใจ #ฮีลใจ #ชีวิตเรียบง่าย #Shorts\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน ฟังสบายทุกคืน\nhttps://www.youtube.com/@farmmer-n9t",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/c-EE1dqjBFE/default.jpg?sqp=CKzU29cG&rs=AOn4CLBCYxgDPC9WC2baKJXtXPgw1foUvg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/c-EE1dqjBFE/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDDncB-xWcHo3gewhrlRLCJMSE6gg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/c-EE1dqjBFE/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLAwnuPCDCXJtRlIKNHO-DCYJxOyZw",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/c-EE1dqjBFE/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLDhDh6EBNEaaLIiXCh0oDrnurQ8jA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/c-EE1dqjBFE/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLANJfgDa-9dIFG1bKcPxMCK1K4x_Q",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "tags": [
+   "กำลังใจ",
+   "ความสุข",
+   "ชีวิตเรียบง่าย",
+   "วัยกลางคน",
+   "ฮีลใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เมื่อวันเวลาสอนให้เราเป็นแค่คนธรรมดา #Shorts",
+   "description": "เส้นทางที่ผ่านมาสอนให้เรารู้ว่าไม่ต้องสมบูรณ์แบบในทุกเรื่อง\n\nฟังข้อคิดชีวิตแบบเต็ม ๆ ได้ในช่อง ตาต้า GenX Shop\n#วัยกลางคน #กำลังใจ #ฮีลใจ #ชีวิตเรียบง่าย #Shorts\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน ฟังสบายทุกคืน\nhttps://www.youtube.com/@farmmer-n9t"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "3",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

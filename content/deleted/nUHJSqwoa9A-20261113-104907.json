@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "9NtCGbVumReKmUZ3YKmiMP8sst4",
+ "id": "nUHJSqwoa9A",
+ "snippet": {
+  "publishedAt": "2026-11-09T13:21:32Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "กรอบหน้าต่างบานเก่า | เรื่องเล่าการ์ตูน #Shorts",
+  "description": "บานหน้าต่างไม้เก่าเปิดรับลมหนาวที่พัดผ่านมาในยามเช้า\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าอบอุ่น #ความผูกพัน #ครอบครัว #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/nUHJSqwoa9A/default.jpg?sqp=CKzU29cG&rs=AOn4CLB-4v8zug2Yld3NzXtJKzFkVOEorg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/nUHJSqwoa9A/mqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLBc0e4Cp_CItpCqcYlxApg5ZYU5UA",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/nUHJSqwoa9A/hqdefault.jpg?sqp=CKzU29cG&rs=AOn4CLA0teDB4bUwgN4xLBTUQZXBoUvfgg",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/nUHJSqwoa9A/sddefault.jpg?sqp=CKzU29cG&rs=AOn4CLCkUF7vKhhn7PRL_upqG1MvtymkAA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/nUHJSqwoa9A/maxresdefault.jpg?sqp=CKzU29cG&rs=AOn4CLDi9F7FSEt9u7njcnBlJQ72f6WoNQ",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "การให้อภัย",
+   "ครอบครัว",
+   "ความผูกพัน",
+   "คุณค่าชีวิต",
+   "เรื่องเล่าอบอุ่น"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "กรอบหน้าต่างบานเก่า | เรื่องเล่าการ์ตูน #Shorts",
+   "description": "บานหน้าต่างไม้เก่าเปิดรับลมหนาวที่พัดผ่านมาในยามเช้า\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#เรื่องเล่าอบอุ่น #ความผูกพัน #ครอบครัว #การให้อภัย #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "1",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}
