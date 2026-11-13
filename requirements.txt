@@ -11,3 +11,8 @@ mcp>=1.0
 # Optional: only needed to publish to YouTube (yt_auth.py, publish_youtube.py).
 google-api-python-client>=2.100
 google-auth-oauthlib>=1.2
+
+# The pod browser is driven over CDP (pod_account_login.py, gmail_app_password.py,
+# remote_browser.py). A recycled pod loses this, and the helpers then die with
+# "need websocket-client" -- so it belongs here, not in a one-off pip install.
+websocket-client>=1.7
