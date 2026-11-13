@@ -44,6 +44,8 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - Measured history: `docs/STATUS-<date>.md`, `docs/counters.jsonl` (the counter), `docs/HEALTH.md`.
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
+- **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
+  packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)

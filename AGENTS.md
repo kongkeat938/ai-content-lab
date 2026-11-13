@@ -52,6 +52,12 @@ The old one died with PC1 because the note lived only in the `ax-workspace` repo
 current. Rules: **ak never signs up as K**, and if a service demands a phone number ak cannot own,
 **stop and ask K** (guard `scripts/test_ak_identity.py`).
 
+## ak's team of workers (K, 2026-11-13)
+ak has a **team that does the work, not just advice** (`scripts/team.py`): `researcher`,
+`scriptwriter`, `packager`, `critic`, `analyst` (fast) + `engineer` (OpenHands Cloud).
+Hand a worker a task and use the artifact: `python3 scripts/team.py run packager "..."`.
+The decision panel stays separate (`advise.py`, >=5 voices). Guard `scripts/test_team.py`.
+
 ## Decide without waiting (K, 2026-11-11)
 Take a decision to the **panel**, not to K: presence of mind → order the events → find the
 causes → weigh pros/cons and the effect on the goal → panel (`scripts/advise.py`) → choose the
