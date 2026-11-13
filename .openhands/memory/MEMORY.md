@@ -7,12 +7,12 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts do not count). Steer by long-form
   watch-hours/week + `retention@2min`, never raw views. **dharma = 96% of long-form watch
-  time → concentrate there.** Review 2026-11-16.
-- **The first 2 minutes is the binding constraint, not volume** (dharma 102%@1% → **28.9%@2%**,
-  target ≥40%). **Fade-in 4s→1s** = **+12 dB** in the opening second — the hook is the lever.
-- **Watch-time/view rises with length:** dharma's 120-min ≈ **6.0 min/view** vs its 17-min ≈ 4.6 —
-  keep videos long; the completion % is a distraction. **kongkeat PAUSED** via `content/PAUSED`
-  → rails skipped; `test_paused_channel.py`; reverse = empty the file.
+  time → concentrate there.**
+- **The first 2 minutes is the binding constraint, not volume** (dharma 28.9%@2%, target ≥40%).
+  **Fade-in 4s→1s** = **+12 dB** in the opening second — the hook is the lever.
+- **Watch-time/view rises with length:** dharma 120-min ≈ **6.0 min/view** vs 17-min ≈ 4.6 — keep
+  videos long; completion % is a distraction. **kongkeat PAUSED** via `content/PAUSED` →
+  rails skipped; `test_paused_channel.py`.
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
@@ -24,16 +24,15 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel `advise.py`
   (≥5, multi-vendor). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
 - **A guard must be able to FAIL;** never hardcode the set a guard sweeps; a generator that can
-  drop a piece must FAIL. `.get()+continue` on a config key is a silent killer — make it loud.
+  drop a piece must FAIL. `.get()+continue` on a config key is a silent killer.
 - **Repo hygiene** (`test_repo_hygiene.py`): pushing rails run `git pull --rebase`; a shared-ledger
   writer needs a guard; health thresholds must exceed the REAL cadence; every foreman rail watched.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
-  `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. Auto: `rogue-guard` hides a
-  live clip within the hour (30-min, foreman+health), `private-delete` deletes the parked
-  **private** set after the reset (never unlisted). Root = the token: revoke + re-consent —
-  **Option B (2026-11-13) lets the team do it with no K** (`revoke_token.py`).
+  `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. `rogue-guard` hides each live
+  one (private, reversible); `private-delete` clears the parked set after the reset. Root = the
+  token: revoke + re-consent — **Option B (2026-11-13) lets the team do it with no K**.
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day). Prefer **reversible (private)** over delete; mark the skip path (`delete_video.py
   --unpublish`).
@@ -47,31 +46,34 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 - **Night rail:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long hook
   kills retention (cap 220); never downgrade a LIVE entry (`--forget`). `test_night_*.py`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate
-  graded 120-min files B; counter_ledger read a same-day dip as DOWN (skip same-UTC-day); health
-  flagged paused rails (now reads `PAUSED`).
+  graded 120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
+- **We were blind to a YouTube take-down** (2026-11-13): the audit only diffed
+  channel→manifest, so a REMOVED video vanished silently — genx carried an active
+  community-guidelines **warning** (content removed; expires 1 Feb) while a doc claimed "no
+  strike". `find_removed` now diffs manifest→uploads (`test_audit_removed`). Panel 3/3: do
+  NOT pause genx (fastest grower, +183 subs/28 d); keep clips low-risk.
 - **Mail on the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`CONSULT-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md`
-  · logs `.openhands/memory/2026-11-DD.md`.
+  · logs `2026-11-DD.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`. Pages:
   kongkeat938.github.io/ai-content-lab/.
-- **Accounts (K, 2026-11-12):** 1 channel = 1 Google account — genx `kongkeat.938`, dharma
-  `farmmer.938`, kongkeat-story `kongkeat.p3` (each its own 19/day pool); `test_channel_accounts.py`
-  locks the map. **genx is a DIRECT channel, not a Brand Account** → the Manager invite is
-  **Studio → การตั้งค่า → สิทธิ์**. The reauth "ยืนยันว่าเป็นคุณ" wall needs K on the VNC screen once.
-- **Delegation (Option B, 2026-11-13):** genx has a second account `aerismusic8@gmail.com` as
-  **Manager** + a delegated token (`YT_CH1_ALT_REFRESH_TOKEN`); `delegate_ready.py` = `READY genx`.
-  **A refresh token is bound to the client that minted it:** the manager's is on client **B**
-  (`…-7g6258s…`, env `YT_ALT_CLIENT_ID/SECRET`) — 200s there, `401 unauthorized_client` on the
-  primary client **A** (`…-39ngdj…`); check each alt token with its own client.
+- **Accounts (2026-11-12):** 1 channel = 1 Google account — genx `kongkeat.938`, dharma
+  `farmmer.938`, kongkeat-story `kongkeat.p3` (own 19/day pool each); `test_channel_accounts.py`.
+  Manager invite = **Studio → การตั้งค่า → สิทธิ์**; the reauth wall needs K on VNC once.
+- **Delegation (Option B, 2026-11-13):** genx = `aerismusic8@gmail.com` **Manager** +
+  `YT_CH1_ALT_REFRESH_TOKEN`; `delegate_ready.py` = `READY genx`. **A refresh token is bound to the
+  client that minted it:** alt is on client **B** (`YT_ALT_CLIENT_ID/SECRET`) — 200s there, `401
+  unauthorized_client` on the primary; check each alt token with its own client. dharma/ch4 need
+  their OWNER to invite (K on VNC).
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
-  `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
+  `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
 - **VNC remote-in (2026-11-12):** ak drives headful chromium over CDP :9222; K types passwords
-  on noVNC (`start_novnc.sh`). Thai fonts (`fonts-thai-tlwg`) + `--lang=th-TH` or text is boxes.
+  on noVNC (`start_novnc.sh`). Thai fonts (`fonts-thai-tlwg`) or text is boxes.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl --slug <ch>`). **Text must fit
   its frame** (`test_short_caption`, `test_poster_fit`). Conversion lever = pinned CTA comment
   (`test_shorts_cta_comment`).
