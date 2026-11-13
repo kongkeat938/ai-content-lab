@@ -49,6 +49,11 @@ def main() -> int:
     if f'"{secret}":' not in wf:
         fail(f"cred-transport.yml does not add {secret} to its plaintext table")
 
+    req = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+    if "websocket-client" not in req:
+        fail("requirements.txt does not pin websocket-client; a recycled pod loses "
+             "it and every CDP helper dies with 'need websocket-client'")
+
     print(f"OK: pod_account_login uses AddSession and reads {secret}, which "
           "cred-transport wraps")
     return 0
