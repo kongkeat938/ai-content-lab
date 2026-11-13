@@ -6,12 +6,9 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 **Project = `yt938-2`; read `docs/PROJECT-MAP.md` before creating anything. Search first —
 never make a second copy of a thing under a new name (K, 2026-11-13; `test_project_map.py`).**
 
-## 🪪 ak's own identity (K, 2026-11-13: "ak มีโปรไฟล์และเมลของตัวเอง")
-ak **owns a mailbox** — use it for a free signup, never K's. Vault key `ak.identity.mailbox`
-(`scripts/ak_mail.py new|show|inbox|read`); recorded in `docs/AK-IDENTITY.md`
-(`test_ak_identity.py`). Rules: **ak never signs up as K**; a service demanding a phone number
-ak cannot own → **stop and ask K**. The old box died with PC1 because its note lived only in the
-`ax-workspace` repo — keep this copy current.
+## 🪪 ak's own identity (K, 2026-11-13)
+ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + vault `ak.identity.mailbox`
+(`docs/AK-IDENTITY.md`; `test_ak_identity.py`). **Never sign up as K**; a phone ak can't own → **ask K**.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count). Steer by long-form watch-hours/week +
@@ -53,8 +50,8 @@ ak cannot own → **stop and ask K**. The old box died with PC1 because its note
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate graded
   120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
 - **We were blind to a take-down** (2026-11-13): the audit diffed only channel→manifest, so a REMOVED
-  video vanished silently. `find_removed` diffs manifest→uploads (`test_audit_removed`). **Mail is on
-  the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
+  video vanished silently → `find_removed` (`test_audit_removed`). **Mail is on the cloud, not PC1**
+  (dead); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
