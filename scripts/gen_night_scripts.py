@@ -70,6 +70,28 @@ def learned(channel: str) -> dict:
         return {}
 
 
+def theme_for(themes: list[str], used: int) -> str:
+    """The theme for the (used+1)-th built set: rotate, never repeat in a row."""
+    return themes[used % len(themes)]
+
+
+def next_theme(themes: list[str]) -> str:
+    """Rotate through the learned themes instead of always taking themes[0].
+
+    Measured 2026-11-13: `--from-insights` always picked themes[0], so raising the
+    long-form cadence would have shipped the same theme on every run -- the exact
+    "repetitious content" shape the advisor panel warned about. The number of
+    already-built auto sets (content/night_auto_*) is a run counter, so each new
+    run advances to the next theme and the cycle only repeats once every len(themes)
+    sets."""
+    content = os.path.join(ROOT, "content")
+    used = 0
+    if os.path.isdir(content):
+        used = sum(1 for d in os.listdir(content)
+                   if d.startswith("night_auto_") and os.path.isdir(os.path.join(content, d)))
+    return theme_for(themes, used)
+
+
 def prompt_for(theme: str, angle: str, want: str, rules: list[str] | None = None) -> str:
     rule_block = ""
     if rules:
@@ -152,7 +174,7 @@ def main() -> int:
     if a.from_insights and not a.theme:
         themes = [t for t in ins.get("themes", []) if isinstance(t, str)]
         if themes:
-            a.theme = themes[0]
+            a.theme = next_theme(themes)
             print(f"theme learned from {a.channel} analytics: {a.theme}")
     if not a.theme:
         raise SystemExit("no theme: pass --theme, or --from-insights with a learned theme")

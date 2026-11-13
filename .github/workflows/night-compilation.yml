@@ -33,9 +33,14 @@ on:
         description: "Real music bed to loop under the voice (e.g. assets/music/bed-middleway.mp3); blank = synthesised fallback"
         default: ""
   schedule:
-    # Weekly, Monday 02:17 UTC. A 2-hour file is not a daily post, and the
-    # content set grows between runs.
+    # Twice a week: Monday 02:17 and Thursday 02:17 UTC. Measured 2026-11-13:
+    # dharma earns 61 YPP-qualifying watch-hours / 28 days but needs 4,000 in 365d
+    # (~5x), and the advisor panel named long-form cadence the binding constraint.
+    # The panel also said to step up, not jump: 1 -> 2/week first, with each video
+    # genuinely different (rotated theme, fresh content set, different bed). A
+    # 2-hour file is not a daily post; two a week is the measured next step.
     - cron: "17 2 * * 1"
+    - cron: "17 2 * * 4"
 
 permissions:
   contents: write
@@ -76,12 +81,14 @@ jobs:
           GEN="${{ inputs.generate }}"
           if [ -z "$CONTENT" ]; then
             if [ "$GEN" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
-              # One fresh set a week keeps the rail fed. The directory is dated
-              # per ISO week and reused if it already has pieces, so a re-run of
-              # the same week reuses the committed set instead of asking Gemini
-              # for a different one -- which would fingerprint differently and
-              # publish a near-duplicate.
-              CONTENT="content/night_auto_$(date -u +%G%V)"
+              # One fresh set PER RUN, not per ISO week. Measured 2026-11-13: the
+              # directory was dated `%G%V`, so a second run in the same week reused
+              # the committed set and produced nothing new -- the rail could build
+              # only one set a week, which capped the long-form cadence (the binding
+              # constraint on YPP watch-hours). The run number is stable across a
+              # re-run of the same run (a retry reuses its set and cannot publish a
+              # near-duplicate) and distinct across runs.
+              CONTENT="content/night_auto_$(date -u +%G%V)_r${GITHUB_RUN_NUMBER:-0}"
               if ls "$CONTENT"/*.txt >/dev/null 2>&1; then
                 echo "$CONTENT already has pieces; reusing it"
               else
@@ -91,8 +98,9 @@ jobs:
                         "ปล่อยวางความกลัวอนาคต" "ความสงบในความไม่แน่นอน")
                 wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
                 # Prefer the theme the analytics loop learned from the long-form
-                # videos that actually earned YPP watch-hours; fall back to the
-                # fixed weekly list when no learned theme exists yet.
+                # videos that actually earned YPP watch-hours (rotated per run, so
+                # a raised cadence does not ship one theme repeatedly); fall back
+                # to the fixed weekly list when no learned theme exists yet.
                 python3 scripts/gen_night_scripts.py \
                   --out "$CONTENT" --count 8 --channel dharma --from-insights \
                   || python3 scripts/gen_night_scripts.py \

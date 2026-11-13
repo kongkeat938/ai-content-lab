@@ -73,6 +73,19 @@ def main() -> int:
         wrote = os.path.isdir(out) and bool(os.listdir(out))
         check("no partial set was written to disk", not wrote)
 
+    # Rotating theme: a raised cadence must not ship one theme repeatedly.
+    # Measured 2026-11-13: --from-insights always took themes[0], so every run at
+    # a higher cadence would have produced the same theme -- the "repetitious
+    # content" shape the advisor panel warned about. next_theme must advance with
+    # the number of already-built auto sets and cycle through all themes.
+    themes = ["A", "B", "C"]
+    picked = {G.theme_for(themes, i) for i in range(3 * len(themes))}
+    check("theme_for cycles through every theme", picked == set(themes), str(picked))
+    # The bug shape must be catchable: the old code returned themes[0] forever.
+    seq = [G.theme_for(themes, i) for i in range(4)]
+    check("theme_for is not the old 'always themes[0]'",
+          len(set(seq)) > 1, str(seq))
+
     if FAILS:
         print(f"\nFAILED: {FAILS}")
         return 1
