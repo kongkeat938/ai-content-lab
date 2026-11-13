@@ -358,6 +358,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "83": {
+      "video_id": "zpSGkclcOtY",
+      "url": "https://youtu.be/zpSGkclcOtY",
+      "title": "ทำไมกองเสื้อผ้ากองโตถึงทำให้พี่น้องทะเลาะกันลั่นบ้าน #Shorts",
+      "posted_at": "2026-11-13T18:54:52+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
