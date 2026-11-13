@@ -6,9 +6,10 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 **Project = `yt938-2`; read `docs/PROJECT-MAP.md` first. Search before creating — never make a
 second copy under a new name (K, 2026-11-13; `test_project_map.py`).**
 
-## 🪪 ak's own identity (K, 2026-11-13)
-ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + vault `ak.identity.mailbox`
-(`docs/AK-IDENTITY.md`; `test_ak_identity.py`). **Never sign up as K**; a phone ak can't own → **ask K**.
+## 🪪 ak's identity & team (K, 2026-11-13)
+ak **owns a mailbox** (`ak_mail.py`, `docs/AK-IDENTITY.md`): use it for a signup, never K's; **never
+sign up as K**; a phone ak can't own → **ask K**. **Workers** (`team.py run <role>`): researcher,
+scriptwriter, packager, critic, analyst + engineer DO the work; the panel (`advise.py`) only advises.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count). Steer by long-form watch-hours/week +
@@ -48,14 +49,13 @@ ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + va
   kills retention (cap 220); never downgrade a LIVE entry (`--forget`). `test_night_*.py`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate graded
   120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
-- **We were blind to a take-down** (2026-11-13): the audit diffed only channel→manifest, so a REMOVED
-  video vanished silently → `find_removed` (`test_audit_removed`). **Mail is on the cloud, not PC1**
-  (dead); `IMAP_ACCOUNTS` = kongkeat.938 only.
+- **We were blind to a take-down** (2026-11-13): the audit diffed only channel→manifest → `find_removed`
+  (`test_audit_removed`). **Mail is on the cloud, not PC1** (dead); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
-- `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md` · daily logs.
+- `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md` · daily logs.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account — genx `kongkeat.938`, dharma `farmmer.938`, ch4
@@ -67,11 +67,11 @@ ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + va
   Detail → `topics/05`. Login path: `pod_account_login.py --from-secret` (secret
   `OWNER_LOGIN_PASSWORDS`, now set) — never type the password, never ask K.
 - **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ"; a pending
-  row **vanishes** on reload if the save failed → verify by reloading สิทธิ์. **Driving Studio: CDP
-  `Input.dispatchMouseEvent` works; JS `.click()` and raw XTest do not.**
+  row **vanishes** on reload if the save failed → verify by reloading สิทธิ์. **Studio: CDP
+  `Input.dispatchMouseEvent` works; JS `.click()` and XTest do not.**
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
 - **Remote-in:** **Browser Live View** (`browser_live.py`, 12000, work-1) = tab over CDP (no OS dialogs);
   **noVNC** (`start_novnc.sh`, 12001, work-2) = fallback. Detail → `topics/05`.
-- **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); **text must fit its frame**
+- **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); text must fit its frame
   (`test_short_caption`, `test_poster_fit`); pinned CTA comment = the conversion lever.
