@@ -689,6 +689,14 @@
       "posted_at": "2026-11-13T19:12:34+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "114": {
+      "video_id": "yKXgdoGZ-SY",
+      "url": "https://youtu.be/yKXgdoGZ-SY",
+      "title": "คืนนี้ลองปรับท่านอนตะแคงขวาแล้วพับมือวางรองใต้แก้ม #Shorts",
+      "posted_at": "2026-11-13T22:48:35+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
