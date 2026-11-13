@@ -27,10 +27,10 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   writer needs a guard; health thresholds must exceed the REAL cadence; every rail watched.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
-- **Rogue upload stream (NOT our code):** clips no manifest names, `en-US`/cat 27/old brand at
-  `:21` (ours: `th`/cat 22–24 at `:44`) = external leaked token. `rogue-guard` hides each live one
-  (private, reversible); `private-delete` clears the parked set after the reset. Root = the token:
-  revoke + re-consent — **Option B (2026-11-13) lets the team do it with no K**.
+- **Rogue upload stream (NOT ours):** clips no manifest names, `en-US`/cat 27/old brand at
+  `:21` (ours `th`/cat 22–24 at `:44`) = external leaked token. `rogue-guard` hides each
+  (reversible); `private-delete` clears parked after the reset. Root = the token: revoke +
+  re-consent — **Option B lets the team do it with no K**.
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day). Prefer **reversible (private)** over delete; mark the skip path.
 - **A PUT to `brandingSettings.channel` REPLACES the whole object** → read live, merge.
@@ -44,10 +44,10 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   kills retention (cap 220); never downgrade a LIVE entry (`--forget`). `test_night_*.py`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate graded
   120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
-- **We were blind to a YouTube take-down** (2026-11-13): the audit only diffed channel→manifest, so a
-  REMOVED video vanished silently (genx had a community-guidelines **warning**). `find_removed` now
-  diffs manifest→uploads (`test_audit_removed`).
-- **Mail on the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
+- **We were blind to a take-down** (2026-11-13): the audit diffed only channel→manifest, so a REMOVED
+  video vanished silently (genx had a guidelines **warning**). `find_removed` diffs manifest→uploads
+  (`test_audit_removed`). **Mail is on the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` =
+  kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
@@ -60,18 +60,17 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
 - **Accounts:** 1 channel = 1 Google account — genx `kongkeat.938`, dharma `farmmer.938`, ch4
   `kongkeat.p3` (own 19/day pool each); `test_channel_accounts.py`. Invite = **Studio → การตั้งค่า →
   สิทธิ์ → เชิญ**.
-- **Delegation (Option B, 2026-11-13):** genx = `aerismusic8@gmail.com` **Manager** +
-  `YT_CH1_ALT_REFRESH_TOKEN` (`delegate_ready.py` = `READY genx`). **A refresh token is bound to the
-  client that minted it** — alt is on client **B** (`YT_ALT_CLIENT_ID/SECRET`), `401
-  unauthorized_client` on the primary.
-- **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ → ป้อนรหัสผ่าน";
-  a filled form shows a pending row that **vanishes** on reload if the save failed → verify by reloading
-  สิทธิ์. ch4 (`kongkeat.p3`) is signed in at **authuser=0** (the chooser's "ออกจากระบบแล้ว" is a hint).
-- **Driving Studio: CDP `Input.dispatchMouseEvent` (mousePressed+Released) works; JS `.click()` and a
-  raw XTest warp+click do not** (2026-11-13: the CDP click opened settings → สิทธิ์ → invite).
+- **Delegation (Option B, 2026-11-13):** genx+dharma → `aerismusic8@gmail.com` **Manager**
+  (accepted); `YT_CH{1,2}_ALT_REFRESH_TOKEN` set, `delegate_ready.py` = `READY genx,dharma`;
+  kongkeat-story pending. **`READY` = the token EXCHANGES, not that it uploads to the target**
+  (aeris read dharma `fileDetails` but uploads hit `uploadLimitExceeded`). Detail → `topics/05`.
+- **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ"; a pending
+  row **vanishes** on reload if the save failed → verify by reloading สิทธิ์. **Driving Studio: CDP
+  `Input.dispatchMouseEvent` works; JS `.click()` and raw XTest do not.**
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
-- **VNC remote-in (2026-11-12):** ak drives headful chromium over CDP :9222; K types passwords on
-  noVNC (`start_novnc.sh`). Thai fonts (`fonts-thai-tlwg`) or text is boxes.
+- **Remote-in (2026-11-13):** **Browser Live View** (`browser_live.py`, port **12000**, work-1) = the
+  tab only over CDP (lighter, no X/RFB; **no OS-level dialogs**); **noVNC** (`start_novnc.sh`, 12001,
+  work-2) = fallback. Panel ranked CDP>VNC>Xpra>Guac>WebRTC for this pod. Detail → `topics/05`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); **text must fit its frame**
   (`test_short_caption`, `test_poster_fit`); pinned CTA comment = the conversion lever.

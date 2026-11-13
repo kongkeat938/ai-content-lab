@@ -136,3 +136,23 @@ index. Newest first. Every item here was measured, not assumed.
   Guards: `test_short_caption.py` (in-frame sweep + contrast over the brightest art),
   `test_cover_image_source.py` (no Commons fallback). Long-form had qa_gate; Shorts had
   none -- a format with no guard drifts.
+
+## Delegation detail (Option B, 2026-11-13)
+- genx + dharma: `aerismusic8@gmail.com` is **Manager** (accepted); `YT_CH1/CH2_ALT_REFRESH_TOKEN`
+  set; `delegate_ready.py` = `READY genx,dharma`; kongkeat-story still pending.
+- The alt refresh token is bound to the OAuth **client B** (`YT_ALT_CLIENT_ID/SECRET`); exchanging
+  it with the primary client gives `401 unauthorized_client`.
+- **`READY` only proves the token EXCHANGES, not that it uploads to the target.** The aeris token
+  could read dharma `videos.list?part=fileDetails` (manager-only) but an upload returned
+  `uploadLimitExceeded` (aeris pool spent/unverified) → could not prove the landing channel.
+- `mine=true` lists only the account's own channel (`AERIS Music`), never a managed target.
+- No rail uses any `*_ALT_*` token; `publish_batch.py` has a `WRONG_CHANNEL` guard.
+- Adding a Manager needs the OWNER password (Google "ยืนยันว่าเป็นคุณ"); the pending row vanishes on
+  reload if the save failed → verify by reloading สิทธิ์.
+
+## Browser Live View detail (2026-11-13)
+- `scripts/browser_live.py` on port 12000 (work-1): CDP `Page.startScreencast` out +
+  `Input.dispatchMouseEvent`/`KeyEvent` back, over one aiohttp websocket. No X/RFB.
+- Cannot show OS-level dialogs (native file picker, basic-auth) → keep noVNC (12001) as fallback.
+- Guard `scripts/test_browser_live.py` (fake CDP; proves the guard can FAIL). Panel 4/5 ranked
+  CDP > VNC > Xpra > Guacamole > WebRTC for a non-root, no-GPU, recycled pod.
