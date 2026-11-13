@@ -61,9 +61,10 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   `kongkeat.p3` (own 19/day pool each); `test_channel_accounts.py`. Invite = **Studio → การตั้งค่า →
   สิทธิ์ → เชิญ**.
 - **Delegation (Option B, 2026-11-13):** genx+dharma → `aerismusic8@gmail.com` **Manager**
-  (accepted); `YT_CH{1,2}_ALT_REFRESH_TOKEN` set, `delegate_ready.py` = `READY genx,dharma`;
-  kongkeat-story pending. **`READY` = the token EXCHANGES, not that it uploads to the target**
-  (aeris read dharma `fileDetails` but uploads hit `uploadLimitExceeded`). Detail → `topics/05`.
+  (accepted); `YT_CH{1,2}_ALT_REFRESH_TOKEN` set. **`delegate_ready.py` now needs TWO legs**
+  (token exchanges AND a probe upload) — measured 2026-11-13 both = **LIMITED**
+  (`uploadLimitExceeded`), so the delegate still cannot publish. kongkeat-story = **BLOCKED**
+  (no owner session; K login forbidden). Detail → `topics/05`.
 - **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ"; a pending
   row **vanishes** on reload if the save failed → verify by reloading สิทธิ์. **Driving Studio: CDP
   `Input.dispatchMouseEvent` works; JS `.click()` and raw XTest do not.**

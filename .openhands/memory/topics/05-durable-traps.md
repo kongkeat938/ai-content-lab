@@ -139,16 +139,23 @@ index. Newest first. Every item here was measured, not assumed.
 
 ## Delegation detail (Option B, 2026-11-13)
 - genx + dharma: `aerismusic8@gmail.com` is **Manager** (accepted); `YT_CH1/CH2_ALT_REFRESH_TOKEN`
-  set; `delegate_ready.py` = `READY genx,dharma`; kongkeat-story still pending.
+  set. kongkeat-story: **BLOCKED** -- its owner is `kongkeat.p3@gmail.com`, the pod's Chrome is
+  signed in ONLY as `farmmer.938` (AccountChooser lists just that), there is NO login secret, and
+  K forbids asking K to log in. Measured: farmmer.938 has NO Brand Account; dharma/genx are direct
+  channels, not Brand Accounts.
+- **`READY` needs TWO legs** (`delegate_ready.py`): the token **exchanges** AND a probe **upload**
+  succeeds (~1.4 KB private video, deleted in the same run). Measured 2026-11-13 in CI:
+  `LIMITED genx` and `LIMITED dharma` -- both exchange, both `400 uploadLimitExceeded`. A credential
+  that only exchanges reads **LIMITED**, never READY.
 - The alt refresh token is bound to the OAuth **client B** (`YT_ALT_CLIENT_ID/SECRET`); exchanging
   it with the primary client gives `401 unauthorized_client`.
-- **`READY` only proves the token EXCHANGES, not that it uploads to the target.** The aeris token
-  could read dharma `videos.list?part=fileDetails` (manager-only) but an upload returned
-  `uploadLimitExceeded` (aeris pool spent/unverified) → could not prove the landing channel.
 - `mine=true` lists only the account's own channel (`AERIS Music`), never a managed target.
 - No rail uses any `*_ALT_*` token; `publish_batch.py` has a `WRONG_CHANNEL` guard.
 - Adding a Manager needs the OWNER password (Google "ยืนยันว่าเป็นคุณ"); the pending row vanishes on
-  reload if the save failed → verify by reloading สิทธิ์.
+  reload if the save failed -> verify by reloading สิทธิ์.
+- `uploadLimitExceeded` on a fresh manager is a YouTube gate on the delegate's OWN account, not our
+  code: `aerismusic8` must clear its upload eligibility (channel verify / terms / daily cap) before
+  the probe passes. Until then K is still the only one who can change a rogue grant.
 
 ## Browser Live View detail (2026-11-13)
 - `scripts/browser_live.py` on port 12000 (work-1): CDP `Page.startScreencast` out +
