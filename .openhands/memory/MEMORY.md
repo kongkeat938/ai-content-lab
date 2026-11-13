@@ -3,8 +3,8 @@
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
 **panel** (`advise.py`), not K. **This file is a MAP** (injected each session, tail truncated):
 keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
-**Project = `yt938-2`; read `docs/PROJECT-MAP.md` before creating anything. Search first —
-never make a second copy of a thing under a new name (K, 2026-11-13; `test_project_map.py`).**
+**Project = `yt938-2`; read `docs/PROJECT-MAP.md` first. Search before creating — never make a
+second copy under a new name (K, 2026-11-13; `test_project_map.py`).**
 
 ## 🪪 ak's own identity (K, 2026-11-13)
 ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + vault `ak.identity.mailbox`
@@ -33,9 +33,8 @@ ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + va
   writer needs a guard; health thresholds must exceed the REAL cadence; every rail watched.
 
 ## 🧭 Traps still true (one line each; detail in `topics/05-durable-traps.md` + daily logs)
-- **Rogue upload stream (NOT ours):** clips no manifest names (`en-US`/cat 27/old brand at `:21`;
-  ours `th`/cat 22–24 at `:44`) = external leaked token. `rogue-guard` hides each (reversible);
-  root = revoke + re-consent — **Option B lets the team do it with no K**.
+- **Rogue upload stream (NOT ours):** clips no manifest names (`en-US`/cat 27 at `:21`; ours `th`/22–24
+  at `:44`) = leaked token. `rogue-guard` hides each; root = revoke + re-consent (Option B, no K).
 - **A guard that only marks SUCCESS cannot end a loop it will never satisfy** (`remove-bad-cut`
   ×37/day). Prefer **reversible (private)** over delete; mark the skip path.
 - **A PUT to `brandingSettings.channel` REPLACES the whole object** → read live, merge.
@@ -56,11 +55,9 @@ ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + va
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
 
 ## 🗺️ Topic map (read on demand)
-- `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md` · logs
-  `2026-11-DD.md`.
+- `topics/00-..05-*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`/`CHANNEL-AUDIT-LATEST.md` · daily logs.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
-  **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`. Pages:
-  kongkeat938.github.io/ai-content-lab/.
+  **Publishing:** `content/<ch>_publish.json`/`_shorts.json`, `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account — genx `kongkeat.938`, dharma `farmmer.938`, ch4
   `kongkeat.p3` (own 19/day pool each); `test_channel_accounts.py`. Invite = **Studio → การตั้งค่า →
   สิทธิ์ → เชิญ**.
@@ -74,7 +71,7 @@ ak **owns a mailbox** — use it for a free signup, never K's: `ak_mail.py` + va
   `Input.dispatchMouseEvent` works; JS `.click()` and raw XTest do not.**
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
-- **Remote-in:** **Browser Live View** (`browser_live.py`, port **12000**, work-1) = the tab only over
-  CDP (lighter; **no OS dialogs**); **noVNC** (`start_novnc.sh`, 12001, work-2) = fallback. Detail → `topics/05`.
+- **Remote-in:** **Browser Live View** (`browser_live.py`, 12000, work-1) = tab over CDP (no OS dialogs);
+  **noVNC** (`start_novnc.sh`, 12001, work-2) = fallback. Detail → `topics/05`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); **text must fit its frame**
   (`test_short_caption`, `test_poster_fit`); pinned CTA comment = the conversion lever.
