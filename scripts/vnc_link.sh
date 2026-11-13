@@ -11,14 +11,19 @@
 set -u
 cd "$(dirname "$0")/.."
 
-PORT="${1:-12001}"
+PORT=12001
+FORCE=0
+case "${1:-}" in
+  ""|--restart) [ "${1:-}" = "--restart" ] && FORCE=1 ;;
+  *) PORT="$1" ;;
+esac
 HOST="${WORK_HOST_2:-work-2-untoypfpfjgkquuf.prod-runtime.all-hands.dev}"
 
 restart() {
   bash scripts/start_novnc.sh "$PORT" >/dev/null 2>&1
 }
 
-if [ "${1:-}" = "--restart" ]; then
+if [ "$FORCE" = 1 ]; then
   restart
 elif ! curl -s -o /dev/null -m 5 "http://127.0.0.1:${PORT}/vnc_lite.html"; then
   echo "noVNC is down (recycled pod?) -- restarting"

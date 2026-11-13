@@ -44,10 +44,9 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   kills retention (cap 220); never downgrade a LIVE entry (`--forget`). `test_night_*.py`.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (2026-11-12): qa_gate graded
   120-min files B; counter_ledger read a same-day dip as DOWN; health flagged paused rails.
-- **We were blind to a YouTube take-down** (2026-11-13): the audit only diffed channel→manifest, so
-  a REMOVED video vanished silently — genx carried an active community-guidelines **warning**
-  (expires 1 Feb) while a doc claimed "no strike". `find_removed` diffs manifest→uploads
-  (`test_audit_removed`). Panel 3/3: do NOT pause genx (+183 subs/28 d).
+- **We were blind to a YouTube take-down** (2026-11-13): the audit only diffed channel→manifest, so a
+  REMOVED video vanished silently (genx had a community-guidelines **warning**). `find_removed` now
+  diffs manifest→uploads (`test_audit_removed`).
 - **Mail on the cloud, not PC1** (dead — don't retry); `IMAP_ACCOUNTS` = kongkeat.938 only.
 - **ch4 subs flat:** Shorts work, long-form dead (subs/1,000 = 1.93); a Short must not promise a
   "full clip" (`test_ch4_cta.py`); trailer wired (after 08:00Z).
@@ -65,11 +64,11 @@ keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`.
   `YT_CH1_ALT_REFRESH_TOKEN` (`delegate_ready.py` = `READY genx`). **A refresh token is bound to the
   client that minted it** — alt is on client **B** (`YT_ALT_CLIENT_ID/SECRET`), `401
   unauthorized_client` on the primary.
-- **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ". A filled
-  form shows a pending row that **vanishes** on reload if the save failed → verify by reloading
-  สิทธิ์, never the form. ch4 (`kongkeat.p3`) is signed in at **authuser=0** (the chooser's
-  "ออกจากระบบแล้ว" is only a hint). **Studio's SPA ignores CDP/synthetic clicks** — use `XTest` on
-  `DISPLAY=:99`.
+- **Inviting needs the OWNER's password** (K): **บันทึก** triggers Google "ยืนยันว่าเป็นคุณ → ป้อนรหัสผ่าน";
+  a filled form shows a pending row that **vanishes** on reload if the save failed → verify by reloading
+  สิทธิ์. ch4 (`kongkeat.p3`) is signed in at **authuser=0** (the chooser's "ออกจากระบบแล้ว" is a hint).
+- **Driving Studio: CDP `Input.dispatchMouseEvent` (mousePressed+Released) works; JS `.click()` and a
+  raw XTest warp+click do not** (2026-11-13: the CDP click opened settings → สิทธิ์ → invite).
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`. Suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
 - **VNC remote-in (2026-11-12):** ak drives headful chromium over CDP :9222; K types passwords on
