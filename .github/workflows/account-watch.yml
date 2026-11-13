@@ -114,7 +114,10 @@ jobs:
           set +e
           # K chose B (2026-11-12): a second account as manager, so the team can cut
           # a rogue grant with no human. This reports, live, whether that delegated
-          # credential exists yet -- a channel with none is a real gap, named not hidden.
+          # credential exists AND can publish -- READY needs both, because a token that
+          # exchanges can still be refused by videos.insert (measured 2026-11-13). The
+          # upload leg is a ~1.4 KB private probe video, deleted in the same run, so it
+          # spends one upload slot a day (this job runs after the 08:00 UTC reset).
           echo "### Delegation readiness" >> "$GITHUB_STEP_SUMMARY"
           python3 scripts/delegate_ready.py | tee -a "$GITHUB_STEP_SUMMARY"
 
