@@ -35,6 +35,14 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("KONGKEAT_GH_TOKEN")
 API = "https://api.github.com"
 
+# The night (dharma long-form) rail's own cadence, in builds per week. Kept here
+# as the single source the backfill threshold is derived from, so raising the rail
+# cadence cannot leave the foreman's backfill behind (measured 2026-11-13: the
+# rail was raised to 2/week but the foreman still only backfilled after 6 days, so
+# a dropped tick would have waited days). `test_foreman_cadence.py` reads the
+# workflow's cron count and asserts this matches it.
+NIGHT_BUILDS_PER_WEEK = 2
+
 
 def gh(path: str, method: str = "GET", body: dict | None = None) -> dict:
     data = json.dumps(body).encode() if body is not None else None
@@ -254,13 +262,18 @@ def main() -> int:
     if l_age is None or l_age > 6 * 60:
         plan.append(("link-shorts", {}))
 
-    # 5. Keep the long rail fed: a weekly build if the newest one is over 6 days
-    #    old. generate=true so the scheduled path mints a fresh content set --
-    #    without it the dispatch rebuilds an existing set and the fingerprint
-    #    guard turns the whole run into a no-op. night-compilation fingerprints
-    #    its own content, so a repeat on unchanged material is a cheap skip.
+    # 5. Keep the long rail fed. Cadence raised 1 -> 2/week on 2026-11-13 (the
+    #    binding YPP lever; the rail also has Mon+Thu crons). The backfill window is
+    #    DERIVED from NIGHT_BUILDS_PER_WEEK, not hardcoded: a 6-day window would let
+    #    a dropped Thursday tick wait until Monday (a 4-day hole the cron cannot fill
+    #    because it already passed). With 2/week the longest healthy gap is 4 days, so
+    #    a missed tick is backfilled within a day and a healthy week never triggers
+    #    it. generate=true so the dispatch mints a fresh set (the per-run content dir
+    #    means it is a new video, not a re-run). The rail fingerprints its own
+    #    content, so a repeat on unchanged material is a cheap skip.
     n_age = last_success_min("night-compilation", ids)
-    if n_age is None or n_age > 6 * 24 * 60:
+    night_window = (7.0 / NIGHT_BUILDS_PER_WEEK + 1) * 24 * 60  # 4 days at 2/week
+    if n_age is None or n_age > night_window:
         plan.append(("night-compilation", {"generate": "true"}))
 
     # 5b. Keep the ch4 family rail fed too: a weekly build if the newest is over
