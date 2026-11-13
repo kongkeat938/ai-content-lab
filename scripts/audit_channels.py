@@ -81,16 +81,45 @@ def playlists(yt) -> list:
             return out
 
 
-def recent_videos(yt, uploads: str, limit: int = 20) -> list:
+def upload_ids(yt, uploads: str, cap: int = 1000) -> list:
+    """Every video id still on the channel's uploads playlist, newest first.
+
+    A video that was removed -- by YouTube (a policy take-down) or by us -- leaves
+    the uploads playlist, so this is the set to diff a manifest against. `private`
+    clips stay listed here, which is why they are not read as removals.
+    """
     ids, token = [], None
-    while uploads and len(ids) < limit:
+    while uploads and len(ids) < cap:
         r = yt.playlistItems().list(part="contentDetails", playlistId=uploads,
                                     maxResults=50, pageToken=token).execute()
         ids.extend(i["contentDetails"]["videoId"] for i in r.get("items", []))
         token = r.get("nextPageToken")
         if not token:
             break
-    ids = ids[:limit]
+    return ids[:cap]
+
+
+def find_removed(recorded: dict, present: set, removed: set) -> list:
+    """Recorded videos that are no longer on the channel.
+
+    YouTube removing a video (a policy take-down) is invisible to every other
+    guard: the clip simply disappears from the uploads playlist and nothing here
+    notices. Measured 2026-11-13: genx carried an active community-guidelines
+    warning whose removed content never appeared in any report -- the audit only
+    ever diffed channel -> manifest, never manifest -> channel.
+    """
+    out = []
+    for vid, meta in recorded.items():
+        if vid in present or vid in removed:
+            continue
+        out.append(f"video {vid} was recorded but is no longer on the channel "
+                   f"(removed by YouTube, or deleted without a backup): "
+                   f"{(meta.get('title') or '')[:50]}")
+    return out
+
+
+def recent_videos(yt, uploads: str, limit: int = 20) -> list:
+    ids = upload_ids(yt, uploads, cap=limit)[:limit]
     if not ids:
         return []
     out = []
@@ -101,17 +130,22 @@ def recent_videos(yt, uploads: str, limit: int = 20) -> list:
     return out
 
 
-def recorded_ids(channel_id: str) -> set:
-    """Every video id this repo has recorded for a channel.
+def recorded_entries(channel_id: str) -> dict:
+    """Every video this repo has recorded for a channel: id -> {title, posted_at}.
 
     A video the channel owns but no manifest names was uploaded by something
     OUTSIDE these rails -- a manual Studio upload, or a second tool. That is the
     one class of upload the pace/cap/gap guards cannot see, so the audit must
     name it (measured 2026-11-11: ch4 had 97 uploads against 57 recorded, and 25
     carried a brand token no code here writes).
+
+    The reverse is just as important and was missing until 2026-11-13: a video we
+    DID record that is no longer on the channel has been removed -- by YouTube
+    (a policy take-down, which is how genx got its warning) or by us. The uploads
+    playlist is the only place either shows up, so keep the timestamp too.
     """
     root = os.path.dirname(HERE)
-    ids = set()
+    out: dict = {}
     for name in os.listdir(os.path.join(root, "content")):
         if not name.endswith(".json"):
             continue
@@ -123,10 +157,41 @@ def recorded_ids(channel_id: str) -> set:
             continue
         for v in (d.get("shorts") or {}).values():
             if isinstance(v, dict) and v.get("video_id"):
-                ids.add(v["video_id"])
+                out[v["video_id"]] = {"title": v.get("title", ""),
+                                      "posted": v.get("posted_at")}
         for v in (d.get("videos") or []):
             if isinstance(v, dict) and v.get("video_id"):
-                ids.add(v["video_id"])
+                out[v["video_id"]] = {"title": v.get("title", ""),
+                                      "posted": v.get("posted_at") or v.get("published")}
+    return out
+
+
+def recorded_ids(channel_id: str) -> set:
+    return set(recorded_entries(channel_id))
+
+
+def removed_by_us(channel_id: str) -> set:
+    """Ids we ourselves removed -- a delete leaves a backup in content/deleted/.
+
+    Without this the new "recorded but missing" check would fire on every clip we
+    deleted on purpose. `private` clips are NOT here: they stay in the uploads
+    playlist, so they still read as present.
+    """
+    root = os.path.dirname(HERE)
+    d = os.path.join(root, "content", "deleted")
+    ids = set()
+    if not os.path.isdir(d):
+        return ids
+    for name in os.listdir(d):
+        if not name.endswith(".json"):
+            continue
+        try:
+            row = json.load(open(os.path.join(d, name), encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        vid = row.get("id") if isinstance(row, dict) else None
+        if vid:
+            ids.add(vid)
     return ids
 
 
@@ -194,6 +259,11 @@ def find_defects(ch: dict, pls: list, vids: list, recorded: set | None = None) -
         if n > 1:
             d.append(f"{n} videos share the title: {t[:60]}")
     return d
+
+
+def removed_defects(recorded: dict, present: set, removed: set) -> list:
+    """`removed_by_us` ids are ours; everything else is a take-down to name."""
+    return find_removed(recorded, present, removed)
 
 
 def alert_live_rogue(report: dict) -> None:
@@ -395,10 +465,14 @@ def main() -> int:
         ch = channel_report(yt, c["slug"])
         pls = playlists(yt)
         vids = recent_videos(yt, ch.get("uploads_playlist"), a.limit)
-        recorded = recorded_ids(c["channel_id"])
+        recorded = recorded_entries(c["channel_id"])
+        # The full uploads list is needed to notice a take-down: a removed video
+        # leaves the playlist, so diff the whole list, not just the newest page.
+        present = set(upload_ids(yt, ch.get("uploads_playlist")))
         print(f"  {ch.get('title')}  subs={ch.get('subs')} videos={ch.get('videos')} "
-              f"views={ch.get('views')} playlists={len(pls)}")
-        defects = find_defects(ch, pls, vids, recorded)
+              f"views={ch.get('views')} playlists={len(pls)} uploads={len(present)}")
+        defects = find_defects(ch, pls, vids, set(recorded))
+        defects += removed_defects(recorded, present, removed_by_us(c["channel_id"]))
         for x in defects:
             print(f"    DEFECT: {x}")
         if not defects:
