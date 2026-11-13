@@ -8,8 +8,14 @@ This proves, live, whether that credential exists and still works, and exits
 non-zero while any channel is not delegated (a real gap, not a claim).
 
 Live test, quota-free: it exchanges the token at `oauth2.googleapis.com/token`. A
-delegated token that exchanges (`access_token` returned) is READY; a token that
-returns `invalid_grant` is NOT-DELEGATED. It never prints a token.
+delegated token that returns an `access_token` is READY; anything else -- including
+the `unauthorized_client` a token bound to a *different* OAuth client answers -- is
+NOT-DELEGATED. It never prints a token.
+
+A delegated token is bound to the OAuth client that minted it, and a second account
+was authorised on its own client, so the alt token is exchanged with
+`YT_ALT_CLIENT_ID`/`YT_ALT_CLIENT_SECRET` when set, then with the primary client.
+Either success is READY; a mismatch is never read as READY.
 
     python3 scripts/delegate_ready.py
     python3 scripts/delegate_ready.py --strict   # exit 1 unless every channel is READY
@@ -17,6 +23,7 @@ returns `invalid_grant` is NOT-DELEGATED. It never prints a token.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import urllib.error
@@ -35,33 +42,59 @@ CHANNELS = {
 TOKEN = "https://oauth2.googleapis.com/token"
 
 
-def exchanges(refresh_token: str) -> bool:
-    """True if the refresh token still mints an access token (valid_grant)."""
-    cid = os.environ.get("YT_CLIENT_ID")
-    sec = os.environ.get("YT_CLIENT_SECRET")
+def _client(cid_key: str, sec_key: str) -> tuple[str, str] | None:
+    cid = os.environ.get(cid_key)
+    sec = os.environ.get(sec_key)
+    return (cid, sec) if (cid and sec) else None
+
+
+def clients_for_alt() -> list[tuple[str, str]]:
+    """The clients a delegated token may have been minted under, most specific first.
+
+    A token is bound to the client that minted it, so a second account authorised on
+    its own client cannot be checked with the primary client. Try the alt client,
+    then the primary, so either arrangement verifies.
+    """
+    out = []
+    for pair in (_client("YT_ALT_CLIENT_ID", "YT_ALT_CLIENT_SECRET"),
+                 _client("YT_CLIENT_ID", "YT_CLIENT_SECRET")):
+        if pair and pair not in out:
+            out.append(pair)
+    return out
+
+
+def exchanges(refresh_token: str, client: tuple[str, str] | None = None) -> bool:
+    """True only if the refresh token mints an access token under `client`.
+
+    A token bound to a different client answers `unauthorized_client`; that is not a
+    working credential, so it must not be read as one.
+    """
+    cid, sec = client or (os.environ.get("YT_CLIENT_ID"), os.environ.get("YT_CLIENT_SECRET"))
     if not (cid and sec):
         return False
     data = urllib.parse.urlencode({
         "client_id": cid, "client_secret": sec,
         "refresh_token": refresh_token, "grant_type": "refresh_token"}).encode()
     try:
-        urllib.request.urlopen(urllib.request.Request(TOKEN, data=data), timeout=30)
-        return True
-    except urllib.error.HTTPError as e:
-        return "invalid_grant" not in e.read().decode()
+        with urllib.request.urlopen(urllib.request.Request(TOKEN, data=data), timeout=30) as fh:
+            return bool(json.loads(fh.read().decode()).get("access_token"))
+    except urllib.error.HTTPError:
+        return False
     except Exception:
         return False
 
 
-def status(primary: str | None, alt: str | None) -> tuple[str, str]:
-    """(verdict, detail) for one channel. verdict: READY / NOT-DELEGATED / NO-ALT-SECRET."""
+def status(primary: str | None, alt: str | None,
+           clients: list[tuple[str, str]] | None = None) -> tuple[str, str]:
+    """(verdict, detail) for one channel. verdict: READY / NOT-DELEGATED."""
     if not alt:
         return "NOT-DELEGATED", "no delegated secret (set YT_<CH>_ALT_REFRESH_TOKEN)"
     if primary and alt == primary:
         return "NOT-DELEGATED", "delegated secret is a COPY of the primary, not a second account"
-    if exchanges(alt):
-        return "READY", "delegated credential mints a token"
-    return "NOT-DELEGATED", "delegated credential does not exchange (invalid_grant)"
+    for client in (clients if clients is not None else clients_for_alt()):
+        if exchanges(alt, client):
+            return "READY", "delegated credential mints a token"
+    return "NOT-DELEGATED", "delegated credential does not exchange (invalid_grant or wrong client)"
 
 
 def main() -> int:

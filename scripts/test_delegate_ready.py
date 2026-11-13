@@ -3,8 +3,12 @@
 
 K chose B (2026-11-12): a second account as manager, so the team can act without
 him. A "delegated" secret that is really the primary copied across is not a second
-account -- it is the same grant wearing a new name, and it proves nothing. This
-locks that distinction, and proves the guard can FAIL.
+account -- it is the same grant wearing a new name, and it proves nothing.
+
+A delegated token is also bound to the OAuth client that minted it, so a token from
+a second client must be exchanged with *that* client. A wrong client answers
+`unauthorized_client`, which is not a working credential -- it must never read as
+READY. This locks both distinctions, and proves the guard can FAIL.
 
     python3 scripts/test_delegate_ready.py
 """
@@ -41,6 +45,21 @@ def main() -> int:
         os.environ.pop(k, None)
     v, _ = dr.status("primary", "a-different-token")
     check("unexchangeable alt -> NOT-DELEGATED", v == "NOT-DELEGATED", v)
+
+    print("a token is checked with its OWN client, not only the primary (the guard can fail)")
+    # Simulate a real exchange: the token works only under client "B". A checker that
+    # only ever tried the primary client ("A") would report NOT-DELEGATED -- the bug
+    # this fix removes -- so READY must require trying the matching client.
+    real = dr.exchanges
+    client_a, client_b = ("id-a", "sec-a"), ("id-b", "sec-b")
+    dr.exchanges = lambda tok, cl=None: cl == client_b
+    try:
+        v, _ = dr.status("primary", "alt-token", clients=[client_a, client_b])
+        check("matching client -> READY", v == "READY", v)
+        v, _ = dr.status("primary", "alt-token", clients=[client_a])
+        check("primary client only -> NOT-DELEGATED", v == "NOT-DELEGATED", v)
+    finally:
+        dr.exchanges = real
 
     print("the three active channels are mapped")
     check("genx/dharma/kongkeat-story present",
