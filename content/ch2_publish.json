@@ -293,7 +293,7 @@
     },
     {
       "key": "night_auto_202646_r18",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-bc97c386b7b8-a74f6e/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/night-bc97c386b7b8-a74f6e/compilation.mp3",
       "thumbnail": "assets/branding/farmmer/thumbs/night_auto_202646_r18.jpg",
@@ -327,7 +327,9 @@
           "hook_sec": 19.8,
           "true_peak_dbfs": -3.1
         }
-      }
+      },
+      "video_id": "lKt_A63IUmg",
+      "url": "https://youtu.be/lKt_A63IUmg"
     }
   ]
 }
