@@ -24,7 +24,7 @@ set -u
 
 if [ "${1:-}" = "--stop" ]; then
   for pat in "websockify --web=/usr/share/novnc" "x11vnc -display :99" \
-             "remote-debugging-port=9222" "Xvfb :99"; do
+             "remote-debugging-port=9222" "browser_live.py" "Xvfb :99"; do
     pkill -9 -f "$pat" 2>/dev/null
   done
   sleep 1
@@ -141,10 +141,26 @@ if ! running "remote-debugging-port=9222"; then
   sleep 6
 fi
 
+if ! running "browser_live.py"; then
+  # A second, lighter way in: the tab itself, over CDP, on the work-1 port. No X, no
+  # RFB -- just Page.startScreencast out and Input.dispatchMouseEvent back. Kept beside
+  # noVNC on purpose: the live view cannot show an OS-level dialog (a native file
+  # picker, a browser basic-auth prompt), so noVNC stays the fallback for those.
+  if python3 -c "import aiohttp" 2>/dev/null; then
+    echo "starting Browser Live View on 12000"
+    setsid python3 "$(dirname "$0")/browser_live.py" --port 12000 \
+      >"$LOG_DIR/browser_live.log" 2>&1 </dev/null &
+    sleep 2
+  else
+    echo "skipping live view (aiohttp missing: pip install aiohttp)"
+  fi
+fi
+
 echo
 echo "noVNC is up."
 echo "  Open:  \$WORK_HOST_2/vnc_lite.html   (simple)  or  /vnc.html"
 echo "  VNC password:  $VNC_PASSWORD"
+echo "  Browser Live View (tab only, lighter):  \$WORK_HOST_1/  (port 12000)"
 echo "  CDP for the agent:  http://localhost:9222/json/version"
 echo "  Logs:  $LOG_DIR/"
 echo "  Sign in, then leave the tab open. Profile: $CHROME_PROFILE"
