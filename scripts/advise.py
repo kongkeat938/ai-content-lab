@@ -17,6 +17,10 @@ checkable probes (`scripts/panel_bench.py`, 2026-11-09), across two vendors:
 
 The four Gemini entries share a key but run different models; openrouter is a
 genuinely different vendor, so the team is five opinions, not five copies of one.
+**When OPENROUTER_API_KEY is absent or empty** (measured 2026-11-13: it was set but
+blank, so the "fifth" voice was dead and only four answered), ``resolve_team`` swaps
+openrouter for **pollinations** -- a different vendor that needs no key -- so the
+default panel always yields the five voices it claims.
 
 A sixth vendor, **pollinations**, is available with ``--broad``. It is *not* in the
 default team because it is slow (~66 s measured, ~50x the others) and returns
@@ -252,6 +256,27 @@ FAST_PLUS = FAST
 BROAD = FAST + ["pollinations"]
 DEEP = ["openhands", "openhands-claude", "openhands-gpt"]
 
+
+def _has_openrouter_key() -> bool:
+    return bool((os.environ.get("OPENROUTER_API_KEY") or _read_key_file()).strip())
+
+
+def resolve_team(names: list[str]) -> list[str]:
+    """Replace a panelist whose key is missing, so the panel yields the voices it claims.
+
+    Measured 2026-11-13: ``OPENROUTER_API_KEY`` was set but **empty**, so the default
+    "five" advisors really returned four answers (openrouter -> "(unavailable)") and K's
+    >=5 rule was silently broken. pollinations needs no key and is a different vendor, so
+    it stands in; de-dup so a substitution never double-counts a panelist.
+    """
+    out: list[str] = []
+    for name in names:
+        if name == "openrouter" and not _has_openrouter_key():
+            name = "pollinations"
+        if name not in out:
+            out.append(name)
+    return out
+
 # The small panel the learning loop and the graders ask: one Google model plus one
 # other vendor, so a decision is never one model's opinion. Defined here, next to
 # the registry, so a script cannot name an advisor that does not exist (the bug
@@ -287,7 +312,7 @@ def main() -> int:
     if args.only:
         names = [n.strip() for n in args.only.split(",") if n.strip()]
     else:
-        names = (BROAD if args.broad else FAST) + (DEEP if args.deep else [])
+        names = resolve_team((BROAD if args.broad else FAST) + (DEEP if args.deep else []))
     parts = [args.question]
     if args.extra:
         parts.insert(0, "ข้อมูลจริงที่วัดได้:\n" + args.extra)
