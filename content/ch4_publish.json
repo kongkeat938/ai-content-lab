@@ -86,7 +86,7 @@
     },
     {
       "key": "ch4_auto_202646_long",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-7dd2c1371163-af6a96/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/ch4-family-long-7dd2c1371163-af6a96/compilation.mp3",
       "thumbnail": "assets/branding/thumbs/ch4_auto_202646_long.jpg",
@@ -120,7 +120,9 @@
           "hook_sec": 20.2,
           "true_peak_dbfs": -3.2
         }
-      }
+      },
+      "video_id": "X2UiFPUnKIc",
+      "url": "https://youtu.be/X2UiFPUnKIc"
     }
   ]
 }
