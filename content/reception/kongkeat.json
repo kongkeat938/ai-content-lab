@@ -215,6 +215,21 @@
         "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
       },
       "at": "2026-11-13T15:23:39+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "r1lsxotMMlY",
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak; paused 33h -- posting one changed clip to test whether the feed returns",
+      "hours_since_last": 33.43,
+      "stall": {
+        "stalled": true,
+        "flat": 5,
+        "last_hours": 33.4,
+        "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+      },
+      "at": "2026-11-13T15:15:27+00:00"
     }
   ],
   "latest": {
