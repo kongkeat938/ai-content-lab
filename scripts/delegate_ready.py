@@ -160,12 +160,14 @@ def probe_upload(access_token: str) -> tuple[bool, str]:
             vid = json.loads(fh.read().decode()).get("id")
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")
-        reason = ""
+        reason = msg = ""
         try:
-            reason = json.loads(detail)["error"]["errors"][0]["reason"]
+            err = json.loads(detail)["error"]
+            reason = err["errors"][0].get("reason", "")
+            msg = err.get("message", "")
         except Exception:
-            reason = detail[:80].replace("\n", " ")
-        return False, f"upload refused ({e.code} {reason})"
+            msg = detail[:120].replace("\n", " ")
+        return False, f"upload refused ({e.code} {reason}: {msg[:120]})"
     except Exception as e:
         return False, f"upload error ({type(e).__name__})"
     if not vid:
