@@ -122,9 +122,20 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         check("no exception escapes on a 500", False, f"{type(exc).__name__}: {exc}")
 
-    print("every publishing channel declares a pin_cta")
-    for name in ("dharma", "genx"):
-        check(f"{name} has a non-empty pin_cta", bool(ps.CHANNELS[name].get("pin_cta")))
+    print("every channel that funnels to a playlist also pins that playlist")
+    # Sweep the registry, never a hardcoded pair: a new channel (ch4, 2026-11-13)
+    # shipped with no pin_cta and this guard's old ("dharma", "genx") list did not
+    # notice -- the Shorts screen then carried no funnel at all.
+    for name, spec in ps.CHANNELS.items():
+        tail = spec.get("tail", "")
+        if "playlist?list=" not in tail:
+            continue
+        want = tail.split("playlist?list=")[1].split()[0].strip()
+        pin = spec.get("pin_cta", "")
+        check(f"{name} declares a non-empty pin_cta", bool(pin))
+        check(f"{name} pin_cta links a playlist", "playlist?list=" in pin, pin[:80])
+        check(f"{name} pin_cta links ITS OWN playlist (not another channel's)",
+              want in pin, f"tail has {want}; pin has {pin[:80]!r}")
 
     print()
     if FAILS:

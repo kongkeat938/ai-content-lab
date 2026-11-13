@@ -154,6 +154,15 @@ CHANNELS = {
         "tail": ("\n\nรวมเรื่องเล่าครอบครัวทุกตอน → "
                  "https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n"
                  "#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"),
+        # The pinned comment (the one CTA that shows on the Shorts screen). ch4 had
+        # none, so its Shorts screen carried no funnel at all -- measured 2026-11-13
+        # the channel has the worst subs/1k on the fleet (1.93). The link is the
+        # durable playlist (it survives a deleted video), which is honest: it is
+        # where the channel's long stories live, not a "full clip" that is not there
+        # (forbid_cta still bans that promise).
+        "pin_cta": ("กดติดตามไว้ ไม่พลาดเรื่องอบอุ่นใจทุกคืน 🔔\n"
+                    "ฟังเรื่องเล่าต่อเนื่องรวมทุกตอน → "
+                    "https://www.youtube.com/playlist?list=PLU4aztRNvt28"),
     },
 }
 
