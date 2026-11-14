@@ -697,6 +697,14 @@
       "posted_at": "2026-11-13T22:48:35+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "115": {
+      "video_id": "PdPu9IHiQTo",
+      "url": "https://youtu.be/PdPu9IHiQTo",
+      "title": "คืนนี้ลองหยุดคิดเรื่องพรุ่งนี้แล้ววางมือถือไว้ไกลตัว #Shorts",
+      "posted_at": "2026-11-14T20:31:12+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
