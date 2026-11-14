@@ -10,12 +10,12 @@ name: restore-metadata
 # The originals are recoverable from the manifests, so this walks them back. A
 # `videos.update` is 50 quota units against a 10,000/day cap, so a full restore cannot
 # finish in one run: the script stops cleanly on quotaExceeded and docs/metadata_restore.json
-# skips whatever is done, so each morning tick advances the pass. Run it AFTER the 08:00 UTC
-# reset.
+# skips whatever is done, so each tick advances the pass. It runs in its own window
+# (after polish-all's 08-12 title pass) because the quota pool is shared across the fleet.
 on:
   workflow_dispatch:
   schedule:
-    - cron: "23 8 * * *"
+    - cron: "23 12 * * *"
 
 permissions:
   contents: write

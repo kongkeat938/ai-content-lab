@@ -87,6 +87,11 @@ def current(vids: list[str], token: str) -> dict[str, dict]:
     return out
 
 
+def needs_restore(sn: dict) -> bool:
+    """True when a snippet lost its description or its tags."""
+    return not (sn.get("description") or "").strip() or not sn.get("tags")
+
+
 def put(vid: str, sn: dict, target: dict, token: str) -> None:
     body = {"id": vid, "snippet": {
         "title": sn.get("title", ""),
@@ -140,8 +145,9 @@ def main() -> int:
             sn = cur.get(vid)
             if not sn:
                 continue
-            if not (sn.get("description") or "").strip() or not sn.get("tags"):
-                need.append((vid, sn, tgt))
+            if not needs_restore(sn):
+                continue
+            need.append((vid, sn, tgt))
         print(f"== {ch}: {len(targets)} known, {len(need)} need a restore")
         if not a.apply:
             for vid, sn, _ in need[:5]:

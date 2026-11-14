@@ -303,10 +303,11 @@ def main() -> int:
         plan.append(("polish-all", {}))
 
     # 5c-ii. Metadata restore: put back the description + tags that
-    #        `videos.update` erased (measured 2026-11-14). 50 quota units a clip, so
-    #        it resumes daily from its ledger, right after the 08:00 UTC reset.
+    #        `videos.update` erased (measured 2026-11-14). 50 quota units a clip against a
+    #        shared 10,000/day pool, so it runs in its own window (after polish-all's
+    #        08-12 pass) and resumes daily from its ledger.
     rm_age = last_success_min("restore-metadata", ids)
-    if 8 <= now().hour < 12 and (rm_age is None or rm_age > 12 * 60):
+    if 12 <= now().hour < 22 and (rm_age is None or rm_age > 12 * 60):
         plan.append(("restore-metadata", {}))
 
     # 5d. Watch-hours: the weekly measurement of the one number the business runs
