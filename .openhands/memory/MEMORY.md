@@ -2,42 +2,40 @@
 
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
 **panel** (`advise.py`), not K. **This file is a MAP** (injected each session, tail truncated): keep
-<6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`. **Project = `yt938-2`;
-read `docs/PROJECT-MAP.md` first; search before creating — never a second copy (K; `test_project_map.py`).**
+<6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`. **Project = `yt938-2`; read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`).**
 
 ## 🪪 ak's identity & team (K, 2026-11-13)
 ak **owns a mailbox** (`ak_mail.py`): use it, never K's; **never sign up as K**; a phone ak can't
 own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel only advises.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
-- **YPP watch-hours = long-form ONLY** (Shorts don't count). Steer by long-form watch-hours/week +
-  `retention@2min`, never raw views. **dharma = 96% of long-form watch time → concentrate there**
- (genx 6.3h, kongkeat 0.7h / 28d). **Cadence is the lever, but step up, don't jump** (panel):
-  dharma 1→2/week; each video must differ (rotated theme, fresh set, unique bed) or it risks YouTube
-  "repetitious content"; NEVER stitch high-view Shorts into a long-form (spam).
-- **The first 2 minutes is the binding constraint** (dharma 28.9%@2%, target ≥40%). **Fade-in 4s→1s**
-  = **+12 dB** in the opening second — the hook is the lever.
-- **Watch-time/view rises with length:** 120-min ≈ **6.0** vs 17-min ≈ 4.6 min/view — keep them
-  long. **`content/PAUSED`** pauses a channel's rails (`test_paused_channel.py`).
+- **YPP watch-hours = long-form ONLY** (Shorts don't count); steer by long-form watch-hours/week +
+  `retention@2min`, never raw views. **dharma = 96% of long-form watch time → concentrate there.**
+- **The first 2 minutes binds** (dharma 28.9%@2%, target ≥40%); fade-in 4s→1s = **+12 dB** on the hook.
+- **Longer is better per view** (120-min ≈ **6.0** vs 17-min ≈ 4.6 min/view). **`content/PAUSED`**
+  pauses a channel's rails. **Cadence: step up, don't jump** (dharma 1→2/week; each video must differ
+  or it risks "repetitious content"; never stitch high-view Shorts into a long-form).
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order: **live API >
   real output file (ffprobe/ebur128) > a test that can FAIL > a committed doc**. Best = a
   **counter with an invariant** (`counter_ledger.py`).
-- **Times to K = Thai (UTC+7), 24-hour `HH:MM`** (never raw UTC).
+- **Times to K = Thai (UTC+7), 24-hour `HH:MM`** (never raw UTC). `PROGRESS.md`'s ONLY source is
+  `watch_hours.json` (a weekly rail) — if it lapses the headline silently freezes.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → use **per-channel
   secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel `advise.py`
   (≥5). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
 - **A guard must be able to FAIL;** never hardcode the set a guard sweeps; a generator that can
-  drop a piece must FAIL. `.get()+continue` on a config key is a silent killer.
+  drop a piece must FAIL. `.get()+continue` on a config key is a silent killer. A test that pins a
+  "recent" date to a literal goes red on its own (`test_no_pinned_recent_date.py`).
 - **Repo hygiene** (`test_repo_hygiene.py`): pushing rails run `git pull --rebase` + retry; a
   shared-ledger writer needs a guard; health thresholds must exceed the REAL cadence.
 
 ## 🧭 Traps still true (detail in `topics/05-durable-traps.md` + daily logs)
-- **Rogue stream (NOT ours):** clips no manifest names = leaked token; `rogue-guard` hides each; root = revoke + re-consent.
-- **A guard that only marks SUCCESS can't end a loop**; prefer private over delete. **A PUT to
-  `brandingSettings.channel` REPLACES the object** → read, merge.
+- **Rogue stream (NOT ours):** clips no manifest names = leaked token; `rogue-guard` hides each;
+  root = revoke + re-consent. A guard that only marks SUCCESS can't end a loop; prefer private over
+  delete. **A PUT to `brandingSettings.channel` REPLACES the object** → read, merge.
 - **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**. A GITHUB_TOKEN push
   does NOT trigger a workflow → dispatch explicitly.
 - **Git/CI hygiene:** racing rails → one concurrency group per channel + a union merge driver
@@ -47,9 +45,8 @@ own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel onl
   inline regex was copy-pasted into 10 scripts and crashed a rail (`test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir must be per-RUN
-  (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail, and the theme must ROTATE, not always
-  `themes[0]`** — else a raised cadence is a no-op or an add/add conflict
-  (`test_night_scripts.py`, `test_per_run_content_dir.py`).
+  (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail, and the theme must ROTATE** — else a raised
+  cadence is a no-op or an add/add conflict (`test_per_run_content_dir.py`).
 - **TTS voice fallback:** the alt Thai voice (VOICE_ALT `PremwadeeNeural`) returns
   `NoAudioReceived` on EVERY retry for some texts while the house voice reads the same text fine — a
   per-voice refusal, not a socket blip; `speak()` falls back to VOICE (`test_tts_fallback.py`).
@@ -57,10 +54,10 @@ own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel onl
   counter_ledger read a dip as DOWN; a pre-08:00-UTC Data-API 403 = spent quota, not an outage).
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK** or the rail
   looks healthy and produces nothing (2026-11-13 ch4; `test_rail_channels.py`).
-- **Audit was blind to a take-down** (diffed only channel→manifest → `find_removed`). **Mail is on
-  the cloud, not PC1** (dead); `IMAP_ACCOUNTS` = kongkeat.938 only.
-- **ch4 UNPAUSED 2026-11-13** (K: "ลุย ch4"): a tension hook is **enforced** (`test_hook_concrete`)
-  for the long-form hook AND the Shorts pool; no "full clip" CTA (`test_ch4_cta.py`).
+- **Audit was blind to a take-down** (→ `find_removed`). **Mail is on the cloud, not PC1** (dead);
+  `IMAP_ACCOUNTS` = kongkeat.938 only.
+- **ch4 UNPAUSED 2026-11-13**: a tension hook is **enforced** (`test_hook_concrete`) for the
+  long-form hook AND the Shorts pool; no "full clip" CTA (`test_ch4_cta.py`).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md` · daily logs.
@@ -71,7 +68,7 @@ own → **ask K**. **Workers** (`team.py run <role>`) DO the work; the panel onl
 - **Delegation:** genx+dharma → Manager `aerismusic8@gmail.com`; kongkeat-story BLOCKED
   (`uploadLimitExceeded` API-only; web Studio works). → `topics/05`.
 - **Inviting needs the OWNER's password** (K): save → Google "ยืนยันว่าเป็นคุณ"; a failed save
-  **vanishes** on reload → verify by reloading.
+  **vanishes** on reload → verify.
 - **Pod env:** recycled often → reinstall `ffmpeg` + `pip install -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`; suite = run every `scripts/test_*.py`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`); the pinned CTA comment
