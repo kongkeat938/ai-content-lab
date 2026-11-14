@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -55,8 +56,13 @@ def main() -> int:
     # The live rogue stream and the pre-manifest backlog must be told apart:
     # a recent unrecorded upload is the stream that is still running; an old one
     # is history. A take-down acts on the former, never the latter.
-    recent = "2026-11-11T00:00:00Z"
-    old = "2026-01-01T00:00:00Z"
+    # Compute the dates from `now()`: a hardcoded "recent" date passes while the
+    # wall clock is near it and then silently FAILS once it ages past RECENT_DAYS
+    # (measured 2026-11-14: the pinned 2026-11-11 became 3.25 days old and the
+    # guard broke with no code change).
+    now = datetime.now(timezone.utc)
+    recent = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    old = (now - timedelta(days=200)).strftime("%Y-%m-%dT%H:%M:%SZ")
     d3 = "\n".join(ac.find_defects(ch, [{"id": "PL"}],
                                    [vid("LIVE", "สด #Shorts", recent),
                                     vid("OLD", "เก่า #Shorts", old)], set()))
