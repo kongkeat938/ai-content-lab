@@ -705,6 +705,14 @@
       "posted_at": "2026-11-14T20:31:12+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "116": {
+      "video_id": "Dup3lDal2Fo",
+      "url": "https://youtu.be/Dup3lDal2Fo",
+      "title": "คืนนี้ลองนอนตะแคงขวาแล้วหลับตาลงช้าช้า #Shorts",
+      "posted_at": "2026-11-14T23:18:49+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
