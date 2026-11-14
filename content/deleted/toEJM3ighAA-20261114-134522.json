@@ -1,0 +1,75 @@
+{
+ "kind": "youtube#video",
+ "etag": "QSDtpgqjJIQdZDVV7MTlZcsRKmg",
+ "id": "toEJM3ighAA",
+ "snippet": {
+  "publishedAt": "2026-11-13T18:21:00Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "คืนนี้ให้เตียงนุ่มรับน้ำหนักใจ #Shorts",
+  "description": "ความมืดรอบกายค่อยๆ โอบรับความเหนื่อยอ่อนทั้งหมดไว้\n\nฟังธรรมะก่อนนอนแบบยาว ๆ ได้ทั้งคืนในช่อง Farmmer\n#ธรรมะก่อนนอน #หลับสบาย #ปล่อยวาง #ความสงบ #Shorts\n\n— ช่องพี่น้อง —\nkongkeat pratumma — เรื่องเล่าการ์ตูน\nhttps://www.youtube.com/@kongkeatpratumma",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/toEJM3ighAA/default.jpg?sqp=CNzL4dcG&rs=AOn4CLBQXE3DaPoBYYvQkSSAbuDXDVaqNA",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/toEJM3ighAA/mqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLCpM_efZTckS4rgPP2dL3SlACilCQ",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/toEJM3ighAA/hqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBrHKwul_9sY9DZVjE_F_qPJqWoBA",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/toEJM3ighAA/sddefault.jpg?sqp=CNzL4dcG&rs=AOn4CLDIKwe1EhI6m8B6HnFY0sXQFWH6HA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/toEJM3ighAA/maxresdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLAMSX9MnbqjtNFpyUcmL15hFSgC5g",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/toEJM3ighAA/sardefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBvuHABIpskbfrCboQKvR-4vNdIzg",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "tags": [
+   "ความสงบ",
+   "ธรรมะก่อนนอน",
+   "ปล่อยวาง",
+   "ผ่อนคลาย",
+   "หลับสบาย"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "คืนนี้ให้เตียงนุ่มรับน้ำหนักใจ #Shorts",
+   "description": "ความมืดรอบกายค่อยๆ โอบรับความเหนื่อยอ่อนทั้งหมดไว้\n\nฟังธรรมะก่อนนอนแบบยาว ๆ ได้ทั้งคืนในช่อง Farmmer\n#ธรรมะก่อนนอน #หลับสบาย #ปล่อยวาง #ความสงบ #Shorts\n\n— ช่องพี่น้อง —\nkongkeat pratumma — เรื่องเล่าการ์ตูน\nhttps://www.youtube.com/@kongkeatpratumma"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "84",
+  "likeCount": "1",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

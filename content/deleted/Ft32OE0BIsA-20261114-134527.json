@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "O4zqFdyDoCONyFYGuHJ8ofD3Q8M",
+ "id": "Ft32OE0BIsA",
+ "snippet": {
+  "publishedAt": "2026-11-13T22:19:29Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "นิทานสั้นก่อนนอน | นาฬิกาทรายของคุณยาย #Shorts",
+  "description": "ณ บ้านไม้หลังเก่าริมทุ่งหญ้า มีนาฬิกาทรายโบราณตั้งอยู่\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#นิทานก่อนนอน #เรื่องเล่าอบอุ่น #สอนใจเด็ก #ความผูกพัน #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/Ft32OE0BIsA/default.jpg?sqp=CNzL4dcG&rs=AOn4CLC3MbBWdUh2pb6m1hAfU27-iiJUTA",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/Ft32OE0BIsA/mqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBqjIWg9fObyWnHWA23p1kKJzQz5w",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/Ft32OE0BIsA/hqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBWl3a8tOMcAngsHPcQqdbkdoseFg",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/Ft32OE0BIsA/sddefault.jpg?sqp=CNzL4dcG&rs=AOn4CLC1vN5Z8hBRXPs9KTKpqO2-dvfWXw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/Ft32OE0BIsA/maxresdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLCUgcE3RcAixPPXtBsR_pztGz4J7A",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "ความผูกพัน",
+   "นิทานก่อนนอน",
+   "สอนใจเด็ก",
+   "เรื่องเล่าอบอุ่น",
+   "เวลาของครอบครัว"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "นิทานสั้นก่อนนอน | นาฬิกาทรายของคุณยาย #Shorts",
+   "description": "ณ บ้านไม้หลังเก่าริมทุ่งหญ้า มีนาฬิกาทรายโบราณตั้งอยู่\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#นิทานก่อนนอน #เรื่องเล่าอบอุ่น #สอนใจเด็ก #ความผูกพัน #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "1",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}
