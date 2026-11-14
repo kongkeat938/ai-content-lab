@@ -368,6 +368,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "85": {
+      "video_id": "CgcqrrR2ank",
+      "url": "https://youtu.be/CgcqrrR2ank",
+      "title": "สัญญาในครอบครัวแผ่นนั้นทำไมถึงถูกฉีกทิ้งต่อหน้า #Shorts",
+      "posted_at": "2026-11-14T16:00:22+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
