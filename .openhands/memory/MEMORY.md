@@ -37,15 +37,16 @@
 
 ## 🧭 Traps still true (detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue stream (NOT ours):** clips no manifest names = leaked token; `rogue-guard` hides each;
-  root = revoke + re-consent. A guard that only marks SUCCESS can't end a loop; prefer private over
-  delete. A PUT to `brandingSettings.channel` REPLACES the object → read, merge.
+  root = revoke + re-consent. A guard that only marks SUCCESS can't end a loop; prefer private over delete.
+  - **`videos.update` REPLACES the whole `snippet`** — omit a field and it ERASES it; read-merge-write.
+    A title pass dropped description+tags (123/146 genx, 2026-11-14);
+    `restore-metadata.yml`, `test_snippet_update_preserves.py`. Same for `brandingSettings.channel`.
 - **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**. A GITHUB_TOKEN push
   does NOT trigger a workflow → dispatch explicitly.
 - **Git/CI hygiene:** racing rails → one concurrency group per channel + a union merge driver
-  (`git_push_retry.sh`). A GENERATED `docs/` report (volatile header) needs ONE writer rail, else two
-  regenerating it conflict (`test_report_single_writer.py`; `test_push_retry_union.py`).
-- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`""`/`P1DT2H`); the old
-  inline regex, copy-pasted into 10 scripts, crashed a rail (`test_duration_parse.py`).
+  (`git_push_retry.sh`). A GENERATED `docs/` report needs ONE writer rail, else two conflict (`test_report_single_writer.py`; `test_push_retry_union.py`).
+- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`""`/`P1DT2H`); the old inline regex
+  (copy-pasted into 10 scripts) crashed a rail (`test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir must be per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail, and the theme must ROTATE** — else a raised
@@ -53,8 +54,8 @@
 - **TTS voice fallback:** the alt Thai voice (`PremwadeeNeural`) returns `NoAudioReceived` on
   EVERY retry for some texts while the house voice reads the same text fine — a per-voice refusal,
   not a socket blip; `speak()` falls back to VOICE (`test_tts_fallback.py`).
-- **Every new mechanism seeds a false alarm until the sweep learns it** (qa_gate graded a 120-min B;
-  counter_ledger read a dip as DOWN; a pre-08:00-UTC 403 = spent quota, not an outage).
+- **Every new mechanism seeds a false alarm until the sweep learns it** (a pre-08:00-UTC 403 =
+  spent quota, not an outage).
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK** or the rail
   looks healthy and produces nothing (`test_rail_channels.py`).
 - **Audit was blind to a take-down** (→ `find_removed`). **Mail is on the cloud, not PC1** (dead).

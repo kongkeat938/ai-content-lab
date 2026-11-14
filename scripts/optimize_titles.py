@@ -204,7 +204,24 @@ def only_recorded(vids: list[dict], recorded: set, allow_unrecorded: bool = Fals
 
 
 def apply_title(vid: str, title: str, category: str, token: str) -> str:
-    body = {"id": vid, "snippet": {"title": title, "categoryId": category}}
+    """Set the title, KEEPING every other snippet field.
+
+    `videos.update` REPLACES the whole `snippet` part: a field left out of the body
+    is erased, not preserved. Measured 2026-11-14 -- this function used to send only
+    `{title, categoryId}`, so every retitle silently wiped the description and tags
+    (123/146 genx clips lost their tags; 120 of them were retitled). Read the
+    snippet first and write every field back.
+    """
+    cur = _get("videos", {"part": "snippet", "id": vid}, token)["items"][0]["snippet"]
+    snippet = {
+        "title": title,
+        "description": cur.get("description", ""),
+        "categoryId": category or cur.get("categoryId", "22"),
+    }
+    for k in ("tags", "defaultLanguage", "defaultAudioLanguage"):
+        if cur.get(k) is not None:
+            snippet[k] = cur[k]
+    body = {"id": vid, "snippet": snippet}
     req = urllib.request.Request(API + "videos?part=snippet", data=json.dumps(body).encode(),
                                  method="PUT",
                                  headers={"Authorization": f"Bearer {token}",

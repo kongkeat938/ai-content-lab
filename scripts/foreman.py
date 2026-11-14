@@ -302,6 +302,13 @@ def main() -> int:
     if 8 <= now().hour < 12 and (p_age is None or p_age > 12 * 60):
         plan.append(("polish-all", {}))
 
+    # 5c-ii. Metadata restore: put back the description + tags that
+    #        `videos.update` erased (measured 2026-11-14). 50 quota units a clip, so
+    #        it resumes daily from its ledger, right after the 08:00 UTC reset.
+    rm_age = last_success_min("restore-metadata", ids)
+    if 8 <= now().hour < 12 and (rm_age is None or rm_age > 12 * 60):
+        plan.append(("restore-metadata", {}))
+
     # 5d. Watch-hours: the weekly measurement of the one number the business runs
     #     on. Reads the Analytics API, which has its own quota.
     wh_age = last_success_min("watch-hours", ids)

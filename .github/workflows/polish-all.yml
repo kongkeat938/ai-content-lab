@@ -69,6 +69,11 @@ jobs:
           CH="${CH:-genx dharma kongkeat}"
           for ch in $CH; do
             echo "### $ch"
+            # --apply is safe again: apply_title now reads the current snippet and
+            # writes description/tags/language back (videos.update REPLACES the whole
+            # snippet, so the old body that sent only {title,categoryId} erased the
+            # description and tags -- measured 2026-11-14: 123/146 genx clips lost
+            # their tags). scripts/test_snippet_update_preserves.py guards this.
             python3 scripts/optimize_titles.py --channel "$ch" --all --apply --sleep 1.0
             # --gen-art draws a fresh unique image per video (K's rule: no repeats).
             # --limit keeps one run inside the daily API quota; the ledger advances

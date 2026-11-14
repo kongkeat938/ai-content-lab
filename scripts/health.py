@@ -46,6 +46,7 @@ EXPECTED = {
     "grow-shorts-pool": 1700,    # daily 22:00 + the chain
     "ch4-realign": 1700,         # daily 08:05 + the chain
     "polish-all": 1700,          # daily 08-11 + the chain
+    "restore-metadata": 1700,    # daily 08-11 + the chain (restores erased desc/tags)
     "progress": 1700,            # daily 07:12
     "account-watch": 1700,       # daily 08:42
     "publish-ch1": 1700,

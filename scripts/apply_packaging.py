@@ -96,14 +96,29 @@ def key_to_video() -> dict:
 
 def snippet(vid: str, token: str) -> dict:
     req = urllib.request.Request(
-        f"{API}?part=snippet&id={vid}&fields=items/snippet(title,categoryId,tags)",
+        f"{API}?part=snippet&id={vid}"
+        "&fields=items/snippet(title,categoryId,tags,description,"
+        "defaultLanguage,defaultAudioLanguage)",
         headers={"Authorization": f"Bearer {token}"})
     items = json.load(urllib.request.urlopen(req, timeout=30)).get("items", [])
     return items[0]["snippet"] if items else {}
 
 
 def set_title_tags(vid: str, title: str, tags: list, category: str, token: str) -> None:
-    body = {"id": vid, "snippet": {"title": title, "categoryId": category, "tags": tags}}
+    """Write title/tags, KEEPING description and language.
+
+    `videos.update` REPLACES the whole `snippet`; a field left out is erased. This
+    used to send only {title, categoryId, tags}, wiping the description (which holds
+    the subscribe ask) on every packaging pass. Read the current snippet and write
+    every field back.
+    """
+    cur = snippet(vid, token)
+    body_sn = {"title": title, "categoryId": category, "tags": tags,
+               "description": cur.get("description", "")}
+    for k in ("defaultLanguage", "defaultAudioLanguage"):
+        if cur.get(k) is not None:
+            body_sn[k] = cur[k]
+    body = {"id": vid, "snippet": body_sn}
     req = urllib.request.Request(f"{API}?part=snippet", data=json.dumps(body).encode(),
                                  method="PUT",
                                  headers={"Authorization": f"Bearer {token}",
