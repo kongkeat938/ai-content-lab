@@ -378,6 +378,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "86": {
+      "video_id": "3d2tLkvM8sc",
+      "url": "https://youtu.be/3d2tLkvM8sc",
+      "title": "ทำไมแม่ถึงคอยหั่นผลไม้ชิ้นเล็กๆ ให้ลูกทานทั้งที่รู้ว่าลูกโตแล้ว #Shorts",
+      "posted_at": "2026-11-14T19:02:32+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
