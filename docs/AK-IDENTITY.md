@@ -23,6 +23,32 @@ that is now dead**, so a fresh session never saw it. That is the root cause of t
 - Measured live: `POST /accounts` 201, `POST /token` 200 (token 354 chars), `GET /messages` 200,
   `GET /me` 200 (quota 40 MB, `isDisabled=false`).
 
+## EVERY tool and EVERY agent uses its OWN mailbox (K, 2026-11-14)
+K: *"ต่อไปเครื่องมือทุกอย่างใช้เมล์ตัวเองล็อกอินเลย รวมถึง agent ในทีมด้วย ไม่ต้องใช้เมล์ K แล้ว"*.
+
+So a mailbox is now **per-identity**, not just for ak. The vault key is
+`ak.identity.mailbox` for ak and **`ak.identity.mail.<role>`** for every worker in `team.py`.
+Never K's address (`kongkeat.938` / `farmmer.938` / `kongkeat.p3` / `aerismusic8`) — those are
+the **business channel assets**, a different thing entirely (they stay, for the YouTube API).
+
+```
+python3 scripts/ak_mail.py new  --as researcher   # a worker's own mailbox
+python3 scripts/ak_mail.py show --as critic
+python3 scripts/ak_mail.py roster                 # every identity + its address (no passwords)
+python3 scripts/team.py mail researcher --new     # same, from the team CLI
+```
+
+Measured live 2026-11-14: all **7 identities** (ak + researcher, scriptwriter, packager,
+critic, analyst, engineer) each created a distinct mailbox and stored it. The roster is read
+from `team.py`, so a new worker is never silently missing a mailbox.
+
+**Trap fixed (the real reason ak "forgot" its mailbox):** `cmd_new` created an address at the
+provider but a failed vault write still exited 0 → the mailbox existed but was never recorded,
+so the next session read "no ak mailbox". Now a failed store **exits 1** (a generator that can
+drop a piece must FAIL), the vault write retries, and `scripts/test_agent_own_email.py` locks
+both this and the per-identity separation.
+
+
 ## How to use it (headless, no human)
 ```
 python3 scripts/ak_mail.py new                 # create + store a fresh ak mailbox

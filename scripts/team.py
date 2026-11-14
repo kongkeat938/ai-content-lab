@@ -83,10 +83,31 @@ def worker(role: str) -> dict[str, str]:
     return spec
 
 
+def mailbox(role: str) -> str | None:
+    """The worker's OWN mailbox address (never K's), or None if it has none yet.
+
+    K (2026-11-14): every tool and every agent in the team signs up with its own
+    mailbox, never K's. Each worker's mailbox lives in the vault under its own key
+    (`ak_mail.py --as <role>`); create one with `ak_mail.py new --as <role>`.
+    """
+    worker(role)                                        # loud on an unknown role
+    sys.path.insert(0, HERE)
+    import ak_mail  # noqa: PLC0415
+    acct = ak_mail._vault("GET", identity=role)
+    return acct.get("address") if acct else None
+
+
 def dispatch(role: str, task: str) -> str:
     spec = worker(role)
     fn = advise.advisor(spec["advisor"])   # loud if the advisor name is wrong
-    prompt = f"{spec['prompt']}\n\nงานที่มอบหมาย:\n{task}"
+    # Every worker signs up / acts as ITSELF (K, 2026-11-14), never as K. The brief
+    # carries the worker's own mailbox so it can never reach for K's address.
+    own = mailbox(role)
+    ident = (f"\n\nคุณคือ worker '{role}' ของ ak -- ใช้เมลของตัวเองเท่านั้น"
+             + (f" ({own})" if own else " (ยังไม่มีเมล -- สร้างด้วย ak_mail.py new --as "
+                f"{role})")
+             + " ห้ามใช้เมลของเจ้าของช่อง (K) เด็ดขาด")
+    prompt = f"{spec['prompt']}{ident}\n\nงานที่มอบหมาย:\n{task}"
     return fn(prompt).strip()
 
 
@@ -94,8 +115,23 @@ def cmd_list(_args) -> int:
     print(f"ak's team ({len(TEAM)} workers):")
     for role, spec in TEAM.items():
         kind = "Cloud worker (minutes)" if role in DEEP_ROLES else f"fast ({spec['advisor']})"
-        print(f"  {role:13} {kind:24} {spec['prompt'][:60]}...")
+        own = mailbox(role) or "(no mailbox yet)"
+        print(f"  {role:13} {kind:24} {own:26} {spec['prompt'][:40]}...")
     return 0
+
+
+def cmd_mail(args) -> int:
+    """Create or show a worker's OWN mailbox, so a signup never uses K's address."""
+    sys.path.insert(0, HERE)
+    import ak_mail  # noqa: PLC0415
+    if args.new:
+        return ak_mail.cmd_new(argparse.Namespace(as_=args.role))
+    addr = mailbox(args.role)
+    if addr:
+        print(addr)
+        return 0
+    print(f"no mailbox for {args.role} -- run: python3 scripts/team.py mail {args.role} --new")
+    return 1
 
 
 def cmd_run(args) -> int:
@@ -133,6 +169,10 @@ def main() -> int:
     a = sub.add_parser("all")
     a.add_argument("task")
     a.set_defaults(fn=cmd_all)
+    m = sub.add_parser("mail", help="create/show a worker's OWN mailbox (never K's)")
+    m.add_argument("role")
+    m.add_argument("--new", action="store_true", help="create a fresh mailbox for this role")
+    m.set_defaults(fn=cmd_mail)
     args = ap.parse_args()
     return args.fn(args)
 
