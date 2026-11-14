@@ -10,6 +10,20 @@ OpenHands **KV vault** (account-scoped, survives a sandbox recycle) and reads it
     python3 scripts/ak_mail.py inbox     # list messages
     python3 scripts/ak_mail.py read ID   # read one message (verification links)
 
+**Every tool and every agent in the team uses its OWN mailbox** (K, 2026-11-14: "ต่อไปเครื่องมือ
+ทุกอย่างใช้เมล์ตัวเองล็อกอินเลย รวมถึง agent ในทีมด้วย ไม่ต้องใช้เมล์ K แล้ว"). The mailbox
+lives under a per-identity vault key (`ak.identity.mailbox`, `ak.identity.mail.<role>`), so a
+signup by a worker never touches K's address:
+
+    python3 scripts/ak_mail.py new --as researcher   # the researcher worker's own mailbox
+    python3 scripts/ak_mail.py show --as critic
+
+A store that fails MUST fail loudly. Measured 2026-11-14: `new` created an address at the
+provider but the vault write failed (a 400 on the wrong automation anchor) and the command
+still exited 0 -- so the mailbox existed but was never recorded, and the next session read
+"no ak mailbox in the vault". That silent partial write is why ak kept "forgetting" its own
+mailbox. `cmd_new` now exits 1 if the vault write does not verify.
+
 Provider: mail.tm (domain fldubai.com). Measured 2026-11-13 from the pod: create 201,
 token 200, read 200 -- but `POST /token` can 401 for a few seconds right after create, and
 the token body is longer than a small read buffer, so we read the whole body and retry.
@@ -33,6 +47,22 @@ UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) Chrome/126.0 Safari/537.36"
       "Accept": "application/json", "Content-Type": "application/json"}
 
 
+def _roster() -> list[str]:
+    """Every identity that must own a mailbox: `ak` plus every worker in the team.
+    Read from team.py so a new worker is never silently missing a mailbox (the
+    `.get()+continue` trap that once emptied the panel)."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import team  # noqa: PLC0415
+        roles = list(team.TEAM)
+    except Exception:                                   # noqa: BLE001
+        roles = []
+    return ["ak"] + roles
+
+
+ROSTER = _roster()
+
+
 def _req(url: str, data=None, method=None, token=None) -> tuple[int, str]:
     headers = dict(UA)
     if token:
@@ -49,34 +79,54 @@ def _req(url: str, data=None, method=None, token=None) -> tuple[int, str]:
         return 0, str(e)
 
 
-def _vault(method: str, value: dict | None = None) -> dict | None:
+def _vault_key(identity: str) -> str:
+    """The vault key for an identity. `ak` keeps the historical key (already in the vault);
+    every worker gets its own, so a worker's signup never shares ak's address."""
+    if identity in ("", "ak"):
+        return VAULT_KEY
+    return f"ak.identity.mail.{identity}"
+
+
+def _vault(method: str, value: dict | None = None,
+           identity: str = "ak", retries: int = 3) -> dict | None:
     key = os.environ.get("OPENHANDS_API_KEY") or os.environ.get("KONGKEAT_OH_KEY")
     if not key:
         return None
-    url = f"https://app.all-hands.dev/api/automation/v1/kv/{VAULT_KEY}?automation_id={VAULT_ANCHOR}"
+    vk = _vault_key(identity)
+    url = f"https://app.all-hands.dev/api/automation/v1/kv/{vk}?automation_id={VAULT_ANCHOR}"
     headers = {"Authorization": "Bearer " + key, "Content-Type": "application/json"}
     body = json.dumps({"value": json.dumps(value)}).encode() if value is not None else None
-    req = urllib.request.Request(url, data=body, method=method, headers=headers)
-    try:
-        r = urllib.request.urlopen(req, timeout=25)
-        raw = json.loads(r.read().decode())
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return None
-        print(f"vault {method} failed: {e.code}")
-        return None
-    except Exception as e:                          # noqa: BLE001
-        print(f"vault {method} failed: {e}")
-        return None
-    v = raw.get("value")
-    if isinstance(v, dict) and "value" in v:        # GET wraps once
-        v = v["value"]
-    if isinstance(v, str):
+    # A write can fail transiently; retry so a blip does not silently lose the mailbox.
+    # The caller still checks the result: a store that fails MUST fail loudly.
+    for attempt in range(retries):
+        req = urllib.request.Request(url, data=body, method=method, headers=headers)
         try:
-            v = json.loads(v)
-        except json.JSONDecodeError:
-            pass
-    return v if isinstance(v, dict) else None
+            r = urllib.request.urlopen(req, timeout=25)
+            raw = json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+            if attempt == retries - 1:
+                print(f"vault {method} failed: {e.code} {e.read().decode()[:160]}")
+                return None
+            time.sleep(2)
+            continue
+        except Exception as e:                          # noqa: BLE001
+            if attempt == retries - 1:
+                print(f"vault {method} failed: {e}")
+                return None
+            time.sleep(2)
+            continue
+        v = raw.get("value")
+        if isinstance(v, dict) and "value" in v:        # GET wraps once
+            v = v["value"]
+        if isinstance(v, str):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                pass
+        return v if isinstance(v, dict) else None
+    return None
 
 
 def _new_account() -> dict:
@@ -105,26 +155,47 @@ def _token_for(acct: dict) -> str | None:
     return None
 
 
-def cmd_new(_args) -> int:
+def cmd_new(args) -> int:
+    identity = getattr(args, "as_", "ak") or "ak"
     acct = _new_account()
-    stored = _vault("PUT", acct)
-    print(f"created ak mailbox: {acct['address']}  (stored in vault: {bool(stored)})")
+    stored = _vault("PUT", acct, identity=identity)
+    if not stored:
+        # A created address that was never recorded is exactly the silent partial write
+        # that made ak "forget" its mailbox. Fail loudly instead of exiting 0.
+        print(f"FAIL: created {acct['address']} at the provider but the vault write "
+              f"failed -- the mailbox would be lost. Nothing was recorded.", file=sys.stderr)
+        return 1
+    print(f"created {identity} mailbox: {acct['address']}  (stored in vault: {bool(stored)})")
     return 0
 
 
-def cmd_show(_args) -> int:
-    acct = _vault("GET")
+def cmd_show(args) -> int:
+    identity = getattr(args, "as_", "ak") or "ak"
+    acct = _vault("GET", identity=identity)
     if not acct:
-        print("no ak mailbox in the vault -- run: python3 scripts/ak_mail.py new")
+        print(f"no {identity} mailbox in the vault -- run: "
+              f"python3 scripts/ak_mail.py new --as {identity}")
         return 1
     print(acct["address"])
     return 0
 
 
-def cmd_inbox(_args) -> int:
-    acct = _vault("GET")
+def cmd_roster(_args) -> int:
+    """Print every identity's mailbox address (never a password), so it is visible
+    that each tool/agent has its own -- and none is K's."""
+    for identity in ROSTER:
+        acct = _vault("GET", identity=identity)
+        addr = acct.get("address") if acct else "(none -- run: ak_mail.py new --as %s)" % identity
+        print(f"  {identity:13} {addr}")
+    return 0
+
+
+def cmd_inbox(args) -> int:
+    identity = getattr(args, "as_", "ak") or "ak"
+    acct = _vault("GET", identity=identity)
     if not acct:
-        print("no ak mailbox in the vault -- run: python3 scripts/ak_mail.py new")
+        print(f"no {identity} mailbox in the vault -- run: "
+              f"python3 scripts/ak_mail.py new --as {identity}")
         return 1
     tok = _token_for(acct)
     if not tok:
@@ -142,9 +213,10 @@ def cmd_inbox(_args) -> int:
 
 
 def cmd_read(args) -> int:
-    acct = _vault("GET")
+    identity = getattr(args, "as_", "ak") or "ak"
+    acct = _vault("GET", identity=identity)
     if not acct:
-        print("no ak mailbox in the vault")
+        print(f"no {identity} mailbox in the vault")
         return 1
     tok = _token_for(acct)
     if not tok:
@@ -165,11 +237,15 @@ def cmd_read(args) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description="ak's own mailbox")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("new").set_defaults(fn=cmd_new)
-    sub.add_parser("show").set_defaults(fn=cmd_show)
-    sub.add_parser("inbox").set_defaults(fn=cmd_inbox)
+    for name in ("new", "show", "inbox", "roster"):
+        p = sub.add_parser(name)
+        p.set_defaults(fn=globals()["cmd_" + name])
+        if name != "roster":
+            p.add_argument("--as", dest="as_", default="ak",
+                           help="the identity whose mailbox to use (default ak)")
     r = sub.add_parser("read")
     r.add_argument("id")
+    r.add_argument("--as", dest="as_", default="ak")
     r.set_defaults(fn=cmd_read)
     args = ap.parse_args()
     return args.fn(args)
