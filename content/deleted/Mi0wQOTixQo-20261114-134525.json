@@ -1,0 +1,75 @@
+{
+ "kind": "youtube#video",
+ "etag": "t44GX3WsaoeKg-I0bTeqpTYqJUY",
+ "id": "Mi0wQOTixQo",
+ "snippet": {
+  "publishedAt": "2026-11-14T03:20:47Z",
+  "channelId": "UCI6EfsgM1HNjrYarvigxyrQ",
+  "title": "เติบโตมาเพื่อพบว่าการได้นอนเฉย ๆ คือรางวัล #Shorts",
+  "description": "เราแบกความคาดหวังของคนทั้งโลกไว้บนบ่าโดยไม่รู้ตัว\n\nฟังข้อคิดชีวิตแบบเต็ม ๆ ได้ในช่อง ตาต้า GenX Shop\n#วัยกลางคน #กำลังใจ #ฮีลใจ #ชีวิตทำงาน #Shorts\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน ฟังสบายทุกคืน\nhttps://www.youtube.com/@farmmer-n9t",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/Mi0wQOTixQo/default.jpg?sqp=CNzL4dcG&rs=AOn4CLD_3LYLsLRMRKovUFram0shJIuoPg",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/Mi0wQOTixQo/mqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLDwV_q1w8tItd1Bxi_xNRb8arjLww",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/Mi0wQOTixQo/hqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLAZoHH9Ue-w9S05Lvw9YtQNdxsyaQ",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/Mi0wQOTixQo/sddefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBD9HzNHx9eITNGOEKb5dZfYA2Qfw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/Mi0wQOTixQo/maxresdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBcg8OjVH_1FZxLB0OKE2qpgpWspA",
+    "width": 1280,
+    "height": 720
+   },
+   "shortsAspectRatio": {
+    "url": "https://i9.ytimg.com/vi/Mi0wQOTixQo/sardefault.jpg?sqp=CNzL4dcG&rs=AOn4CLCx2zwNbohc3ecajCZJ-OCr2PttKg",
+    "width": 405,
+    "height": 720
+   }
+  },
+  "channelTitle": "ตาต้า GenX — ปรัชญาชีวิต",
+  "tags": [
+   "กำลังใจ",
+   "ความสุข",
+   "ชีวิตทำงาน",
+   "วัยกลางคน",
+   "ฮีลใจ"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "เติบโตมาเพื่อพบว่าการได้นอนเฉย ๆ คือรางวัล #Shorts",
+   "description": "เราแบกความคาดหวังของคนทั้งโลกไว้บนบ่าโดยไม่รู้ตัว\n\nฟังข้อคิดชีวิตแบบเต็ม ๆ ได้ในช่อง ตาต้า GenX Shop\n#วัยกลางคน #กำลังใจ #ฮีลใจ #ชีวิตทำงาน #Shorts\n\n— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน ฟังสบายทุกคืน\nhttps://www.youtube.com/@farmmer-n9t"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "41",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

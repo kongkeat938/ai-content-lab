@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "uuDiVJQOTpOM8STiB4q5eK8aKYo",
+ "id": "2AQb_wBS28Y",
+ "snippet": {
+  "publishedAt": "2026-11-14T08:20:39Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "นิทานสั้นก่อนนอน | ปะการังน้อยผู้สร้างบ้าน #Shorts",
+  "description": "ในก้นบึ้งของมหาสมุทรอันกว้างใหญ่มีปะการังตัวน้อยสีชมพูอาศัยอยู่\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#นิทานก่อนนอน #นิทานเด็ก #นิทานสอนใจ #เรื่องเล่าอบอุ่น #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/2AQb_wBS28Y/default.jpg?sqp=CNzL4dcG&rs=AOn4CLDTh7kxjsZsyqKr9gO3Y2Timiuy3w",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/2AQb_wBS28Y/mqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLDctnGssN1klK_P_YEneo80UFxw3A",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/2AQb_wBS28Y/hqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLBJ8urHpuHvq09nwMFVPil6TZ-xjA",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/2AQb_wBS28Y/sddefault.jpg?sqp=CNzL4dcG&rs=AOn4CLB7Sn32nbBYj1RY1K78JASL_53gqA",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/2AQb_wBS28Y/maxresdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLAFsPiMOQZ7fJE_9vqCwTz6dqtZZg",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "นิทานก่อนนอน",
+   "นิทานสอนใจ",
+   "นิทานสั้น",
+   "นิทานเด็ก",
+   "เรื่องเล่าอบอุ่น"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "นิทานสั้นก่อนนอน | ปะการังน้อยผู้สร้างบ้าน #Shorts",
+   "description": "ในก้นบึ้งของมหาสมุทรอันกว้างใหญ่มีปะการังตัวน้อยสีชมพูอาศัยอยู่\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#นิทานก่อนนอน #นิทานเด็ก #นิทานสอนใจ #เรื่องเล่าอบอุ่น #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}

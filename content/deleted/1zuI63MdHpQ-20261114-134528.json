@@ -1,0 +1,70 @@
+{
+ "kind": "youtube#video",
+ "etag": "xPNwtyc1Azy3gsbrb31j347VQNo",
+ "id": "1zuI63MdHpQ",
+ "snippet": {
+  "publishedAt": "2026-11-13T13:20:48Z",
+  "channelId": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "title": "นิทานสั้นก่อนนอน | ร่มใบไม้ของเจ้ากระรอกน้อย #Shorts",
+  "description": "ณ ป่าใหญ่ยามบ่าย สายฝนเริ่มโปรยปรายลงมาเบาๆ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#นิทานก่อนนอน #เรื่องเล่าอบอุ่น #นิทานเด็ก #ข้อคิดดีๆ #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/1zuI63MdHpQ/default.jpg?sqp=CNzL4dcG&rs=AOn4CLBUewQeKEJlPlyjDo0983qX-S7oTQ",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/1zuI63MdHpQ/mqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLB8DOO_-SsaDoNYOoGGlRNlxeO5xg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/1zuI63MdHpQ/hqdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLDp5HaP1lF1w2Eie-nVCFL1U2n9mw",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/1zuI63MdHpQ/sddefault.jpg?sqp=CNzL4dcG&rs=AOn4CLB82rKLCRu3yzGC7Gvt_ZZDW_Xn5g",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/1zuI63MdHpQ/maxresdefault.jpg?sqp=CNzL4dcG&rs=AOn4CLAYusQ4MoKMZBm6wsUAvUNKTIsbIQ",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "เรื่องเล่าอบอุ่นใจ",
+  "tags": [
+   "ข้อคิดดีๆ",
+   "นิทานก่อนนอน",
+   "นิทานสอนใจ",
+   "นิทานเด็ก",
+   "เรื่องเล่าอบอุ่น"
+  ],
+  "categoryId": "27",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "นิทานสั้นก่อนนอน | ร่มใบไม้ของเจ้ากระรอกน้อย #Shorts",
+   "description": "ณ ป่าใหญ่ยามบ่าย สายฝนเริ่มโปรยปรายลงมาเบาๆ\n\nติดตามซีรี่ส์เรื่องเล่าอบอุ่นใจได้ในช่อง เรื่องเล่าอบอุ่นใจ\n#นิทานก่อนนอน #เรื่องเล่าอบอุ่น #นิทานเด็ก #ข้อคิดดีๆ #Shorts\n\n— ช่องพี่น้อง —\nตาต้า GenX Shop — ปรัชญาชีวิต\nhttps://www.youtube.com/@tatagenxgeny\n\nรวมเรื่องเล่าครอบครัวทุกตอน → https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"
+  },
+  "defaultAudioLanguage": "en-US"
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": false,
+  "publicStatsViewable": false,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}
