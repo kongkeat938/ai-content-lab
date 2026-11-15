@@ -23,6 +23,7 @@ import datetime as dt
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -32,6 +33,10 @@ ROOT = os.path.dirname(HERE)
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 ANALYTICS = "https://youtubeanalytics.googleapis.com/v2/reports"
 DATA = "https://www.googleapis.com/youtube/v3"
+
+# Attempts for a *transient* Analytics failure (5xx / 429 / timeout). A real 4xx
+# (bad token, bad query) is not retried -- see report().
+RETRIES = 3
 
 CHANNELS = {
     "ch1": "YT_CH1_REFRESH_TOKEN",
@@ -195,10 +200,35 @@ def access_token(env: str) -> str:
 
 
 def report(tok: str, q: dict) -> dict:
+    """Query the Analytics API, retrying a *transient* failure.
+
+    Measured 2026-11-15: a bare urlopen let a one-off "HTTP Error 500: Internal
+    Server Error" from the Analytics endpoint kill the whole matrix job for ch1 --
+    the other channels succeeded, ch1's insights file was never written, and the
+    script generator was fed stale data. A 5xx/429/timeout here is the API having a
+    bad moment, not a bad request, so retry it with backoff.
+
+    If it still fails, raise: the repo rule is that a generator which can drop a
+    piece must FAIL, not write a partial set. The caller therefore never writes a
+    half-built insights file, and the job goes red so the loss is visible.
+    """
     url = f"{ANALYTICS}?{urllib.parse.urlencode(q)}"
-    with urllib.request.urlopen(urllib.request.Request(
-            url, headers={"Authorization": f"Bearer {tok}"}), timeout=60) as fh:
-        return json.load(fh)
+    last: Exception | None = None
+    for attempt in range(RETRIES):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(
+                    url, headers={"Authorization": f"Bearer {tok}"}), timeout=60) as fh:
+                return json.load(fh)
+        except urllib.error.HTTPError as exc:
+            # 4xx other than 429 is a real error (bad token, bad query): fail now.
+            if exc.code != 429 and exc.code < 500:
+                raise
+            last = exc
+        except (urllib.error.URLError, TimeoutError) as exc:
+            last = exc
+        if attempt < RETRIES - 1:
+            time.sleep(2 ** attempt)
+    raise last if last else RuntimeError("analytics report failed")
 
 
 def rows(d: dict) -> list[dict]:
