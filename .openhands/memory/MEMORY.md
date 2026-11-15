@@ -2,7 +2,8 @@
 
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
 **panel** (`advise.py`), not K. **This file is a MAP** (injected each session, tail truncated): keep
-<6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`. **Project = `yt938-2`; read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`).**
+<6,000 chars (`test_memory_budget.py`); detail in `topics/`, logs, `docs/`. **Project = `yt938-2`;
+read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`).**
 
 ## 🪪 ak's identity & team (K, 2026-11-13; every agent its OWN mail 2026-11-14)
 **Every tool and every agent uses its OWN mailbox, never K's** (K, 2026-11-14). ak = `ak_mail.py`
@@ -16,8 +17,8 @@
   `retention@2min`, never raw views. **dharma = 96% of long-form watch time → concentrate there.**
 - **The first 2 minutes binds** (dharma 28.9%@2%, target ≥40%); fade-in 4s→1s = **+12 dB** on the hook.
 - **Longer is better per view** (120-min ≈ **6.0** vs 17-min ≈ 4.6 min/view). **`content/PAUSED`**
-  pauses a channel's rails. **Cadence: step up, don't jump** (dharma 1→2/week; each video must differ
-  or it risks "repetitious content"; never stitch Shorts into a long-form).
+  pauses a channel's rails. **Cadence: step up, don't jump** (dharma 1→2/week; each video must
+  differ or it risks "repetitious content").
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order: **live API >
@@ -37,9 +38,12 @@
 
 ## 🧭 Traps still true (detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue stream (NOT ours):** clips no manifest names = leaked grant; `rogue-guard` hides each
-  (private over delete); root = K revokes at `myaccount.google.com`.
-  - **`videos.update` REPLACES the whole `snippet`** — omit a field and it ERASES it; read-merge-write
-    (a title pass dropped desc+tags, 123/146 genx 2026-11-14; `restore-metadata.yml`, `test_snippet_update_preserves.py`).
+  (private over delete); root = K revokes at `myaccount.google.com`. Data quota is spent by
+  ~13:00 UTC so the pausing rail 403s until the 08:00 reset; `rogue_watch_rss.py` (public RSS,
+  no quota) sees it anyway. Same grant in `aeris-drive-automation` (`ops/yt_publish.py` names our
+  3 channels) → K must disable that automation too.
+  - **`videos.update` REPLACES the whole `snippet`** — read-merge-write or it erases desc/tags
+    (`test_snippet_update_preserves.py`).
 - **Repo is PUBLIC** (free plan → private would halt the rails): never commit a credential
   (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); K's were
   scrubbed from tree AND history, real ones in the `CH_ACCOUNTS` secret.
@@ -51,14 +55,13 @@
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir must be per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail, and the theme must ROTATE** — else a raised
   cadence is a no-op or an add/add conflict.
-- **TTS fallback:** the alt Thai voice (`PremwadeeNeural`) returns `NoAudioReceived` on EVERY retry
-  for some texts while the house voice reads the same text fine — a per-voice refusal, not a blip;
-  `speak()` falls back to VOICE (`test_tts_fallback.py`).
+- **TTS fallback:** the alt Thai voice (`PremwadeeNeural`) refuses some texts
+  (`NoAudioReceived`) → `speak()` falls back to VOICE (`test_tts_fallback.py`).
 - **Every new mechanism seeds a false alarm until the sweep learns it** (pre-08:00-UTC 403 =
   spent quota, not an outage).
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK** or the rail
-  looks healthy yet produces nothing (`test_rail_channels.py`).
-- **Audit was blind to a take-down** (→ `find_removed`). **Mail = cloud, not PC1** (dead).
+  looks healthy yet produces nothing (`test_rail_channels.py`). **Audit was blind to a take-down**
+  (→ `find_removed`). **Mail = cloud, not PC1** (dead).
 - **ch4 UNPAUSED 2026-11-13**: a tension hook is **enforced** (`test_hook_concrete`) for the
   long-form hook AND the Shorts pool; no "full clip" CTA (`test_ch4_cta.py`).
 
@@ -69,8 +72,7 @@
 - **Accounts:** 1 channel = 1 Google account — genx `ch1`, dharma `ch2`, ch4
   `ch4` (`test_channel_accounts.py`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED
-  (`uploadLimitExceeded` API-only; web Studio works).
-- **Inviting needs K's OWNER password**: a failed save vanishes on reload.
+  (`uploadLimitExceeded` API-only; web Studio works). Inviting needs K's OWNER password.
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`; suite = every `scripts/test_*.py`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`).
