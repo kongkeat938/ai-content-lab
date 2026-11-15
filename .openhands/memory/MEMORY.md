@@ -37,16 +37,14 @@
 
 ## 🧭 Traps still true (detail in `topics/05-durable-traps.md` + daily logs)
 - **Rogue stream (NOT ours):** clips no manifest names = leaked token; `rogue-guard` hides each;
-  root = revoke + re-consent. A guard that only marks SUCCESS can't end a loop; prefer private over delete.
-  - **`videos.update` REPLACES the whole `snippet`** — omit a field and it ERASES it; read-merge-write.
-    A title pass dropped description+tags (123/146 genx, 2026-11-14);
-    `restore-metadata.yml`, `test_snippet_update_preserves.py`. Same for `brandingSettings.channel`.
-- **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**. A GITHUB_TOKEN push
-  does NOT trigger a workflow → dispatch explicitly.
+  root = revoke + re-consent. Prefer private over delete.
+  - **`videos.update` REPLACES the whole `snippet`** — omit a field and it ERASES it; read-merge-write
+    (a title pass dropped desc+tags, 123/146 genx 2026-11-14; `restore-metadata.yml`, `test_snippet_update_preserves.py`).
+- **Repo is PUBLIC:** never commit a credential (`test_no_committed_secrets.py`); K's gmails still sit in it (~107 lines) — history rewrite proposed to K. `policy_check.py`→`COMPLIANCE.md`
+- **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**; a GITHUB_TOKEN push does NOT trigger a workflow
 - **Git/CI hygiene:** racing rails → one concurrency group per channel + a union merge driver
-  (`git_push_retry.sh`). A GENERATED `docs/` report needs ONE writer rail, else two conflict (`test_report_single_writer.py`; `test_push_retry_union.py`).
-- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`""`/`P1DT2H`); the old inline regex
-  (copy-pasted into 10 scripts) crashed a rail (`test_duration_parse.py`).
+  (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer rail (`test_report_single_writer.py`; `test_push_retry_union.py`).
+- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`P1DT2H`); the old copy-pasted regex crashed a rail (`test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir must be per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail, and the theme must ROTATE** — else a raised
@@ -58,7 +56,7 @@
   spent quota, not an outage).
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK** or the rail
   looks healthy and produces nothing (`test_rail_channels.py`).
-- **Audit was blind to a take-down** (→ `find_removed`). **Mail is on the cloud, not PC1** (dead).
+- **Audit was blind to a take-down** (→ `find_removed`). **Mail is cloud, not PC1** (dead).
 - **ch4 UNPAUSED 2026-11-13**: a tension hook is **enforced** (`test_hook_concrete`) for the
   long-form hook AND the Shorts pool; no "full clip" CTA (`test_ch4_cta.py`).
 
