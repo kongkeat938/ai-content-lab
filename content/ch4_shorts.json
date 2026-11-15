@@ -408,6 +408,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "89": {
+      "video_id": "x1AyGQyyyuQ",
+      "url": "https://youtu.be/x1AyGQyyyuQ",
+      "title": "ทำไมแม่ถึงแอบร้องไห้ทุกครั้งที่ฉันทานข้าวหมดจาน #Shorts",
+      "posted_at": "2026-11-15T21:56:38+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
