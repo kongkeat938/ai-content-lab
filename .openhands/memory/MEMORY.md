@@ -40,7 +40,9 @@
   root = revoke + re-consent. Prefer private over delete.
   - **`videos.update` REPLACES the whole `snippet`** — omit a field and it ERASES it; read-merge-write
     (a title pass dropped desc+tags, 123/146 genx 2026-11-14; `restore-metadata.yml`, `test_snippet_update_preserves.py`).
-- **Repo is PUBLIC:** never commit a credential (`test_no_committed_secrets.py`); K's gmails still sit in it (~107 lines) — history rewrite proposed to K. `policy_check.py`→`COMPLIANCE.md`
+- **Repo is PUBLIC:** never commit a credential (`test_no_committed_secrets.py`). K's addresses
+  were scrubbed from the tree AND history (`git filter-repo`); real ones live in the `CH_ACCOUNTS`
+  secret. `policy_check.py`→`COMPLIANCE.md`
 - **Quota:** `videos.insert` has its own pool; Data API resets **08:00 UTC**; a GITHUB_TOKEN push does NOT trigger a workflow
 - **Git/CI hygiene:** racing rails → one concurrency group per channel + a union merge driver
   (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer rail (`test_report_single_writer.py`; `test_push_retry_union.py`).

@@ -50,13 +50,38 @@ STATE = os.path.join(ROOT, "content", "mail_watch_state.json")
 # Mail detail must not land in a public repository, so it goes outside it.
 PRIVATE = os.environ.get("MAIL_WATCH_PRIVATE", os.path.expanduser("~/mail_watch_private.json"))
 
-# slug -> (refresh-token env var, the account's address)
+# slug -> (refresh-token env var, the account's placeholder address).
+# The real addresses live in the repository secret CH_ACCOUNTS (JSON slug->address),
+# never in this PUBLIC repo -- the address is only used to name a gap in the report
+# and to apply a bare shared password, so a placeholder keeps the code runnable.
 ACCOUNTS = {
     "dharma": ("YT_CH2_REFRESH_TOKEN", "ch2@example.invalid"),
     "genx": ("YT_CH1_REFRESH_TOKEN", "ch1@example.invalid"),
     "aeris-music": ("YT_CH3_REFRESH_TOKEN", "ch3@example.invalid"),
     "kongkeat-story": ("YT_CH4_REFRESH_TOKEN", "ch4@example.invalid"),
 }
+
+
+def account_addresses() -> dict:
+    """slug -> address, real ones from the CH_ACCOUNTS secret when present.
+
+    K holds the addresses privately; the repo keeps placeholders so a leak of this
+    file reveals nothing. A missing or malformed secret falls back to the
+    placeholders -- the IMAP read itself is driven by IMAP_ACCOUNTS, so the address
+    here is a label, not the credential.
+    """
+    out = {slug: addr for slug, (_var, addr) in ACCOUNTS.items()}
+    raw = (os.environ.get("CH_ACCOUNTS") or "").strip()
+    if raw:
+        try:
+            doc = json.loads(raw)
+            if isinstance(doc, dict):
+                for slug, addr in doc.items():
+                    if slug in out and isinstance(addr, str) and addr.strip():
+                        out[slug] = addr.strip()
+        except json.JSONDecodeError:
+            pass
+    return out
 
 # Channels that are no longer ak's to run. aeris-music was handed to another AI
 # (K, 2026-11-03), so watching it is not a gap and not an alert -- it is simply
@@ -216,7 +241,7 @@ def mail_accounts() -> list[tuple[str, str, str]]:
     # applied to every account this project already knows. That is the smallest thing
     # to type on a phone, and it matches how K described it.
     if not pairs and raw and ":" not in raw and not raw.startswith(("[", "{")):
-        for _slug, (_var, addr) in ACCOUNTS.items():
+        for _slug, addr in account_addresses().items():
             if addr and _slug not in CANCELLED:
                 add(default_host, addr, raw)
     return pairs
@@ -300,7 +325,7 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
     # as "clean". Name it instead: an unwatched inbox is a gap, not a clean one.
     # (Measured 2026-11-09: IMAP_ACCOUNTS held only ch1, so dharma and
     # kongkeat-story were never read and the report said nothing about them.)
-    for slug, (_var, addr) in ACCOUNTS.items():
+    for slug, addr in account_addresses().items():
         if slug in CANCELLED or not addr or addr in read_users:
             continue
         notes.append(f"NOT read {addr} ({slug}): no app password in IMAP_ACCOUNTS")
