@@ -62,6 +62,19 @@ ACCOUNTS = {
 }
 
 
+def public_address(slug: str) -> str:
+    """The PLACEHOLDER to show in the public report for a channel slug.
+
+    The real address (from CH_ACCOUNTS) is a credential-context value: it is used
+    to log in and to expand a bare shared password, never to be printed. The
+    report is committed to a PUBLIC repository, so it names a channel by slug or
+    placeholder. Measured 2026-11-15: the account-watch rail wrote the real
+    addresses back into docs/MAIL-ALERTS.md because the status line echoed the raw
+    IMAP user, undoing the earlier PII scrub.
+    """
+    return ACCOUNTS.get(slug, ("", slug))[1]
+
+
 def account_addresses() -> dict:
     """slug -> address, real ones from the CH_ACCOUNTS secret when present.
 
@@ -69,6 +82,9 @@ def account_addresses() -> dict:
     file reveals nothing. A missing or malformed secret falls back to the
     placeholders -- the IMAP read itself is driven by IMAP_ACCOUNTS, so the address
     here is a label, not the credential.
+
+    Callers that WRITE a public file must use `public_address()` instead: this
+    returns the real value when the secret is present, and the report is public.
     """
     out = {slug: addr for slug, (_var, addr) in ACCOUNTS.items()}
     raw = (os.environ.get("CH_ACCOUNTS") or "").strip()
@@ -300,6 +316,7 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
     alerts: list[dict] = []
     notes: list[str] = []
     read_users = {u for _h, u, _p in accounts}
+    addr_to_slug = {addr: slug for slug, addr in account_addresses().items()}
     for host, user, pw in accounts:
         try:
             box = imaplib.IMAP4_SSL(host)
@@ -318,9 +335,11 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
                                    "subject": subj, "date": msg.get("Date", "")})
                     found += 1
             box.logout()
-            notes.append(f"read {user}: {found} flagged unread in {days} day(s)")
+            notes.append(f"read {public_address(addr_to_slug.get(user, ''))}: "
+                         f"{found} flagged unread in {days} day(s)")
         except Exception as exc:  # noqa: BLE001 - any IMAP failure must be reported, not hidden
-            notes.append(f"IMAP failed for {user}: {explain_imap_error(exc)}")
+            notes.append(f"IMAP failed for {public_address(addr_to_slug.get(user, ''))}: "
+                         f"{explain_imap_error(exc)}")
     # An account with no credential in the secret is skipped silently, which reads
     # as "clean". Name it instead: an unwatched inbox is a gap, not a clean one.
     # (Measured 2026-11-09: IMAP_ACCOUNTS held only ch1, so dharma and
@@ -328,7 +347,7 @@ def inbox_alerts(days: int) -> tuple[list[dict], str]:
     for slug, addr in account_addresses().items():
         if slug in CANCELLED or not addr or addr in read_users:
             continue
-        notes.append(f"NOT read {addr} ({slug}): no app password in IMAP_ACCOUNTS")
+        notes.append(f"NOT read {public_address(slug)} ({slug}): no app password in IMAP_ACCOUNTS")
     return alerts, "; ".join(notes)
 
 

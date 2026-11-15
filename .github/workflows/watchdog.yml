@@ -34,6 +34,7 @@ on:
 
 permissions:
   actions: write
+  issues: write     # the RSS rogue check comments on the alert issue
 
 concurrency:
   group: watchdog        # never two chains at once
@@ -49,6 +50,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      # The chain ticks every `interval` seconds and is the timer that actually
+      # fires (GitHub cron is unreliable). The rogue watcher needs no quota, so
+      # running it here closes the blind window to the chain's cadence (~2 h)
+      # even when the rogue-guard cron never fires and the Data API pool is
+      # spent. It is cheap: 3 RSS GETs, no key, no OAuth.
+      - name: Rogue check, no quota (RSS)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/rogue_watch_rss.py --alert
 
       - name: Drive the foreman, then re-chain
         env:

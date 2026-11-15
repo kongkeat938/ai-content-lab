@@ -143,8 +143,24 @@ def main() -> int:
     if "aeris-music" in status:
         fail("a cancelled account must not be listed as a gap")
 
+    # 6. The REAL address (from the CH_ACCOUNTS secret) must never reach the report.
+    #    Measured 2026-11-15: the account-watch rail echoed the raw IMAP user into
+    #    docs/MAIL-ALERTS.md and wrote the real addresses back into a PUBLIC repo,
+    #    undoing the earlier PII scrub. The status must name the channel, not the
+    #    address.
+    real = "a@gmail.com"   # the sanctioned fixture address (see test_no_committed_pii.py)
+    os.environ["CH_ACCOUNTS"] = json.dumps({"dharma": real})
+    os.environ["IMAP_ACCOUNTS"] = json.dumps([{"user": real, "app_password": PW}])
+    mw.imaplib = types.SimpleNamespace(IMAP4_SSL=FakeIMAP)
+    _alerts, status2 = mw.inbox_alerts(3)
+    if real in status2:
+        fail(f"the real address leaked into the report status: {status2!r}")
+    if "ch2@example.invalid" not in status2:
+        fail(f"the channel was not named by its placeholder: {status2!r}")
+
     print("OK: one secret serves every account, duplicates merge, no credential "
-          "reads as BLIND, and the password never reaches the report")
+          "reads as BLIND, the password never reaches the report, and the real "
+          "address never reaches the public report")
     return 0
 
 
