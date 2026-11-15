@@ -4,6 +4,13 @@
 __pycache__/
 *.pyc
 
+# built package artifacts (measured 2026-11-15: a broad `git add` swept 30 wheels
+# into the repo root). Never track these; install from pip via requirements.txt.
+*.whl
+*.egg
+*.tar.gz
+*.tgz
+
 # the media is regenerable from scripts + sources
 site/media/*.mp4
 site/media/*.mp3
