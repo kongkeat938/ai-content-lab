@@ -408,6 +408,87 @@
       "creator": "Quilt",
       "source": "https://freesound.org/people/Quilt/sounds/32083",
       "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-not-to-notice.mp3",
+      "id": "bed-calm-0",
+      "mood": "calm",
+      "title": "Not To Notice",
+      "creator": "Andrewkn",
+      "source": "https://freesound.org/people/Andrewkn/sounds/504540",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-ambient-game.mp3",
+      "id": "bed-calm-1",
+      "mood": "calm",
+      "title": "Ambient game",
+      "creator": "JeltsinSH",
+      "source": "https://freesound.org/people/JeltsinSH/sounds/481121",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-organ-a3-wav.mp3",
+      "id": "bed-sad-0",
+      "mood": "sad",
+      "title": "Organ_A3.wav",
+      "creator": "hello_flowers",
+      "source": "https://freesound.org/people/hello_flowers/sounds/31092",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-yz6inspelning-10-wav.mp3",
+      "id": "bed-sad-1",
+      "mood": "sad",
+      "title": "YZ6Inspelning (10).wav",
+      "creator": "vumseplutten1709",
+      "source": "https://freesound.org/people/vumseplutten1709/sounds/430921",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-horror-background-ambience.mp3",
+      "id": "bed-mystic-0",
+      "mood": "mystic",
+      "title": "Horror Background Ambience",
+      "creator": "DBlover",
+      "source": "https://freesound.org/people/DBlover/sounds/478663",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-luminis.mp3",
+      "id": "bed-mystic-1",
+      "mood": "mystic",
+      "title": "Luminis",
+      "creator": "Vrymaa",
+      "source": "https://freesound.org/people/Vrymaa/sounds/722399",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-suspense-orchestral-soundtra.mp3",
+      "id": "bed-epic-0",
+      "mood": "epic",
+      "title": "Suspense Orchestral Soundtrack - Hurricane",
+      "creator": "MusicByMisterbates",
+      "source": "https://freesound.org/people/MusicByMisterbates/sounds/608813",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-epic-score-best-one-ever-by-.mp3",
+      "id": "bed-epic-1",
+      "mood": "epic",
+      "title": "epic score best one ever by kris klavenes 18.08.17.mp3",
+      "creator": "klavo1985",
+      "source": "https://freesound.org/people/klavo1985/sounds/399846",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-grabby-bow-original.mp3",
+      "id": "bed-epic-0",
+      "mood": "epic",
+      "title": "grabby bow original",
+      "creator": "Bruce Burbank",
+      "source": "https://freesound.org/people/Bruce%20Burbank/sounds/220917",
+      "license": "CC0-1.0"
     }
   ]
 }
