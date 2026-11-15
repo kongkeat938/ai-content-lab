@@ -201,6 +201,213 @@
       "creator": "Quilt",
       "source": "https://freesound.org/people/Quilt/sounds/32080",
       "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-mounts-wav.mp3",
+      "id": "bed-calm-0",
+      "mood": "calm",
+      "title": "mounts.wav",
+      "creator": "levelclearer",
+      "source": "https://freesound.org/people/levelclearer/sounds/352408",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-spooky-halloween-soundtrack.mp3",
+      "id": "bed-calm-1",
+      "mood": "calm",
+      "title": "Spooky Halloween Soundtrack",
+      "creator": "MusicByMisterbates",
+      "source": "https://freesound.org/people/MusicByMisterbates/sounds/677436",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-eroika-remix-wav.mp3",
+      "id": "bed-calm-2",
+      "mood": "calm",
+      "title": "Eroika remix.wav",
+      "creator": "eardeer",
+      "source": "https://freesound.org/people/eardeer/sounds/416494",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-soft-piano-wav.mp3",
+      "id": "bed-calm-0",
+      "mood": "calm",
+      "title": "Soft piano.wav",
+      "creator": "Johnnie_Holiday",
+      "source": "https://freesound.org/people/Johnnie_Holiday/sounds/554602",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-calm-free-dark-ambient-atmospheri.mp3",
+      "id": "bed-calm-1",
+      "mood": "calm",
+      "title": "Free Dark Ambient Atmospheric Beat.mp3",
+      "creator": "BenDerhover",
+      "source": "https://freesound.org/people/BenDerhover/sounds/684611",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-warm-japan-koto-my-amateur-improv.mp3",
+      "id": "bed-warm-0",
+      "mood": "warm",
+      "title": "Japan_Koto_My_Amateur_Improv_Session_1.wav",
+      "creator": "RutgerMuller",
+      "source": "https://freesound.org/people/RutgerMuller/sounds/364807",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-warm-trap-melody-3.mp3",
+      "id": "bed-warm-1",
+      "mood": "warm",
+      "title": "Trap Melody 3",
+      "creator": "FreeSampleMelodies",
+      "source": "https://freesound.org/people/FreeSampleMelodies/sounds/509271",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-warm-guitar-2-wav.mp3",
+      "id": "bed-warm-2",
+      "mood": "warm",
+      "title": "Guitar 2.wav",
+      "creator": "staticpony1",
+      "source": "https://freesound.org/people/staticpony1/sounds/249607",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-old-piano-somber-chords-wav.mp3",
+      "id": "bed-sad-0",
+      "mood": "sad",
+      "title": "Old Piano - Somber Chords.wav",
+      "creator": "DeVern",
+      "source": "https://freesound.org/people/DeVern/sounds/427307",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-drops.mp3",
+      "id": "bed-sad-1",
+      "mood": "sad",
+      "title": "Drops",
+      "creator": "Andrewkn",
+      "source": "https://freesound.org/people/Andrewkn/sounds/404460",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-sad-piano-improv-ethnic-balkans.mp3",
+      "id": "bed-sad-2",
+      "mood": "sad",
+      "title": "Piano Improv. ethnic balkans",
+      "creator": "EKVelika",
+      "source": "https://freesound.org/people/EKVelika/sounds/669489",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-hopeful-positive-acoustic-guitar-bac.mp3",
+      "id": "bed-hopeful-0",
+      "mood": "hopeful",
+      "title": "Positive Acoustic Guitar Background Music",
+      "creator": "guitarman213",
+      "source": "https://freesound.org/people/guitarman213/sounds/712071",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-hopeful-scottish-pipers-4.mp3",
+      "id": "bed-hopeful-1",
+      "mood": "hopeful",
+      "title": "Scottish Pipers 4",
+      "creator": "lonerdroner",
+      "source": "https://freesound.org/people/lonerdroner/sounds/712451",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-hopeful-scottish-pipers-3.mp3",
+      "id": "bed-hopeful-2",
+      "mood": "hopeful",
+      "title": "Scottish Pipers 3",
+      "creator": "lonerdroner",
+      "source": "https://freesound.org/people/lonerdroner/sounds/712450",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-horror-alien-world-ambience.mp3",
+      "id": "bed-mystic-0",
+      "mood": "mystic",
+      "title": "Horror / alien world ambience",
+      "creator": "cabled_mess",
+      "source": "https://freesound.org/people/cabled_mess/sounds/332249",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-space-line-mp3.mp3",
+      "id": "bed-mystic-1",
+      "mood": "mystic",
+      "title": "space_line.mp3",
+      "creator": "vlad.zaichyk",
+      "source": "https://freesound.org/people/vlad.zaichyk/sounds/495019",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-mystic-creepy-music.mp3",
+      "id": "bed-mystic-2",
+      "mood": "mystic",
+      "title": "Creepy music",
+      "creator": "Victor_Natas",
+      "source": "https://freesound.org/people/Victor_Natas/sounds/551567",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-atmosphere-entry-wav.mp3",
+      "id": "bed-epic-0",
+      "mood": "epic",
+      "title": "Atmosphere Entry.wav",
+      "creator": "DeVern",
+      "source": "https://freesound.org/people/DeVern/sounds/385078",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-strange-planet.mp3",
+      "id": "bed-epic-1",
+      "mood": "epic",
+      "title": "Strange Planet",
+      "creator": "unfa",
+      "source": "https://freesound.org/people/unfa/sounds/156537",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-emotional-spiritual-soundtra.mp3",
+      "id": "bed-epic-2",
+      "mood": "epic",
+      "title": "Emotional Spiritual Soundtrack - Respect",
+      "creator": "MusicByMisterbates",
+      "source": "https://freesound.org/people/MusicByMisterbates/sounds/603711",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-strings-and-drums-wav.mp3",
+      "id": "bed-epic-0",
+      "mood": "epic",
+      "title": "Strings and Drums.wav",
+      "creator": "BuytheField",
+      "source": "https://freesound.org/people/BuytheField/sounds/465294",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-65421-wav.mp3",
+      "id": "bed-epic-1",
+      "mood": "epic",
+      "title": "65421.wav",
+      "creator": "BuytheField",
+      "source": "https://freesound.org/people/BuytheField/sounds/506168",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "bed-epic-orchestral-4of5-ogg.mp3",
+      "id": "bed-epic-2",
+      "mood": "epic",
+      "title": "Orchestral_4of5.ogg",
+      "creator": "Quilt",
+      "source": "https://freesound.org/people/Quilt/sounds/32083",
+      "license": "CC0-1.0"
     }
   ]
 }
