@@ -66,9 +66,16 @@ kongkeat-story (`ch4`) **ยังไม่ได้อ่าน**. รายง
 | run ที่ล้มเหลวล่าสุด (เรา) | **0** | ไม่มีงานพังค้าง |
 
 **ประเด็นที่ต้องแก้จริง:** `.github/workflows/pc1-task.yml` รันบน `[self-hosted, pc1]` — ตอนนี้ runner ตาย
-⇒ ถ้าใคร dispatch จะ **ค้างตลอดกาล** (ไม่มี timeout ช่วย เพราะ job ไม่เคยเริ่ม). แก้แล้ว: เพิ่ม job
-`preflight` (ubuntu-latest) ตรวจว่ามี runner `pc1` online ไหม — ถ้าไม่มีให้ **แดงทันที** และ
-`run-on-pc1` `needs: preflight`. Guard: `scripts/test_pc1_no_forever_queue.py` (ล้มได้จริง).
+⇒ ถ้าใคร dispatch จะ **ค้างตลอดกาล** (ไม่มี timeout ช่วย เพราะ job ไม่เคยเริ่ม). แก้แล้ว: job `preflight`
+ที่ **opt-in** — input `pc1_online` ดีฟอลต์ `false`; ถ้าไม่ตั้ง `true` preflight **แดงทันที** และ
+`run-on-pc1` `needs: preflight` → ถูก **skip** ไม่ค้าง. Guard:
+`scripts/test_pc1_no_forever_queue.py` (ล้มได้จริง).
+
+> **บทเรียน (วัดสด 2026-11-15):** เวอร์ชันแรกของ gate เช็ค `actions/runners` ด้วย GITHUB_TOKEN ของ
+> workflow — API นั้น **403** ("Resource not accessible by integration") และ `|| echo 0` กลืน 403
+> เป็น **ผ่านทั้งที่ควรแดง** (dispatch จริงแล้ว preflight เขียว, run-on-pc1 ค้าง). จึงเปลี่ยนเป็น
+> opt-in ที่ดีฟอลต์ปิด. **ยืนยันสดหลังแก้:** dispatch → `run=completed/failure`,
+> `preflight=failure`, `run-on-pc1=skipped` (ไม่ค้าง).
 
 **ยังทำไม่ได้ (พูดตรง ๆ):** ลบ zombie run `41809364136` — GitHub ไม่ให้ (409/403) และไม่มี API
 ลบ run เดี่ยว. มันไม่กิน runner และไม่บล็อกงานอื่น (ทุก rail รันบน `ubuntu-latest`) ⇒ ปล่อยไว้ได้
