@@ -21,9 +21,9 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   differ or it risks "repetitious content").
 
 ## 🔑 Durable principles (K)
-- **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order: **live
-  API > real output file (ffprobe/ebur128) > a test that can FAIL > a committed doc**. Best =
-  a **counter with an invariant** (`counter_ledger.py`).
+- **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
+  **live API > real output file (ffprobe/ebur128) > a test that can FAIL > a committed
+  doc**. Best = a **counter with an invariant** (`counter_ledger.py`).
 - **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md`'s ONLY source is `watch_hours.json`
   (weekly rail) — if it lapses the headline freezes.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → use **per-channel
