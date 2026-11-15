@@ -6,7 +6,7 @@
 read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`).**
 
 ## 🪪 ak's identity & team (K, 2026-11-13; every agent its OWN mail 2026-11-14)
-**Every tool and every agent uses its OWN mailbox, never K's** (K, 2026-11-14). ak = `ak_mail.py`
+**Every tool/agent uses its OWN mailbox, never K's** (K, 2026-11-14). ak = `ak_mail.py`
 (key `ak.identity.mailbox`); each `team.py` worker = key `ak.identity.mail.<role>`
 (`ak_mail.py new/show --as <role>`; `team.py mail <role> [--new]`). K's channel addresses are
 **business assets** (YouTube API), not signup emails. Never sign up as K; a phone ak can't own →
@@ -24,36 +24,37 @@ read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order: **live API >
   real output file (ffprobe/ebur128) > a test that can FAIL > a committed doc**. Best = a
   **counter with an invariant** (`counter_ledger.py`).
-- **Times to K = Thai (UTC+7), 24-hour `HH:MM`**. `PROGRESS.md`'s ONLY source is
-  `watch_hours.json` (weekly rail) — if it lapses the headline silently freezes.
+- **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md`'s ONLY source is `watch_hours.json`
+  (weekly rail) — if it lapses the headline freezes.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → use **per-channel
   secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel `advise.py`
   (≥5). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
-- **A guard must be able to FAIL;** never hardcode the set a guard sweeps; a generator that can
-  drop a piece must FAIL. `.get()+continue` on a config key is a silent killer; a test pinning a
-  "recent" date to a literal goes red on its own (`test_no_pinned_recent_date.py`).
+- **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
+  a piece must FAIL. `.get()+continue` on a config key is a silent killer
+  (`test_no_pinned_recent_date.py`).
 - **Repo hygiene** (`test_repo_hygiene.py`): pushing rails run `git pull --rebase` + retry; a
   shared-ledger writer needs a guard; health thresholds > the REAL cadence.
 
-## 🧭 Traps still true (detail in `topics/05-durable-traps.md` + daily logs)
+## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **Rogue stream (NOT ours):** clips no manifest names = leaked grant; `rogue-guard` hides each
   (private over delete); root = K revokes at `myaccount.google.com`. Data quota is spent by
   ~13:00 UTC so the pausing rail 403s until the 08:00 reset; `rogue_watch_rss.py` (public RSS,
-  no quota) sees it anyway. Same grant in `aeris-drive-automation` (`ops/yt_publish.py` names our
+  no quota) sees it anyway; also in the `watchdog` chain. Same grant in `aeris-drive-automation` (`ops/yt_publish.py` names our
   3 channels) → K must disable that automation too.
-  - **`videos.update` REPLACES the whole `snippet`** — read-merge-write or it erases desc/tags
+  - **`videos.update` REPLACES the whole `snippet`** — read-merge-write
     (`test_snippet_update_preserves.py`).
 - **Repo is PUBLIC** (free plan → private would halt the rails): never commit a credential
   (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); K's were
-  scrubbed from tree AND history, real ones in the `CH_ACCOUNTS` secret.
-- **Quota:** `videos.insert` own pool; Data API resets **08:00 UTC**; a GITHUB_TOKEN push does NOT trigger a workflow
+  scrubbed from tree AND history, real ones in the `CH_ACCOUNTS` secret. **Mail rail leaked them back** (echoed the raw IMAP user into
+    `docs/MAIL-ALERTS.md`); labels now use `public_address()` (`test_mail_credentials.py`).
+- **Quota:** `videos.insert` own pool; a GITHUB_TOKEN push does NOT trigger a workflow
 - **Git/CI hygiene:** racing rails → one concurrency group per channel + a union merge driver
   (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer rail (`test_report_single_writer.py`; `test_push_retry_union.py`).
 - **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`P1DT2H`); the old copy-pasted regex crashed a rail (`test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
-  hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir must be per-RUN
-  (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail, and the theme must ROTATE** — else a raised
+  hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir per-RUN
+  (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail + theme ROTATES** — else a raised
   cadence is a no-op or an add/add conflict.
 - **TTS fallback:** the alt Thai voice (`PremwadeeNeural`) refuses some texts
   (`NoAudioReceived`) → `speak()` falls back to VOICE (`test_tts_fallback.py`).
