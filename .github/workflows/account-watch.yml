@@ -58,6 +58,7 @@ jobs:
           IMAP_ACCOUNTS: ${{ secrets.IMAP_ACCOUNTS }}
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_APP_PASSWORD: ${{ secrets.IMAP_APP_PASSWORD }}
+          CH_ACCOUNTS: ${{ secrets.CH_ACCOUNTS }}
           PC1_MCP_URL: ${{ secrets.PC1_MCP_URL }}
           PC1_MCP_TOKEN: ${{ secrets.PC1_MCP_TOKEN }}
         run: |
