@@ -52,3 +52,8 @@ jobs:
             fi
           done
           exit $fail
+
+      # A hard compliance invariant (a committed credential, or a fraud primitive
+      # appearing in the code) must fail the job, not just be reported.
+      - name: Compliance invariants
+        run: python3 scripts/policy_check.py
