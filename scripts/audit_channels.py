@@ -153,7 +153,19 @@ def recorded_entries(channel_id: str) -> dict:
             d = json.load(open(os.path.join(root, "content", name), encoding="utf-8"))
         except (ValueError, OSError):
             continue
-        if not isinstance(d, dict) or d.get("channel_id") != channel_id:
+        if not isinstance(d, dict):
+            continue
+        # A ledger of uploads made by a *sibling* rail on the same channels: the
+        # predecessor kongkeat938/ax-workspace auto-shorts (disabled 2026-11-15)
+        # published to the same 3 channels with the same YT_CH*_REFRESH_TOKEN
+        # secrets but recorded them only in its own docs/published.json, so the
+        # audit read them as "rogue". It has no top-level channel_id -- each entry
+        # carries its own. Counting them stops the false "rogue" label.
+        for v in (d.get("uploads") or []):
+            if isinstance(v, dict) and v.get("channel_id") == channel_id and v.get("video_id"):
+                out[v["video_id"]] = {"title": v.get("title", ""),
+                                      "posted": v.get("posted_at")}
+        if d.get("channel_id") != channel_id:
             continue
         for v in (d.get("shorts") or {}).values():
             if isinstance(v, dict) and v.get("video_id"):
