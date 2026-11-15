@@ -398,6 +398,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "88": {
+      "video_id": "g012qy5-Lco",
+      "url": "https://youtu.be/g012qy5-Lco",
+      "title": "ทำไมพ่อต้องตื่นมาฟังเพลงจากวิทยุเก่าทุกเช้าทั้งที่เครื่องพังแล้ว #Shorts",
+      "posted_at": "2026-11-15T16:32:22+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
