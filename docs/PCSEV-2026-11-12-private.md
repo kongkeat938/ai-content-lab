@@ -1,5 +1,18 @@
 # PCSEV — the "private" videos and the source that makes them (2026-11-12)
 
+> **CORRECTION 2026-11-15 (measured).** This document's conclusion — "the source is
+> **external** … a leaked OAuth refresh token" and the signature "`en-US`, category
+> 27, the old brand" — was **wrong**, and the signature was never measured: the audit
+> reads `snippet,statistics,contentDetails` and never a per-video `categoryId` /
+> `defaultLanguage`. Re-measured 2026-11-15: the clips carry **`th`, category 22/24**,
+> and our own `— ช่องพี่น้อง —` promo block (`scripts/promote_channels.py`). The
+> unrecorded uploads are the **sibling repo `aerismusic8-alt/aeris-drive-automation`**,
+> which maps our exact channels (ch1/ch2/ch4) and holds the **same** secrets
+> (`YT_CH1..CH4_REFRESH_TOKEN`, `YT_CLIENT_ID`, `YT_CLIENT_SECRET`) — an identity bug,
+> not an attacker (panel `docs/PANEL-*` 2026-11-15, 5/5). See
+> `scripts/test_rogue_alert_body.py` for the guard that now forbids the fabricated
+> claim. Keep this file for history; do not trust its section 2 signature.
+
 Owner K: *"there are clips showing as private — what is it? delete them all and go
 delete the source that created them too."*
 

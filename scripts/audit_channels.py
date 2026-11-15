@@ -266,14 +266,48 @@ def removed_defects(recorded: dict, present: set, removed: set) -> list:
     return find_removed(recorded, present, removed)
 
 
+def rogue_alert_body(live: dict, now: datetime | None = None) -> str:
+    """The issue body for a live unrecorded upload.
+
+    It states ONLY what the audit measures. An earlier version asserted the clips
+    carry `en-US`/category 27, but the audit never read a per-video categoryId or
+    defaultLanguage -- the claim was written, not measured, and it was wrong (the
+    clips are ours/sibling uploads that carry `th`, category 22/24, and our own
+    `— ช่องพี่น้อง —` promo block; measured 2026-11-15). A guard now forbids a
+    per-video-attribute claim the code does not read (`test_rogue_alert_body.py`).
+    """
+    now = now or datetime.now(timezone.utc)
+    return "\n".join(
+        [f"Measured {now:%Y-%m-%d %H:%M} UTC.",
+         "These videos are on a channel but in NO manifest and were published "
+         "recently: an upload our rails did not record. The audit measured only that "
+         "-- it did NOT read the clip's categoryId, defaultLanguage, audio language "
+         "or title brand, so it makes no claim about them.",
+         "",
+         "**A shared OAuth client is the likely cause, not an attacker.** The sibling "
+         "repo `aerismusic8-alt/aeris-drive-automation` maps our exact channels "
+         "(ch1/ch2/ch4) and uses the SAME secret names (`YT_CH1..CH4_REFRESH_TOKEN`, "
+         "`YT_CLIENT_ID`, `YT_CLIENT_SECRET`), so an upload from either repo reaches "
+         "our channels with no manifest entry (measured 2026-11-15). Treat this as an "
+         "identity/attribution bug: give each repo its OWN OAuth client, and revoke "
+         "any grant we do not recognise.",
+         ""]
+        + [f"- {s}: {h}" for s, hs in live.items() for h in hs]
+        + ["",
+           "The clip can be paused (`status.privacyStatus=private`, reversible) while "
+           "the cause is confirmed -- a take-down on the historical backlog would hide "
+           "legitimate old videos, so only recent unrecorded uploads are touched.", "",
+           "_Opened/updated by scripts/audit_channels.py; it clears itself when no "
+           "live rogue upload remains._"])
+
+
 def alert_live_rogue(report: dict) -> None:
     """Open (or refresh) a GitHub issue while a LIVE rogue upload is on a channel.
 
     The step summary is not where K looks. Measured 2026-11-11: a second stream
-    is inserting clips our code never writes (`en-US`, category 27, the old brand
-    `เรื่องเล่าการ์ตูน`) at a fixed `:21` minute. It is invisible to every other
-    guard, so it must reach a place that is seen -- a GitHub issue, like
-    health.py. The issue clears itself when no live rogue upload remains.
+    inserts clips our code does not record. It is invisible to every other guard,
+    so it must reach a place that is seen -- a GitHub issue, like health.py. The
+    issue clears itself when no live rogue upload remains.
     """
     live = {}
     measured = False
@@ -298,20 +332,7 @@ def alert_live_rogue(report: dict) -> None:
         existing = next((i for i in json.loads(listed.stdout or "[]")
                          if i["title"] == title), None)
         if live:
-            body = "\n".join(
-                [f"Measured {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC.",
-                 "These videos are on a channel but in NO manifest and were published "
-                 "recently. Our uploaders all write `defaultLanguage=th` and category 22/24; "
-                 "these carry `en-US`/category 27 and an old brand, so they are NOT our rails.",
-                 ""]
-                + [f"- {s}: {h}" for s, hs in live.items() for h in hs]
-                + ["", "The stream runs at a fixed `:21` minute. Our own tokens hold the "
-                   "`youtube` scope, so the same access can pause a rogue clip "
-                   "(`status.privacyStatus=private`, reversible) -- but first confirm the "
-                   "source, because a take-down on the historical backlog would hide "
-                   "legitimate old videos.", "",
-                   "_Opened/updated by scripts/audit_channels.py; it clears itself when no "
-                   "live rogue upload remains._"])
+            body = rogue_alert_body(live)
             if existing:
                 subprocess.run(["gh", "issue", "comment", str(existing["number"]),
                                 "--repo", repo, "--body", body], check=True)
