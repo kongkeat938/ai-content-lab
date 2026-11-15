@@ -1,5 +1,18 @@
 # PCSEV — the "rogue uploader" is our own sibling repo (2026-11-15)
 
+> **UPDATE 2026-11-15 (later, same day) — the exact uploader was found and fixed with
+> NO human login.** The second uploader is `kongkeat938/ax-workspace` workflow
+> **`auto-shorts`** — K's OWN predecessor repo. It published one Short every ~5 h plus a
+> `:20` keep-warm cron (`ops/publish_next_short.py`) to the SAME three channels with the
+> SAME `YT_CH1/CH2/CH4_REFRESH_TOKEN` secrets, recording them only in its own
+> `docs/published.json` — whose tail is exactly the ids issue #30 called rogue
+> (`1zuI63MdHpQ`, `toEJM3ighAA`, `Ft32OE0BIsA`, `Mi0wQOTixQo`). It was still running
+> (2026-11-15T13:20Z). `aeris-drive-automation` (below) maps the channels but is
+> **read-only** — it is not the uploader. Fixed: disabled via the GitHub API **and** the 5
+> YouTube secrets were deleted from that repo (root cut; the values still live here, so
+> nothing is lost). No credential was ever leaked and no external attacker existed.
+> See `docs/K-PHONE-ACTION.md` and `content/known_uploads.json`.
+
 Owner K pushed back: *"it's weird — you made all of this; who else could post? it
 has to be a bug you created. go check everything."* K was right.
 

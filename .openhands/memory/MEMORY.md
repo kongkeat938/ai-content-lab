@@ -37,19 +37,19 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   shared-ledger writer needs a guard; health thresholds > the REAL cadence.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS, not an attacker** (measured 2026-11-15; K was right): the alert's
-  `en-US`/category-27 signature was **never measured** (audit reads only
-  snippet/statistics/contentDetails) and is false -- the clips carry `th`/cat 22-24 + our own
-  `— ช่องพี่น้อง —` promo. `fn38n2-CRm0` is entry 88 of `content/ch1_shorts.json`. The sibling
-  repo `aeris-drive-automation` maps ch1/ch2/ch4 and holds the SAME `YT_CH*_REFRESH_TOKEN`
-  secrets -> a shared-identity bug. Fix = per-repo OAuth client + revoke; guard
-  `test_rogue_alert_body.py`. `rogue_watch_rss.py` (RSS, no quota) also runs in `watchdog`.
+- **"Rogue" = OURS** (measured 2026-11-15; K was right). The second uploader is
+  `kongkeat938/ax-workspace` workflow **auto-shorts** (K's OWN predecessor repo): it posted
+  Shorts to ch1/ch2/ch4 with the SAME `YT_CH*_REFRESH_TOKEN`, logged only in its own
+  `docs/published.json` -> our audit saw "outside the rails". The `en-US`/cat-27 signature was
+  never measured (false). FIXED (no login): disabled via API + **deleted the 5 YT secrets
+  from that repo** (reversible) -> `known_uploads.json` (75) records them
+  (`test_audit_known_uploads.py`). 30/32 in `rogue_hidden.json` were ours (25 deleted, 5
+  restorable) -> `restore_wrongly_hidden.py` + rail. `aeris-drive-automation` = READ-ONLY.
   - **`videos.update` REPLACES the whole `snippet`** — read-merge-write
     (`test_snippet_update_preserves.py`).
 - **Repo is PUBLIC** (free plan → private would halt the rails): never commit a credential
   (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); K's were
-  scrubbed from tree AND history, real ones in the `CH_ACCOUNTS` secret. **Mail rail leaked them back** (echoed the raw IMAP user into
-    `docs/MAIL-ALERTS.md`); labels now use `public_address()` (`test_mail_credentials.py`).
+  scrubbed from tree AND history, real ones in the `CH_ACCOUNTS` secret. mail labels use `public_address()` (`test_mail_credentials.py`).
 - **Quota:** `videos.insert` own pool; a GITHUB_TOKEN push does NOT trigger a workflow
 - **Git/CI hygiene:** racing rails → one concurrency group per channel + a union merge driver
   (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer rail (`test_report_single_writer.py`; `test_push_retry_union.py`).
@@ -77,5 +77,5 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED
   (`uploadLimitExceeded` API-only; web Studio works). Needs K's OWNER password.
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
-  `GH_TOKEN=$KONGKEAT_GH_TOKEN`; suite = every `scripts/test_*.py` (70).
+  `GH_TOKEN=$KONGKEAT_GH_TOKEN`; suite = every `scripts/test_*.py`.
 - **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`).
