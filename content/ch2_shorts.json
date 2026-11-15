@@ -713,6 +713,14 @@
       "posted_at": "2026-11-14T23:18:49+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "117": {
+      "video_id": "_a1AnQ36Faw",
+      "url": "https://youtu.be/_a1AnQ36Faw",
+      "title": "คืนนี้ลองวางมือบนอกแล้วหายใจลึกสามครั้ง #Shorts",
+      "posted_at": "2026-11-15T21:56:19+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
