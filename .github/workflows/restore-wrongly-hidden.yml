@@ -36,10 +36,20 @@ jobs:
           python-version: "3.12"
 
       - name: Install the YouTube client
-        run: pip install -q google-api-python-client google-auth
+        # google-auth-oauthlib is required by yt_auth.load_credentials() (its
+        # _require_google() imports google_auth_oauthlib.flow). Measured
+        # 2026-11-15: this rail exited 1 on EVERY run with "Missing
+        # google_auth_oauthlib" because only google-api-python-client + google-auth
+        # were installed -- so the 5 wrongly-hidden clips were never restored. The
+        # failure was masked by continue-on-error below. scripts/test_workflow_deps.py
+        # now fails if this drifts again.
+        run: pip install -q google-api-python-client google-auth google-auth-oauthlib
 
       - name: Restore the wrongly-hidden clips
-        continue-on-error: true   # a spent quota defers to the next reset cleanly
+        # No continue-on-error: the script itself returns 0 on the spent-quota case
+        # (it prints "quota likely spent" and exits 0), so a nonzero exit here is a
+        # real bug. Measured 2026-11-15: continue-on-error: true had been hiding a
+        # missing google-auth-oauthlib import that failed the rail on every run.
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
