@@ -32,19 +32,18 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   `advise.py` (≥5). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
   a piece must FAIL. `.get()+continue` on a config key is a silent killer
-  (`test_no_pinned_recent_date.py`).
+  (`test_no_pinned_recent_date.py`). A gate that probes an API its own token cannot read (403)
+  + `|| echo 0` is a **false pass** — use an explicit opt-in that DEFAULTS OFF.
 - **Repo hygiene** (`test_repo_hygiene.py`): pushing rails `git pull --rebase`+retry; a
   shared-ledger writer needs a guard; health thresholds > the REAL cadence.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS** (measured 2026-11-15; K was right). The second uploader is
-  `kongkeat938/ax-workspace` workflow **auto-shorts** (K's OWN predecessor repo): it posted
-  Shorts to ch1/ch2/ch4 with the SAME `YT_CH*_REFRESH_TOKEN`, logged only in its own
-  `docs/published.json` -> our audit saw "outside the rails". The `en-US`/cat-27 signature was
-  never measured (false). FIXED (no login): disabled via API + **deleted the 5 YT secrets
-  from that repo** (reversible) -> `known_uploads.json` (75) records them
-  (`test_audit_known_uploads.py`). 30/32 in `rogue_hidden.json` were ours (25 deleted, 5
-  restorable) -> `restore_wrongly_hidden.py` + rail. `aeris-drive-automation` = READ-ONLY.
+- **"Rogue" = OURS** (2026-11-15; K was right): the 2nd uploader is `kongkeat938/ax-workspace`
+  workflow **auto-shorts** (K's OLD repo) — same channels, same `YT_CH*_REFRESH_TOKEN`, logged
+  only in its own `docs/published.json` -> audit read it as "outside the rails". FIXED (no
+  login): disabled via API + **deleted the 5 YT secrets from that repo** (reversible) ->
+  `known_uploads.json` (75) (`test_audit_known_uploads.py`). 30/32 in `rogue_hidden.json` were
+  ours (25 deleted, 5 restorable) -> `restore_wrongly_hidden.py` + rail. `aeris` = READ-ONLY.
   - **`videos.update` REPLACES the whole `snippet`** — read-merge-write
     (`test_snippet_update_preserves.py`).
 - **Repo is PUBLIC** (free plan → private would halt the rails): never commit a credential
