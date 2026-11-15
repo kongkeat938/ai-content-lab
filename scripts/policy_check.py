@@ -54,10 +54,15 @@ def git(*a: str) -> str:
                           text=True).stdout
 
 
+# The fraud patterns below are themselves strings; this file (and the guard that
+# lists credential shapes) would match its own source. Skip the scanners.
+SELF = {"scripts/policy_check.py", "scripts/test_no_committed_secrets.py"}
+
+
 def py_files() -> list[str]:
     out = []
     for rel in git("ls-files").splitlines():
-        if rel.endswith(".py") and rel.startswith("scripts/"):
+        if rel.endswith(".py") and rel.startswith("scripts/") and rel not in SELF:
             out.append(rel)
     return out
 
