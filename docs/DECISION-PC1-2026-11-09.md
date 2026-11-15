@@ -50,3 +50,26 @@ kongkeat-story (`ch4`) **ยังไม่ได้อ่าน**. รายง
 
 **ยังไม่ผ่าน (บอกตรง ๆ):** ขับ PC1 แบบไร้คน = **ทำไม่ได้** และ**ไม่จำเป็น**สำหรับงานที่โหลด-bearing.
 งาน Studio-only ยังพัก.
+
+---
+
+## UPDATE 2026-11-15 — ตรวจ "runtime ค้าง" ตามที่ K สั่ง
+
+**วัดสด 2026-11-15** (Actions API + runner list):
+
+| ที่ | สถานะ | ความหมาย |
+|---|---|---|
+| `ai-content-lab` runners | **ว่าง (0)** | ไม่มี self-hosted runner ผูกกับ repo นี้เลย |
+| `ax-workspace` runners | **ว่าง (0)** | เหมือนกัน |
+| `ai-content-lab` run ค้าง | **1** — `account-watch` id `41809364136`, `queued` ตั้งแต่ **2026-11-04T09:41Z** | run ซอมบี้ฝั่ง GitHub: `gh run cancel` → "completed", `force-cancel` → 409, `rerun` → 403. **ลบ/ยกเลิกไม่ได้** |
+| `aeris-drive-automation` run ค้าง | **2 zombie** — `AX PC2 Local Dispatch E2E` (2026-09-30), `AX Active Executions` (2026-09-13) | ของ repo นั้น ไม่ใช่ของเรา (เราไม่มีสิทธิ์เขียน) |
+| run ที่ล้มเหลวล่าสุด (เรา) | **0** | ไม่มีงานพังค้าง |
+
+**ประเด็นที่ต้องแก้จริง:** `.github/workflows/pc1-task.yml` รันบน `[self-hosted, pc1]` — ตอนนี้ runner ตาย
+⇒ ถ้าใคร dispatch จะ **ค้างตลอดกาล** (ไม่มี timeout ช่วย เพราะ job ไม่เคยเริ่ม). แก้แล้ว: เพิ่ม job
+`preflight` (ubuntu-latest) ตรวจว่ามี runner `pc1` online ไหม — ถ้าไม่มีให้ **แดงทันที** และ
+`run-on-pc1` `needs: preflight`. Guard: `scripts/test_pc1_no_forever_queue.py` (ล้มได้จริง).
+
+**ยังทำไม่ได้ (พูดตรง ๆ):** ลบ zombie run `41809364136` — GitHub ไม่ให้ (409/403) และไม่มี API
+ลบ run เดี่ยว. มันไม่กิน runner และไม่บล็อกงานอื่น (ทุก rail รันบน `ubuntu-latest`) ⇒ ปล่อยไว้ได้
+ไม่มีผลกับธุรกิจ. ถ้าจะให้หายจากหน้า Actions จริง ๆ ต้องให้ K กด "Delete run" บนหน้าเว็บ (ไม่บังคับ).
