@@ -546,6 +546,14 @@
       "posted_at": "2026-11-14T11:46:09+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "89": {
+      "video_id": "gbT-nROQRzM",
+      "url": "https://youtu.be/gbT-nROQRzM",
+      "title": "คุณมีสิทธิ์หยุดทำสามสิ่งนี้ทันที #Shorts",
+      "posted_at": "2026-11-15T13:00:06+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
