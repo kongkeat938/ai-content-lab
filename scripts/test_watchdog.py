@@ -142,7 +142,8 @@ def main() -> int:
     #    fresh". Exempt: the watchdog (it watches itself), and the condition-gated
     #    rails, which are legitimately idle when they have nothing to do (a fixed
     #    age threshold on those would be a false alarm).
-    CONDITION_GATED = {"watchdog", "apply-packaging", "remove-bad-cut", "remake shorts"}
+    CONDITION_GATED = {"watchdog", "apply-packaging", "remove-bad-cut", "remake shorts",
+                       "restore-wrongly-hidden"}
     unwatched = [n for n in sorted(referenced) if n not in health.EXPECTED]
     unwatched = [n for n in unwatched if n not in CONDITION_GATED]
     if unwatched:

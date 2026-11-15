@@ -173,6 +173,21 @@ def main() -> int:
         if a_age is None or a_age > 20 * 60:
             plan.append(("account-watch", {}))
 
+    # 1d. Restore the clips a FALSE "rogue" label hid (measured 2026-11-15). The
+    #     audit called the predecessor rail's uploads (ax-workspace auto-shorts) a
+    #     "live rogue stream" and paused them; private-delete then removed most.
+    #     After the 08:00 UTC reset, put back the ones that are still only hidden.
+    #     Due only while such a clip remains in the ledger, so once restored the
+    #     rail stops being dispatched.
+    hidden_ids = {h.get("video_id") for h in
+                  load("content/rogue_hidden.json", {}).get("hidden", [])}
+    known_ids = {u.get("video_id") for u in
+                 load("content/known_uploads.json", {}).get("uploads", [])}
+    if ids.get("restore-wrongly-hidden") and (hidden_ids & known_ids) and utc_hour() >= 8:
+        r_age = last_success_min("restore-wrongly-hidden", ids)
+        if r_age is None or r_age > 6 * 60:
+            plan.append(("restore-wrongly-hidden", {}))
+
     # 2. Long videos: due whenever an entry has no id and its hold has passed.
     pub = load("content/ch2_publish.json", {"videos": []})
     due_long = [v for v in pub["videos"] if not v.get("video_id")

@@ -1,0 +1,64 @@
+name: restore-wrongly-hidden
+
+# Put back the clips a FALSE "rogue" label hid (measured 2026-11-15).
+#
+# The audit called any unrecorded upload a "live rogue upload outside the rails"
+# and paused it (privacyStatus=private). The real source was our OWN predecessor
+# rail kongkeat938/ax-workspace .github/workflows/auto-shorts.yml, which published
+# to the same three channels with the same secrets and recorded them only in its
+# own docs/published.json. 30 of the 32 clips in content/rogue_hidden.json are ours,
+# so they were hidden on a false label -- and private-delete then removed 25 of them.
+# The remaining 5 are still only hidden and can be restored.
+#
+# It runs just after the 08:00 UTC Data API reset, because a write costs quota and
+# the project's quota is spent by midday. It is idempotent and never touches a
+# deleted clip (the API cannot un-delete). It is a no-op once nothing is left.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "22 8 * * *"   # 08:22 UTC, just after the quota reset
+  push:
+    paths:
+      - "content/known_uploads.json"
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the YouTube client
+        run: pip install -q google-api-python-client google-auth
+
+      - name: Restore the wrongly-hidden clips
+        continue-on-error: true   # a spent quota defers to the next reset cleanly
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: python3 scripts/restore_wrongly_hidden.py --apply
+
+      - name: Commit the updated ledger
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          if git diff --quiet content/rogue_hidden.json; then
+            echo "nothing to record"; exit 0
+          fi
+          git add content/rogue_hidden.json
+          git commit -m "restore: un-hide clips wrongly paused as rogue [skip ci]"
+          git pull --rebase --autostash origin main
+          bash scripts/git_push_retry.sh
