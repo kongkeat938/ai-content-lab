@@ -142,11 +142,13 @@ def main() -> int:
         "the root fix is the owner's 2-minute browser step: revoke the grant at "
         "`myaccount.google.com` → third-party access, or rotate the GCP client secret. "
         "No API key we hold can do it (measured: `cloudresourcemanager` 403).",
-        "2. **Owner email addresses in this PUBLIC repo** (~107 lines). No password or "
-        "token is committed, but the addresses are a phishing/social-engineering target "
-        "and a GitHub acceptable-use concern. Closing it means removing the addresses "
-        "from the files AND from history (`git filter-repo`) — a history rewrite, so it "
-        "is proposed to K, not done unattended.",
+        "2. **The owner email addresses were removed from the files AND from history** "
+        "(measured 2026-11-15: `git filter-repo` rewrote the blobs and the 2 offending "
+        "commit messages, force-pushed main + tags; only `ch1-4@example.invalid` "
+        "placeholders remain, guarded by `scripts/test_no_committed_pii.py`). What "
+        "remains and cannot be fixed from here: GitHub still serves the OLD commit "
+        "objects by direct SHA, so a purge needs GitHub support / GC. Tracked as an "
+        "owner action, not a repo defect.",
         "",
         "_This report is a claim about the repo; the live API is the final word._",
     ]

@@ -42,6 +42,24 @@ jobs:
       - name: Install the YouTube client
         run: pip install --quiet google-api-python-client google-auth-oauthlib
 
+      - name: Detect the rogue stream with NO quota (RSS feed)
+        continue-on-error: true   # informational; the step below pauses when it can
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          # Quota-blind window: the Data API pool is spent most days well before
+          # UTC midnight, so the pausing step below can see nothing from ~13:00 UTC
+          # until the 08:00 reset. The channel's public RSS feed needs no quota and
+          # lists the newest uploads, so this sees the rogue stream anyway and says
+          # so on the alert issue. Measured 2026-11-15: 4 live rogue clips sat
+          # public through a blind window this step would have flagged.
+          python3 scripts/rogue_watch_rss.py --alert \
+            2>&1 | tee work/rogue_rss.txt
+          echo "rss_exit=${PIPESTATUS[0]}" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "ROGUE |no live rogue|commented" work/rogue_rss.txt \
+            >> "$GITHUB_STEP_SUMMARY" || true
+
       - name: Pause any live rogue clip (reversible) and refresh the alert
         continue-on-error: true   # a spent quota defers cleanly to the next run
         env:
