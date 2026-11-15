@@ -241,6 +241,19 @@
         "flat": 1
       },
       "at": "2026-11-14T18:29:59+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "unknown",
+      "last_shape": null,
+      "last_video_id": "fn38n2-CRm0",
+      "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+      "hours_since_last": 25.22,
+      "stall": {
+        "stalled": false,
+        "flat": 0
+      },
+      "at": "2026-11-15T12:59:36+00:00"
     }
   ],
   "latest": {
@@ -249,11 +262,11 @@
     "last_shape": null,
     "last_video_id": "fn38n2-CRm0",
     "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 6.73,
+    "hours_since_last": 25.22,
     "stall": {
       "stalled": false,
-      "flat": 1
+      "flat": 0
     },
-    "at": "2026-11-14T18:29:59+00:00"
+    "at": "2026-11-15T12:59:36+00:00"
   }
 }
