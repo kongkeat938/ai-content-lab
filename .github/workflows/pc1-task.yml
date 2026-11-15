@@ -27,28 +27,35 @@ on:
         description: "PowerShell to run when task=shell"
         required: false
         default: "hostname"
+      pc1_online:
+        description: "Confirm the PC1 self-hosted runner is back online (leave false unless it really is)"
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   # Fail fast instead of queueing forever. PC1's self-hosted runner is dead
-  # (measured 2026-11-15: `runners` is empty; Smart App Control blocks the
-  # unsigned Runner.Listener.exe, and the tailnet funnel is NXDOMAIN). A job on
-  # `[self-hosted, pc1]` with no such runner does not fail -- it sits `queued`
-  # forever (the pod's own account-watch run has been queued since 2026-11-04).
-  # This preflight turns a doomed dispatch into a clear red run instead.
+  # (measured 2026-11-15: `gh api .../actions/runners` returns total_count 0;
+  # Smart App Control blocks the unsigned Runner.Listener.exe; the tailnet funnel
+  # is NXDOMAIN). A job on `[self-hosted, pc1]` with no such runner does not fail --
+  # it sits `queued` forever (the pod's own account-watch run has been queued since
+  # 2026-11-04 and cannot be cancelled: GitHub returns 409/403).
+  #
+  # A first attempt checked the runner list with the workflow's GITHUB_TOKEN, but
+  # that 403s ("Resource not accessible by integration") and a pipeline swallowed
+  # it into a false pass. So the gate is now an explicit opt-in: the self-hosted job
+  # only runs when the dispatcher sets `pc1_online=true`. The default dispatch
+  # fails this gate -> `run-on-pc1` is skipped, never queued.
   preflight:
     runs-on: ubuntu-latest
     steps:
-      - name: Is a pc1 runner online?
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Is the pc1 runner confirmed online?
         run: |
-          n=$(gh api "repos/${{ github.repository }}/actions/runners" \
-                --jq '[.runners[] | select(.status=="online")] | length' 2>/dev/null || echo 0)
-          echo "online pc1 runners: $n"
-          if [ "$n" = "0" ]; then
-            echo "::error::No self-hosted 'pc1' runner is online, so this task would queue forever. PC1 is dead (Smart App Control blocks the unsigned runner; the funnel is NXDOMAIN). Do NOT dispatch pc1-task. Use the cloud rails instead -- account-watch reads IMAP on ubuntu-latest."
+          if [ "${{ inputs.pc1_online }}" != "true" ]; then
+            echo "::error::The PC1 self-hosted runner is dead, so this task would queue forever. Do NOT dispatch pc1-task. Use the cloud rails instead -- account-watch reads IMAP on ubuntu-latest. If the runner is genuinely back, dispatch with pc1_online=true."
             exit 1
           fi
+          echo "operator confirmed the pc1 runner is online; proceeding"
 
   run-on-pc1:
     needs: preflight
