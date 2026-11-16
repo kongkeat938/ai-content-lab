@@ -105,3 +105,28 @@ Defaults now `D:\ax-work` in `pc1_setup`/`pc1_push`/`yt938_sync`/`pull_ch2_to_dr
   Prefer UI steps, or give native PowerShell (New-Item / Move-Item / `;`).
 - Communicates in Thai; wants concise Thai answers.
 - Wants evidence and verified results, not claims.
+
+## PC1: what actually drives it, and the old ChatGPT-remote stack (2026-11-16)
+K was physically at PC1 (rare human window). ak's eyes/hands on PC1 are the **`pc1-winremote_*`
+tools = the `winremote` MCP server**, NOT anything else on the box:
+- `C:\AX-Runtime\winremote\start-winremote-mcp.cmd` -> `python -u -m winremote
+  --transport streamable-http --host 127.0.0.1 --port 8090 --enable-tier3 --auth-key ...`
+  (cmd.exe PID = the window that sat on the taskbar). An optional front is
+  `authenticated-mcp-proxy.mjs` (node, 127.0.0.1:**8091** -> forwards to 8090, bearer auth).
+- Reachability is via **Tailscale** (`tailscaled` connects to 127.0.0.1:8090 as a client).
+  The taskbar cmd window is only the launcher -- closing it kills ak's control of PC1. It was
+  hidden (ShowWindow SW_HIDE on its hwnd), not closed; it returns if the task restarts.
+- **DesktopCommander MCP (`@wonderwhy-er/desktop-commander`) is NOT how ak drives PC1** -- it is
+  part of the OLD ChatGPT-remote AX stack.
+
+**Old ChatGPT-remote AX stack -- disabled 2026-11-16** (K: "ระบบเก่าตอนใช้ chatgpt remote").
+24 `AERIS*`/`AX-*` scheduled tasks set to **Disabled** (reversible with
+`Enable-ScheduledTask`), incl. `AERIS-AX-DESKTOP-VISION` (AX-VISION-CONTINUITY-SUPERVISOR),
+`AERIS-PC1-REVERSE-CONTROL` (`reverse\ax-pc1-worker.py`, was stuck SynSent to GCP 34.27.211.76),
+`AX-DesktopCommander-RemoteDevice`, `AX-Agent-Evaluation-Loop`, `AX-Heartbeat`,
+`AERIS-PC1-BRAIN1-{DECISION,LOCAL-CONTROL,WATCHDOG}`, `AERIS-PC1-STUDIO-LOGIN-QR`,
+`WinRemoteMCP` (duplicate, never ran). Killed the live procs: desktop-ocr-loop.ps1 (17080,
+~10.7 h CPU), hybrid-control-loop.mjs (12344), DesktopCommander node x2 (13920/9656), the
+reverse worker (6968). Kept: winremote (2248) + `AERIS-PC1-WINREMOTE-MCP` (Running),
+`-PROXY`, MeshCentral (node 6000/7716/8084), Mesh Agent, `actions.runner.*-PC1-MAIN` service.
+**Do NOT disable `AERIS-PC1-WINREMOTE-MCP`** -- that is ak's control channel.

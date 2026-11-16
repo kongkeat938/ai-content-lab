@@ -28,8 +28,9 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → **per-channel
   secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel
-  `advise.py` (≥5 = 4 Gemini + pollinations; **openrouter DROPPED**, dead). Do NOT retry
-  ChatGPT/PC1/DeepSeek/Devin/HF.
+  `advise.py` (≥5; openrouter DROPPED, dead). Do NOT retry
+  ChatGPT/DeepSeek/Devin/HF. **PC1 IS live** = ak's hands via `winremote` 8090/Tailscale
+  (`topics/03`); old AX stack off 2026-11-16.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
   a piece must FAIL. `.get()+continue` on a config key is a silent killer
   (`test_no_pinned_recent_date.py`). A gate that probes an API its own token cannot read (403)
@@ -61,8 +62,8 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (pre-08:00-UTC 403 = quota).
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no
-  live rogue" while `feeds/videos.xml` 404'd for every channel -> now falls back to the uploads
-  playlist `UU<id>` and exits **2=BLIND** (≠0 clean). `topics/05`.
+  live rogue" while `feeds/videos.xml` 404'd -> falls back to the uploads playlist `UU<id>`
+  and exits **2=BLIND** (≠0). `topics/05`.
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK**
   (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail=cloud, not PC1.
 - **ch4 UNPAUSED 2026-11-13**: a tension hook is **enforced** (`test_hook_concrete`) for the
