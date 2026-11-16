@@ -6,26 +6,26 @@ K's rule: never bring a decision to a person; take it to an AI. K also requires
 of failure, and one dead vendor must never stop a decision. This asks the whole
 panel and reports which answered.
 
-Default team (fast, seconds): **five** advisors measured at ~0.5-1.5 s each on
-checkable probes (`scripts/panel_bench.py`, 2026-11-09), across two vendors:
+Default team: **five** advisors across **two vendors** -- K's rule:
 
   1. gemini-3.5-flash-lite  -- GEMINI_API_KEY, one independent model
   2. gemini-3.1-flash-lite  -- same key, a second model
   3. gemini-3.5-flash       -- same key, a third model
   4. gemini-3-flash-preview -- same key, a fourth model
-  5. openrouter             -- free tier (Nvidia/Cohere), a different vendor
+  5. pollinations           -- a different vendor, needs no key
 
-The four Gemini entries share a key but run different models; openrouter is a
-genuinely different vendor, so the team is five opinions, not five copies of one.
-**When OPENROUTER_API_KEY is absent or empty** (measured 2026-11-13: it was set but
-blank, so the "fifth" voice was dead and only four answered), ``resolve_team`` swaps
-openrouter for **pollinations** -- a different vendor that needs no key -- so the
-default panel always yields the five voices it claims.
+The four Gemini entries share a key but run different models; pollinations is a
+genuinely different vendor, so the team is five opinions across two vendors, not
+five copies of one. pollinations is slower (measured 2026-11-15: 0.3-42 s), but the
+panel asks every advisor in parallel, so it only sets the worst-case wall time.
 
-A sixth vendor, **pollinations**, is available with ``--broad``. It is *not* in the
-default team because it is slow (~66 s measured, ~50x the others) and returns
-HTTP 400 on a long prompt -- a slow, flaky panelist drags every decision, and K
-wants the team fast.
+**openrouter was DROPPED (2026-11-15).** Measured DEAD: no key
+(`OPENROUTER_API_KEY` empty, no `~/.pod-openrouter-key`), every call raised
+`no OpenRouter key`. K's rule: *"ตัวไหนติดไม่ต้องใช้เลย"* (whichever is blocked, do
+not use it at all). The default five span two vendors without it, so the old
+`resolve_team()` substitution is gone; `resolve_team()` now only de-duplicates.
+`scripts/test_advise_panel.py` fails if a dead vendor is re-added to the registry
+or the default team collapses to one vendor.
 
 **Deep mode** (`--deep`) adds three OpenHands Cloud conversations (its own
 DeepSeek agent, Claude Sonnet, GPT-5) on KONGKEAT_OH_KEY. They are genuinely
@@ -53,11 +53,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
 GEMINI_MODELS = ("gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-flash-lite-latest")
-# Free OpenRouter models, each a different vendor (Nvidia / Cohere). The shared
-# free pool is rate-limited, so they are tried in order as extra panelists.
-OPENROUTER_MODELS = ("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-                     "cohere/north-mini-code:free",
-                     "nvidia/nemotron-3.5-lightning:free")
 OH_BASE = os.environ.get("OPENHANDS_BASE_URL", "https://app.all-hands.dev")
 
 SYSTEM = ("ตอบเป็นภาษาไทย กระชับ ตรงประเด็น ระบุว่าอะไรควรทำก่อน-หลัง "
@@ -177,54 +172,6 @@ def ask_openhands(prompt: str, model: str | None = None, poll_seconds: int = 120
     raise RuntimeError("no assistant reply before the deadline")
 
 
-def ask_openrouter(prompt: str, models: tuple[str, ...] | None = None,
-                   tries: int = 3) -> str:
-    """Ask OpenRouter with a free-tier key (openrouter.ai).
-
-    OpenRouter fronts many independent vendors (Nvidia, Cohere, Google, ...),
-    so a single key yields genuinely different opinions -- but the free pool is
-    shared and rate-limited upstream, so try several models and back off.
-    """
-    key = (os.environ.get("OPENROUTER_API_KEY") or _read_key_file()).strip()
-    if not key:
-        raise RuntimeError("no OpenRouter key (OPENROUTER_API_KEY or ~/.pod-openrouter-key)")
-    models = models or OPENROUTER_MODELS
-    last = ""
-    for model in models:
-        for attempt in range(tries):
-            try:
-                d = _post("https://openrouter.ai/api/v1/chat/completions",
-                          {"model": model,
-                           "messages": [{"role": "user", "content": prompt}],
-                           "max_tokens": 1200},
-                          headers={"Content-Type": "application/json",
-                                   "Authorization": f"Bearer {key}"},
-                          timeout=180)
-                text = (d["choices"][0]["message"].get("content") or "").strip()
-                if text:
-                    return text
-                last = f"{model}: empty reply"
-            except urllib.error.HTTPError as exc:
-                last = f"{model}: HTTP {exc.code}"
-                if exc.code in (429, 500, 502, 503):
-                    time.sleep(3 * (attempt + 1))
-                    continue
-                break
-            except Exception as exc:  # noqa: BLE001 - try the next model
-                last = f"{model}: {str(exc)[:100]}"
-                time.sleep(2 * (attempt + 1))
-    raise RuntimeError(last)
-
-
-def _read_key_file() -> str:
-    path = os.path.expanduser("~/.pod-openrouter-key")
-    try:
-        with open(path) as fh:
-            return fh.read().strip()
-    except OSError:
-        return ""
-
-
 ADVISORS = {
     # A short alias the light panel asks for. Measured 2026-11-11: four scripts
     # (studio_ai, video_review, diagnose_videos, panel_scorecard) asked for
@@ -237,12 +184,8 @@ ADVISORS = {
     "gemini-3.1": lambda p: ask_gemini(p, ("gemini-3.1-flash-lite",)),
     "gemini-flash": lambda p: ask_gemini(p, ("gemini-3.5-flash",)),
     "gemini-preview": lambda p: ask_gemini(p, ("gemini-3-flash-preview",)),
-    # a genuinely different vendor (OpenRouter fronts Nvidia/Cohere). Kept in the
-    # default team because it is the only non-Google vendor that is fast (~1.3 s);
-    # ask_openrouter walks the free slugs with backoff because the pool is shared.
-    "openrouter": ask_openrouter,
-    # a different vendor but slow (~66 s measured) and prompt-length sensitive, so
-    # it is opt-in: a slow panelist drags every decision.
+    # a genuinely different vendor that needs no key; slower than Gemini
+    # (measured 0.3-42 s) but the panel runs in parallel.
     "pollinations": ask_pollinations,
     # slow but genuinely different vendors -- opt in with --deep
     "openhands": ask_openhands,
@@ -250,29 +193,17 @@ ADVISORS = {
     "openhands-gpt": lambda p: ask_openhands(p, model="openhands/gpt-5"),
 }
 
-# The default team: five fast, high-quality advisors across two vendors.
-FAST = ["gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview", "openrouter"]
+# The default team: five advisors across two vendors (4 Gemini models + pollinations).
+FAST = ["gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview", "pollinations"]
 FAST_PLUS = FAST
-BROAD = FAST + ["pollinations"]
+BROAD = FAST
 DEEP = ["openhands", "openhands-claude", "openhands-gpt"]
 
 
-def _has_openrouter_key() -> bool:
-    return bool((os.environ.get("OPENROUTER_API_KEY") or _read_key_file()).strip())
-
-
 def resolve_team(names: list[str]) -> list[str]:
-    """Replace a panelist whose key is missing, so the panel yields the voices it claims.
-
-    Measured 2026-11-13: ``OPENROUTER_API_KEY`` was set but **empty**, so the default
-    "five" advisors really returned four answers (openrouter -> "(unavailable)") and K's
-    >=5 rule was silently broken. pollinations needs no key and is a different vendor, so
-    it stands in; de-dup so a substitution never double-counts a panelist.
-    """
+    """De-duplicate a panel so a name is never counted twice."""
     out: list[str] = []
     for name in names:
-        if name == "openrouter" and not _has_openrouter_key():
-            name = "pollinations"
         if name not in out:
             out.append(name)
     return out
@@ -303,7 +234,7 @@ def main() -> int:
     ap.add_argument("--extra", default="", help="extra measured facts to include")
     ap.add_argument("--only", default="", help="comma list of advisors to use")
     ap.add_argument("--broad", action="store_true",
-                    help="add the slow pollinations advisor (a sixth vendor)")
+                    help="deprecated no-op: pollinations is already in the default team")
     ap.add_argument("--deep", action="store_true",
                     help="also ask the slow OpenHands advisors (2-20 min each)")
     ap.add_argument("--no-system", action="store_true")

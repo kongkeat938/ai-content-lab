@@ -61,50 +61,35 @@ def test_scripts_share_one_light_team():
 def test_default_team_has_at_least_five_independent_slots():
     assert len(advise.FAST) >= 5, advise.FAST
     assert len(set(advise.FAST)) == len(advise.FAST), "duplicate panelist"
-    # more than one vendor: openrouter is not Google.
-    assert "openrouter" in advise.FAST
 
 
-def test_default_team_excludes_the_measured_slow_advisor():
-    # pollinations measured ~66 s vs ~0.5-1.5 s for the rest (panel_bench.py):
-    # a slow panelist drags every decision, so it stays opt-in via --broad.
-    assert "pollinations" not in advise.FAST
-    assert "pollinations" in advise.BROAD
-    assert set(advise.FAST) <= set(advise.BROAD)
+def test_default_team_spans_two_vendors():
+    # more than one vendor: pollinations is not Google.
+    assert "pollinations" in advise.FAST, advise.FAST
 
 
-def test_broad_is_default_plus_pollinations():
-    assert advise.BROAD == advise.FAST + ["pollinations"]
+def test_no_dead_vendor_is_used():
+    """K's rule (2026-11-15): 'ตัวไหนติดไม่ต้องใช้เลย' -- whichever advisor is
+    blocked must not be used at all. openrouter measured DEAD (no key, every call
+    raised 'no OpenRouter key'), so it must be gone from the registry AND from every
+    panel group. This SWEEPS the module for every panel list (a hardcoded group name
+    is how a guard goes blind to a new group), so re-adding a dead vendor anywhere
+    fails here."""
+    assert "openrouter" not in advise.ADVISORS, sorted(advise.ADVISORS)
+    groups = {n: v for n, v in vars(advise).items()
+              if n.isupper() and isinstance(v, list)}
+    assert groups, "no panel groups found to sweep in advise.py"
+    for gname, names in groups.items():
+        assert "openrouter" not in names, f"{gname} still uses the dead openrouter: {names}"
 
 
-def test_default_panel_yields_five_real_voices_without_an_openrouter_key():
-    """Measured 2026-11-13: OPENROUTER_API_KEY was set but EMPTY, so the default
-    "five" advisors answered with only four (openrouter -> "(unavailable)") and K's
-    >=5 rule was broken while every existing guard still passed. resolve_team() must
-    substitute a keyless vendor so the panel keeps the voices it advertises."""
-    saved = os.environ.pop("OPENROUTER_API_KEY", None)
-    try:
-        team = advise.resolve_team(list(advise.FAST))
-    finally:
-        if saved is not None:
-            os.environ["OPENROUTER_API_KEY"] = saved
-    assert len(team) >= 5, f"panel lost a voice without a key: {team}"
-    assert len(set(team)) == len(team), f"duplicate panelist after substitution: {team}"
+def test_default_panel_yields_five_real_voices():
+    """The default team must resolve to >=5 registered voices across >=2 vendors."""
+    team = advise.resolve_team(list(advise.FAST))
+    assert len(team) >= 5, f"panel lost a voice: {team}"
+    assert len(set(team)) == len(team), f"duplicate panelist: {team}"
     assert all(n in advise.ADVISORS for n in team), team
-    assert "openrouter" not in team, team
     assert "pollinations" in team, team
-
-
-def test_resolve_team_keeps_openrouter_when_a_key_is_present():
-    saved = os.environ.get("OPENROUTER_API_KEY")
-    os.environ["OPENROUTER_API_KEY"] = "sk-or-test"
-    try:
-        assert advise.resolve_team(list(advise.FAST)) == advise.FAST
-    finally:
-        if saved is None:
-            os.environ.pop("OPENROUTER_API_KEY", None)
-        else:
-            os.environ["OPENROUTER_API_KEY"] = saved
 
 
 if __name__ == "__main__":

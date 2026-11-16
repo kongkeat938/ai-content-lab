@@ -11,7 +11,7 @@ times each call, and prints a table sorted by (passes desc, median latency asc).
 It does not trust a vendor's own claim of quality -- it measures it.
 
     python3 scripts/panel_bench.py                 # the fast advisors
-    python3 scripts/panel_bench.py --only gemini-3.5,openrouter
+    python3 scripts/panel_bench.py --only gemini-3.5,pollinations
     python3 scripts/panel_bench.py --repeat 2      # steadier latency
 """
 from __future__ import annotations

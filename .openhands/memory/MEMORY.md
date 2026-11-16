@@ -28,7 +28,8 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → **per-channel
   secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel
-  `advise.py` (≥5). Do NOT retry ChatGPT/PC1/DeepSeek/Devin/HF.
+  `advise.py` (≥5 = 4 Gemini + pollinations; **openrouter DROPPED**, dead). Do NOT retry
+  ChatGPT/PC1/DeepSeek/Devin/HF.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
   a piece must FAIL. `.get()+continue` on a config key is a silent killer
   (`test_no_pinned_recent_date.py`). A gate that probes an API its own token cannot read (403)
@@ -51,17 +52,17 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   does NOT trigger a workflow (dispatch explicitly).
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + a union merge driver
   (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer (`test_report_single_writer.py`).
-- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`P1DT2H`); the old copy-pasted regex crashed a rail (`test_duration_parse.py`).
+- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`P1DT2H`); the old copy-pasted
+  regex crashed a rail (`test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail + theme ROTATES** — else a raised
   cadence is a no-op or an add/add conflict.
 - **TTS fallback:** alt Thai voice (`PremwadeeNeural`) refuses some texts (`NoAudioReceived`) →
   `speak()` falls back to VOICE (`test_tts_fallback.py`).
-- **A rail can die at IMPORT: its workflow installs a SUBSET of the deps its script
-  needs, and `continue-on-error` turns it green.** Measured twice (`fetch-music`
-  missing `numpy`; `restore-wrongly-hidden` missing `google-auth-oauthlib`).
-  `test_workflow_deps.py` sweeps each workflow's installs vs the scripts it RUNS.
+- **A rail can die at IMPORT: its workflow installs a SUBSET of the deps its script needs,
+  and `continue-on-error` turns it green.** Twice (`fetch-music` no `numpy`;
+  `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (pre-08:00-UTC 403 = quota).
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK**
   (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail=cloud, not PC1.
