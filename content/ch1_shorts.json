@@ -554,6 +554,14 @@
       "posted_at": "2026-11-15T13:00:06+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "90": {
+      "video_id": "irpISwm2PRo",
+      "url": "https://youtu.be/irpISwm2PRo",
+      "title": "คุณอนุญาตให้ตัวเองหยุดเหนื่อยได้แล้ว #Shorts",
+      "posted_at": "2026-11-16T13:39:54+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
