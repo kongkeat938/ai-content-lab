@@ -239,6 +239,22 @@ if ($SkipTailscale) {
   Write-Host $status.Trim()
   if ($status -match '(https://[^\s/]+)') { Say "TAILNET_URL=$($Matches[1])"; $actions.Add('TAILSCALE_SERVED') }
   else { $actions.Add('TAILSCALE_SERVE_UNCONFIRMED') }
+
+  # A pod (GitHub Actions runner / cloud agent) is NOT a member of this tailnet, so
+  # `serve` alone (tailnet-only) leaves it NXDOMAIN. The pod reaches PC1 only through
+  # the PUBLIC funnel. Enable it so the MCP endpoint is reachable from outside the
+  # tailnet; the 32-byte auth key in the .cmd is the only credential.
+  $ErrorActionPreference = 'Continue'
+  & $ts funnel --bg $Port 2>&1 | ForEach-Object { Say $_ }
+  $funnelCode = $LASTEXITCODE
+  $ErrorActionPreference = $prevEap
+  Say "FUNNEL_EXIT=$funnelCode"
+  $ErrorActionPreference = 'Continue'
+  $fstatus = & $ts funnel status 2>&1 | Out-String
+  $ErrorActionPreference = $prevEap
+  Write-Host $fstatus.Trim()
+  if ($fstatus -match '(https://[^\s/]+)') { Say "FUNNEL_URL=$($Matches[1])"; $actions.Add('TAILSCALE_FUNNEL_ON') }
+  else { $actions.Add('TAILSCALE_FUNNEL_UNCONFIRMED') }
 }
 
 # --- 7. Verify: the server answers ---------------------------------------
