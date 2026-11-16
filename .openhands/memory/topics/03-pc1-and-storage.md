@@ -115,7 +115,11 @@ tools = the `winremote` MCP server**, NOT anything else on the box:
   `authenticated-mcp-proxy.mjs` (node, 127.0.0.1:**8091** -> forwards to 8090, bearer auth).
 - Reachability is via **Tailscale** (`tailscaled` connects to 127.0.0.1:8090 as a client).
   The taskbar cmd window is only the launcher -- closing it kills ak's control of PC1. It was
-  hidden (ShowWindow SW_HIDE on its hwnd), not closed; it returns if the task restarts.
+  hidden (ShowWindow SW_HIDE on its hwnd), not closed. **Made permanent 2026-11-16**: the task
+  `AERIS-PC1-WINREMOTE-MCP` action now runs `wscript.exe start-winremote-mcp-hidden.vbs`
+  (Run style 0 = no console window); proven end-to-end by starting a 2nd winremote hidden on
+  port 8092 (listened, no cmd/wscript window) then tearing it down. The running server is NOT
+  restarted by the edit -- do not restart it mid-session (tools vanish until a new conversation).
 - **DesktopCommander MCP (`@wonderwhy-er/desktop-commander`) is NOT how ak drives PC1** -- it is
   part of the OLD ChatGPT-remote AX stack.
 
