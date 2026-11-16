@@ -29,8 +29,8 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel
   `advise.py` (≥5; openrouter DROPPED, dead). Do NOT retry
-  ChatGPT/DeepSeek/Devin/HF. **PC1 IS live** = ak's hands via `winremote` 8090/Tailscale
-  (`topics/03`); old AX stack off 2026-11-16.
+  ChatGPT/DeepSeek/Devin/HF. **PC1 = ak's hands** via `winremote` 8090/Tailscale (`topics/03`);
+  AX stack off. **Close PC1 windows when done** (K).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
   a piece must FAIL. `.get()+continue` on a config key is a silent killer
   (`test_no_pinned_recent_date.py`). A gate that probes an API its own token cannot read (403)
@@ -39,10 +39,10 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   writer needs a guard; health thresholds > real cadence.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS** (2026-11-15): the 2nd uploader is `ax-workspace` **auto-shorts** (K's
-  OLD repo) — same channels/tokens. FIXED: disabled + deleted its 5 YT secrets ->
-  `known_uploads.json` (75); 30/32 in `rogue_hidden.json` were ours -> `restore_wrongly_hidden.py`.
-  `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`** (read-merge-write).
+- **"Rogue" = OURS** (2026-11-15): the 2nd uploader is `ax-workspace` **auto-shorts** (K's OLD
+  repo) — same channels/tokens. FIXED: disabled + deleted its 5 YT secrets -> `known_uploads.json`
+  (75); 30/32 in `rogue_hidden.json` were ours -> `restore_wrongly_hidden.py`. `aeris` = READ-ONLY.
+  **`videos.update` REPLACES the whole `snippet`** (read-merge-write).
 - **Repo is PUBLIC** (free plan → private would halt the rails): never commit a credential
   (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); K's scrubbed from tree AND history, real ones in `CH_ACCOUNTS`; labels use `public_address()`.
 - **Quota:** `videos.insert` own pool; Data API resets 08:00 UTC; a GITHUB_TOKEN push
@@ -62,8 +62,8 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (pre-08:00-UTC 403 = quota).
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no
-  live rogue" while `feeds/videos.xml` 404'd -> falls back to the uploads playlist `UU<id>`
-  and exits **2=BLIND** (≠0). `topics/05`.
+  live rogue" while `feeds/videos.xml` 404'd -> falls back to uploads playlist `UU<id>`; exits
+  **2=BLIND** (≠0). `topics/05`.
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK**
   (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail=cloud, not PC1.
 - **ch4 UNPAUSED 2026-11-13**: a tension hook is **enforced** (`test_hook_concrete`) for the

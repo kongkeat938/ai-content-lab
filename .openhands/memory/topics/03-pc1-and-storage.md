@@ -134,3 +134,13 @@ tools = the `winremote` MCP server**, NOT anything else on the box:
 reverse worker (6968). Kept: winremote (2248) + `AERIS-PC1-WINREMOTE-MCP` (Running),
 `-PROXY`, MeshCentral (node 6000/7716/8084), Mesh Agent, `actions.runner.*-PC1-MAIN` service.
 **Do NOT disable `AERIS-PC1-WINREMOTE-MCP`** -- that is ak's control channel.
+
+## PC1 window hygiene (K, 2026-11-16)
+**Close every window the agent opens on PC1 as soon as it is done with it** -- leftover
+windows slow the box and make it hang (K: "มันทำให้เครื่องช้า ค้าง"). This covers app windows
+(Chrome/Edge/Settings/explorer/any GUI) opened for a task, and any stray console window.
+- The winremote **launcher** cmd window is the one exception -- it must stay (it IS ak's control
+  channel), but it is now hidden by the wscript launcher (see above), so it is not "left open".
+- Cleanup recipe: `Get-Process | Where-Object { $_.MainWindowHandle -ne 0 }` to list window
+  owners, then `Stop-Process -Id <pid>` for the ones the agent opened. Close the app, not just
+  the tab, when the task that needed it is finished.
