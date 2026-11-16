@@ -108,26 +108,34 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
     default_lang = chb.get("defaultLanguage") or item["snippet"].get("defaultLanguage") or ""
     loc_key = t.get("loc", t["lang"])
     loc_th = (item.get("localizations") or {}).get(loc_key, {}).get("title")
+    # A description/keywords block is only "present" if it is the TARGET text.
+    # A truthiness check is a trap: after the ch4 genre pivot the live blurb was
+    # still the old family one (measured 2026-11-16), which is non-empty, so the
+    # rail skipped the repair forever. Compare against the target instead.
+    desc_ok = chb.get("description") == t["description"]
+    kw_ok = chb.get("keywords") == t["keywords"]
     print(f"== {slug}  id={item['id']}")
     print(f"   live title (brandingSettings.channel.title): {live_title}")
     print(f"   snippet.title                              : {item['snippet']['title']}")
     print(f"   defaultLanguage                            : {default_lang!r}")
     print(f"   localizations.{loc_key}.title              : {loc_th!r}")
+    print(f"   description matches target                 : {desc_ok}")
+    print(f"   keywords match target                      : {kw_ok}")
     if verify_only:
         ok = loc_th == t["title"]
         print(f"   target {t['title']!r} -> {'OK' if ok else 'NOT YET'}")
         return 0 if ok else 2
-    if loc_th == t["title"] and default_lang == t["lang"] \
-            and chb.get("description") and chb.get("keywords"):
+    if loc_th == t["title"] and default_lang == t["lang"] and desc_ok and kw_ok:
         print("   already renamed and branded -- skip")
         return 0
     if loc_th == t["title"]:
-        # The name landed but the branding did not (measured 2026-11-11: a trailer
-        # PUT replaces the whole brandingSettings.channel object, so it wiped the
-        # description, keywords and defaultLanguage). Re-apply them instead of
-        # skipping on the title alone.
-        print("   name is set but description/keywords/defaultLanguage are not -- "
-              "restoring them")
+        # The name landed but the branding did not, or it went stale (measured
+        # 2026-11-11: a trailer PUT replaces the whole brandingSettings.channel
+        # object, so it wiped the description, keywords and defaultLanguage;
+        # measured 2026-11-16: a pre-pivot blurb lingers). Re-apply them instead
+        # of skipping on the title alone.
+        print("   name is set but description/keywords/defaultLanguage are not the "
+              "target -- restoring them")
 
     # The API's own rules, read from the channels.update reference (2026-11-07):
     #   * `part` accepts exactly ONE of brandingSettings | invideoPromotion |
@@ -143,7 +151,7 @@ def run(slug: str, dry: bool, verify_only: bool) -> int:
         print("   dry-run: not writing")
         return 0
 
-    if default_lang != t["lang"] or not chb.get("description") or not chb.get("keywords"):
+    if not desc_ok or not kw_ok or default_lang != t["lang"]:
         # Call 1: part=brandingSettings. The channel title MUST be echoed back
         # unchanged (channelTitleUpdateForbidden otherwise), so we carry the whole
         # object and set defaultLanguage, description and keywords together.

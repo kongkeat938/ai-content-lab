@@ -39,6 +39,11 @@ ROOT = os.path.dirname(HERE)
 
 MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
 
+# How many times to re-ask for a piece that fails a gate before dropping it. A
+# single re-ask is enough: the failures are transient (a short or over-long
+# answer), not a systematically unanswerable question.
+GATE_TRIES = 3
+
 # One question per piece, walking from the everyday outward, so the set has an
 # arc instead of twelve unrelated trivia cards. Each entry is (name, the question
 # the piece must answer, the angle that keeps it a story rather than a list).
@@ -137,8 +142,21 @@ def main() -> int:
     beats = ARC[:a.count]
     pieces, skipped = [], []
     for i, (name, question, angle) in enumerate(beats, 1):
-        text = ask(key, prompt_for(a.theme, name, question, angle))
-        ok, reason = valid(text)
+        # A piece that fails a gate is retried, not dropped on the first try: the
+        # gate rejects a transient short/long answer (measured 2026-11-16: one
+        # 3-line "sea" answer blocked all 12 pieces), and a retry has a real
+        # chance of passing. The set is still refused if it never passes -- this
+        # retries the piece, it does not accept a partial set.
+        text, ok, reason = "", False, "no attempt"
+        for attempt in range(GATE_TRIES):
+            text = ask(key, prompt_for(a.theme, name, question, angle))
+            ok, reason = valid(text)
+            if ok:
+                break
+            if attempt + 1 < GATE_TRIES:
+                print(f"  {i:02d}_{name}: {reason}; retry "
+                      f"{attempt + 1}/{GATE_TRIES - 1}", flush=True)
+                time.sleep(3)
         if not ok:
             skipped.append((name, reason))
             print(f"  {i:02d}_{name}: SKIP ({reason})", flush=True)
