@@ -13,6 +13,10 @@ compositions:
     flourishes, the title in espresso with a cream halo, a bronze diamond
     divider, and a light film grain.
   * `--style classic` -- the original flat composition, also bright with dark type.
+  * `--style knowledge` -- ch4's post-pivot look (2026-11-16): drawn flat, no photo.
+    A bright blue->cream gradient, faint geometry, a minimal light-bulb-with-"?"
+    mark, deep-navy type and an amber accent. `--banner-art`/`--avatar-art` are not
+    needed for this style.
 
 Everything is Pillow + numpy; no paid tool and no generative model.
 
@@ -25,6 +29,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import math
 import os
 
 import numpy as np
@@ -42,6 +47,14 @@ INK = (18, 11, 4)
 INK_DARK = (14, 9, 3)      # espresso type, for a bright background
 CREAM = (252, 243, 220)     # light halo/stroke behind dark type
 BRONZE = (122, 86, 26)      # ornament that reads on a bright background
+
+# "knowledge" style (ch4 pivot, 2026-11-16) -- panel-designed flat look:
+# bright background, deep-navy type, amber accent. No photo needed.
+KN_BG_TOP = (233, 242, 247)     # crisp light blue
+KN_BG_BOT = (255, 250, 240)     # warm cream
+KN_NAVY = (10, 25, 47)          # #0A192F type + icon
+KN_AMBER = (255, 111, 0)        # #FF6F00 accent / "?"
+KN_SOFT = (223, 230, 240)       # faint geometry on the bright field
 
 
 def font(name: str, size: int) -> ImageFont.FreeTypeFont:
@@ -133,6 +146,94 @@ def ornament(d: ImageDraw.ImageDraw, box, col=GOLD) -> None:
         d.polygon([(x, y - 14), (x + 14, y), (x, y + 14), (x - 14, y)], fill=col)
 
 
+
+def kn_background(w: int, h: int) -> Image.Image:
+    """A bright vertical gradient with faint geometry -- no photo required."""
+    top, bot = np.array(KN_BG_TOP, np.float32), np.array(KN_BG_BOT, np.float32)
+    t = np.linspace(0.0, 1.0, h, dtype=np.float32)[:, None, None]
+    arr = top[None, None, :] * (1 - t) + bot[None, None, :] * t
+    arr = np.repeat(arr, w, axis=1)
+    im = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGB")
+    d = ImageDraw.Draw(im, "RGBA")
+    for i, (cx, cy, r) in enumerate(((w * 0.14, h * 0.20, h * 0.42),
+                                     (w * 0.88, h * 0.80, h * 0.50),
+                                     (w * 0.72, h * 0.16, h * 0.22))):
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=KN_SOFT + (110,), width=6)
+    d.ellipse([w * 0.06 - h * 0.10, h * 0.86 - h * 0.10, w * 0.06 + h * 0.10, h * 0.86 + h * 0.10],
+              fill=KN_AMBER + (28,))
+    return im
+
+
+def kn_bulb(draw: ImageDraw.ImageDraw, cx: float, cy: float, scale: float,
+            bulb=KN_AMBER, mark=KN_NAVY) -> None:
+    """A minimal light-bulb with a question mark: the "idea / knowledge" mark."""
+    r = scale
+    draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=bulb)
+    # the neck + base
+    bw, bh = r * 0.62, r * 0.44
+    draw.rounded_rectangle([cx - bw / 2, cy + r * 0.74, cx + bw / 2, cy + r * 0.74 + bh],
+                           radius=int(r * 0.12), fill=bulb)
+    for k in range(3):
+        yy = cy + r * 0.80 + k * bh * 0.30
+        draw.line([cx - bw * 0.42, yy, cx + bw * 0.42, yy], fill=mark, width=max(3, int(r * 0.05)))
+    f = font("Kanit-Bold.ttf", int(r * 1.18))
+    tb = draw.textbbox((0, 0), "?", font=f)
+    draw.text((cx - (tb[2] - tb[0]) / 2 - tb[0], cy - (tb[3] - tb[1]) / 2 - tb[1]), "?", font=f, fill=mark)
+
+
+def knowledge_banner(title: str, subtitle: str, kicker: str, out: str) -> str:
+    im = kn_background(BANNER_W, BANNER_H).convert("RGBA")
+    cx = BANNER_W // 2
+    f_kick = font("Prompt-SemiBold.ttf", 48)
+    f_title = font("Kanit-Bold.ttf", 132)
+    f_sub = font("Prompt-SemiBold.ttf", 60)
+    probe = ImageDraw.Draw(im)
+    th = probe.textbbox((0, 0), title, font=f_title)[3]
+    sh = probe.textbbox((0, 0), subtitle, font=f_sub)[3]
+    kh = probe.textbbox((0, 0), kicker, font=f_kick)[3]
+    g1, g2, rule = 22, 30, 18
+    block = kh + g1 + th + g2 + rule + sh
+    y = (BANNER_H - block) // 2
+    if kicker:
+        draw_centered_ls(probe, cx, y, kicker, f_kick, KN_AMBER, 10)
+        y += kh + g1
+    tw = probe.textlength(title, font=f_title)
+    im.alpha_composite(_with_halo(title, f_title, KN_NAVY, (255, 255, 255), cx, y))
+    y += th + g2
+    d = ImageDraw.Draw(im)
+    d.line([cx - 220, y + 8, cx - 34, y + 8], fill=KN_AMBER, width=6)
+    d.line([cx + 34, y + 8, cx + 220, y + 8], fill=KN_AMBER, width=6)
+    d.ellipse([cx - 12, y - 4, cx + 12, y + 20], fill=KN_NAVY)
+    y += rule
+    d.text((cx - d.textlength(subtitle, font=f_sub) / 2, y), subtitle, font=f_sub,
+           fill=KN_NAVY, stroke_width=2, stroke_fill=(255, 255, 255))
+    # icon tucked in the safe band, left of the copy
+    kn_bulb(d, cx - tw / 2 - 150, BANNER_H // 2 - 10, 92)
+    im.convert("RGB").save(out, quality=94)
+    return out
+
+
+def _with_halo(txt: str, f, fill, halo, cx, y) -> Image.Image:
+    layer = Image.new("RGBA", (BANNER_W, BANNER_H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    w = d.textlength(txt, font=f)
+    d.text((cx - w / 2, y), txt, font=f, fill=halo + (255,), stroke_width=10, stroke_fill=halo + (255,))
+    layer = layer.filter(ImageFilter.GaussianBlur(14))
+    d = ImageDraw.Draw(layer)
+    d.text((cx - w / 2, y), txt, font=f, fill=fill + (255,))
+    return layer
+
+
+def knowledge_avatar(out: str, title: str = "") -> str:
+    im = kn_background(800, 800).convert("RGBA")
+    d = ImageDraw.Draw(im, "RGBA")
+    # the circle YouTube crops to: keep the bulb well inside it (icon-only, per panel)
+    d.ellipse([140, 140, 660, 660], fill=(255, 255, 255, 210))
+    d.ellipse([140, 140, 660, 660], outline=KN_NAVY, width=9)
+    kn_bulb(d, 400, 380, 128, bulb=KN_AMBER, mark=KN_NAVY)
+    im.convert("RGB").save(out, quality=95)
+    return out
+
 def banner(art: str, out: str, title: str, kicker: str, subtitle: str,
            style: str = "lavish") -> str:
     im = cover(Image.open(art).convert("RGB"), BANNER_W, BANNER_H)
@@ -220,18 +321,25 @@ def avatar(art: str, out: str, style: str = "lavish") -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--banner-art", required=True)
-    ap.add_argument("--avatar-art", required=True)
+    ap.add_argument("--banner-art", required=False, default="")
+    ap.add_argument("--avatar-art", required=False, default="")
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--title", required=True)
     ap.add_argument("--subtitle", required=True)
     ap.add_argument("--kicker", default="")
     ap.add_argument("--tagline", default="", help="alias for --kicker (classic look)")
-    ap.add_argument("--style", choices=("lavish", "classic"), default="lavish",
-                    help="lavish (default) or classic -- both bright, dark type")
+    ap.add_argument("--style", choices=("lavish", "classic", "knowledge"), default="lavish",
+                    help="lavish/classic need art; knowledge is drawn flat (no photo)")
     a = ap.parse_args()
     os.makedirs(a.out_dir, exist_ok=True)
     kicker = a.kicker or a.tagline
+    if a.style == "knowledge":
+        print("wrote", knowledge_banner(a.title, a.subtitle, kicker,
+                                        os.path.join(a.out_dir, "banner_2560x1440.jpg")))
+        print("wrote", knowledge_avatar(os.path.join(a.out_dir, "avatar_800x800.jpg")))
+        return 0
+    if not (a.banner_art and a.avatar_art):
+        ap.error("--banner-art and --avatar-art are required for lavish/classic")
     print("wrote", banner(a.banner_art, os.path.join(a.out_dir, "banner_2560x1440.jpg"),
                          a.title, kicker, a.subtitle, a.style))
     print("wrote", avatar(a.avatar_art, os.path.join(a.out_dir, "avatar_800x800.jpg"), a.style))
