@@ -42,25 +42,36 @@ jobs:
       - name: Install the YouTube client
         run: pip install --quiet google-api-python-client google-auth-oauthlib
 
-      - name: Detect the rogue stream with NO quota (RSS feed)
-        continue-on-error: true   # informational; the step below pauses when it can
+      - name: Detect the rogue stream with NO quota (RSS feed / uploads page)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set +e
           # Quota-blind window: the Data API pool is spent most days well before
           # UTC midnight, so the pausing step below can see nothing from ~13:00 UTC
-          # until the 08:00 reset. The channel's public RSS feed needs no quota and
-          # lists the newest uploads, so this sees the rogue stream anyway and says
-          # so on the alert issue. Measured 2026-11-15: 4 live rogue clips sat
-          # public through a blind window this step would have flagged.
+          # until the 08:00 reset. A channel's public RSS feed -- and, when that is
+          # down, its uploads playlist page -- needs no quota and lists the newest
+          # uploads, so this sees the rogue stream anyway and says so on the alert
+          # issue. Exit 1 = a rogue was seen; exit 2 = BLIND (no public source
+          # answered). BOTH fail this step: a scan that measured nothing is not a
+          # clean scan, and a silently-blind guard is worse than none. Measured
+          # 2026-11-16: /feeds/videos.xml returned 404 for every channel, so the
+          # uploads-page fallback is what keeps this from going blind.
           python3 scripts/rogue_watch_rss.py --alert \
             2>&1 | tee work/rogue_rss.txt
-          echo "rss_exit=${PIPESTATUS[0]}" >> "$GITHUB_STEP_SUMMARY"
-          grep -E "ROGUE |no live rogue|commented" work/rogue_rss.txt \
+          rss_exit=${PIPESTATUS[0]}
+          echo "rss_exit=$rss_exit" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "ROGUE |no live rogue|BLIND|commented" work/rogue_rss.txt \
             >> "$GITHUB_STEP_SUMMARY" || true
+          if [ "$rss_exit" = "2" ]; then
+            echo "::error::rogue watcher BLIND: no public source answered for one or more channels -- the no-quota guard is down"
+          elif [ "$rss_exit" = "1" ]; then
+            echo "::error::a live rogue upload was seen without quota (alert issue updated)"
+          fi
+          exit "$rss_exit"
 
       - name: Pause any live rogue clip (reversible) and refresh the alert
+        if: always()   # run even when the no-quota scan above went blind
         continue-on-error: true   # a spent quota defers cleanly to the next run
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
