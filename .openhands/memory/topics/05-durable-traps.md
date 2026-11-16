@@ -211,3 +211,13 @@ was indistinguishable from a clean scan: the classic **false pass**.
 - **Verify (live):** `rogue-guard` run 43810752542 on commit `959c673b` = success,
   log "no live rogue upload on any channel feed" (NOT "BLIND") = the fallback
   measured every channel.
+
+
+## PII lives in HISTORY too (2026-11-16)
+`test_no_committed_pii.py` scans the tree only. Real addresses were committed in CONTENT **and
+commit MESSAGES**; a tree-only scrub leaves them in history on a PUBLIC repo. Fix = git-filter-repo
+with BOTH `--replace-text` and `--replace-message`. Non-interactive gotcha: delete
+`.git/filter-repo/` before re-running (the stale `already_ran` file makes filter-repo call
+`input()`, which dies with `OSError: Bad file descriptor`). Freeze CI first (disable workflows +
+cancel runs) so the self-chaining rails cannot clobber the rewrite, then force-with-lease.
+A FORK keeps the old history and cannot be fixed without the fork owner's admin rights.
