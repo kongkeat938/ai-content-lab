@@ -182,3 +182,32 @@ Whole-repo audit anchored to the ONE project goal `yt938-2` (YPP). Measured, the
   referenced nowhere, or if `docs/PROJECT-MAP.md` is missing. It must be able to FAIL.
 - **The map:** `docs/PROJECT-MAP.md` = the single anchor (goal, live rails, one login path, where
   truth lives, conventions, archive list). Read it before creating anything.
+
+## Rogue watcher false pass: a dead RSS feed read as "clean" (2026-11-16)
+`scripts/rogue_watch_rss.py` (the no-quota step of `rogue-guard.yml`, the safety net
+during the quota-blind window) read each channel's public RSS feed and printed
+"no live rogue upload on any channel feed" -- but `https://www.youtube.com/feeds/
+videos.xml?channel_id=...` returned **404 for EVERY channel** (measured from the
+pod proxy, from CI, and from a residential IP on PC1). A scan that measured nothing
+was indistinguishable from a clean scan: the classic **false pass**.
+- **Fix 1 -- a working no-quota source:** fall back to the uploads playlist page
+  `https://www.youtube.com/playlist?list=UU<id>` (swap `UC` -> `UU`). It still
+  returns 200 with up to 100 uploads; parse `ytInitialData` -> `lockupViewModel`
+  (`contentId`, `metadata.lockupMetadataViewModel.title.content`, and a relative age
+  in `metadataRows[].metadataParts[].text.content` like `"2d ago"`). Force
+  `Accept-Language: en-US` + `&hl=en` -- the age labels are LOCALIZED, so a Thai
+  response makes every age unparseable and drops a fresh rogue silently.
+  (`/videos` and `/shorts` tabs also work but the Shorts tab carries NO age; the
+  `UU` playlist is the closest replacement for the old feed.)
+- **Fix 2 -- no silent blind:** `scan()` returns `(rogue, blind)`. A channel no
+  source can answer for -- or a source that answers with ZERO entries (broken
+  selector) -- is BLIND. `main()` exits **2 (BLIND)**, distinct from 0 (clean) and
+  1 (rogue); `rogue-guard.yml` fails the step on 2 as well as 1. `continue-on-error`
+  was REMOVED from the scan step (it hid the false pass); the pausing step keeps it.
+- **Guard:** `scripts/test_rogue_rss.py` covers the fallback parse, the age labels,
+  the blind path, the empty-source path and the source fallthrough; mutation-tested
+  (ignoring the `d` unit, returning `[]` for a blind page, ignoring `age_days`, and
+  not recording blind channels are each caught).
+- **Verify (live):** `rogue-guard` run 43810752542 on commit `959c673b` = success,
+  log "no live rogue upload on any channel feed" (NOT "BLIND") = the fallback
+  measured every channel.

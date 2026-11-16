@@ -38,14 +38,10 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   writer needs a guard; health thresholds > real cadence.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS** (2026-11-15; K was right): the 2nd uploader is `kongkeat938/ax-workspace`
-  workflow **auto-shorts** (K's OLD repo) — same channels, same `YT_CH*_REFRESH_TOKEN`, logged
-  only in its own `docs/published.json` -> audit read it as "outside the rails". FIXED (no
-  login): disabled via API + **deleted the 5 YT secrets from that repo** (reversible) ->
-  `known_uploads.json` (75) (`test_audit_known_uploads.py`). 30/32 in `rogue_hidden.json` were
-  ours (25 deleted, 5 restorable) -> `restore_wrongly_hidden.py` + rail. `aeris` = READ-ONLY.
-  - **`videos.update` REPLACES the whole `snippet`** — read-merge-write
-    (`test_snippet_update_preserves.py`).
+- **"Rogue" = OURS** (2026-11-15): the 2nd uploader is `ax-workspace` **auto-shorts** (K's
+  OLD repo) — same channels/tokens. FIXED: disabled + deleted its 5 YT secrets ->
+  `known_uploads.json` (75); 30/32 in `rogue_hidden.json` were ours -> `restore_wrongly_hidden.py`.
+  `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`** (read-merge-write).
 - **Repo is PUBLIC** (free plan → private would halt the rails): never commit a credential
   (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); K's scrubbed from tree AND history, real ones in `CH_ACCOUNTS`; labels use `public_address()`.
 - **Quota:** `videos.insert` own pool; Data API resets 08:00 UTC; a GITHUB_TOKEN push
@@ -64,6 +60,9 @@ signup emails; never sign up as K (`test_agent_own_email.py`). **Workers** (`tea
   and `continue-on-error` turns it green.** Twice (`fetch-music` no `numpy`;
   `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
 - **Every new mechanism seeds a false alarm until the sweep learns it** (pre-08:00-UTC 403 = quota).
+- **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no
+  live rogue" while `feeds/videos.xml` 404'd for every channel -> now falls back to the uploads
+  playlist `UU<id>` and exits **2=BLIND** (≠0 clean). `topics/05`.
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK**
   (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail=cloud, not PC1.
 - **ch4 UNPAUSED 2026-11-13**: a tension hook is **enforced** (`test_hook_concrete`) for the
