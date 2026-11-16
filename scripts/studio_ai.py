@@ -366,9 +366,9 @@ QUESTION = (
 # "kongkeat" while question_for is always called with the Studio id, so the hint
 # was never sent, the panel proposed flat scenes, and the guard test went red.
 TOPICS_HINT = {
-    "ch4": ("หัวข้อ Shorts ใหม่ 8 หัวข้อ ที่มี 'ปมตึง' ในครอบครัว: เป็นคำถาม "
-            "(ทำไม...), ความลับที่ถูกปิดบัง, การจากลา/การสูญเสีย, หรือความผิดหวัง "
-            "(ห้ามเป็นฉากอบอุ่นราบเรียบ เช่น ทำกับข้าวด้วยกัน)"),
+    "ch4": ("หัวข้อ Shorts ใหม่ 8 หัวข้อ เกี่ยวกับเกร็ดความรู้รอบตัว ที่เปิดด้วย "
+            "ความอยากรู้: เป็นคำถาม (ทำไม...), รู้ไหมว่า..., หรือความจริงที่..."
+            "(ห้ามเป็นเรื่องเล่าครอบครัวหรือฉากอบอุ่นใจ เช่น พ่อกอดลูก)"),
 }
 
 
@@ -409,6 +409,16 @@ def required_hook(channel: str):
         return None
 
 
+def retired_pattern(channel: str):
+    """The genre a channel has left, if it named one (see gen_short_scripts)."""
+    alias = GEN_ALIAS.get(channel, channel)
+    try:
+        import gen_short_scripts as gen  # noqa: PLC0415
+        return (gen.CHANNELS.get(alias) or {}).get("retired")
+    except Exception:  # noqa: BLE001 - a missing rule must not stop the loop
+        return None
+
+
 def fallback_topics(channel: str, req) -> list[str]:
     """Curated subjects that carry the required marker.
 
@@ -436,11 +446,18 @@ def filter_topics(channel: str, topics: list[str]) -> list[str]:
     sitting there is how the loop steers itself back to the shape that lost the
     feed. If nothing survives, fall back to the channel's own on-rule subjects so
     the file is never empty of usable ones.
+
+    A channel that has changed genre also drops subjects from the genre it left:
+    ch4's committed insights held family stories that carried "ทำไม" and so passed
+    the curiosity marker, which would have steered the pool back to the abandoned
+    genre (measured 2026-11-16).
     """
     req = required_hook(channel)
     if not req:
         return topics
-    kept = [t for t in topics if req.search(t)]
+    retired = retired_pattern(channel)
+    kept = [t for t in topics if req.search(t)
+            and not (retired and retired.search(t))]
     return kept or fallback_topics(channel, req)
 
 

@@ -43,7 +43,7 @@ HANDLES = {
     "dharma": "farmmer-n9t",
     "kongkeat": "kongkeatpratumma",
 }
-LABEL = {"genx": "ตาต้า GenX", "dharma": "Farmmer", "kongkeat": "เรื่องเล่าอบอุ่นใจ"}
+LABEL = {"genx": "ตาต้า GenX", "dharma": "Farmmer", "kongkeat": "เกร็ดความรู้รอบตัว"}
 ISSUE_TITLE = "ความคืบหน้าถึงเป้า $500/เดือน — รายงานล่าสุด"
 
 

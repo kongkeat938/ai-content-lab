@@ -18,9 +18,9 @@ Everything is Pillow + numpy; no paid tool and no generative model.
 
 Usage:
     python3 scripts/make_branding.py --banner-art art.jpg --avatar-art a.jpg \
-        --out-dir out/ --title "เรื่องเล่าอบอุ่นใจ" \
-        --kicker "รวมเรื่องเล่าครอบครัวไทย" \
-        --subtitle "ฟังเพลินทั้งคืน · เสียงนุ่ม ๆ ก่อนนอน"
+        --out-dir out/ --title "เกร็ดความรู้รอบตัว" \
+        --kicker "เกร็ดน่ารู้รอบตัว" \
+        --subtitle "ไขคำถามคาใจ · ฟังเพลินได้ทุกวัน"
 """
 from __future__ import annotations
 

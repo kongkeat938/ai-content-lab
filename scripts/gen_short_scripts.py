@@ -48,6 +48,36 @@ _TENSION = re.compile(
     r"เสียใจ|ผิดหวัง|เสียสละ|ร้องไห้|น้ำตา|ไม่มี.*อีกแล้ว|ไม่เหลือ|ไม่ทัน|สายไป|"
     r"คำโกหก|คำสัญญา|ไม่กล้า|กลั้น|อดทน")
 
+# The knowledge genre's hook floor (pivot 2026-11-16). A five-advisor panel chose
+# general knowledge for ch4 and required the Shorts to match the long-form's
+# genre, or the mismatch starves the long-form's click-through. A curiosity hook
+# ("why is...", "did you know...", "the truth is...") is what makes a knowledge
+# Short get tapped; a flat fact statement does not. Enforced in valid().
+_CURIOSITY = re.compile(
+    r"ทำไม|เพราะอะไร|รู้ไหม|รู้หรือไม่|รู้หรือเปล่า|ความจริง|ที่แท้จริง|ความลับ|"
+    r"มหัศจรรย์|เหลือเชื่อ|ไม่น่าเชื่อ|จริงหรือ|เคยสงสัย|คำตอบ")
+
+# The genre a channel has LEFT. ch4 abandoned family stories on 2026-11-16, but
+# its committed insights still held family subjects and a rule that carried
+# "ทำไม" ("ทำไมพ่อถึงเก็บจานข้าว...", "ระบุคีย์เวิร์ด เรื่องครอบครัว"), which
+# passed the curiosity marker and steered the generator straight back to the
+# abandoned genre. A retired subject must name a family relationship AND carry a
+# story signal (the two lookaheads are an AND): a knowledge subject like
+# "ทำไมแม่น้ำจึงไหล" (river, no story signal) or "ท้องฟ้าเป็นสีฟ้าได้อย่างไร"
+# (อย่างไร, no story signal) survives. Kept as a config value, not a hardcoded
+# check, so a future pivot is a one-line change.
+_RETIRED_FAMILY = re.compile(
+    r"(?=.*(?:พ่อ|แม่|ยาย|ย่า|ปู่|ครอบครัว|ลูกชาย|ลูกสาว))"
+    r"(?=.*(?:ครอบครัว|อบอุ่นใจ|เรื่องเล่า|จากไป|เสียสละ|อภัย|งานศพ|เผาศพ|มรดก|"
+    r"น้ำตา|ตาย|เสียชีวิต|ป่วย|วันเกิด|ทิ้งไว้|กลับบ้าน|ค่าเทอม|ความทรงจำ|คิดถึง|"
+    r"ผิดหวัง|กอด|ซ่อน|ประสบความสำเร็จ|ปรบมือ))")
+
+
+def is_retired(topic: str, pattern) -> bool:
+    """True if a subject or rule uses a genre the channel has left."""
+    return bool(pattern and pattern.search(topic))
+
+
 CHANNELS = {
     "dharma": {
         "path": os.path.join(ROOT, "content", "ch2_shorts", "scripts.json"),
@@ -138,32 +168,37 @@ CHANNELS = {
     },
     "kongkeat-story": {
         "path": os.path.join(ROOT, "content", "ch4_shorts", "scripts.json"),
+        # PIVOT 2026-11-16: ch4's long-form moved from warm family stories to
+        # general knowledge (a five-advisor panel chose the genre; the long-form
+        # measured 0.7 watch-hours/28d and the family Shorts, though they drew
+        # 460-1,083 views, converted only 1.93 subs/1k -- worst on the fleet). The
+        # panel's second finding was that the Shorts must share the long-form's
+        # genre: a viewer pulled in by a family story does not click a knowledge
+        # long-form, so a mismatched Shorts feed starves the very rail it feeds.
         "angles": [
-            "ความลับที่แม่ปิดบังเรื่องเงินในบ้าน", "คืนที่พ่อจากไปโดยไม่บอกลา",
-            "วันที่ฉันเข้าใจความเสียสละของแม่ที่สายไป", "ความจริงที่ยายเพิ่งเล่าในวันสุดท้าย",
-            "คำพูดของพ่อที่ฉันเพิ่งเข้าใจตอนท่านไม่อยู่แล้ว", "วันที่พี่สาวเลือกครอบครัวแทนความฝัน",
-            "ความผิดหวังที่ซ่อนอยู่ใต้รอยยิ้มของแม่", "จดหมายที่พ่อทิ้งไว้ก่อนจากไป",
-            "ทำไมคนที่เสียสละให้บ้านมากที่สุด ถึงถูกมองข้ามเสมอ", "ความเงียบในมื้อเย็นที่ไม่มีพ่อ",
-            "วันสุดท้ายที่ฉันได้กอดยาย", "เรื่องที่แม่ไม่เคยบอกใครเรื่องงานของพ่อ",
-            "ตอนที่ฉันรู้ว่าบ้านไม่เหลืออะไรแล้ว", "รอยยิ้มของแม่ที่กลบความเหนื่อยทั้งชีวิต",
-            "คำขอร้องสุดท้ายของพ่อที่ฉันยังไม่ได้ทำ", "วันที่พี่ชายต้องเลือกระหว่างฉันกับอนาคตตัวเอง",
-            "ความจริงในกล่องไม้เก่าของตา", "ตอนที่แม่ร้องไห้คนเดียวในครัว",
-            "ทำไมเราถึงรู้ค่าของคนที่จากไปแล้วเสมอ", "คำโกหกครั้งสุดท้ายที่พ่อบอกเพื่อปกป้องฉัน",
+            "ทำไมท้องฟ้าจึงเป็นสีฟ้า", "ทำไมน้ำทะเลจึงเค็ม", "ทำไมเราจึงหาวตามคนอื่น",
+            "ทำไมแมวจึงชอบกล่อง", "ทำไมนิ้วจึงย่นเมื่อแช่น้ำนาน", "ทำไมเราเห็นฟ้าแลบก่อนได้ยินฟ้าร้อง",
+            "ทำไมนกจึงบินเป็นตัววี", "ทำไมดวงจันทร์เปลี่ยนรูปร่าง", "ทำไมน้ำผึ้งจึงไม่เสีย",
+            "ทำไมน้ำแข็งจึงลอยน้ำได้", "ทำไมเราจึงได้ยินเสียงสะท้อน", "ทำไมเราจึงฝัน",
+            "ทำไมรุ้งจึงมีเจ็ดสี", "ทำไมท้องฟ้าจึงเป็นสีแดงยามเย็น", "ทำไมใบไม้จึงเป็นสีเขียว",
+            "ทำไมเราจึงจาม", "ทำไมสัตว์บางชนิดจำศีล", "ทำไมเกลือละลายน้ำได้", "ทำไมเราจึงเมาเครื่องบิน",
+            "ทำไมเราจึงมองเห็นดาวตก", "ทำไมเสียงจึงดังในที่แคบ", "ทำไมน้ำจึงเดือดที่ยอดเขา",
+            "ทำไมคนเราจึงมีลายนิ้วมือไม่เหมือนกัน", "ทำไมดอกไม้จึงมีกลิ่น", "ทำไมลมจึงพัด",
         ],
-        "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
-        # The measured hook floor for this channel. Measured 2026-11-10: the flat
-        # "concrete scene" hooks (the old rule) kept only 13.7% mid-retention vs
-        # genx 62% / dharma 68%, and the feed stopped showing the channel. A hook
-        # must now carry a tension marker (a question, a hidden truth, a loss, a
-        # let-down), not just a warm description. Enforced in valid(), so a draft
-        # cannot drift back to the flat shape.
-        "require": _TENSION,
-        # The channel has no reachable long-form (its 120-min files get 1-3 views),
-        # so a "go watch the full clip" CTA sends viewers to a dead end. Enforced by
-        # valid(), not just asked for in the prompt.
+        # The curiosity cues and the hook floor. A knowledge Short is tapped
+        # because the hook opens a question, so both the cue list and the required
+        # marker ask for that shape; a flat fact statement is rejected in valid().
+        "cues": ("ทำไม", "รู้ไหม", "เพราะอะไร", "ความจริง", "เคยสงสัย"),
+        "require": _CURIOSITY,
+        # The genre this channel left (family stories). Learned topics and rules
+        # that use it are dropped, so the committed family insights cannot steer
+        # the pool back after the pivot.
+        "retired": _RETIRED_FAMILY,
+        # The channel's long-form gets few views, so a "go watch the full clip"
+        # CTA still sends viewers to a dead end. Enforced by valid().
         "forbid_cta": _BROKEN_CTA,
-        "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "เรื่องเล่าอบอุ่นใจ"
-กลุ่มเป้าหมาย: คนไทยที่ชอบเรื่องเล่าอบอุ่นใจเกี่ยวกับครอบครัว
+        "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "เกร็ดความรู้รอบตัว"
+กลุ่มเป้าหมาย: คนไทยทั่วไปที่ชอบเรื่องน่ารู้สั้น ๆ เข้าใจง่าย
 
 เขียน Shorts ใหม่ {count} คลิป เรื่อง: {angles}
 (ห้ามซ้ำกับที่เขียนไปแล้ว: {done})
@@ -173,18 +208,15 @@ CHANNELS = {
 
 กติกา:
 - lines 8-9 บรรทัด แต่ละบรรทัด 6-12 คำ รวมแล้วพูดได้ประมาณ 50-60 วินาที
-- hook บังคับ: ต้องเปิดด้วย "ปมตึง" ในครอบครัว ภายใน 12 คำแรก มีคำเรียกความสัมพันธ์
-  (พ่อ/แม่/พี่/ยาย/ตา) และต้องมีปมอย่างน้อยหนึ่งอย่าง: เป็นคำถาม (ทำไม...), ความลับที่ถูกปิดบัง,
-  การจากลา/การสูญเสีย, หรือความผิดหวัง/ความเสียใจ
-  ตัวอย่างที่ดี: "ทำไมลูกที่เสียสละให้บ้านมากที่สุด ถึงเป็นคนที่พ่อแม่เกรงใจน้อยที่สุด"
-                "พ่อพับนกกระดาษทิ้งไว้ ก่อนจะจากเราไปโดยไม่บอกลาสักคำ"
-  ห้ามเขียนฮุกที่เป็นแค่การบรรยายฉากอบอุ่นราบเรียบ เช่น "บ่ายวันเสาร์พ่อจูงมือไปพับนกกระดาษ"
-  (วัดจริง 2026-11-10: ฮุกบรรยายฉากได้ opening 104% แต่ดูต่อกลางเรื่องเพียง 13.7%;
-   ฮุกที่มีปมตึงของช่องอื่นได้กลางเรื่อง 62-68%)
-- โครงเรื่อง: เปิดด้วยปม/คำถาม -> เผยความจริงทีละนิด -> เฉลยอบอุ่นกินใจตอนจบ (หักมุมได้)
-- เรื่องสั้นจบในคลิปเดียว จุดจบอบอุ่น กินใจ ไม่เทศนา
+- hook บังคับ: ต้องเป็นคำถามหรือความอยากรู้ ภายใน 12 คำแรก ต้องมีคำอย่าง "ทำไม"
+  หรือ "รู้ไหม" หรือ "ความจริง" ตัวอย่างที่ดี:
+  "ทำไมท้องฟ้าจึงเป็นสีฟ้า ทั้งที่อวกาศเป็นสีดำ"
+  "รู้ไหมว่าน้ำผึ้งแท้ไม่มีวันเสีย แม้ทิ้งไว้เป็นพันปี"
+  ห้ามเขียนฮุกที่เป็นแค่การทวนความจริงเฉย ๆ เช่น "ท้องฟ้าเป็นสีฟ้า"
+- เนื้อหา: อธิบายเหตุผลหรือกลไกทางวิทยาศาสตร์แบบง่าย ๆ ให้ความรู้ที่ถูกต้องจริง
+- โครงเรื่อง: เปิดด้วยคำถาม -> เผยคำตอบทีละนิด -> จบด้วยเกร็ดที่ทำให้ร้องอ๋อ
 - cta: ชวนติดตามอย่างเดียว ห้ามสัญญาว่า "มีคลิปเต็ม/คลิปยาว/วิดีโอตัวเต็ม/ไปดูต่อ"
-  เพราะช่องนี้ยังไม่มีคลิปยาวที่คนดูถึง ให้เขียนแบบ "กดติดตามเพื่อรับเรื่องอบอุ่นใจแบบนี้ทุกวัน"
+  ให้เขียนแบบ "กดติดตามไว้ รับเกร็ดความรู้แบบนี้ทุกวัน"
 - ห้ามใช้เลขอารบิกหรือเลขไทย ให้เขียนเป็นคำเสมอ
 - ไม่มี emoji ไม่มี markdown
 
@@ -252,7 +284,7 @@ def valid(s: dict, cues=(), forbid=None, require=None) -> bool:
     # the shape that got 74-173 views/day. See docs/HOOKS-MEASURED.md.
     if cues and not any(c in s["hook"] for c in cues):
         return False
-    # The channel's hook floor (a tension marker). Measured 2026-11-10: without it
+    # The channel's hook floor (a curiosity marker). Measured 2026-11-10: without it
     # kongkeat's pool filled with flat scenes and its feed stopped showing the
     # channel, so a draft that lacks the marker is rejected before it is rendered.
     if require and not require.search(s["hook"]):
@@ -271,6 +303,18 @@ def _overlaps(angle: str, text: str, floor: int = 3) -> bool:
     return any(a[i:i + floor] in t for i in range(len(a) - floor + 1))
 
 
+def fresh_angles(cfg: dict, seen: str, learned: list[str]) -> list[str]:
+    """Learned subjects first, then the curated list minus what is already used.
+
+    The overlap floor is 8 for BOTH. A loose 3-char floor rejected every curated
+    angle on a channel whose pool is already full (measured 2026-11-16: dharma 0
+    of 41, genx 0 of 33, kongkeat 2 of 25) -- Thai shares 3-char runs constantly,
+    so the curated list silently went dead and the channel only ever used learned
+    subjects.
+    """
+    return learned + [a for a in cfg["angles"] if not _overlaps(a, seen, 8)]
+
+
 def ask_angles(key: str, channel: str, seen: str, want: int) -> list[str]:
     """Ask Gemini for new one-line subjects when the curated list is used up.
 
@@ -280,11 +324,19 @@ def ask_angles(key: str, channel: str, seen: str, want: int) -> list[str]:
     """
     who = {"dharma": "คนไทยที่นอนไม่หลับ เครียด คิดมากตอนกลางคืน",
            "genx": "คนไทยวัยผู้ใหญ่ (Gen X) ที่เหนื่อยกับชีวิตและกำลังหาความหมาย",
-           "kongkeat-story": "คนไทยที่ชอบเรื่องเล่าอบอุ่นใจเกี่ยวกับครอบครัว"}[channel]
+           "kongkeat-story": "คนไทยที่ชอบเรื่องน่ารู้รอบตัวแบบสั้น ๆ เข้าใจง่าย"}[channel]
+    # The subject domain follows the channel's genre. The old one asked for topics
+    # "about life, thoughts, feelings", which is the dharma/genx framing -- measured
+    # 2026-11-16 it steered ch4's post-pivot pool toward philosophical hooks
+    # ("why do we miss the past") instead of knowledge subjects.
+    subject = {"dharma": "ความคิด ความรู้สึกในชีวิตประจำวัน",
+               "genx": "แง่คิดการใช้ชีวิตของผู้ใหญ่",
+               "kongkeat-story": "ปรากฏการณ์ธรรมชาติ วิทยาศาสตร์ในชีวิตประจำวัน "
+                                 "เกร็ดน่ารู้รอบตัว"}[channel]
     prompt = (f"กลุ่มเป้าหมาย: {who}\n"
               f"เสนอหัวข้อ Shorts ใหม่ {want} หัวข้อ ที่ยังไม่ซ้ำกับหัวข้อที่ใช้แล้ว\n"
               f"หัวข้อที่ใช้แล้ว (ห้ามซ้ำ): {seen[-2000:]}\n"
-              "แต่ละหัวข้อเป็นวลีสั้น 4-10 คำ เกี่ยวกับชีวิต ความคิด ความรู้สึก\n"
+              f"แต่ละหัวข้อเป็นวลีสั้น 4-10 คำ เกี่ยวกับ{subject}\n"
               "ตอบเป็น JSON array ของสตริงเท่านั้น")
     out = ask(key, prompt)
     return [x for x in out if isinstance(x, str) and x.strip()]
@@ -343,12 +395,15 @@ def main() -> int:
             # housework) that got its feed withdrawn, and putting them first steered
             # the batch back to the losing shape.
             _req = cfg.get("require")
+            _retired = cfg.get("retired")
             learned = [t for t in blob.get("topics", [])
-                       if not _overlaps(t, seen, 8) and (not _req or _req.search(t))]
-            rules = [r for r in blob.get("rules", []) if isinstance(r, str)][:3]
+                       if not _overlaps(t, seen, 8) and (not _req or _req.search(t))
+                       and not is_retired(t, _retired)]
+            rules = [r for r in blob.get("rules", []) if isinstance(r, str)
+                     and not is_retired(r, _retired)][:3]
         except (json.JSONDecodeError, OSError):
             learned = []
-    angles = learned + [a for a in cfg["angles"] if not _overlaps(a, seen)]
+    angles = fresh_angles(cfg, seen, learned)
     if learned:
         print(f"  using {len(learned)} topics learned from the channel's own analytics")
     if not angles:

@@ -24,22 +24,22 @@ ROOT = os.path.dirname(HERE)
 
 # A concrete action cue a listener can act on immediately. The proven winners
 # use this shape; an abstract reassurance does not. Per channel: genx is
-# philosophy (a calming action), kongkeat is family story (a concrete image).
+# philosophy (a calming action), knowledge is general knowledge (a curiosity cue
+# the listener already feels: "รู้ไหม", "คำถามคาใจ").
 CHANNEL_CUES = {
     "dharma.md": ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ลองกด", "ปล่อยลมหายใจ"),
     "genx.md": ("วางมือ", "หายใจเข้า", "หายใจออก", "ลองทำ", "ปล่อยลมหายใจ"),
-    "kongkeat.md": ("กลับไปกอด", "มือที่คอยซ่อม", "เรื่องของผู้ชาย"),
+    "knowledge.md": ("รู้ไหม", "คำถามคาใจ", "เคยสงสัย"),
 }
 
-# kongkeat's long-form died on a flat "warm scene" hook (measured 2026-11-10:
-# mid-retention 13.7% vs 62-68% on the channels whose hooks carry a tension
-# marker). So its hook must ALSO open a tension, not just show a warm image --
-# the cue alone let the losing shape back in. This is the exact lever that killed
-# the channel, so it is enforced, not asked for.
-_KONGKEAT_TENSION = re.compile(
-    r"ทำไม|ความลับ|ซ่อน|จากไป|จากเรา|ไม่บอกลา|ครั้งสุดท้าย|วันสุดท้าย|เพิ่งเข้าใจ|"
-    r"เพิ่งรู้|สายไป|เสียใจ|ไม่เคยบอก|ไม่เหลือ|ไม่ทัน|ร้องไห้|น้ำตา")
-TENSION_HOOKS = {"kongkeat.md": _KONGKEAT_TENSION}
+# The knowledge channel's long-form must open a curiosity, not a flat fact.
+# Measured 2026-11-16: the pivot replaced the family warm-scene hook (mid-retention
+# 13.7%, which killed the feed) with a question, so the guard enforces the question
+# shape, not just a warm image.
+_KNOWLEDGE_CURIOSITY = re.compile(
+    r"ทำไม|รู้ไหม|รู้หรือไม่|เพราะอะไร|ความจริง|ที่แท้จริง|ความลับ|คำถาม|เคยสงสัย|"
+    r"มหัศจรรย์|เหลือเชื่อ|ไม่น่าเชื่อ")
+TENSION_HOOKS = {"knowledge.md": _KNOWLEDGE_CURIOSITY}
 
 # The panel's other half of the lever: the promise must land fast. edge-tts Thai
 # speaks ~9 characters per second here, so 220 characters is ~24 s -- inside the

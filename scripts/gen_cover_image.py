@@ -53,6 +53,10 @@ STYLES = {
              "through a window, a single chair or a cup of tea, calm muted earthy "
              "palette, minimal illustration, no text, no words, no watermark, "
              "painterly, centered subject"),
+    "knowledge": ("clean bright scientific illustration of an everyday wonder, "
+                  "soft blue sky and daylight, curious and friendly mood, simple "
+                  "shapes, minimal flat illustration, no text, no words, "
+                  "no watermark, centered subject"),
 }
 
 
@@ -164,6 +168,7 @@ def from_procedural(seed: int, style: str, w: int, h: int) -> bytes:
         "dharma": [(14, 18, 46), (26, 34, 74), (52, 44, 92), (120, 96, 60)],
         "family": [(60, 34, 22), (110, 62, 34), (176, 120, 62), (232, 196, 132)],
         "genx": [(28, 27, 26), (58, 54, 48), (120, 104, 80), (214, 196, 160)],
+        "knowledge": [(12, 30, 58), (30, 74, 128), (86, 150, 196), (232, 240, 248)],
     }
     cols = palettes.get(style, palettes["dharma"])
     im = Image.new("RGB", (w, h), cols[0])

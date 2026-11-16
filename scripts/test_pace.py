@@ -252,11 +252,13 @@ def test_probe_voice() -> None:
 
 
 def test_tension_parity() -> None:
-    """The tension rule is defined twice; the two copies must stay identical.
+    """The hook markers are defined twice; the two copies must stay identical.
 
     publish_shorts keeps a local copy so the rail never imports the generator (the
     same reason hook_shape is local). If they drift, the generator would accept a
     hook the rail then holds back -- or worse, the rail would publish a flat one.
+    _TENSION (kongkeat's old rule) and _CURIOSITY (ch4's knowledge rule after the
+    2026-11-16 pivot) are both kept in step.
     """
     import gen_short_scripts as gen
     import publish_shorts
@@ -265,6 +267,8 @@ def test_tension_parity() -> None:
         fail("publish_shorts lost the tension rule or its require_hook wiring")
     if gen._TENSION.pattern != publish_shorts._TENSION.pattern:
         fail("the two _TENSION copies have drifted; keep them byte-identical")
+    if gen._CURIOSITY.pattern != publish_shorts._CURIOSITY.pattern:
+        fail("the two _CURIOSITY copies have drifted; keep them byte-identical")
     # A flat scene must be rejected; a tension hook accepted.
     flat = {"hook": "บ่ายวันเสาร์พ่อจูงมือฉันไปนั่งพับนกกระดาษในสวนหลังบ้าน"}
     tens = {"hook": "คืนที่พ่อจากไปฉันพบจดหมายวางนิ่งอยู่บนโต๊ะไม้ตัวเดิม"}
@@ -272,26 +276,31 @@ def test_tension_parity() -> None:
         fail("the flat-scene hook is no longer rejected")
     if not publish_shorts._TENSION.search(tens["hook"]):
         fail("a tension hook is being rejected")
+    # The knowledge marker: a flat fact rejected, a curiosity hook accepted.
+    if publish_shorts._CURIOSITY.search("ท้องฟ้าเป็นสีฟ้า"):
+        fail("a flat fact is no longer rejected by the knowledge marker")
+    if not publish_shorts._CURIOSITY.search("ทำไมท้องฟ้าจึงเป็นสีฟ้า"):
+        fail("a curiosity hook is being rejected by the knowledge marker")
     spec = publish_shorts.CHANNELS["kongkeat"]
-    if spec.get("require_hook") is not publish_shorts._TENSION:
-        fail("kongkeat does not require the tension hook on the publish rail")
+    if spec.get("require_hook") is not publish_shorts._CURIOSITY:
+        fail("kongkeat does not require the knowledge hook on the publish rail")
     if publish_shorts.CHANNELS["genx"].get("require_hook") or \
        publish_shorts.CHANNELS["dharma"].get("require_hook"):
-        fail("the tension rule leaked onto a healthy channel")
-    print("  tension: kongkeat holds flat hooks, the two copies match, other channels untouched")
+        fail("a hook rule leaked onto a healthy channel")
+    print("  hooks: kongkeat holds flat hooks, both copies match, other channels untouched")
 
 
 def test_ch4_insights_tension() -> None:
-    """kongkeat's learned topics must carry tension, or the generator is steered
-    back to the flat scenes that got the channel's feed withdrawn (2026-11-10)."""
+    """kongkeat's learned topics must carry the knowledge marker, or the generator
+    is steered back to the flat/family shapes the channel left (2026-11-16)."""
     import gen_short_scripts as gen
     import json
     path = os.path.join(ROOT, "content", "insights", "ch4.json")
     topics = json.load(open(path, encoding="utf-8")).get("topics", [])
-    flat = [t for t in topics if not gen._TENSION.search(t)]
+    flat = [t for t in topics if not gen._CURIOSITY.search(t)]
     if flat:
-        fail(f"ch4 insights topics lack tension: {flat}")
-    print(f"  insights: all {len(topics)} ch4 topics carry the tension marker")
+        fail(f"ch4 insights topics lack the knowledge marker: {flat}")
+    print(f"  insights: all {len(topics)} ch4 topics carry the knowledge marker")
 
 
 def test_wiring() -> None:

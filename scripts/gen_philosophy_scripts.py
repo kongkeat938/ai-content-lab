@@ -2,7 +2,7 @@
 """Generate a fresh GenX life-philosophy content set for the genx long-form rail.
 
 The dharma rail has `gen_night_scripts.py` and the ch4 rail has
-`gen_family_scripts.py`; genx -- the channel with the most Shorts (52) and the
+`gen_knowledge_scripts.py`; genx -- the channel with the most Shorts (52) and the
 highest Shorts reach -- had no long-form at all, so every one of its Shorts
 pointed its funnel at an empty playlist (measured 2026-11-07). This writes the
 content set that fills it.

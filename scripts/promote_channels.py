@@ -33,7 +33,7 @@ import yt_auth  # noqa: E402
 # The three channels promote each other, so each audience can find the other two.
 SIBLING = {
     "genx": ("Farmmer — ธรรมะก่อนนอน", "https://www.youtube.com/@farmmer-n9t"),
-    "dharma": ("เรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว",
+    "dharma": ("เกร็ดความรู้รอบตัว",
                "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ"),
     "kongkeat-story": ("ตาต้า GenX — ปรัชญาชีวิต", "https://www.youtube.com/@tatagenxgeny"),
 }

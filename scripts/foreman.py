@@ -248,7 +248,8 @@ def main() -> int:
     for slug, man_rel, pool_rel, cid in channels:
         man = load(man_rel, {"shorts": {}})
         pool = load(pool_rel, [])
-        waiting[slug] = len([s for s in pool if s["id"] not in man["shorts"]])
+        waiting[slug] = len([s for s in pool
+                             if s["id"] not in man["shorts"] and not s.get("retired")])
         rec = limits.get(cid, {}) if isinstance(limits, dict) else {}
         capped[slug] = bool(rec.get("reset_at")) and parse(rec["reset_at"]) > now()
         if capped[slug]:

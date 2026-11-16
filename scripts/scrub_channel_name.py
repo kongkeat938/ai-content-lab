@@ -3,12 +3,12 @@
 
 Two renames landed on ch4. First the channel dropped the owner's personal name
 (`@kongkeatpratumma`, `kongkeat pratumma`) and every clip published before
-2026-11-05 still carried it. Then, on 2026-11-07, the channel itself was renamed
-from "เรื่องเล่าการ์ตูน" (cartoon) to "เรื่องเล่าอบอุ่นใจ" -- the cartoon promise
-never matched the warm, adult, no-animation narration the channel actually
-publishes, and the advisor panel traced the weakest reach of the three channels
-to that mismatch (docs/PANEL-2026-11-07-ch4-CONSENSUS.md). Clips on the *other*
-channels also name ch4 in their "ช่องพี่น้อง" block, so they carry the old title
+2026-11-05 still carried it. Then the channel was renamed twice: "เรื่องเล่าการ์ตูน"
+(cartoon) to "เรื่องเล่าอบอุ่นใจ" on 2026-11-07, then to "เกร็ดความรู้รอบตัว" on
+2026-11-16 (the genre PIVOT from family stories to general knowledge -- the old
+format was one still poster looping and drew 0.7 long-form watch-hours/28d). Every
+name change left the previous title in the live descriptions, and clips on the
+*other* channels name ch4 in their "ช่องพี่น้อง" block, so they carry an old title
 too.
 
 This replaces each old token with the new one, idempotently (a description with
@@ -37,10 +37,12 @@ sys.path.insert(0, HERE)
 OLD_HANDLE = "@kongkeatpratumma"
 NEW_URL = "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ"
 OLD_NAME = "kongkeat pratumma"
-NEW_NAME = "เรื่องเล่าอบอุ่นใจ"
+NEW_NAME = "เกร็ดความรู้รอบตัว"
 OLD_TITLE = "เรื่องเล่าการ์ตูน"
+OLD_STORY = "เรื่องเล่าอบอุ่นใจ"
 SIBLING_OLD = "เรื่องเล่าการ์ตูน — เรื่องเล่าอบอุ่นใจ"
-SIBLING_NEW = "เรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว"
+SIBLING_STORY = "เรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว"
+SIBLING_NEW = "เกร็ดความรู้รอบตัว — เกร็ดน่ารู้และวิทยาศาสตร์ในชีวิตประจำวัน"
 
 # Ordered: the longest strings first, so a later short replacement can never
 # leave a half-renamed sentence behind.
@@ -49,10 +51,12 @@ REPLACEMENTS = [
     (OLD_HANDLE, NEW_URL),
     (OLD_NAME, NEW_NAME),
     (SIBLING_OLD, SIBLING_NEW),
+    (SIBLING_STORY, SIBLING_NEW),
     (OLD_TITLE, NEW_NAME),
+    (OLD_STORY, NEW_NAME),
     ("https://www.youtube.com/" + NEW_URL, NEW_URL),
 ]
-OLD_TOKENS = (OLD_HANDLE, OLD_NAME, OLD_TITLE)
+OLD_TOKENS = (OLD_HANDLE, OLD_NAME, OLD_TITLE, OLD_STORY)
 
 CHANNELS = {
     "ch1": ("YT_CH1_REFRESH_TOKEN", "UCI6EfsgM1HNjrYarvigxyrQ"),

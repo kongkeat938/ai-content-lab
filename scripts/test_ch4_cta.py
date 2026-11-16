@@ -51,13 +51,13 @@ def main() -> int:
     check("no queued ch4 script promises a full clip", not broken, broken)
 
     # The gate itself must reject the shape, or the next pool refills with it.
-    good = {"hook": "คืนนั้นแม่ทำกับข้าวให้เขากินด้วยกัน", "lines": ["ก", "ข", "ค"],
-            "cta": "กดติดตามเพื่อรับเรื่องอบอุ่นใจแบบนี้ทุกวัน"}
+    good = {"hook": "ทำไมน้ำทะเลถึงเค็มทั้งที่ฝนจืด", "lines": ["ก", "ข", "ค"],
+            "cta": "กดติดตามเพื่อรับเกร็ดความรู้แบบนี้ทุกวัน"}
     bad = dict(good, cta="กดติดตามแล้วไปดูคลิปเต็มในคลิปยาวกัน")
     check("valid() accepts an honest subscribe CTA",
-          G.valid(good, ("แม่",), G._BROKEN_CTA))
+          G.valid(good, ("ทำไม",), G._BROKEN_CTA))
     check("valid() rejects a full-clip promise",
-          not G.valid(bad, ("แม่",), G._BROKEN_CTA))
+          not G.valid(bad, ("ทำไม",), G._BROKEN_CTA))
 
     cfg = G.CHANNELS["kongkeat-story"]
     check("the kongkeat-story channel forbids the broken CTA",

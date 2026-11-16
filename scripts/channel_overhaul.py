@@ -42,7 +42,7 @@ ROOT = os.path.dirname(HERE)
 CHANNELS = {
     "ch1": {"token": "YT_CH1_REFRESH_TOKEN", "name": "ตาต้า GenX"},
     "ch2": {"token": "YT_CH2_REFRESH_TOKEN", "name": "Farmmer"},
-    "ch4": {"token": "YT_CH4_REFRESH_TOKEN", "name": "เรื่องเล่าอบอุ่นใจ"},
+    "ch4": {"token": "YT_CH4_REFRESH_TOKEN", "name": "เกร็ดความรู้รอบตัว"},
 }
 
 # How each channel should be shelved. A rule is either `by` (shorts/long, i.e.
@@ -81,12 +81,12 @@ PLAN = {
     },
     "ch4": {
         "playlists": [
-            {"title": "เรื่องเล่าอบอุ่นใจ — Shorts", "by": "shorts", "keep": True,
-             "rename_from": "เรื่องเล่าการ์ตูน — Shorts",
-             "desc": "ช่วงเวลาครอบครัวอบอุ่น สั้น ๆ ได้ข้อคิดทุกตอน"},
-            {"title": "เรื่องเล่าอบอุ่นใจ — ตอน", "by": "long", "keep": True,
-             "rename_from": "เรื่องเล่าการ์ตูน — ตอน",
-             "desc": "เรื่องเล่าอบอุ่นใจฉบับเต็มตอน ฟังเพลินทั้งคืน"},
+            {"title": "เกร็ดความรู้รอบตัว — Shorts", "by": "shorts", "keep": True,
+             "rename_from": "เรื่องเล่าอบอุ่นใจ — Shorts",
+             "desc": "เกร็ดความรู้สั้น ๆ รอบตัว ได้ความรู้ทุกคลิป"},
+            {"title": "เกร็ดความรู้รอบตัว — ตอน", "by": "long", "keep": True,
+             "rename_from": "เรื่องเล่าอบอุ่นใจ — ตอน",
+             "desc": "เกร็ดความรู้รอบตัวฉบับเต็มตอน ฟังเพลินได้ทั้งวัน"},
         ],
     },
 }

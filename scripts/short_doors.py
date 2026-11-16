@@ -62,7 +62,7 @@ CHANNELS = {
     "ch4": {
         "token": "YT_CH4_REFRESH_TOKEN", "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
         "home": "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ",
-        "routes": [("เรื่องเล่าอบอุ่นใจ — Shorts", r".")],
+        "routes": [("เกร็ดความรู้รอบตัว — Shorts", r".")],
     },
 }
 

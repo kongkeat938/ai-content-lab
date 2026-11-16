@@ -77,6 +77,12 @@ def main() -> int:
     ap.add_argument("--chapters", action="store_true",
                     help="change the picture per piece (one card per chapter) "
                          "instead of one card looping for the whole file")
+    ap.add_argument("--engine", default="poster", choices=["poster", "kinetic"],
+                    help="poster = the still card (legacy); kinetic = an "
+                         "always-moving background with captions synced to the "
+                         "narration (the ch4 pivot, see make_kinetic_video.py)")
+    ap.add_argument("--brand", default="เกร็ดความรู้รอบตัว",
+                    help="persistent corner tag for the kinetic engine")
     a = ap.parse_args()
 
     # The cold open decides the first two minutes, so it may come from a file that
@@ -153,10 +159,20 @@ def main() -> int:
                    *(["--hook", hook_text] if hook_text else []),
                    *(["--bed-file", a.bed_file] if a.bed_file else []),
                    *(["--bed-ledger", a.bed_ledger] if a.bed_ledger else []),
+                   *(["--timing"] if a.engine == "kinetic" else []),
                    "--key", a.key or os.path.basename(a.content)]),
     ]
     if not a.skip_video:
-        if a.chapters:
+        if a.engine == "kinetic":
+            # The ch4 pivot: a picture that moves the whole time, with captions
+            # timed to the narration, instead of one still card. No images are
+            # generated, so this branch ignores --image/--chapters on purpose.
+            steps += [("video", [sys.executable,
+                                 os.path.join(HERE, "make_kinetic_video.py"),
+                                 "--audio", mp3, "--timing", mp3 + ".timing.json",
+                                 "--out", mp4, "--title", a.title,
+                                 "--brand", a.brand])]
+        elif a.chapters:
             steps += [("video", [sys.executable,
                                  os.path.join(HERE, "make_chapter_video.py"),
                                  "--audio", mp3, "--info", mp3 + ".info.json",

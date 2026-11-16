@@ -43,6 +43,7 @@ import tempfile
 W, H = 1920, 1080
 FPS = 25
 FONT = "Kanit"
+HOLD_SEC = 9.0  # a caption animates in, holds at most this long, then leaves
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 # The motion is the point: a background filter chain with none of these
@@ -172,9 +173,14 @@ def build_ass(lines: list[dict], total: float, title: str, brand: str) -> str:
         if not text:
             continue
         start = float(line["start"])
-        # End at the next line's start, the audio end, or +9 s, whichever is first.
+        # End at the next line's start, the audio end, or HOLD seconds later --
+        # whichever is first. The HOLD cap matters when a "line" is really a
+        # whole section (minutes long): the caption should animate in, be read,
+        # then leave, not sit on screen for the rest of the piece.
         nxt = float(starts[n + 1][1]["start"]) if n + 1 < len(starts) else total
-        end = min(max(nxt, start + 0.8), total)
+        end = min(nxt, total, start + HOLD_SEC)
+        if end < start + 0.8:
+            end = min(total, start + 0.8)
         # Kinetic entrance: slide up 60 px while fading in, then a tiny scale
         # settle. The body is a plain dialogue so the words stay legible.
         text_ass = (

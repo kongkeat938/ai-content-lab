@@ -86,25 +86,73 @@ def narrator_for(base: str) -> str | None:
     return None
 
 
-def build_part(script: str, work: str, voice: str = VOICE) -> dict:
+def build_part(script: str, work: str, voice: str = VOICE,
+               want_timing: bool = False) -> dict:
     """Synthesise and master one piece. Resumable: an existing part is reused."""
     base = os.path.splitext(os.path.basename(script))[0]
     out = os.path.join(work, f"part_{base}.mp3")
     meta = os.path.join(work, f"part_{base}.json")
+    timing = os.path.join(work, f"part_{base}.timing.json")
     if os.path.exists(out) and os.path.exists(meta):
         info = json.load(open(meta, encoding="utf-8"))
-        if info.get("duration_sec", 0) > 30:
+        if info.get("duration_sec", 0) > 30 and (not want_timing or os.path.exists(timing)):
             print(f"  {base}: cached ({info['duration_sec']:.0f}s)")
             return info
     narrator = narrator_for(base)
-    info = make_audio.build(script, out, voice, RATE, PITCH, PAUSE_BETWEEN,
-                            narrator=narrator)
+    if want_timing:
+        # build_with_timing speaks through edge-tts directly to capture boundary
+        # events, so it cannot honour a non-edge narrator; the kinetic caption
+        # track is only correct when the piece is edge-voiced (the default).
+        info = make_audio.build_with_timing(script, out, voice, RATE, PITCH,
+                                            PAUSE_BETWEEN, timing)
+    else:
+        info = make_audio.build(script, out, voice, RATE, PITCH, PAUSE_BETWEEN,
+                                narrator=narrator)
     info["name"] = base
     info["narrator"] = narrator or os.environ.get("NARRATOR", "auto")
     json.dump(info, open(meta, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     print(f"  {base}: {info['duration_sec']:.0f}s  {info['lufs']} LUFS  "
           f"[{info['narrator']}]")
     return info
+
+
+def decoded_seconds(path: str) -> float:
+    """Decoded length in seconds -- what `concat` actually stitches.
+
+    An MP3's *container* duration includes frame padding: measured 2026-11-16, a
+    10.000 s tone reports 10.031 s. `concat` decodes to PCM, so summing container
+    durations drifts ~31 ms per part (a second over a long file), which would
+    slide every caption later. Decoding to raw PCM and counting samples is exact.
+    """
+    p = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", path, "-f", "s16le",
+         "-ac", "2", "-ar", "48000", "-"], capture_output=True)
+    return len(p.stdout) / (4 * 48000)
+
+
+def merge_timing(part_files: list, work: str, total: float, out: str) -> int:
+    """Fold each part's line starts into one timeline for the final audio.
+
+    The kinetic renderer needs every caption's start on the *stitched* track, so
+    a part's line times are shifted by the summed decoded duration of the parts
+    before it. Repeated pieces (the loop to reach `--minutes`) are handled
+    naturally because the caller passes the final file order, not the unique set.
+    """
+    lines, offset = [], 0.0
+    for pf in part_files:
+        base = os.path.splitext(os.path.basename(pf))[0]
+        if base.startswith("part_"):
+            base = base[len("part_"):]
+        tp = os.path.join(work, f"part_{base}.timing.json")
+        if os.path.exists(tp):
+            for ln in json.load(open(tp, encoding="utf-8")).get("lines", []):
+                if ln.get("start") is not None and (ln.get("text") or "").strip():
+                    lines.append({"text": ln["text"],
+                                  "start": round(ln["start"] + offset, 3)})
+        offset += decoded_seconds(pf)
+    json.dump({"duration_sec": round(total, 3), "lines": lines},
+              open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    return len(lines)
 
 
 def concat(parts: list, out: str) -> None:
@@ -119,7 +167,8 @@ def concat(parts: list, out: str) -> None:
     os.remove(listfile)
 
 
-def hook_piece(text: str, work: str, voice: str = VOICE) -> dict | None:
+def hook_piece(text: str, work: str, voice: str = VOICE,
+               want_timing: bool = False) -> dict | None:
     """Synthesise a short opening hook and return its info, or None if empty.
 
     The advisor panel (2026-11-07) put this first: people leave in the first
@@ -133,7 +182,7 @@ def hook_piece(text: str, work: str, voice: str = VOICE) -> dict | None:
     path = os.path.join(work, "00_hook.txt")
     with open(path, "w", encoding="utf-8") as f:
         f.write(text + "\n")
-    info = build_part(path, work, voice)
+    info = build_part(path, work, voice, want_timing=want_timing)
     info["name"] = "00_hook"
     return info
 
@@ -257,6 +306,9 @@ def main() -> None:
     ap.add_argument("--hook", default="",
                     help="one-line opening hook spoken before the body "
                          "(the panel's #1 retention lever)")
+    ap.add_argument("--timing", action="store_true",
+                    help="also emit <out>.timing.json (per-line starts on the "
+                         "stitched track) for the kinetic caption renderer")
     a = ap.parse_args()
 
     scripts = []
@@ -268,9 +320,9 @@ def main() -> None:
     os.makedirs(a.work, exist_ok=True)
 
     print(f"building {len(scripts)} pieces")
-    infos = [build_part(s, a.work, a.voice) for s in scripts]
+    infos = [build_part(s, a.work, a.voice, want_timing=a.timing) for s in scripts]
 
-    hook = hook_piece(a.hook, a.work, a.voice)
+    hook = hook_piece(a.hook, a.work, a.voice, want_timing=a.timing)
     if hook:
         infos = [hook] + infos
         print(f"  hook: {hook['duration_sec']:.0f}s")
@@ -293,6 +345,10 @@ def main() -> None:
     concat(part_files, voice)
     total = duration(voice)
     print(f"voice track: {total / 60:.1f} min")
+
+    if a.timing:
+        n = merge_timing(part_files, a.work, total, a.out + ".timing.json")
+        print(f"timing: {n} caption lines -> {a.out}.timing.json")
 
     mixed = voice
     bed_used = False

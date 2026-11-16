@@ -68,6 +68,14 @@ _TENSION = re.compile(
     r"เสียใจ|ผิดหวัง|เสียสละ|ร้องไห้|น้ำตา|ไม่มี.*อีกแล้ว|ไม่เหลือ|ไม่ทัน|สายไป|"
     r"คำโกหก|คำสัญญา|ไม่กล้า|กลั้น|อดทน")
 
+# The knowledge genre's hook marker (ch4, 2026-11-16 pivot). A local copy of
+# gen_short_scripts._CURIOSITY so the rail never depends on the generator import;
+# test_pace guards the two against drift. A knowledge Short is tapped because the
+# hook opens a question; a flat fact statement is held back.
+_CURIOSITY = re.compile(
+    r"ทำไม|เพราะอะไร|รู้ไหม|รู้หรือไม่|รู้หรือเปล่า|ความจริง|ที่แท้จริง|ความลับ|"
+    r"มหัศจรรย์|เหลือเชื่อ|ไม่น่าเชื่อ|จริงหรือ|เคยสงสัย|คำตอบ")
+
 CHANNELS = {
     "dharma": {
         "scripts": SCRIPTS, "manifest": MANIFEST, "channel_id": CHANNEL_ID,
@@ -129,39 +137,33 @@ CHANNELS = {
         "token": "YT_CH4_REFRESH_TOKEN",
         "work": os.path.join(ROOT, "work", "ch4_shorts"),
         "art": os.path.join(ROOT, "assets", "art", "ch4"),
-        "art_style": "family",
+        "art_style": "knowledge",
         "music_dir": os.path.join(ROOT, "assets", "music"),
-        "mood": "warm",
-        "tags": ["เรื่องเล่า", "อบอุ่นใจ", "ครอบครัว", "ความทรงจำ", "เรื่องเล่าอบอุ่นใจ",
-                 "คิดถึงบ้าน", "พ่อแม่", "Shorts"],
-        "category": "24",
-        # The channel pivoted to family moments (docs/STORY-CHANNEL-PIVOT.md), but
-        # measured 2026-11-10 a warm "concrete scene" alone is not enough: it held
-        # only 13.7% mid-retention and the feed stopped showing the channel. The hook
-        # must now also carry a tension marker (see require_hook below).
-        "cues": ("พ่อ", "แม่", "พี่", "ยาย", "ตา", "ป้า", "น้า", "ลูก"),
-        # Measured 2026-11-10: the flat "concrete scene" hooks kept only 13.7%
-        # mid-retention (genx 62% / dharma 68%) and the Shorts feed stopped showing
-        # the channel. Only publish a hook that carries a tension marker; the pool's
-        # flat leftovers stay held back until they are rewritten.
-        "require_hook": _TENSION,
+        "mood": "hopeful",
+        "tags": ["เกร็ดความรู้", "ความรู้รอบตัว", "วิทยาศาสตร์", "เรื่องน่ารู้", "ทำไม",
+                 "สาระน่ารู้", "ความรู้ทั่วไป", "Shorts"],
+        "category": "27",
+        # PIVOT 2026-11-16: the channel's long-form moved to general knowledge
+        # (a five-advisor panel chose the genre). The Shorts must share it -- a
+        # family-story viewer does not click a knowledge long-form, so a mismatched
+        # feed starves the rail. The hook must open a question ("ทำไม", "รู้ไหม"),
+        # enforced by require_hook; a flat fact statement is held back.
+        "cues": ("ทำไม", "รู้ไหม", "เพราะอะไร", "ความจริง", "เคยสงสัย"),
+        "require_hook": _CURIOSITY,
         # ch4 experiment (2026-11-09, five-advisor panel): the channel watched to
-        # the end (59.5%) but converted 1.79 subs/1k vs ch1's 5.38 and got 0
-        # shares/comments, because the subscribe ask sat at the tail after the
-        # viewer had swiped. Speak it after the story's peak instead. Revert if
-        # subs/1k does not rise in ~3 days (the pace loop measures the verdict).
+        # the end but converted 1.79 subs/1k vs ch1's 5.38, because the subscribe
+        # ask sat at the tail after the viewer had swiped. Speak it after the
+        # answer's peak instead.
         "cta_mid": True,
-        "tail": ("\n\nรวมเรื่องเล่าครอบครัวทุกตอน → "
+        "tail": ("\n\nรวมเกร็ดความรู้ทุกตอน → "
                  "https://www.youtube.com/playlist?list=PLU4aztRNvt28\n\n"
-                 "#เรื่องเล่า #ครอบครัว #อบอุ่นใจ"),
-        # The pinned comment (the one CTA that shows on the Shorts screen). ch4 had
-        # none, so its Shorts screen carried no funnel at all -- measured 2026-11-13
-        # the channel has the worst subs/1k on the fleet (1.93). The link is the
-        # durable playlist (it survives a deleted video), which is honest: it is
-        # where the channel's long stories live, not a "full clip" that is not there
-        # (forbid_cta still bans that promise).
-        "pin_cta": ("กดติดตามไว้ ไม่พลาดเรื่องอบอุ่นใจทุกคืน 🔔\n"
-                    "ฟังเรื่องเล่าต่อเนื่องรวมทุกตอน → "
+                 "#เกร็ดความรู้ #ความรู้รอบตัว #วิทยาศาสตร์"),
+        # The pinned comment (the one CTA that shows on the Shorts screen). The
+        # link is the durable playlist (it survives a deleted video), which is
+        # honest: it is where the channel's long-form lives, not a "full clip" that
+        # is not there (forbid_cta still bans that promise).
+        "pin_cta": ("กดติดตามไว้ ไม่พลาดเกร็ดความรู้ทุกวัน 🔔\n"
+                    "รวมเกร็ดความรู้ต่อเนื่องทุกตอน → "
                     "https://www.youtube.com/playlist?list=PLU4aztRNvt28"),
     },
 }
@@ -601,7 +603,13 @@ def main() -> int:
         print(f"channel upload limit recorded; resets {rec['reset_at']} -- nothing to do")
         return 0
 
-    todo = [s for s in scripts if not man["shorts"].get(s["id"], {}).get("video_id")]
+    # `retired` marks a clip minted for a genre the channel has left (ch4's
+    # family Shorts after the 2026-11-16 knowledge pivot). Publishing one would
+    # feed a viewer a genre the long-form no longer serves, so it is skipped
+    # rather than drained -- the id is never reused.
+    todo = [s for s in scripts
+            if not man["shorts"].get(s["id"], {}).get("video_id")
+            and not s.get("retired")]
     # Hold the channel to a slow drip regardless of how often this was triggered.
     already = uploads_in_last_24h(args.channel, spec["manifest"])
     room = max(DAILY_CAP - already, 0)

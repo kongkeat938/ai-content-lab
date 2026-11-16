@@ -12,6 +12,7 @@ It also drives the caption builder on a synthetic timing so the sync maths
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -74,6 +75,42 @@ def test_fonts_are_bundled() -> None:
     assert os.path.isdir(fonts), f"bundled fonts dir missing: {fonts}"
     assert any(f.startswith("Kanit") for f in os.listdir(fonts)), \
         "Kanit is not bundled -- Thai captions would render as tofu"
+
+
+def test_merge_timing_shifts_and_orders() -> None:
+    """The stitched timeline must shift each part and stay monotonic.
+
+    A caption at the wrong offset is worse than no caption (it names the wrong
+    picture), so this drives the real merge with two parts and FAILS if the
+    offset is not applied or the parts come out of order.
+    """
+    import json
+    import tempfile
+    sys.path.insert(0, HERE)
+    import make_compilation as mc  # noqa: E402
+
+    d = tempfile.mkdtemp(prefix="merge_")
+    # Two fake 10 s parts, each with its own line timing.
+    for name, dur in (("01_a", 10.0), ("02_b", 10.0)):
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
+                        "-i", f"anullsrc=r=48000:cl=stereo", "-t", str(dur),
+                        os.path.join(d, f"part_{name}.mp3")], check=True)
+        json.dump({"duration_sec": dur, "lines": [
+            {"text": f"line {name} one", "start": 1.0},
+            {"text": f"line {name} two", "start": 5.0}]},
+            open(os.path.join(d, f"part_{name}.timing.json"), "w"))
+    files = [os.path.join(d, "part_01_a.mp3"), os.path.join(d, "part_02_b.mp3")]
+    out = os.path.join(d, "merged.timing.json")
+    n = mc.merge_timing(files, d, 20.0, out)
+    assert n == 4, f"expected 4 lines, got {n} -- a piece was dropped"
+    lines = json.load(open(out))["lines"]
+    starts = [l["start"] for l in lines]
+    assert starts == sorted(starts), f"timeline not monotonic: {starts}"
+    # The second part's first line must be shifted by the first part's decoded
+    # duration (exactly 10 s), not left at 1.0 and not by the MP3 container
+    # length (10.031 s), which would drift every later caption.
+    assert abs(lines[2]["start"] - 11.0) < 0.02, \
+        f"second part not shifted by decoded length: {lines[2]}"
 
 
 if __name__ == "__main__":

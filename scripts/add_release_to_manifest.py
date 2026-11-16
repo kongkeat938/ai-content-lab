@@ -89,22 +89,23 @@ def description_for(title: str, minutes: int, content: str) -> str:
             f"เปิดทิ้งไว้ได้ทั้งคืน ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ\n\n"
             f"บทที่ผ่านมา: {topics}\n\n"
             f"ฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก\n\n"
-            f"— ช่องพี่น้อง —\nเรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว\n"
+            f"— ช่องพี่น้อง —\nเกร็ดความรู้รอบตัว — เกร็ดน่ารู้และวิทยาศาสตร์ในชีวิตประจำวัน\n"
             f"https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ")
 
 
-def story_description(title: str, minutes: int, content: str) -> str:
+def knowledge_description(title: str, minutes: int, content: str) -> str:
     names = []
     if os.path.isdir(content):
         for f in sorted(os.listdir(content)):
             if f.endswith(".txt"):
                 names.append(re.sub(r"^\d+_", "", f[:-4]))
     topics = " · ".join(names[:10])
-    return (f"รวมเรื่องเล่าอบอุ่นใจจากครอบครัวไทย — พ่อ แม่ พี่ ยาย ตา — เล่าด้วยเสียงนุ่ม ๆ "
-            f"ต่อเนื่อง {minutes} นาที ฟังเพลินได้ทั้งคืน\n\n"
-            f"แต่ละตอนเป็นช่วงเวลาง่าย ๆ ที่ทุกบ้านมี แล้วจำได้ไม่ลืม\n\n"
+    return (f"รวมเกร็ดความรู้รอบตัวน่าทึ่ง {minutes} นาที — ไขคำถามคาใจเรื่องท้องฟ้า "
+            f"ดวงดาว สัตว์ สิ่งของ และธรรมชาติรอบตัว อธิบายเข้าใจง่ายด้วยเสียงนุ่ม ๆ\n\n"
+            f"เปิดฟังได้ทุกเวลา ทั้งตอนพัก ทำงานบ้าน หรือก่อนนอน "
+            f"ไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่ฟังไปเรื่อย ๆ แล้วจะมองโลกเดิม ๆ ด้วยสายตาใหม่\n\n"
             f"ตอนในคลิปนี้: {topics}\n\n"
-            f"ฝากกดติดตามช่อง เรื่องเล่าอบอุ่นใจ เพื่อรับเรื่องเล่าอบอุ่นใจใหม่ทุกสัปดาห์\n\n"
+            f"ฝากกดติดตามช่อง เกร็ดความรู้รอบตัว เพื่อรับเกร็ดน่ารู้ใหม่ทุกสัปดาห์\n\n"
             f"— ช่องพี่น้อง —\nFarmmer — ธรรมะก่อนนอน\n"
             f"https://www.youtube.com/channel/UCM3QO5L_pmj34n1JVlbhh-w")
 
@@ -143,11 +144,11 @@ CHANNELS = {
         "desc": philosophy_description, "playlist": "PLXEV3B3DcgsU",
     },
     "kongkeat": {
-        "tags": ["เรื่องเล่า", "เรื่องเล่าอบอุ่นใจ", "ครอบครัว", "เรื่องสั้น", "ฟังก่อนนอน",
-                 "เรื่องเล่าภาษาไทย", "นิทานผู้ใหญ่", "คลิปกล่อมใจ", "เรื่องเล่าตอนเดียวจบ",
-                 "ฟังเพลิน ๆ"],
-        "category_id": 24, "cover_dir": "assets/branding/thumbs", "desc": story_description,
-        "playlist": "PLU4aztRNvt28",
+        "tags": ["เกร็ดความรู้", "ความรู้รอบตัว", "วิทยาศาสตร์", "เรื่องน่ารู้", "ทำไม",
+                 "สาระน่ารู้", "ความรู้ทั่วไป", "คำถามคาใจ", "เกร็ดความรู้วิทยาศาสตร์",
+                 "ฟังเพลิน"],
+        "category_id": 27, "cover_dir": "assets/branding/thumbs",
+        "desc": knowledge_description, "playlist": "PLU4aztRNvt28",
     },
 }
 

@@ -42,12 +42,12 @@ def check(label: str, ok: bool, got=None) -> None:
 def main() -> int:
     # 1. The hint reaches the prompt for the channel the workflow actually calls.
     q = S.question_for("ch4")
-    check("question_for('ch4') carries the tension hint", "ปมตึง" in q, q[-120:])
+    check("question_for('ch4') carries the knowledge hint", "เกร็ดความรู้" in q, q[-160:])
     # ...and via the generator's own name, too.
     check("question_for('kongkeat-story') carries the hint",
-          "ปมตึง" in S.question_for("kongkeat-story"))
+          "เกร็ดความรู้" in S.question_for("kongkeat-story"))
     check("a channel with no rule gets the plain question",
-          "ปมตึง" not in S.question_for("ch1"))
+          "เกร็ดความรู้" not in S.question_for("ch1"))
 
     # 2. write_insights filters off-rule subjects for a rule-bound channel.
     req = getattr(S, "required_hook", lambda _c: None)("ch4")
@@ -55,18 +55,18 @@ def main() -> int:
     if req is None:
         print(f"{FAILS} wiring check(s) failed")
         return 1
-    flat = "พ่อกอดลูกชายในวันเกิด"          # no tension marker
-    tense = "คืนที่พ่อจากไปโดยไม่บอกลา"      # carries a marker
+    flat = "ท้องฟ้าเป็นสีฟ้า"                 # a flat fact, no curiosity marker
+    curious = "ทำไมท้องฟ้าจึงเป็นสีฟ้า"         # carries the marker
     with tempfile.TemporaryDirectory() as td:
         orig = S.ROOT
         S.ROOT = td
         try:
-            ans = {"gemini": f"TOPICS: {flat} | {tense} |"}
+            ans = {"gemini": f"TOPICS: {flat} | {curious} |"}
             path = S.write_insights("ch4", [], ans)
             blob = json.load(open(path, encoding="utf-8"))
             got = blob.get("topics", [])
             check("off-rule subject dropped, on-rule kept",
-                  flat not in got and tense in got, got)
+                  flat not in got and curious in got, got)
             check("every written subject carries the marker",
                   all(req.search(t) for t in got), got)
             # Nothing usable -> fall back to the channel's own on-rule subjects.
