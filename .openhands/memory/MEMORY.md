@@ -1,14 +1,13 @@
 # Project Memory — ak (ai-content-lab)
 
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
-**panel** (`advise.py`), not K. **This file is a MAP** (injected each session, tail truncated): keep
+**panel** (`advise.py`), not K. **MAP** (injected each session, tail truncated): keep
 <6,000 chars (`test_memory_budget.py`); detail in `topics/`/logs/`docs/`. **Project = `yt938-2`;
 read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`).**
 
 ## 🪪 ak's identity & team
 **Every tool/agent uses its OWN mailbox, never K's** (`test_agent_own_email.py`): ak = `ak_mail.py`;
-worker = `ak.identity.mail.<role>`. K's channel addresses are business assets, not signup emails.
-**Workers** (`team.py run <role>`) DO the work; panel advises.
+worker = `ak.identity.mail.<role>`. **Workers** (`team.py run <role>`) DO the work; panel advises.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count); steer by long-form watch-hours/week +
@@ -22,18 +21,19 @@ worker = `ak.identity.mail.<role>`. K's channel addresses are business assets, n
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
   **live API > real output file (ffprobe/ebur128) > a test that can FAIL > a committed
   doc**. Best = a **counter with an invariant** (`counter_ledger.py`).
-- **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md`'s ONLY source is `watch_hours.json` (weekly rail).
+- **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md`'s ONLY source is `watch_hours.json`.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on a spent quota → **per-channel
   secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`; `test_channel_identity.py`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. Panel
   `advise.py` (≥5; openrouter/ChatGPT/DeepSeek/Devin/HF all dead — don't retry). **PC1 = ak's
-  hands** via `winremote` 8090/Tailscale (`topics/03`); AX stack off. **Close PC1 windows** (K).
+  hands** via `winremote` 8090/Tailscale (`topics/03`); **close PC1 windows** (K).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
   a piece must FAIL. `.get()+continue` on a config key is a silent killer
   (`test_no_pinned_recent_date.py`). A gate that probes an API its own token cannot read (403)
-  + `|| echo 0` is a **false pass** — use an explicit opt-in that DEFAULTS OFF.
-- **Repo hygiene** (`test_repo_hygiene.py`): pushing rails `git pull --rebase`+retry; a shared-ledger
-  writer needs a guard; health thresholds > real cadence.
+  + `|| echo 0` is a **false pass** — use an explicit opt-in DEFAULTS OFF.
+- **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
+  `GH_TOKEN=$KONGKEAT_GH_TOKEN`; a push may 403 the credential-helper → push with
+  `https://x-access-token:$KONGKEAT_GH_TOKEN@...`; suite = every `scripts/test_*.py`.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS** (2026-11-15): the 2nd uploader was `ax-workspace` auto-shorts (K's OLD
@@ -61,10 +61,12 @@ worker = `ak.identity.mail.<role>`. K's channel addresses are business assets, n
   live rogue" while `feeds/videos.xml` 404'd → falls back to uploads playlist `UU<id>`; exits
   **2=BLIND** (≠0). `topics/05`.
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK**
-  (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail=cloud, not PC1.
-- **ch4 PIVOT 2026-11-16** (family → knowledge, genre "เกร็ดความรู้รอบตัว"): old genre died
-  (0.7 long-form watch-h/28d, 5.2% AVD). Hook must open a question (`_CURIOSITY`, not
-  `_TENSION`); hook `content/hooks/knowledge.md`; `ch4-realign.yml` renames in place.
+  (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail = cloud.
+- **ch4 PIVOT 2026-11-16** (family → knowledge "เกร็ดความรู้รอบตัว"; old genre died, 0.7
+  long-form watch-h/28d). Hook opens a question (`_CURIOSITY`, not `_TENSION`); hook
+  `content/hooks/knowledge.md`. `ch4-realign.yml` renames playlists in place, but the **channel
+  TITLE is NOT API-settable** → **K sets it in Studio > Customization**. The wiring must be on
+  `origin/main`, else the live rail still mints the dead genre (found stale 2026-11-16).
 - **Curated angles must survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected EVERY
   curated angle (dharma 0/41); Thai shares 3-char runs. Floor **8** (`fresh_angles`).
 
@@ -72,9 +74,6 @@ worker = `ak.identity.mail.<role>`. K's channel addresses are business assets, n
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md` · daily logs.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`, `DAILY_CAP=3`.
-- **Accounts:** 1 channel = 1 Google account — `ch1` genx, `ch2` dharma, `ch4` ch4 (`test_channel_accounts.py`).
+- **Accounts:** 1 channel = 1 Google account — ch1 genx, ch2 dharma, ch4 (`test_channel_accounts.py`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED (`uploadLimitExceeded`,
-  API-only; web Studio works).
-- **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
-  `GH_TOKEN=$KONGKEAT_GH_TOKEN`; suite = every `scripts/test_*.py`.
-- **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`).
+  API-only; web Studio works). **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`).
