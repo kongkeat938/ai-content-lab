@@ -562,6 +562,14 @@
       "posted_at": "2026-11-16T13:39:54+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "91": {
+      "video_id": "AEJEVTpRwIo",
+      "url": "https://youtu.be/AEJEVTpRwIo",
+      "title": "คุณมีสิทธิ์อนุญาตให้ตัวเองหยุดวิ่งตามใครบางคน #Shorts",
+      "posted_at": "2026-11-16T16:54:27+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue"
     }
   }
 }
