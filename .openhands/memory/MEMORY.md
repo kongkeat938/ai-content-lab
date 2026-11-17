@@ -13,9 +13,8 @@ read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count); steer by long-form watch-hours/week +
   `retention@2min`, not raw views. **dharma = 96% of long-form watch time → concentrate there.**
 - **The first 2 minutes binds** (dharma 28.9%@2%, target ≥40%); fade-in 4s→1s = **+12 dB** on the hook.
-- **Longer is better per view** (120-min ≈ **6.0** vs 17-min ≈ 4.6 min/view). **`content/PAUSED`**
-  pauses a channel. **Cadence: step up, don't jump** (each video must differ or it risks
-  "repetitious content").
+- **Longer is better per view** (120-min ≈ 6.0 vs 17-min ≈ 4.6 min/view). **`content/PAUSED`**
+  pauses a channel. **Cadence: step up, don't jump** (else "repetitious content").
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live** — trust order:
@@ -35,9 +34,9 @@ read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`)
   `https://x-access-token:$KONGKEAT_GH_TOKEN@...`; suite = every `scripts/test_*.py`.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS** (2026-11-15): the 2nd uploader was `ax-workspace` auto-shorts (K's OLD
-  repo) — same channels/tokens. FIXED: disabled + deleted its 5 YT secrets; `aeris` = READ-ONLY.
-  **`videos.update` REPLACES the whole `snippet`** (read-merge-write). `topics/05`.
+- **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo, same tokens); disabled + its
+  5 YT secrets deleted; `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`**
+  (read-merge-write). `topics/05`.
 - **Repo is PUBLIC** (private would halt the rails): never commit a credential
   (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); labels use
   `public_address()`.
@@ -52,14 +51,15 @@ read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`)
   is a no-op or an add/add conflict.
 - **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` falls back to VOICE
   (`test_tts_fallback.py`).
-- **Reference look = standard** (2026-11-17): ch4 knowledge = REAL b-roll per beat (keyless
-  Coverr, `fetch_broll.py`) + one warm grade + a frosted-glass Thai Q/A card + voice, loudnorm
-  **-14 LUFS**; graded 7/10 vs 4-5 'stock slop'. ch4 rail `--engine kinetic --broll`. Presenter =
-  the only gap (paid); `--hero-dir`.
-- **A rail can die at IMPORT: its workflow installs a SUBSET of the deps its script needs,
-  and `continue-on-error` turns it green.** Twice (`fetch-music` no `numpy`;
-  `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
-- **Every new mechanism seeds a false alarm until the sweep learns it.**
+- **Reference look = standard** (2026-11-17): ch4 knowledge = REAL b-roll/beat (keyless Coverr,
+  `fetch_broll.py`) + clean grade + floating Thai text + voice, loudnorm **-14 LUFS**; ch4 rail
+  `--engine kinetic --broll`. Quality pass (K's "คมชัด" bar): **1080p crf18**, no grain/vignette,
+  floating text, 1.06x lanczos, per-clip brightness ~150 (`test_qa_video.py` #8/#9). Presenter =
+  the only gap (paid).
+- **Vision grader is NON-DETERMINISTIC** (same cut scored 9 then 5/10): never gate in CI
+  (panel agreed); judge by technical metrics (LapVar) + fail-able guards, not an AI score.
+- **A rail can die at IMPORT** (workflow installs a subset of deps; `continue-on-error`
+  turns it green) — twice; `test_workflow_deps.py` sweeps it.
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no
   live rogue" while `feeds/videos.xml` 404'd → falls back to uploads playlist `UU<id>`; exits
   **2=BLIND** (≠0). `topics/05`.
