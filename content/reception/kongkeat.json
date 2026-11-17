@@ -410,21 +410,36 @@
         "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
       },
       "at": "2026-11-16T23:29:54+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "5hOHnnQOcS4",
+      "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak; paused 56h -- posting one changed clip to test whether the feed returns",
+      "hours_since_last": 4.0,
+      "stall": {
+        "stalled": true,
+        "flat": 5,
+        "last_hours": 56.5,
+        "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
+      },
+      "at": "2026-11-17T03:31:01+00:00"
     }
   ],
   "latest": {
     "allowed": true,
     "verdict": "bad",
     "last_shape": null,
-    "last_video_id": "ej_qjM83DGg",
-    "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak; paused 52h -- posting one changed clip to test whether the feed returns",
-    "hours_since_last": 5.92,
+    "last_video_id": "5hOHnnQOcS4",
+    "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak; paused 56h -- posting one changed clip to test whether the feed returns",
+    "hours_since_last": 4.0,
     "stall": {
       "stalled": true,
       "flat": 5,
-      "last_hours": 52.5,
+      "last_hours": 56.5,
       "reason": "the Shorts feed has not shown the last 5 clips (all <= 5 views) -- reach is removed, not weak"
     },
-    "at": "2026-11-16T23:29:54+00:00"
+    "at": "2026-11-17T03:31:01+00:00"
   }
 }
