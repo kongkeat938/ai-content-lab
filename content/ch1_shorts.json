@@ -578,6 +578,16 @@
       "posted_at": "2026-11-16T23:30:53+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "93": {
+      "video_id": "uKrE3wzZDlk",
+      "url": "https://youtu.be/uKrE3wzZDlk",
+      "title": "คุณมีสิทธิ์เลิกคาดหวังความเข้าใจจากใคร #Shorts",
+      "posted_at": "2026-11-17T17:56:34+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/93/thumb_93.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
