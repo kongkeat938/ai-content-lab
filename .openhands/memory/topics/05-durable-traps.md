@@ -221,3 +221,16 @@ with BOTH `--replace-text` and `--replace-message`. Non-interactive gotcha: dele
 `input()`, which dies with `OSError: Bad file descriptor`). Freeze CI first (disable workflows +
 cancel runs) so the self-chaining rails cannot clobber the rewrite, then force-with-lease.
 A FORK keeps the old history and cannot be fixed without the fork owner's admin rights.
+
+
+## A take-down claim needs a 2nd source (2026-11-17)
+`audit_channels.find_removed` diffed the manifest against ONE `playlistItems.list` read. That read
+can come back short (genx 2026-11-17: `uploads=154` while yt-dlp `--flat-playlist` = 147; the count
+wobbled 149/150/154 across runs) → every recorded clip the short read missed was reported as
+"removed by YouTube". Six such false take-downs (lyaxLTHyITY, zRZURbXEpuE, l5hkDGVIYXE, L8OQn6RTVaY,
+12RT8zATxuo, 9Okw0yYB97A) -- all oEmbed 200, all in the public uploads playlist; the flags ROTATED
+run-to-run (same id never twice in a row) = a flaky read, not a removal. Fix: `oembed_alive()`
+(quota-free): 200/401/403 = exists, 404 = gone, else unconfirmed; `find_removed(..., still_live=)`
+vetoes a live clip and marks an unconfirmed one as unconfirmed. Control ids: `AAAAAAAAAAA`=404,
+`NlxhKLTuQp4`=403. Same class as the `rogue_watch_rss` "dead source read as clean" trap: a single
+source is never proof -- diff it against a second one.
