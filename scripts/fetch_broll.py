@@ -77,6 +77,30 @@ def pick(query: str, avoid: set | None = None, **kw) -> dict | None:
     return None
 
 
+def pick_and_download(query: str, out: str, avoid: set | None = None,
+                      min_luma: float = 0.0, quality: str = "1080p",
+                      tries: int = 5) -> dict | None:
+    """Download the first usable hit whose mean luma clears `min_luma`.
+
+    `pick` returns a single hit, so a rejected one (too dark) had no fallback and
+    the beat silently fell back to a still -- measured 2026-11-17 with the luma
+    gate on, 3 of 4 beats lost their real b-roll. So walk the search results and
+    take the first that both downloads and is bright enough. Returns the hit, or
+    None when none qualify.
+    """
+    avoid = avoid or set()
+    n = 0
+    for h in search(query):
+        if h.get("id") in avoid or not usable(h):
+            continue
+        n += 1
+        if download(h, out, quality, min_luma=min_luma):
+            return h
+        if n >= tries:
+            break
+    return None
+
+
 def video_url(hit: dict, quality: str = "1080p") -> str:
     return f"{CDN}/{hit['base_filename']}/{quality}.mp4"
 
@@ -108,6 +132,40 @@ def _is_video(path: str) -> bool:
                         "-show_entries", "stream=codec_name", "-of", "csv=p=0", path],
                        capture_output=True, text=True)
     return r.returncode == 0 and bool(r.stdout.strip())
+
+
+def mean_luma(path: str, t: float = 1.0) -> float:
+    """Mean luma (0-255) of one frame. A dark clip reads as 'ขุ่นมัว' (muddy),
+    which the owner rejected -- so the fetcher must be able to reject it."""
+    r = subprocess.run(["ffmpeg", "-loglevel", "error", "-ss", str(t), "-i", path,
+                        "-frames:v", "1", "-vf", "scale=64:36,format=gray",
+                        "-f", "rawvideo", "-"], capture_output=True)
+    if r.returncode != 0 or not r.stdout:
+        return 255.0  # cannot measure -> do not reject
+    return sum(r.stdout) / len(r.stdout)
+
+
+def download(hit: dict, out: str, quality: str = "1080p",
+             min_luma: float = 0.0) -> bool:
+    """Stream the mp4 to `out` (trying 1080p then 720p). True on success.
+
+    A clip whose mean luma is below `min_luma` is rejected -- measured 2026-11-17
+    a 'sleepy' b-roll landed at luma 70 and made the beat look muddy, the exact
+    complaint the owner raised. Default 0 disables the gate (CLI use)."""
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    for q in ([quality] if quality == "720p" else [quality, "720p"]):
+        url = video_url(hit, q)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=120) as r, open(out, "wb") as f:
+                shutil.copyfileobj(r, f)
+        except Exception:  # noqa: BLE001
+            continue
+        if os.path.getsize(out) > 20000 and _is_video(out):
+            if min_luma and mean_luma(out) < min_luma:
+                continue  # too dark -> try the next quality, then give up
+            return True
+    return False
 
 
 def main() -> int:

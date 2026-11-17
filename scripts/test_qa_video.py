@@ -44,6 +44,19 @@ def bright_frac(png: str) -> tuple[float, float]:
     return bright[: h // 3].mean(), bright[-h // 3:].mean()
 
 
+def luma_of(src: str, vf: str) -> float:
+    """Mean luma (0-255) of one frame of `src` after filter chain `vf`."""
+    import subprocess
+    import tempfile
+    import os
+    from PIL import Image
+    import numpy as np
+    p = os.path.join(tempfile.mkdtemp(prefix="luma_"), "f.png")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", src,
+                    "-frames:v", "1", "-vf", vf, p], check=True)
+    return float(np.asarray(Image.open(p).convert("L"), dtype=float).mean())
+
+
 def main() -> int:
     if not shutil.which("ffmpeg"):
         fail("ffmpeg not found")
@@ -63,6 +76,14 @@ def main() -> int:
         fail("question missing from the top of the overlay")
     if alpha[-h // 3:].sum() == 0:
         fail("answer caption missing from the bottom of the overlay")
+    # 1b. Floating text, not a dark box: the panel (2026-11-17) rejected the
+    #     frosted-glass containers as 'PowerPoint / UI clutter'. The overlay must
+    #     not lay down a large opaque panel behind the type -- sample the row the
+    #     question sits on, away from the glyphs, and require it stays transparent.
+    row = alpha[130]
+    if (row > 200).mean() > 0.5:
+        fail("the question row is mostly opaque: a dark box was drawn behind the "
+             "text instead of floating type")
 
     # 2. A beat with no answer must not draw a caption band.
     card2 = os.path.join(tmp, "card2.png")
@@ -184,6 +205,65 @@ def main() -> int:
     for name, chain in (("BROLL_GRADE", mkv.BROLL_GRADE),):
         if "noise=" in chain or "vignette=" in chain:
             fail(f"{name} still carries grain/vignette: {chain!r}")
+
+    # 8. The b-roll background must NOT soften the source. Measured 2026-11-17:
+    #    the drift upscale cost sharpness (a 1.30x zoom keeps only ~39% of the
+    #    frame detail), and a vision grader then called the cut "soft/compressed".
+    #    Render a band-limited test frame (blurred, so it behaves like real
+    #    footage, not a Nyquist pattern) native vs through broll_chain(), and
+    #    require the chain keeps >= 65% of the native centre detail. This FAILS
+    #    if someone raises BROLL_ZOOM toward 1.3 or drops the lanczos flag.
+    clip = os.path.join(tmp, "detail.mp4")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                    f"testsrc2=s={mq.W}x{mq.H}:d=2:r={mq.FPS}", "-vf", "gblur=sigma=2",
+                    "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", clip],
+                   check=True)
+
+    def centre_detail(src: str, vf: str) -> float:
+        p = os.path.join(tmp, "d.png")
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", src,
+               "-frames:v", "1"]
+        if vf:
+            cmd += ["-vf", vf]
+        subprocess.run(cmd + [p], check=True)
+        g = np.asarray(Image.open(p).convert("L"), dtype=float)
+        h, w = g.shape
+        c = g[h // 2 - 150:h // 2 + 150, w // 2 - 150:w // 2 + 150]
+        return (-4 * c[1:-1, 1:-1] + c[:-2, 1:-1] + c[2:, 1:-1]
+                + c[1:-1, :-2] + c[1:-1, 2:]).var()
+
+    native = centre_detail(clip, f"scale={mq.W}:{mq.H},crop={mq.W}:{mq.H},{mq.GRADE}")
+    graded = centre_detail(clip, mq.broll_chain(clip).replace(",setsar=1", ""))
+    if graded < native * 0.65:
+        fail(f"b-roll chain softens the picture: centre LapVar {graded:.0f} vs "
+             f"native {native:.0f} ({graded / native:.0%}); lower BROLL_ZOOM or "
+             f"keep flags=lanczos")
+    print(f"  #8 b-roll detail kept: {graded / native:.0%} of native "
+          f"({graded:.0f}/{native:.0f})")
+
+    # 9. A dark b-roll clip must be brightness-normalised, so no beat reads muddy
+    #    next to a bright one (measured 2026-11-17: cat luma 107 vs sky 176). A
+    #    synthetic dark clip must be lifted by broll_chain, a bright one left
+    #    alone. FAILS if broll_gamma stops lifting or over-brightens.
+    dark = os.path.join(tmp, "dark.mp4")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                    f"testsrc2=s={mq.W}x{mq.H}:d=2:r={mq.FPS},eq=brightness=-0.45",
+                    "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", dark],
+                   check=True)
+    raw = mq.fetch_broll.mean_luma(dark)
+    if mq.broll_gamma(dark) <= 1.0:
+        fail(f"dark clip (luma {raw:.0f}) got no brightness lift from broll_gamma")
+    lifted = luma_of(dark, mq.broll_chain(dark).replace(",setsar=1", ""))
+    if lifted < raw + 25:
+        fail(f"dark clip barely lifted: {raw:.0f} -> {lifted:.0f}")
+    bright = os.path.join(tmp, "bright.mp4")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                    f"testsrc2=s={mq.W}x{mq.H}:d=2:r={mq.FPS},eq=brightness=0.35",
+                    "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", bright],
+                   check=True)
+    if mq.broll_gamma(bright) != 1.0:
+        fail("an already-bright clip was wrongly gamma-lifted (highlights will blow)")
+    print(f"  #9 dark clip lifted {raw:.0f} -> {lifted:.0f}; bright clip untouched")
 
     shutil.rmtree(tmp, ignore_errors=True)
     print("PASS: Q/A overlay, layout, 16:9 tv-range render, burned-in text, "

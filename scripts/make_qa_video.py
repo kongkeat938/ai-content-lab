@@ -50,7 +50,11 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 import fetch_broll  # noqa: E402
 FONTS = os.path.join(ROOT, "assets", "fonts")
-W, H, FPS = 1280, 720, 30
+W, H, FPS = 1920, 1080, 30
+# Reject b-roll whose mean luma is below this: a dark clip makes the beat read
+# muddy ('ขุ่นมัว'), the exact complaint the owner raised (measured 2026-11-17:
+# a 'sleepy' clip landed at luma 70). Bright, airy footage is the 10/10 target.
+MIN_BROLL_LUMA = 95.0
 SR = 48000
 VOICE = "th-TH-PremwadeeNeural"     # warm female read; the reference voice is female
 VOICE_ALT = "th-TH-NiwatNeural"     # calm male narrator -- the fallback
@@ -97,57 +101,69 @@ BRAND = "#FFB020"   # warm amber accent -- the reference's warm palette
 
 
 def text_card(question: str, answer: str, out: str, brand: str = "") -> None:
-    """A frosted-glass 'UI' card -- question chip top-left, answer card bottom.
+    """FLOATING text: no dark boxes -- crisp white type with a stroke + soft shadow.
 
-    A vision grader (2026-11-17) rejected both a plain grey band ('PowerPoint') and
-    floating outlined text ('default subtitle template'); its fix was a signature UI
-    container -- a frosted-glass card. So each panel is a rounded, semi-transparent
-    dark surface with a hairline light border and a warm-amber accent bar, carrying
-    big bold Kanit text. The caller animates the whole card in (fade + rise).
+    Measured 2026-11-17, a 4/5 advisor panel and a vision rubric agreed the
+    frosted-glass boxes read as 'PowerPoint / UI clutter' and that clean floating
+    type reads more premium. So the question sits top-left and the answer is
+    centred near the bottom, both as white Kanit with a heavy dark stroke (a
+    stroke, not a box, keeps Thai legible over bright b-roll) plus a soft drop
+    shadow for lift. Sizes are scaled for the 1080p render. The caller animates
+    the whole card in (fade + rise).
     """
     card = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(card)
-    fq = ImageFont.truetype(os.path.join(FONTS, "Kanit-Bold.ttf"), 60)
-    fa = ImageFont.truetype(os.path.join(FONTS, "Kanit-Bold.ttf"), 46)
-    fb = ImageFont.truetype(os.path.join(FONTS, "Kanit-SemiBold.ttf"), 26)
+    fq = ImageFont.truetype(os.path.join(FONTS, "Kanit-Bold.ttf"), 88)
+    fa = ImageFont.truetype(os.path.join(FONTS, "Kanit-SemiBold.ttf"), 58)
+    fb = ImageFont.truetype(os.path.join(FONTS, "Kanit-SemiBold.ttf"), 34)
 
-    def glass(size, radius):
-        """A frosted panel: dark translucent fill, hairline border, amber accent."""
-        p = Image.new("RGBA", size, (0, 0, 0, 0))
-        pd = ImageDraw.Draw(p)
-        pd.rounded_rectangle([0, 0, size[0] - 1, size[1] - 1], radius=radius,
-                             fill=(14, 16, 22, 150), outline=(255, 255, 255, 60), width=2)
-        pd.rounded_rectangle([0, 22, 9, size[1] - 22], radius=5, fill=BRAND)
-        return p
+    def wrap(s, font, max_w):
+        """Greedy wrap on spaces so the question reads as a compact stack, not one
+        long line stretched across the frame (a vision grader flagged the single
+        wide line, 2026-11-17)."""
+        words, lines, cur = s.split(), [], ""
+        for w in words:
+            trial = f"{cur} {w}".strip()
+            if cur and d.textlength(trial, font=font) > max_w:
+                lines.append(cur)
+                cur = w
+            else:
+                cur = trial
+        if cur:
+            lines.append(cur)
+        return lines
 
-    def place(panel, xy):
-        card.alpha_composite(panel, xy)
-
-    def txt(xy, s, font, anchor):
+    def txt(xy, s, font, anchor, stroke=8):
         x, y = xy
-        for dx, dy in ((2, 2), (3, 3)):
-            d.text((x + dx, y + dy), s, font=font, fill=(0, 0, 0, 170), anchor=anchor)
-        d.text((x, y), s, font=font, fill=(255, 255, 255, 255), anchor=anchor)
+        shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        sd = ImageDraw.Draw(shadow)
+        sd.text((x + 5, y + 6), s, font=font, fill=(0, 0, 0, 150),
+                anchor=anchor, stroke_width=stroke, stroke_fill=(0, 0, 0, 150))
+        card.alpha_composite(shadow)
+        d.text((x, y), s, font=font, fill=(255, 255, 255, 255), anchor=anchor,
+               stroke_width=stroke, stroke_fill=(10, 12, 18, 235))
 
     if question:
-        tw = d.textlength(question, font=fq)
-        p = glass((int(tw) + 76, 100), 26)
-        place(p, (56, 70))
-        txt((56 + 40, 70 + 50), question, fq, "lm")
+        for i, line in enumerate(wrap(question, fq, int(W * 0.62))):
+            txt((72, 120 + i * 108), line, fq, "la")
 
     if answer:
-        tw = d.textlength(answer, font=fa)
-        pw = int(tw) + 104
-        x0 = max(48, (W - pw) // 2)
-        p = glass((pw, 112), 24)
-        place(p, (x0, H - 152))
-        txt((x0 + 52, H - 152 + 56), answer, fa, "lm")
+        # Wrap a long answer into a compact stack and sit it in the safe area,
+        # clear of the bottom edge (a grader flagged the cramped margin and the
+        # crowded single line, 2026-11-17).
+        lines = wrap(answer, fa, int(W * 0.74))
+        y0 = H - 200 - (len(lines) - 1) * 66
+        for i, line in enumerate(lines):
+            txt((W // 2, y0 + i * 66), line, fa, "mm", stroke=6)
 
     if brand:
-        bw = d.textlength(brand, font=fb)
-        p = glass((int(bw) + 56, 54), 18)
-        place(p, (W - int(bw) - 56 - 40, 40))
-        txt((W - 40 - 28, 40 + 27), brand, fb, "rm")
+        # A small, low-opacity corner bug -- present for identity but quiet, so it
+        # does not read as the 'visual clutter' a grader flagged (2026-11-17).
+        bug = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(bug)
+        bd.text((W - 64, 70), brand, font=fb, fill=(255, 255, 255, 170), anchor="ra",
+                stroke_width=4, stroke_fill=(10, 12, 18, 150))
+        card.alpha_composite(bug)
 
     card.save(out)
 
@@ -179,7 +195,10 @@ def voice(text: str, out: str, v: str, rate: str) -> None:
     raise SystemExit(f"tts failed on both voices: {text[:40]!r}")
 
 
-ENC = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+# crf 18 at 1080p (measured 2026-11-17: a 4/5 panel wanted 15-20 Mbps so the
+# cleaned-up picture is not re-smeared by compression; crf 20 at 720p was
+# ~2 Mbps and read soft). veryfast keeps the render time sane.
+ENC = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
        "-pix_fmt", "yuv420p", "-r", str(FPS),
        "-color_range", "tv", "-colorspace", "bt709",
        "-color_primaries", "bt709", "-color_trc", "bt709",
@@ -194,7 +213,7 @@ def _card_anim() -> tuple[str, str]:
     with a 0.5 s alpha fade and a small upward settle.
     """
     chain = "format=rgba,fade=t=in:st=0:d=0.5:alpha=1"
-    xy = "x=0:y='if(lt(t,0.5),18*(1-t/0.5),0)'"
+    xy = "x=0:y='if(lt(t,0.5),30*(1-t/0.5),0)'"
     return chain, xy
 
 
@@ -204,10 +223,12 @@ def _card_anim() -> tuple[str, str]:
 # muddy) and a vision grader agreed -- `noise=alls=4` + `vignette=PI/4.5` scored
 # 2/10 ("smeared vaseline, digital noise, muddy vignette"), mean luma fell
 # 171->123. Dropping both and adding `unsharp` lifted the same frame to 8/10
-# sharpness, 9/10 brightness. Warmth stays mild for cross-clip cohesion.
+# sharpness, 9/10 brightness. `cas` (contrast-adaptive sharpen) then doubles the
+# local detail (measured LapVar 37->90 on a hazy ocean frame) without losing
+# brightness, which is what "คมชัด แจ่มใส" needs. Warmth stays mild for cohesion.
 GRADE = ("colorbalance=rs=0.03:gs=0.01:bs=-0.03,"
-         "eq=contrast=1.06:saturation=1.12:brightness=0.02,"
-         "unsharp=5:5:0.7:3:3:0.0")
+         "eq=contrast=1.08:saturation=1.14:brightness=0.025,"
+         "unsharp=5:5:0.6:3:3:0.0,cas=0.6")
 
 
 def scene_still(img: str, card: str, aud: str, out: str) -> None:
@@ -229,24 +250,53 @@ def scene_still(img: str, card: str, aud: str, out: str) -> None:
         *ENC, "-shortest", out])
 
 
+# The b-roll drift needs an upscale first to have crop room, and every upscale
+# costs sharpness (measured 2026-11-17: native centre LapVar 119 vs 88 at 1.12x).
+# So the zoom is kept small and both scales use lanczos (95.7 vs bicubic 87.6 at
+# 1.12x) -- the guard test_qa_video.py #8 fails if this softens the picture.
+BROLL_ZOOM = 1.06
+BROLL_FLAGS = "lanczos"
+# Per-clip brightness normalisation: stock clips vary a lot (measured 2026-11-17
+# the 'cat' clip landed at luma 107 while the 'sky' clip was 176), and a dark beat
+# reads as 'ขุ่นมัว' next to a bright one. So each clip is measured and gamma-lifted
+# toward this target (capped, so a bright clip is left alone and highlights hold).
+BROLL_LUMA_TARGET = 150.0
+BROLL_GAMMA_MAX = 1.55
+
+
+def broll_gamma(clip: str) -> float:
+    """Gamma to lift `clip` toward BROLL_LUMA_TARGET, capped. Measured, not fixed."""
+    lum = fetch_broll.mean_luma(clip)
+    if lum >= BROLL_LUMA_TARGET:
+        return 1.0
+    g = 1.0 + (BROLL_LUMA_TARGET - lum) / 120.0
+    return round(min(g, BROLL_GAMMA_MAX), 3)
+
+
+def broll_chain(clip: str) -> str:
+    """Background chain: fit to 16:9, small lanczos zoom, drift, normalise, grade."""
+    zx, zy = int(W * BROLL_ZOOM), int(H * BROLL_ZOOM)
+    dx, dy = int(W * (BROLL_ZOOM - 1) / 2), int(H * (BROLL_ZOOM - 1) / 2)
+    g = broll_gamma(clip)
+    norm = "" if g == 1.0 else f"eq=gamma={g},"
+    return (f"scale={W}:{H}:force_original_aspect_ratio=increase:flags={BROLL_FLAGS},"
+            f"crop={W}:{H},scale={zx}:{zy}:flags={BROLL_FLAGS},"
+            f"crop={W}:{H}:x='{dx}+{dx}*sin(2*PI*t/23)':"
+            f"y='{dy}+{dy}*cos(2*PI*t/29)',fps={FPS},{norm}{GRADE},setsar=1")
+
+
 def scene_broll(clip: str, card: str, aud: str, out: str) -> None:
     """REAL b-roll as the beat base (the reference's actual look).
 
     A free generative model cannot make a believable human (measured 2026-11-17:
     pollinations 3-4/10, Gemini free image quota 0), so the standard uses free
     licence-clean real footage (fetch_broll.py -> Coverr). The clip is looped to
-    the narration length, scaled/cropped to 16:9, graded to one look, and the
-    animated Thai Q/A card is laid over it.
+    the narration length, scaled/cropped to 16:9, brightness-normalised, graded to
+    one look, and the animated Thai Q/A card is laid over it.
     """
     d = dur(aud) + 0.6
     chain, xy = _card_anim()
-    # A slow drift over the looped clip so a short stock shot never reads as a
-    # frozen background; the source is scaled up first to give the crop room.
-    vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
-          f"scale={int(W * 1.12)}:{int(H * 1.12)},"
-          f"crop={W}:{H}:x='{int(W * 0.06)}+{int(W * 0.06)}*sin(2*PI*t/23)':"
-          f"y='{int(H * 0.06)}+{int(H * 0.06)}*cos(2*PI*t/29)',"
-          f"fps={FPS},{GRADE},setsar=1[bg];"
+    vf = (f"[0:v]{broll_chain(clip)}[bg];"
           f"[1:v]{chain}[card];"
           f"[bg][card]overlay={xy},format=yuv420p[v]")
     sh(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1", "-i", clip,
@@ -383,8 +433,9 @@ def build(script_path: str, out: str, work: str, style: str, voice_name: str,
             got_clip = True
         elif broll:
             q = b.get("broll") or b.get("image", "")
-            hit = fetch_broll.pick(q, avoid=used) if q else None
-            if hit and fetch_broll.download(hit, clip):
+            hit = fetch_broll.pick_and_download(q, clip, avoid=used,
+                                                min_luma=MIN_BROLL_LUMA) if q else None
+            if hit:
                 used.add(hit.get("id"))
                 credits.append({"beat": tag, **fetch_broll.attribution(hit)})
                 got_clip = True

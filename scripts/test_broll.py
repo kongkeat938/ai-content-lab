@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -66,6 +67,26 @@ def main() -> int:
     # The URL is the CDN pattern the download relies on.
     if fb.video_url(base(), "1080p") != "https://cdn.coverr.co/videos/coverr-x-1/1080p.mp4":
         fail("video_url built the wrong CDN path")
+
+    # mean_luma must be able to measure a real frame, and the download gate must
+    # reject a clip darker than the floor (a dark beat reads as 'ขุ่นมัว', the
+    # owner's exact complaint). Synthesise a black clip and require rejection.
+    if shutil.which("ffmpeg"):
+        tmp = tempfile.mkdtemp(prefix="broll_guard_")
+        black = os.path.join(tmp, "black.mp4")
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
+                        "-i", "color=c=black:s=320x180:d=2:r=10", "-c:v", "libx264",
+                        "-pix_fmt", "yuv420p", black], check=True)
+        lum = fb.mean_luma(black)
+        if lum > 20:
+            fail(f"mean_luma read {lum:.0f} on a black clip; the gate cannot work")
+        white = os.path.join(tmp, "white.mp4")
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
+                        "-i", "color=c=white:s=320x180:d=2:r=10", "-c:v", "libx264",
+                        "-pix_fmt", "yuv420p", white], check=True)
+        if fb.mean_luma(white) < 200:
+            fail("mean_luma read a white clip as dark; the scale is wrong")
+        shutil.rmtree(tmp, ignore_errors=True)
 
     # Live check: a real query downloads a real, landscape, >=720p video.
     hits = fb.search("ocean waves")
