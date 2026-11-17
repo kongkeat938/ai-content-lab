@@ -2,8 +2,7 @@
 
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
 **panel** (`advise.py`), not K. Keep <6,000 chars (`test_memory_budget.py`); detail in
-`topics/`/logs/`docs/`. **Project = `yt938-2`; read `docs/PROJECT-MAP.md` first (K;
-`test_project_map.py`).**
+`topics/`/logs/. **Project = `yt938-2`; read `docs/PROJECT-MAP.md` first (K; `test_project_map.py`).**
 
 ## 🪪 ak's identity & team
 **Every tool/agent uses its OWN mailbox, never K's** (`test_agent_own_email.py`): ak = `ak_mail.py`.
@@ -27,7 +26,7 @@
   (≥5; openrouter/ChatGPT/DeepSeek/Devin/HF dead — don't retry). **PC1 = ak's hands** via
   `winremote` 8090/Tailscale (`topics/03`).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that drops a piece
-  must FAIL. A gate probing an API its token can't read (403) + `|| echo 0` = **false pass** — OFF by default.
+  must FAIL. A gate probing an API its token can't read (403) + `|| echo 0` = **false pass**.
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`; a push may 403 the credential-helper → push with
   `https://x-access-token:$KONGKEAT_GH_TOKEN@...`; suite = every `scripts/test_*.py`.
@@ -49,20 +48,21 @@
   (`test_tts_fallback.py`).
 - **Reference look = MINIMUM bar for ALL channels** (K, 2026-11-17): 1080p crf18, yuv420p tv/bt709,
   -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`** —
-  both renderers import it; never copy the chain (the rail drifted to LapVar 15.4 vs 46.6 →
-  `test_video_grade.py`). `verify_night.py` hard-fails non-1080p/non-yuv420p/non-tv (`test_verify_night.py`).
+  both renderers import it; never copy the chain (drifted → LapVar 15.4 vs 46.6 → `test_video_grade.py`).
+  `verify_night.py` hard-fails non-1080p/non-yuv420p/non-tv (`test_verify_night.py`).
 - **Shorts: meet the standard or NOT upload** (K, 2026-11-17), backlog too. One source
-  `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709** (was yuvj420p full-range), -14 LUFS,
-  ≤60 s, + a **9:16 portrait thumbnail** (YouTube's rule: min height 640, <2 MB — NOT 1280x720).
-  `publish_shorts.py` gates EVERY upload and HOLDS a substandard build (`test_short_standard.py`).
+  `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709**, -14 LUFS, ≤60 s, + a **9:16 portrait
+  thumbnail** (min height 640, <2 MB — NOT 1280x720). `publish_shorts.py` gates EVERY upload and
+  HOLDS a substandard build (`test_short_standard.py`).
 - **Vision grader is NON-DETERMINISTIC** (same cut scored 9 then 5/10): never gate in CI
-  (panel agreed); judge by technical metrics (LapVar) + fail-able guards, not an AI score.
+  (panel agreed); judge by technical metrics (LapVar) + fail-able guards.
 - **A rail can die at IMPORT** (workflow installs a subset of deps; `continue-on-error`
   turns it green) — twice; `test_workflow_deps.py` sweeps it.
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no rogue"
   while `feeds/videos.xml` 404'd → falls back to playlist `UU<id>`; exits **2=BLIND**. `topics/05`.
 - **Pausing drops a channel from each rail's `matrix`; unpausing must PUT IT BACK**
-  (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`).
+  (`test_rail_channels.py`). **`find_removed` confirms a take-down with a 2nd source (oEmbed)**:
+  2026-11-17 a short uploads read flagged 6 live genx clips; all oEmbed 200.
 - **ch4 PIVOT 2026-11-16** (family → knowledge "เกร็ดความรู้รอบตัว"; old genre died). Hook opens a
   question (`_CURIOSITY`); `content/hooks/knowledge.md`. `ch4-realign.yml` renames playlists, but
   the **channel TITLE is NOT API-settable** → **K sets it in Studio**. The wiring must be on

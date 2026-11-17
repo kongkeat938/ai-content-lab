@@ -23,6 +23,9 @@ import os
 import re
 import subprocess
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from collections import Counter
 from datetime import datetime, timezone
 
@@ -99,7 +102,42 @@ def upload_ids(yt, uploads: str, cap: int = 1000) -> list:
     return ids[:cap]
 
 
-def find_removed(recorded: dict, present: set, removed: set) -> list:
+def oembed_alive(video_id: str, timeout: int = 15) -> bool | None:
+    """Second, independent opinion on whether a video still exists.
+
+    True  -- YouTube's oEmbed endpoint still serves it (200), or it answers
+             401/403 (private/embargoed: it exists, it is not a take-down).
+    False -- oEmbed answers 404: genuinely gone.
+    None  -- the check itself could not be made (network blip, rate limit).
+
+    A single `playlistItems` read is NOT proof a video is gone. Measured
+    2026-11-17: genx's full uploads playlist came back short (a paging hiccup),
+    and the audit flagged six clips -- lyaxLTHyITY, zRZURbXEpuE, l5hkDGVIYXE,
+    L8OQn6RTVaY, 12RT8zATxuo, 9Okw0yYB97A -- as "removed by YouTube". All six
+    answer oEmbed 200 and sit in the public uploads playlist (yt-dlp
+    `--flat-playlist` = 147): every one a false alarm. A take-down claim must
+    survive a second source before it is printed. oEmbed needs no key and spends
+    no Data API quota.
+    """
+    url = "https://www.youtube.com/oembed?" + urllib.parse.urlencode(
+        {"url": f"https://www.youtube.com/watch?v={video_id}", "format": "json"})
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=timeout) as fh:
+            json.load(fh)
+        return True
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return False       # gone
+        if e.code in (401, 403):
+            return True        # exists but not public -- not a removal
+        return None            # rate-limited / transient: unknown
+    except Exception:  # noqa: BLE001 - an unconfirmed check is not a take-down
+        return None
+
+
+def find_removed(recorded: dict, present: set, removed: set,
+                 still_live=None) -> list:
     """Recorded videos that are no longer on the channel.
 
     YouTube removing a video (a policy take-down) is invisible to every other
@@ -107,14 +145,31 @@ def find_removed(recorded: dict, present: set, removed: set) -> list:
     notices. Measured 2026-11-13: genx carried an active community-guidelines
     warning whose removed content never appeared in any report -- the audit only
     ever diffed channel -> manifest, never manifest -> channel.
+
+    A clip missing from `present` is only a *candidate*: the uploads-playlist
+    read can come back short (measured 2026-11-17 -- six false "take-downs").
+    When `still_live` is given it is consulted and a video it still finds is NOT
+    reported; one it cannot confirm is reported as unconfirmed, never as a
+    measured removal.
     """
     out = []
     for vid, meta in recorded.items():
         if vid in present or vid in removed:
             continue
+        title = (meta.get('title') or '')[:50]
+        if still_live is not None:
+            alive = still_live(vid)
+            if alive is True:
+                # Playlist read missed it but YouTube still serves it: a flaky
+                # read, not a take-down. Stay quiet rather than cry wolf.
+                continue
+            if alive is None:
+                out.append(f"video {vid} is missing from the uploads playlist but "
+                           f"its liveness could not be confirmed (oEmbed "
+                           f"unavailable): {title}")
+                continue
         out.append(f"video {vid} was recorded but is no longer on the channel "
-                   f"(removed by YouTube, or deleted without a backup): "
-                   f"{(meta.get('title') or '')[:50]}")
+                   f"(removed by YouTube, or deleted without a backup): {title}")
     return out
 
 
@@ -273,9 +328,15 @@ def find_defects(ch: dict, pls: list, vids: list, recorded: set | None = None) -
     return d
 
 
-def removed_defects(recorded: dict, present: set, removed: set) -> list:
-    """`removed_by_us` ids are ours; everything else is a take-down to name."""
-    return find_removed(recorded, present, removed)
+def removed_defects(recorded: dict, present: set, removed: set,
+                    still_live=None) -> list:
+    """`removed_by_us` ids are ours; everything else is a take-down to name.
+
+    `still_live` is threaded through to `find_removed`: a clip the uploads
+    playlist read missed but oEmbed still serves is a flaky read, not a
+    take-down (measured 2026-11-17 -- six such false alarms on genx).
+    """
+    return find_removed(recorded, present, removed, still_live=still_live)
 
 
 def rogue_alert_body(live: dict, now: datetime | None = None) -> str:
@@ -505,7 +566,11 @@ def main() -> int:
         print(f"  {ch.get('title')}  subs={ch.get('subs')} videos={ch.get('videos')} "
               f"views={ch.get('views')} playlists={len(pls)} uploads={len(present)}")
         defects = find_defects(ch, pls, vids, set(recorded))
-        defects += removed_defects(recorded, present, removed_by_us(c["channel_id"]))
+        # Confirm every candidate take-down against a second source (oEmbed):
+        # a single playlist read that comes back short is not proof a video is
+        # gone (measured 2026-11-17 -- six false alarms on genx).
+        defects += removed_defects(recorded, present, removed_by_us(c["channel_id"]),
+                                   still_live=oembed_alive)
         for x in defects:
             print(f"    DEFECT: {x}")
         if not defects:

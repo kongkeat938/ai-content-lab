@@ -49,6 +49,26 @@ def main() -> int:
     if clean:
         fail("find_removed flagged videos that are all present")
 
+    # A clip missing from ONE playlist read is not proof of a take-down: the read
+    # can come back short (measured 2026-11-17 -- six false "removals" on genx,
+    # every one still served by oEmbed). A second source must veto the claim.
+    out2 = "\n".join(ac.find_removed(recorded, {"KEEP", "WE_DELETED"}, removed,
+                                     still_live=lambda vid: True))
+    if "GONE" in out2:
+        fail("a video still served by oEmbed was reported as removed -- a flaky "
+             "playlist read is being passed off as a YouTube take-down")
+    # The opposite must hold: a video oEmbed confirms is GONE stays reported.
+    out3 = "\n".join(ac.find_removed(recorded, {"KEEP", "WE_DELETED"}, removed,
+                                     still_live=lambda vid: False))
+    if "GONE" not in out3:
+        fail("a video oEmbed confirms is gone (404) was NOT reported; the "
+             "liveness check swallows real take-downs")
+    # An unconfirmed check must NOT be reported as a measured removal.
+    out4 = "\n".join(ac.find_removed(recorded, {"KEEP", "WE_DELETED"}, removed,
+                                     still_live=lambda vid: None))
+    if "removed by YouTube, or deleted" in out4:
+        fail("an unconfirmed liveness check was printed as a measured take-down")
+
     # The detection is worthless unless main() actually runs it, or the blind spot
     # returns. Match the call, not a bare substring (the docstring names it).
     src = (Path(__file__).resolve().parent / "audit_channels.py").read_text(encoding="utf-8")
@@ -57,9 +77,17 @@ def main() -> int:
              "take-down would be measured but never reported")
     if not re.search(r"def removed_defects\(", src):
         fail("removed_defects() is gone; the take-down check was dropped")
+    if not re.search(r"still_live=oembed_alive", src):
+        fail("main() no longer confirms a candidate take-down against oEmbed; "
+             "a short playlist read can cry wolf again")
+    if not re.search(r"def oembed_alive\(", src):
+        fail("oembed_alive() is gone; there is no second source for liveness")
+    if "oembed?" not in src:
+        fail("the liveness check no longer uses YouTube's oEmbed endpoint")
 
     print("OK: the audit names a recorded video that YouTube removed, ignores our "
-          "own deletions, and main() runs the check")
+          "own deletions, requires oEmbed to confirm a removal, and main() runs "
+          "the check")
     return 0
 
 
