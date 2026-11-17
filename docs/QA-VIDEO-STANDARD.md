@@ -130,3 +130,35 @@ locks the format. A clip is uploadable only when:
 `python3 scripts/test_qa_video.py` — exit 0 means the standard holds. It is
 mutation-checked: blanking the overlay, forcing `pc` range, or moving the caption
 to the top each make it FAIL.
+
+## Minimum standard — ALL channels, long-form AND Shorts (2026-11-17)
+
+K made the approved look the **minimum bar for every upload**, and a **Short must also meet an
+aspect-ratio + thumbnail standard** — "if it does not meet the standard, do not upload it,
+including the old backlog." Two things enforce it, and a doc is only the *weakest* evidence:
+
+- **Long-form:** every rail runs `scripts/verify_night.py`, which now **hard-fails** a file that
+  is not 1920x1080, not `yuv420p`, or not `color_range=tv` (on top of the loudness/peak/headroom
+  checks). Guard: `scripts/test_verify_night.py`.
+- **Shorts:** `scripts/short_standard.py` is the single pass/fail. `publish_shorts.py` builds the
+  thumbnail, checks the standard **before** `videos().insert`, and **holds** anything that fails.
+  Guard: `scripts/test_short_standard.py`.
+
+| Surface | Standard | Measured how |
+|---|---|---|
+| Picture | 1920x1080 (long-form) / 1080x1920 9:16 (Short) | `ffprobe` width/height |
+| Colour | `yuv420p`, `range=tv`, `bt709` | `ffprobe` pix_fmt/color_range/color_space |
+| Audio | −14 LUFS ±1.5, true peak ≤ −3 dBFS | `ffmpeg ebur128=peak=true` |
+| Short length | ≤ 60 s | `ffprobe` duration |
+| Short thumbnail | 9:16, height ≥ 640, JPG/PNG, < 2 MB | `PIL` size/format + `os.path.getsize` |
+
+The Shorts thumbnail rule is **YouTube's own** (support.google.com/youtube/answer/72431, read
+2026-11-17): 9:16 aspect, 2160x3840 recommended, minimum height 640, JPG/PNG, under the MB limit.
+It is PORTRAIT — a 1280x720 thumbnail is a long-form shape, not a Shorts one.
+
+### One grade source (do not copy the chain)
+`scripts/video_grade.py` holds the single b-roll grade chain (zoom 1.06, `lanczos`, `unsharp` +
+`cas=0.6`, per-clip brightness ~150). Both `make_qa_video.py` and `make_kinetic_video.py` import
+it. Measured 2026-11-17: the rail's engine had drifted to **LapVar 15.4** on a clip the approved
+chain scored **46.6** on (~3x softer) because it kept a private copy. `scripts/test_video_grade.py`
+fails if the two ever diverge again.
