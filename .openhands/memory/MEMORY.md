@@ -61,12 +61,12 @@
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no rogue"
   while `feeds/videos.xml` 404'd → falls back to playlist `UU<id>`; exits **2=BLIND**. `topics/05`.
 - **Pausing drops a channel from each rail's `matrix`; unpausing must PUT IT BACK**
-  (`test_rail_channels.py`). **`find_removed` confirms a take-down with a 2nd source (oEmbed)**:
-  2026-11-17 a short uploads read flagged 6 live genx clips; all oEmbed 200.
-- **ch4 PIVOT 2026-11-16** (family → knowledge "เกร็ดความรู้รอบตัว"; old genre died). Hook opens a
-  question (`_CURIOSITY`); `content/hooks/knowledge.md`. `ch4-realign.yml` renames playlists, but
-  the **channel TITLE is NOT API-settable** → **K sets it in Studio**. The wiring must be on
-  `origin/main` or the live rail still mints the dead genre.
+  (`test_rail_channels.py`). **`find_removed` confirms a take-down with a 2nd source (oEmbed)**.
+- **ch4 PIVOT 2026-11-16** (family → knowledge; old genre died). Hook opens a question
+  (`_CURIOSITY`); `content/hooks/knowledge.md`. **Channel TITLE is NOT API-settable → K sets it in
+  Studio**; the repo target must FOLLOW the live name (`set_channel_name.py` ch4 = **"PCSEV"**,
+  2026-11-17) — else the daily rail rewrites `localizations.th_TH.title` back
+  (`test_channel_name_live.py`). Wiring must be on `origin/main` or the rail mints the dead genre.
 - **Curated angles must survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected every
   angle; Thai shares 3-char runs. Floor **8**.
 
