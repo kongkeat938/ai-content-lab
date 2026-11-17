@@ -68,7 +68,12 @@ TARGET = {
         "token": "YT_CH4_REFRESH_TOKEN",
         "lang": "th",        # defaultLanguage value
         "loc": "th_TH",      # localizations key (the API stores th_TH, not th)
-        "title": "เกร็ดความรู้รอบตัว",
+        # K renamed ch4 in Studio to "PCSEV" (handle @PCSEV), measured live
+        # 2026-11-17 via three sources (RSS feed, channel page, oEmbed). The main
+        # title is not API-writable, so the repo must FOLLOW K's name, not fight it:
+        # a stale target here makes the daily rails rewrite localizations.th_TH.title
+        # back to the retired genre name.
+        "title": "PCSEV",
         "description": "เกร็ดความรู้รอบตัวและวิทยาศาสตร์ในชีวิตประจำวัน — ไขคำถามคาใจ "
                        "เรื่องท้องฟ้า สัตว์ สิ่งของ และธรรมชาติรอบตัว อธิบายเข้าใจง่าย "
                        "ฟังเพลิน เหมาะเปิดฟังตอนพัก ทำงานบ้าน หรือก่อนนอน",
