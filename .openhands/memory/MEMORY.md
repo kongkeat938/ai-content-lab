@@ -45,20 +45,21 @@ read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`)
   does NOT trigger a workflow (dispatch explicitly).
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + a union merge driver
   (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer.
-- **One duration parser:** `yt_duration.py` (never raises; `test_duration_parse.py`).
+- **One duration parser:** `yt_duration.py` (`test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail + theme ROTATES** — else a raised cadence
   is a no-op or an add/add conflict.
 - **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` falls back to VOICE
   (`test_tts_fallback.py`).
-- **Reference look = standard** (2026-11-17): `make_qa_video.py` = photoreal still + Ken Burns +
-  Thai Q/A overlay + voice, loudnorm **-14 LUFS**; guard `test_qa_video.py`; ch4 rail `--image-style
-  photoreal`. Presenter = the only gap (paid); `--hero-dir` drops one in.
+- **Reference look = standard** (2026-11-17): ch4 knowledge = REAL b-roll per beat (keyless
+  Coverr, `fetch_broll.py`) + one warm grade + a frosted-glass Thai Q/A card + voice, loudnorm
+  **-14 LUFS**; graded 7/10 vs 4-5 'stock slop'. ch4 rail `--engine kinetic --broll`. Presenter =
+  the only gap (paid); `--hero-dir`.
 - **A rail can die at IMPORT: its workflow installs a SUBSET of the deps its script needs,
   and `continue-on-error` turns it green.** Twice (`fetch-music` no `numpy`;
   `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
-- **Every new mechanism seeds a false alarm until the sweep learns it** (pre-08:00-UTC 403 = quota).
+- **Every new mechanism seeds a false alarm until the sweep learns it.**
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no
   live rogue" while `feeds/videos.xml` 404'd → falls back to uploads playlist `UU<id>`; exits
   **2=BLIND** (≠0). `topics/05`.

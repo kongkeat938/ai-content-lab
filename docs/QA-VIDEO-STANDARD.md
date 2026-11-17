@@ -27,6 +27,39 @@ Wan 3.0 from **$0.075/s**, Kling 3.0 from **$0.084/s**, Kling 4.0 from **$0.157/
 Veo 3.1 **$0.80/s**. A 30-minute video at Wan prices is roughly **$135** per video —
 so the free format is the standard, and a hero clip is an optional paid accent.
 
+## The standard that shipped: real b-roll + a designed card (2026-11-17)
+
+The reference's essence is **a real photograph of a person**, not a photoreal still,
+and a free model cannot make a believable human. So the standard uses **REAL
+licence-clean stock video** as the base and lets the *design* carry it:
+
+- base = one real 1080p clip per beat, from **Coverr** via `scripts/fetch_broll.py`
+  (keyless, free for commercial use, no attribution required);
+- **one warm grade** over every clip (`BROLL_GRADE`: warm highlights, cool shadows,
+  contrast, vignette, fine grain) so the footage reads as one story;
+- a **frosted-glass card** (`text_card`): an amber question chip top-left, an answer
+  card bottom-centre, a channel tag top-right — the "signature UI" a vision grader
+  asked for, not a plain black box;
+- Thai voice (edge-tts) and captions synced to the narration.
+
+Measured with a vision grader (`gemini-3.5-flash-lite`), same 3-beat clip, iterating:
+
+| Cut | Production | Thai acceptance | Appeal | Verdict |
+|---|---|---|---|---|
+| cold AI landscape still | 3 | — | — | "cannot pass" |
+| raw stock + floating text | 4–5 | 4 | 4 | "generic stock slop" |
+| + warm grade + frosted card | **7** | **8** | 6.5 | **"escapes stock slop; looks intentional"** |
+
+This is wired into the ch4 knowledge rail: `build_night.py --engine kinetic --broll`
+fetches one clip per beat and burns the captions over the graded base.
+
+### Defect fixed while building this (measured)
+
+The card is a single still fed to a `fade` filter; without looping it, the fade
+blanks the card after ~0.5 s so **beats 2..N rendered textless** (only beat 1 kept
+its card). The card input is now looped. `scripts/test_qa_video.py` locks it: it
+samples a *late* frame and requires the text is still there.
+
 ## Build a clip
 
 ```
@@ -49,6 +82,32 @@ Script shape (`qa.json`):
 
 `image` is an **English** prompt for the still (the free generator is English-first);
 `question` / `answer` are the Thai text that is both spoken and drawn.
+
+Pass `--broll` to use real stock footage per beat instead of the still — the shipped
+standard:
+
+```
+python3 scripts/make_qa_video.py \
+    --script work/<job>/qa.json \
+    --out    work/<job>/video.mp4 \
+    --broll  --brand "เกร็ดความรู้รอบตัว"
+```
+
+Each beat then fetches a clip with its `broll` query (short English queries work
+best) and writes `attribution.json` beside the work dir.
+
+For the long-form (30-min) knowledge rail, the same method is the kinetic engine's
+`--broll` mode, driven by `build_night.py`:
+
+```
+python3 scripts/build_night.py --content content/<set> --work work/ch4_know_01 \
+    --engine kinetic --broll --minutes 30 --voice th-TH-NiwatNeural \
+    --brand "เกร็ดความรู้รอบตัว" --hook-file content/hooks/knowledge.md
+```
+
+`build_night.py` writes `broll.json` (one real clip per beat) and passes it to
+`make_kinetic_video.py --broll`; a beat that cannot be sourced **fails the build**
+rather than shipping a still into a live-action set.
 
 ## The hero-clip slot (drop-in for a paid presenter)
 

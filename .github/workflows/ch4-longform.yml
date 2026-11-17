@@ -130,19 +130,18 @@ jobs:
         run: |
           # The panel's #1 lever is a spoken promise in the first 20 seconds, and
           # the picture must move the whole file AND change as the narration moves
-          # between beats. The knowledge rail uses the kinetic engine with
-          # --chapters: an always-moving gradient base, one illustration per beat
-          # over it, and captions synced to the narration. A five-advisor panel
-          # (2026-11-16) ruled the moving gradient alone still reads as low-effort
-          # (lifts AVD only ~5->12%); the per-chapter picture is what escapes that
-          # signal. The cold open lives in content/hooks/knowledge.md.
+          # between beats. The knowledge rail uses the kinetic engine with --broll:
+          # one REAL stock clip per beat (free keyless Coverr) as the base, captions
+          # synced to the narration, and the cold open from content/hooks/knowledge.md.
           #
-          # STYLE 2026-11-17: photoreal, not the flat "knowledge" illustration.
-          # The owner's reference clip (Veo) reads as a real photograph, and the
-          # vision-graded test of the free generator put photoreal at 8/10 on
-          # object/nature vs the flat art that reads as low-effort AI. Same engine,
-          # same per-chapter motion -- only the still style changed. See
-          # docs/QA-VIDEO-STANDARD.md and scripts/make_qa_video.py.
+          # STYLE 2026-11-17 (measured): the owner's reference clip (Veo) is a real
+          # photograph of a person. A free model cannot make a believable human
+          # (pollinations 3-4/10, Gemini free image quota 0), and a five-advisor panel
+          # said do not ship AI faces. Raw stock under a caption scored 4-5/10
+          # "generic stock slop"; a consistent warm grade + a designed frosted-glass
+          # card over the same footage lifted it to 7/10 with a blunt "looks
+          # intentional" verdict. So the base is real footage, graded as one story.
+          # See docs/QA-VIDEO-STANDARD.md and scripts/make_qa_video.py.
           python3 scripts/build_night.py \
             --content "${{ steps.pick.outputs.content }}" \
             --work work/ch4_know_01 \
@@ -152,9 +151,7 @@ jobs:
             --subtitle "เกร็ดน่ารู้ ฟังเพลินได้ทั้งวัน" \
             --voice th-TH-NiwatNeural \
             --engine kinetic \
-            --chapters \
-            --image-style photoreal \
-            --image-prompt "photorealistic documentary photograph of an everyday wonder, natural light, cinematic" \
+            --broll \
             --brand "เกร็ดความรู้รอบตัว" \
             --hook-file content/hooks/knowledge.md \
             --bed-ledger content/bed_ledger_kongkeat.json

@@ -37,6 +37,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -47,6 +48,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
+import fetch_broll  # noqa: E402
 FONTS = os.path.join(ROOT, "assets", "fonts")
 W, H, FPS = 1280, 720, 30
 SR = 48000
@@ -91,29 +93,62 @@ def still(prompt: str, out: str, style: str, seed: int) -> None:
         "--width", str(W), "--height", str(H)])
 
 
-def text_card(question: str, answer: str, out: str) -> None:
-    """Question top-left, answer caption bottom-centre -- the reference layout.
+BRAND = "#FFB020"   # warm amber accent -- the reference's warm palette
 
-    PIL draws the Thai text (the repo's Shorts already rely on it); libraqm gives
-    correct Thai shaping. A soft dark band keeps the answer legible on any still.
+
+def text_card(question: str, answer: str, out: str, brand: str = "") -> None:
+    """A frosted-glass 'UI' card -- question chip top-left, answer card bottom.
+
+    A vision grader (2026-11-17) rejected both a plain grey band ('PowerPoint') and
+    floating outlined text ('default subtitle template'); its fix was a signature UI
+    container -- a frosted-glass card. So each panel is a rounded, semi-transparent
+    dark surface with a hairline light border and a warm-amber accent bar, carrying
+    big bold Kanit text. The caller animates the whole card in (fade + rise).
     """
     card = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(card)
     fq = ImageFont.truetype(os.path.join(FONTS, "Kanit-Bold.ttf"), 60)
-    fa = ImageFont.truetype(os.path.join(FONTS, "Prompt-SemiBold.ttf"), 40)
+    fa = ImageFont.truetype(os.path.join(FONTS, "Kanit-Bold.ttf"), 46)
+    fb = ImageFont.truetype(os.path.join(FONTS, "Kanit-SemiBold.ttf"), 26)
+
+    def glass(size, radius):
+        """A frosted panel: dark translucent fill, hairline border, amber accent."""
+        p = Image.new("RGBA", size, (0, 0, 0, 0))
+        pd = ImageDraw.Draw(p)
+        pd.rounded_rectangle([0, 0, size[0] - 1, size[1] - 1], radius=radius,
+                             fill=(14, 16, 22, 150), outline=(255, 255, 255, 60), width=2)
+        pd.rounded_rectangle([0, 22, 9, size[1] - 22], radius=5, fill=BRAND)
+        return p
+
+    def place(panel, xy):
+        card.alpha_composite(panel, xy)
 
     def txt(xy, s, font, anchor):
         x, y = xy
-        for dx, dy in ((-3, 0), (3, 0), (0, -3), (0, 3), (2, 2), (-2, -2)):
-            d.text((x + dx, y + dy), s, font=font, fill=(0, 0, 0, 210), anchor=anchor)
+        for dx, dy in ((2, 2), (3, 3)):
+            d.text((x + dx, y + dy), s, font=font, fill=(0, 0, 0, 170), anchor=anchor)
         d.text((x, y), s, font=font, fill=(255, 255, 255, 255), anchor=anchor)
 
     if question:
-        txt((64, 96), question, fq, "la")
+        tw = d.textlength(question, font=fq)
+        p = glass((int(tw) + 76, 100), 26)
+        place(p, (56, 70))
+        txt((56 + 40, 70 + 50), question, fq, "lm")
+
     if answer:
-        band = Image.new("RGBA", (W, 100), (0, 0, 0, 120))
-        card.alpha_composite(band, (0, H - 156))
-        txt((W // 2, H - 106), answer, fa, "ma")
+        tw = d.textlength(answer, font=fa)
+        pw = int(tw) + 104
+        x0 = max(48, (W - pw) // 2)
+        p = glass((pw, 112), 24)
+        place(p, (x0, H - 152))
+        txt((x0 + 52, H - 152 + 56), answer, fa, "lm")
+
+    if brand:
+        bw = d.textlength(brand, font=fb)
+        p = glass((int(bw) + 56, 54), 18)
+        place(p, (W - int(bw) - 56 - 40, 40))
+        txt((W - 40 - 28, 40 + 27), brand, fb, "rm")
+
     card.save(out)
 
 
@@ -151,21 +186,70 @@ ENC = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
        "-c:a", "aac", "-b:a", "160k", "-ar", str(SR), "-ac", "2"]
 
 
+def _card_anim() -> tuple[str, str]:
+    """Card input chain + overlay x:y that fades and rises the text in.
+
+    The reference feels edited, not assembled: its text arrives. A hard-cut static
+    card was graded 'PowerPoint' (2026-11-17), so every beat animates the card in
+    with a 0.5 s alpha fade and a small upward settle.
+    """
+    chain = "format=rgba,fade=t=in:st=0:d=0.5:alpha=1"
+    xy = "x=0:y='if(lt(t,0.5),18*(1-t/0.5),0)'"
+    return chain, xy
+
+
+# A warm cinematic grade applied to EVERY clip, so sky, beach and cat footage read
+# as one story instead of a stock grab-bag (the grader's #1 fix, 2026-11-17:
+# 'match the color grade across all clips'). Warm highlights, cool shadows, a
+# touch of contrast/saturation, a soft vignette and fine grain for a film feel.
+GRADE = ("colorbalance=rs=0.06:gs=0.02:bs=-0.05:rm=0.03:bm=-0.03,"
+         "eq=contrast=1.06:saturation=1.08:brightness=0.006,"
+         "vignette=PI/4.5,noise=alls=4:allf=t")
+
+
 def scene_still(img: str, card: str, aud: str, out: str) -> None:
-    """Slow Ken Burns push on a still, with the text overlay and the beat's voice."""
+    """Slow Ken Burns push on a still, with the animated text overlay and voice."""
     d = dur(aud) + 0.6
+    chain, xy = _card_anim()
     # Normalise to 16:9 first (the generator crops 6% off the bottom to drop the
     # watermark, so a still arrives slightly short), then upscale and slow-push.
     vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
           f"scale={int(W * 1.18)}:{int(H * 1.18)},"
           f"zoompan=z='1.0+0.0008*in':x='iw/2-(iw/zoom/2)':"
-          f"y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps={FPS},setsar=1[bg];"
-          f"[bg][1:v]overlay=0:0,format=yuv420p[v]")
+          f"y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps={FPS},{GRADE},setsar=1[bg];"
+          f"[1:v]{chain}[card];"
+          f"[bg][card]overlay={xy},format=yuv420p[v]")
     sh(["ffmpeg", "-y", "-loglevel", "error",
         "-loop", "1", "-t", f"{d:.3f}", "-i", img,
-        "-i", card, "-i", aud,
+        "-loop", "1", "-i", card, "-i", aud,
         "-filter_complex", vf, "-map", "[v]", "-map", "2:a",
         *ENC, "-shortest", out])
+
+
+def scene_broll(clip: str, card: str, aud: str, out: str) -> None:
+    """REAL b-roll as the beat base (the reference's actual look).
+
+    A free generative model cannot make a believable human (measured 2026-11-17:
+    pollinations 3-4/10, Gemini free image quota 0), so the standard uses free
+    licence-clean real footage (fetch_broll.py -> Coverr). The clip is looped to
+    the narration length, scaled/cropped to 16:9, graded to one look, and the
+    animated Thai Q/A card is laid over it.
+    """
+    d = dur(aud) + 0.6
+    chain, xy = _card_anim()
+    # A slow drift over the looped clip so a short stock shot never reads as a
+    # frozen background; the source is scaled up first to give the crop room.
+    vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+          f"scale={int(W * 1.12)}:{int(H * 1.12)},"
+          f"crop={W}:{H}:x='{int(W * 0.06)}+{int(W * 0.06)}*sin(2*PI*t/23)':"
+          f"y='{int(H * 0.06)}+{int(H * 0.06)}*cos(2*PI*t/29)',"
+          f"fps={FPS},{GRADE},setsar=1[bg];"
+          f"[1:v]{chain}[card];"
+          f"[bg][card]overlay={xy},format=yuv420p[v]")
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1", "-i", clip,
+        "-loop", "1", "-i", card, "-i", aud,
+        "-filter_complex", vf, "-map", "[v]", "-map", "2:a",
+        *ENC, "-t", f"{d:.3f}", out])
 
 
 def scene_hero(clip: str, card: str, aud: str, out: str) -> None:
@@ -188,6 +272,39 @@ def concat(parts: list[str], out: str, work: str) -> None:
             f.write(f"file '{os.path.abspath(p)}'\n")
     sh(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
         "-i", lst, "-c", "copy", out])
+
+
+
+def concat_xfade(parts: list[str], out: str, work: str, xf: float = 0.5) -> None:
+    """Join the beats with a crossfade instead of a hard cut.
+
+    A hard cut between two unrelated stock shots reads as assembled; the reference
+    is edited. Every segment is the same 1280x720/30fps/yuv420p so an xfade chain
+    (video) plus acrossfade (audio) is safe, at the cost of one re-encode.
+    """
+    if len(parts) == 1:
+        shutil.copyfile(parts[0], out)
+        return
+    ds = [dur(p) for p in parts]
+    inputs: list[str] = []
+    for p in parts:
+        inputs += ["-i", p]
+    fc, off = [], ds[0] - xf
+    vprev = "[0:v]"
+    for i in range(1, len(parts)):
+        lbl = f"[vx{i}]"
+        fc.append(f"{vprev}[{i}:v]xfade=transition=fade:duration={xf}:"
+                  f"offset={off:.3f}{lbl}")
+        vprev = lbl
+        off += ds[i] - xf
+    aprev = "[0:a]"
+    for i in range(1, len(parts)):
+        lbl = f"[ax{i}]"
+        fc.append(f"{aprev}[{i}:a]acrossfade=d={xf}:c1=tri:c2=tri{lbl}")
+        aprev = lbl
+    sh(["ffmpeg", "-y", "-loglevel", "error", *inputs,
+        "-filter_complex", ";".join(fc), "-map", vprev, "-map", aprev,
+        *ENC, "-movflags", "+faststart", out])
 
 
 # YouTube normalises toward -14 LUFS integrated; a clip that lands quieter is not
@@ -229,33 +346,62 @@ def finalize(out: str) -> None:
 
 
 def build(script_path: str, out: str, work: str, style: str, voice_name: str,
-          rate: str, hero_dir: str | None) -> None:
+          rate: str, hero_dir: str | None, broll: bool = True,
+          brand: str = "") -> None:
     spec = json.load(open(script_path, encoding="utf-8"))
     beats = spec["beats"]
+    brand = brand or spec.get("brand") or spec.get("title", "")
     os.makedirs(work, exist_ok=True)
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    used: set = set()
+    credits: list = []
     parts = []
     for i, b in enumerate(beats, 1):
         tag = f"{i:02d}"
         img = os.path.join(work, f"{tag}_still.jpg")
+        clip = os.path.join(work, f"{tag}_broll.mp4")
         card = os.path.join(work, f"{tag}_card.png")
         aud = os.path.join(work, f"{tag}.mp3")
         seg = os.path.join(work, f"{tag}.mp4")
         spoken = " ".join(x for x in (b.get("question", ""), b.get("answer", "")) if x)
-        if not os.path.exists(img):
-            still(b["image"], img, style, seed_of(b.get("image", tag)))
-        text_card(b.get("question", ""), b.get("answer", ""), card)
+        text_card(b.get("question", ""), b.get("answer", ""), card, brand)
         voice(spoken, aud, voice_name, rate)
         hero = os.path.join(hero_dir, f"{tag}.mp4") if hero_dir else None
+
+        got_clip = False
         if hero and os.path.exists(hero):
-            print(f"  beat {tag}: hero clip {hero}")
-            scene_hero(hero, card, aud, seg)
+            clip = hero
+            got_clip = True
+        elif broll and not os.path.exists(clip):
+            q = b.get("broll") or b.get("image", "")
+            hit = fetch_broll.pick(q, avoid=used) if q else None
+            if hit and fetch_broll.download(hit, clip):
+                used.add(hit.get("id"))
+                credits.append({"beat": tag, **fetch_broll.attribution(hit)})
+                got_clip = True
+            else:
+                print(f"  beat {tag}: no usable b-roll for {q!r}; using a still",
+                      file=sys.stderr)
+
+        if got_clip:
+            print(f"  beat {tag}: real b-roll ({dur(aud):.1f}s)")
+            scene_broll(clip, card, aud, seg)
         else:
+            if not os.path.exists(img):
+                still(b.get("image", tag), img, style, seed_of(b.get("image", tag)))
             print(f"  beat {tag}: still ({dur(aud):.1f}s)")
             scene_still(img, card, aud, seg)
         parts.append(seg)
-    concat(parts, out, work)
-    finalize(out)
+
+    xf = 0.5
+    body = os.path.join(work, "_body.mp4")
+    concat_xfade(parts, body, work, xf)
+    finalize(body)
+    os.replace(body, out)
+    if credits:
+        att = os.path.join(work, "attribution.json")
+        json.dump(credits, open(att, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        print(f"  b-roll credits -> {att} ({len(credits)} clips)")
 
 
 def verify(out: str) -> int:
@@ -294,14 +440,18 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--work", default="")
     ap.add_argument("--style", default="knowledge")
+    ap.add_argument("--brand", default="", help="channel bug text (defaults to the script title)")
     ap.add_argument("--voice", default=VOICE)
     ap.add_argument("--rate", default=RATE)
     ap.add_argument("--hero-dir", default=None,
                     help="dir of NN.mp4 clips; beat NN uses its clip instead of a still")
+    ap.add_argument("--no-broll", action="store_true",
+                    help="use AI stills only (the legacy path); b-roll is the default")
     ap.add_argument("--no-verify", action="store_true")
     a = ap.parse_args()
     work = a.work or os.path.join(os.path.dirname(os.path.abspath(a.out)), "qa_work")
-    build(a.script, a.out, work, a.style, a.voice, a.rate, a.hero_dir)
+    build(a.script, a.out, work, a.style, a.voice, a.rate, a.hero_dir,
+          broll=not a.no_broll, brand=a.brand)
     return verify(a.out) if not a.no_verify else 0
 
 

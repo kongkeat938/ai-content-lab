@@ -98,6 +98,18 @@ def main() -> int:
     if bot_f < 0.001:
         fail(f"no bright caption pixels in the bottom third (got {bot_f:.4f})")
 
+    # 4b. The card must survive to the END of the beat, not just the first frame.
+    # The card is a single still fed to a fade filter, so without looping it the
+    # fade blanks it after ~0.5 s and beats 2..N render textless (measured
+    # 2026-11-17). Extract a late frame and require the text is still there.
+    late = os.path.join(tmp, "late.png")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "2.5", "-i", out,
+                    "-frames:v", "1", late], check=True)
+    ltop, lbot = bright_frac(late)
+    if ltop < 0.001 or lbot < 0.001:
+        fail(f"card vanished before the beat ended (late top={ltop:.4f} "
+             f"bottom={lbot:.4f}); the card input must be looped")
+
     # 5. Loudness normalisation lands on the -14 LUFS YouTube target.
     quiet = os.path.join(tmp, "quiet.mp4")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
