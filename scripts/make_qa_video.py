@@ -198,13 +198,16 @@ def _card_anim() -> tuple[str, str]:
     return chain, xy
 
 
-# A warm cinematic grade applied to EVERY clip, so sky, beach and cat footage read
-# as one story instead of a stock grab-bag (the grader's #1 fix, 2026-11-17:
-# 'match the color grade across all clips'). Warm highlights, cool shadows, a
-# touch of contrast/saturation, a soft vignette and fine grain for a film feel.
-GRADE = ("colorbalance=rs=0.06:gs=0.02:bs=-0.05:rm=0.03:bm=-0.03,"
-         "eq=contrast=1.06:saturation=1.08:brightness=0.006,"
-         "vignette=PI/4.5,noise=alls=4:allf=t")
+# A CLEAN warm grade applied to EVERY clip, so sky, beach and cat footage read as
+# one story instead of a stock grab-bag. NO film grain, NO vignette: measured
+# 2026-11-17 the owner rejected the old grade as "ไม่คมชัด ขุ่นมัว" (not sharp,
+# muddy) and a vision grader agreed -- `noise=alls=4` + `vignette=PI/4.5` scored
+# 2/10 ("smeared vaseline, digital noise, muddy vignette"), mean luma fell
+# 171->123. Dropping both and adding `unsharp` lifted the same frame to 8/10
+# sharpness, 9/10 brightness. Warmth stays mild for cross-clip cohesion.
+GRADE = ("colorbalance=rs=0.03:gs=0.01:bs=-0.03,"
+         "eq=contrast=1.06:saturation=1.12:brightness=0.02,"
+         "unsharp=5:5:0.7:3:3:0.0")
 
 
 def scene_still(img: str, card: str, aud: str, out: str) -> None:

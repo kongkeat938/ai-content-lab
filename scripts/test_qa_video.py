@@ -150,9 +150,44 @@ def main() -> int:
         fail(f"a cached b-roll clip was discarded (frame mean G={g:.0f} B={b:.0f}); "
              "build() fell back to a still instead of reusing the clip")
 
+    # 7. The grade must stay CLEAN: no film grain, no vignette. The owner
+    #    rejected the shipped cut as "ไม่คมชัด ขุ่นมัว" (not sharp, muddy); a
+    #    vision grader scored the old `noise=alls=4` + `vignette=PI/4.5` grade
+    #    2/10 ("smeared vaseline, digital noise, muddy vignette") and measured
+    #    mean luma fall 171->123. A flat white frame run through GRADE must keep
+    #    its brightness (a vignette darkens the corners) and add no grain.
+    white = os.path.join(tmp, "white.png")
+    Image.new("RGB", (mq.W, mq.H), (235, 235, 235)).save(white)
+    graded = os.path.join(tmp, "graded.png")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", white,
+                    "-vf", mq.GRADE, "-frames:v", "1", graded], check=True)
+    ga = np.asarray(Image.open(graded).convert("L"), dtype=float)
+    corner = np.concatenate([ga[:60, :60].ravel(), ga[:60, -60:].ravel(),
+                             ga[-60:, :60].ravel(), ga[-60:, -60:].ravel()])
+    center = ga[ga.shape[0] // 2 - 30: ga.shape[0] // 2 + 30,
+                ga.shape[1] // 2 - 30: ga.shape[1] // 2 + 30]
+    if center.mean() < 180:
+        fail(f"grade darkens a white frame to {center.mean():.0f}; the picture "
+             "reads muddy (brightness must survive the grade)")
+    if corner.mean() < center.mean() - 12:
+        fail(f"grade vignettes the corners ({corner.mean():.0f} vs centre "
+             f"{center.mean():.0f}); the owner rejected a muddy vignette")
+    # Grain = high-frequency variance on a FLAT frame. A clean grade (unsharp
+    # only) leaves a flat field flat; `noise=` injects speckle.
+    lap = (-4 * ga[1:-1, 1:-1] + ga[:-2, 1:-1] + ga[2:, 1:-1]
+           + ga[1:-1, :-2] + ga[1:-1, 2:]).var()
+    if lap > 50:
+        fail(f"grade adds grain to a flat frame (LapVar={lap:.0f}); drop `noise=`")
+
+    # 7b. The production rail's b-roll grade must be clean too (same defect).
+    import make_kinetic_video as mkv
+    for name, chain in (("BROLL_GRADE", mkv.BROLL_GRADE),):
+        if "noise=" in chain or "vignette=" in chain:
+            fail(f"{name} still carries grain/vignette: {chain!r}")
+
     shutil.rmtree(tmp, ignore_errors=True)
-    print("PASS: Q/A overlay, layout, 16:9 tv-range render, burned-in text and "
-          "loudness normalisation all hold")
+    print("PASS: Q/A overlay, layout, 16:9 tv-range render, burned-in text, "
+          "loudness normalisation and a clean (grain-free, unvignetted) grade hold")
     return 0
 
 
