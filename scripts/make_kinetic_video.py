@@ -40,8 +40,13 @@ import subprocess
 import sys
 import tempfile
 
-W, H = 1920, 1080
-FPS = 25
+HERE = os.path.dirname(os.path.abspath(__file__))
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
+import video_grade  # noqa: E402  -- the shared grade chain (the approved look)
+
+W, H = video_grade.W, video_grade.H
+FPS = video_grade.FPS
 FONT = "Kanit"
 HOLD_SEC = 9.0  # a caption animates in, holds at most this long, then leaves
 # The per-chapter illustration sits inside a frame so the moving base stays
@@ -108,6 +113,51 @@ def background_chain(seed: int = 0) -> str:
         "hue=h=t*1.5:s=1.05,"
         "vignette=PI/4.5"
     )
+
+
+# The grade chain is shared with make_qa_video (video_grade) so the rail ships the
+# exact look the owner approved. Measured 2026-11-17 the two chains had drifted:
+# this file scored LapVar 15.4 on a clip the approved chain scored 46.6 on (~3x
+# softer), because it lacked cas, used bicubic, and skipped per-clip normalisation.
+BROLL_GRADE = video_grade.GRADE
+
+
+def broll_seg_chain(index: int, start: float, end: float, mean_luma: float = 255.0) -> str:
+    """Scale/crop one b-roll clip to 16:9, grade it, drift it, cut to [start,end]."""
+    chain = video_grade.broll_chain(mean_luma).replace(",setsar=1", "")
+    return (f"[{index}:v]{chain},setsar=1,"
+            f"trim=start={start:.3f}:end={end:.3f},setpts=PTS-STARTPTS[bg]")
+
+
+def broll_base(clips: list[dict], work: str) -> str:
+    """Concat real b-roll (one clip per narration beat) into a full-length base.
+
+    Each clip is looped to cover its beat, normalised to 1280x720 16:9, graded and
+    drifted, then the segments are concatenated. Returns the base video path; the
+    captions and voice are burned on top afterwards by build().
+    """
+    import fetch_broll  # shared with the approved renderer; no heavy import cost
+    parts = []
+    for i, c in enumerate(clips):
+        s, e = float(c["start"]), float(c["end"])
+        lum = fetch_broll.mean_luma(c["clip"])
+        seg = os.path.join(work, f"_b{i}.mp4")
+        run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1",
+             "-i", c["clip"], "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo",
+             "-filter_complex", broll_seg_chain(0, s, e, lum),
+             "-map", "[bg]", "-map", "1:a", "-t", f"{e - s:.3f}",
+             "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+             "-pix_fmt", "yuv420p", "-color_range", "tv", "-r", str(FPS),
+             "-c:a", "aac", "-ar", "48000", "-ac", "2", "-shortest", seg])
+        parts.append(seg)
+    lst = os.path.join(work, "_broll.txt")
+    with open(lst, "w", encoding="utf-8") as f:
+        for p in parts:
+            f.write(f"file '{os.path.abspath(p)}'\n")
+    base = os.path.join(work, "_broll_base.mp4")
+    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
+         "-i", lst, "-c", "copy", base])
+    return base
 
 
 def ass_escape(text: str) -> str:
@@ -246,7 +296,8 @@ def chapter_overlay_chain(chapters: list[dict], seed: int = 0) -> tuple[list[str
 
 def build(audio: str, timing_path: str | None, out: str, title: str = "",
           brand: str = "", seed: int = 0, crf: int = 24,
-          preset: str = "veryfast", chapters: list[dict] | None = None) -> dict:
+          preset: str = "veryfast", chapters: list[dict] | None = None,
+          broll: list[dict] | None = None) -> dict:
     total = duration(audio)
     lines = load_lines(timing_path, total)
     tmp = tempfile.mkdtemp(prefix="kinetic_")
@@ -264,7 +315,16 @@ def build(audio: str, timing_path: str | None, out: str, title: str = "",
     subs = f"subtitles='{ass_arg}':fontsdir='{fonts}'"
 
     chapters = [c for c in (chapters or []) if os.path.exists(c.get("image", ""))]
-    if chapters:
+    broll = [c for c in (broll or []) if os.path.exists(c.get("clip", ""))]
+    if broll:
+        # Real footage as the base -- the reference's actual look. One clip per
+        # narration beat, graded and drifted, with the captions burned on top.
+        base = broll_base(broll, os.path.dirname(os.path.abspath(out)) or ".")
+        frags = [f"[0:v]{subs}[v]"]
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", base, "-i", audio,
+               "-filter_complex", ";".join(frags),
+               "-map", "[v]", "-map", "1:a:0"]
+    elif chapters:
         frags, last = chapter_overlay_chain(chapters, seed)
         frags.append(f"{last}{subs}[v]")
         cmd = ["ffmpeg", "-y", "-loglevel", "error",
@@ -300,6 +360,7 @@ def build(audio: str, timing_path: str | None, out: str, title: str = "",
         "duration_sec": round(duration(out), 2),
         "captions": len(lines),
         "chapters": len(chapters),
+        "broll": len(broll),
         "title": title,
     }
     with open(out + ".info.json", "w", encoding="utf-8") as f:
@@ -320,12 +381,18 @@ def main() -> int:
     ap.add_argument("--chapters", default=None,
                     help="JSON file: [{\"image\",\"start\",\"end\"}, ...] -- one "
                          "illustration per narration beat, over the moving base")
+    ap.add_argument("--broll", default=None,
+                    help="JSON file: [{\"clip\",\"start\",\"end\"}, ...] -- real "
+                         "stock footage as the base (the reference look)")
     a = ap.parse_args()
     chapters = None
     if a.chapters and os.path.exists(a.chapters):
         chapters = json.load(open(a.chapters, encoding="utf-8"))
+    broll = None
+    if a.broll and os.path.exists(a.broll):
+        broll = json.load(open(a.broll, encoding="utf-8"))
     info = build(a.audio, a.timing, a.out, a.title, a.brand, a.seed, a.crf,
-                 a.preset, chapters)
+                 a.preset, chapters, broll)
     print(json.dumps(info, ensure_ascii=False))
     return 0
 

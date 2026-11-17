@@ -95,6 +95,52 @@ def build_chapter_plan(work: str, info_path: str, images_dir: str,
     return out
 
 
+def build_broll_plan(work: str, info_path: str, max_cards: int = 24) -> str:
+    """Write a broll.json mapping each narration beat to a REAL stock clip.
+
+    The owner's reference is real live-action footage, and a free generative model
+    cannot make a believable human (measured 2026-11-17), so the standard uses free
+    licence-clean real video (fetch_broll.py -> Coverr). One clip is fetched per
+    (coalesced) beat and named after the piece, so a rebuild reuses it. A beat that
+    cannot be sourced FAILS the build rather than shipping a still into a live-action
+    set -- a generator that can drop a piece must fail, not write a partial plan.
+
+    Returns the path to the plan (consumed by make_kinetic_video --broll).
+    """
+    import make_chapter_video as _mcv
+    import fetch_broll
+    info = json.load(open(info_path, encoding="utf-8"))
+    segs = _mcv.coalesce(_mcv.piece_boundaries(info), max_cards)
+    if not segs:
+        raise SystemExit(f"{info_path} has no pieces; cannot plan b-roll")
+    clips_dir = os.path.join(work, "broll")
+    os.makedirs(clips_dir, exist_ok=True)
+    plan, t, used, credits = [], 0.0, set(), []
+    for i, (name, dur) in enumerate(segs):
+        stem = os.path.splitext(os.path.basename(name))[0]
+        dst = os.path.join(clips_dir, stem + ".mp4")
+        if not os.path.exists(dst):
+            q = label_for_piece(stem)
+            hit = fetch_broll.pick(q, avoid=used)
+            if not hit or not fetch_broll.download(hit, dst):
+                raise SystemExit(
+                    f"no real b-roll for beat {i + 1} ({stem!r}) from Coverr; "
+                    "refusing to ship a still into a live-action set -- rerun when "
+                    "the keyless API answers")
+            used.add(hit.get("id"))
+            credits.append({"beat": stem, **fetch_broll.attribution(hit)})
+        plan.append({"clip": dst, "start": round(t, 3),
+                     "end": round(t + dur, 3), "label": label_for_piece(stem)})
+        t += dur
+    out = os.path.join(work, "broll.json")
+    json.dump(plan, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    if credits:
+        json.dump(credits, open(os.path.join(work, "broll_credits.json"), "w",
+                                encoding="utf-8"), ensure_ascii=False, indent=2)
+    print(f"b-roll plan: {len(plan)} clips -> {out}")
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -134,6 +180,10 @@ def main() -> int:
     ap.add_argument("--chapters", action="store_true",
                     help="change the picture per piece (one card per chapter) "
                          "instead of one card looping for the whole file")
+    ap.add_argument("--broll", action="store_true",
+                    help="use REAL stock footage (one clip per piece, via the free "
+                         "keyless Coverr API) as the kinetic engine's base -- the "
+                         "owner's reference look (docs/QA-VIDEO-STANDARD.md)")
     ap.add_argument("--engine", default="poster", choices=["poster", "kinetic"],
                     help="poster = the still card (legacy); kinetic = an "
                          "always-moving background with captions synced to the "
@@ -237,7 +287,15 @@ def main() -> int:
             # panel's 2026-11-16 verdict: a moving gradient alone still reads as
             # low-effort). Without it the renderer is the plain moving base.
             chap_args = []
-            if a.chapters:
+            if a.broll:
+                info_path = mp3 + ".info.json"
+                if os.path.exists(info_path):
+                    plan = build_broll_plan(a.work, info_path)
+                    chap_args = ["--broll", plan]
+                else:
+                    print("kinetic --broll: no audio info.json; skipping real "
+                          "b-roll", file=sys.stderr)
+            elif a.chapters:
                 info_path = mp3 + ".info.json"
                 if os.path.exists(info_path):
                     plan = build_chapter_plan(
