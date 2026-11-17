@@ -34,6 +34,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
+import short_standard  # noqa: E402  -- the one place that decides pass/fail
+
 SCRIPTS = os.path.join(ROOT, "content", "ch2_shorts", "scripts.json")
 MANIFEST = os.path.join(ROOT, "content", "ch2_shorts.json")
 CHANNEL_ID = "UCM3QO5L_pmj34n1JVlbhh-w"
@@ -729,6 +731,32 @@ def main() -> int:
             rc = 1
             continue
 
+        # Build the 9:16 Shorts thumbnail (art if present, else the clip's own
+        # frame) and enforce the minimum standard BEFORE a single byte moves.
+        # K's rule (2026-11-17): aspect + thumbnail must meet the standard or the
+        # Short must not upload -- including the old backlog. A build that fails is
+        # held (never uploaded), and the failure is loud.
+        art_path = os.path.join(work, sid, "art.jpg")
+        thumb = os.path.join(work, sid, f"thumb_{sid}.jpg")
+        try:
+            if not os.path.exists(thumb):
+                cmd = [sys.executable, os.path.join(HERE, "make_short_thumbnail.py"),
+                       "--hook", s["hook"], "--out", thumb]
+                cmd += ["--art", art_path] if os.path.exists(art_path) else ["--video", out]
+                r = subprocess.run(cmd, capture_output=True, text=True)
+                if r.returncode != 0:
+                    print(f"  {sid}: thumbnail build failed: {r.stderr[-300:]}", file=sys.stderr)
+            ok, reasons, metrics = short_standard.verify_short(out, thumb)
+        except Exception as exc:                       # noqa: BLE001 -- a missing
+            ok, reasons, metrics = False, [f"standard check error: {exc}"], {}
+        if not ok:
+            print(f"  {sid}: HELD -- below the minimum standard, not uploading:")
+            for why in reasons:
+                print(f"      - {why}")
+            rc = 1
+            continue
+        print(f"  {sid}: meets the standard {metrics}")
+
         description = (f"{s['hook']}\n\n" + "\n".join(s["lines"]) +
                        f"\n\n{s['cta']}" + spec["tail"] +
                        (MUSIC_CREDIT if spec.get("music_dir") else ""))
@@ -768,6 +796,17 @@ def main() -> int:
             continue
         vid = response["id"]
         posted_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        # Set the standard thumbnail. Best-effort like the CTA comment: a quota 403
+        # must not lose the upload, and set_thumbnails.py finishes it on a later run.
+        thumb_set = False
+        try:
+            yt.thumbnails().set(videoId=vid,
+                                media_body=MediaFileUpload(thumb)).execute()
+            thumb_set = True
+            print("  thumbnail set")
+        except HttpError as exc:
+            print(f"  thumbnail deferred ({exc.status_code}); set_thumbnails.py will finish it",
+                  file=sys.stderr)
         # The CTA comment is best-effort and never blocks the record (which must be
         # written before anything else can fail).
         note = pin_cta_comment(yt, vid, spec, s, args.privacy)
@@ -777,6 +816,8 @@ def main() -> int:
                               "title": body["snippet"]["title"],
                               "posted_at": posted_at,
                               "cta_note": note,
+                              "thumbnail": os.path.relpath(thumb, ROOT),
+                              "thumbnail_set": thumb_set,
                               "shape": hook_shape(s, spec.get("cues")),
                               **({"probe": True, "probe_voice": "alt"} if stalled else {})}
         save(man, spec["manifest"])   # record before anything else can fail

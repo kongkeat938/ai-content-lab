@@ -49,8 +49,9 @@ ROOT = os.path.dirname(HERE)
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 import fetch_broll  # noqa: E402
+import video_grade  # noqa: E402  -- the shared, single-source b-roll grade chain
 FONTS = os.path.join(ROOT, "assets", "fonts")
-W, H, FPS = 1920, 1080, 30
+W, H, FPS = video_grade.W, video_grade.H, video_grade.FPS
 # Reject b-roll whose mean luma is below this: a dark clip makes the beat read
 # muddy ('ขุ่นมัว'), the exact complaint the owner raised (measured 2026-11-17:
 # a 'sleepy' clip landed at luma 70). Bright, airy footage is the 10/10 target.
@@ -226,9 +227,7 @@ def _card_anim() -> tuple[str, str]:
 # sharpness, 9/10 brightness. `cas` (contrast-adaptive sharpen) then doubles the
 # local detail (measured LapVar 37->90 on a hazy ocean frame) without losing
 # brightness, which is what "คมชัด แจ่มใส" needs. Warmth stays mild for cohesion.
-GRADE = ("colorbalance=rs=0.03:gs=0.01:bs=-0.03,"
-         "eq=contrast=1.08:saturation=1.14:brightness=0.025,"
-         "unsharp=5:5:0.6:3:3:0.0,cas=0.6")
+GRADE = video_grade.GRADE   # the one chain, shared with the kinetic rail
 
 
 def scene_still(img: str, card: str, aud: str, out: str) -> None:
@@ -254,35 +253,22 @@ def scene_still(img: str, card: str, aud: str, out: str) -> None:
 # costs sharpness (measured 2026-11-17: native centre LapVar 119 vs 88 at 1.12x).
 # So the zoom is kept small and both scales use lanczos (95.7 vs bicubic 87.6 at
 # 1.12x) -- the guard test_qa_video.py #8 fails if this softens the picture.
-BROLL_ZOOM = 1.06
-BROLL_FLAGS = "lanczos"
-# Per-clip brightness normalisation: stock clips vary a lot (measured 2026-11-17
-# the 'cat' clip landed at luma 107 while the 'sky' clip was 176), and a dark beat
-# reads as 'ขุ่นมัว' next to a bright one. So each clip is measured and gamma-lifted
-# toward this target (capped, so a bright clip is left alone and highlights hold).
-BROLL_LUMA_TARGET = 150.0
-BROLL_GAMMA_MAX = 1.55
+# Per-clip brightness normalisation and the zoom/resample chain all live in
+# video_grade so this renderer and the kinetic rail cannot drift apart again.
+BROLL_ZOOM = video_grade.BROLL_ZOOM
+BROLL_FLAGS = video_grade.BROLL_FLAGS
+BROLL_LUMA_TARGET = video_grade.BROLL_LUMA_TARGET
+BROLL_GAMMA_MAX = video_grade.BROLL_GAMMA_MAX
 
 
 def broll_gamma(clip: str) -> float:
     """Gamma to lift `clip` toward BROLL_LUMA_TARGET, capped. Measured, not fixed."""
-    lum = fetch_broll.mean_luma(clip)
-    if lum >= BROLL_LUMA_TARGET:
-        return 1.0
-    g = 1.0 + (BROLL_LUMA_TARGET - lum) / 120.0
-    return round(min(g, BROLL_GAMMA_MAX), 3)
+    return video_grade.broll_gamma(fetch_broll.mean_luma(clip))
 
 
 def broll_chain(clip: str) -> str:
     """Background chain: fit to 16:9, small lanczos zoom, drift, normalise, grade."""
-    zx, zy = int(W * BROLL_ZOOM), int(H * BROLL_ZOOM)
-    dx, dy = int(W * (BROLL_ZOOM - 1) / 2), int(H * (BROLL_ZOOM - 1) / 2)
-    g = broll_gamma(clip)
-    norm = "" if g == 1.0 else f"eq=gamma={g},"
-    return (f"scale={W}:{H}:force_original_aspect_ratio=increase:flags={BROLL_FLAGS},"
-            f"crop={W}:{H},scale={zx}:{zy}:flags={BROLL_FLAGS},"
-            f"crop={W}:{H}:x='{dx}+{dx}*sin(2*PI*t/23)':"
-            f"y='{dy}+{dy}*cos(2*PI*t/29)',fps={FPS},{norm}{GRADE},setsar=1")
+    return video_grade.broll_chain(fetch_broll.mean_luma(clip))
 
 
 def scene_broll(clip: str, card: str, aud: str, out: str) -> None:

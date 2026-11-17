@@ -40,8 +40,13 @@ import subprocess
 import sys
 import tempfile
 
-W, H = 1920, 1080
-FPS = 25
+HERE = os.path.dirname(os.path.abspath(__file__))
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
+import video_grade  # noqa: E402  -- the shared grade chain (the approved look)
+
+W, H = video_grade.W, video_grade.H
+FPS = video_grade.FPS
 FONT = "Kanit"
 HOLD_SEC = 9.0  # a caption animates in, holds at most this long, then leaves
 # The per-chapter illustration sits inside a frame so the moving base stays
@@ -110,25 +115,17 @@ def background_chain(seed: int = 0) -> str:
     )
 
 
-# The warm grade + slow drift applied to every real b-roll base, so the
-# disparate stock clips read as one story and every frame keeps moving.
-# NO film grain, NO vignette: measured 2026-11-17 the owner rejected the old
-# grade (noise=alls=4 + vignette=PI/4.5) as "ไม่คมชัด ขุ่นมัว" -- a vision grader
-# scored that 2/10 ("smeared vaseline, digital noise, muddy vignette"). Dropping
-# both and adding `unsharp` lifted the same frame to 8/10 sharpness, 9/10
-# brightness while the mild warmth keeps cross-clip cohesion.
-BROLL_GRADE = ("colorbalance=rs=0.03:gs=0.01:bs=-0.03,"
-               "eq=contrast=1.06:saturation=1.12:brightness=0.02,"
-               "unsharp=5:5:0.7:3:3:0.0")
+# The grade chain is shared with make_qa_video (video_grade) so the rail ships the
+# exact look the owner approved. Measured 2026-11-17 the two chains had drifted:
+# this file scored LapVar 15.4 on a clip the approved chain scored 46.6 on (~3x
+# softer), because it lacked cas, used bicubic, and skipped per-clip normalisation.
+BROLL_GRADE = video_grade.GRADE
 
 
-def broll_seg_chain(index: int, start: float, end: float) -> str:
+def broll_seg_chain(index: int, start: float, end: float, mean_luma: float = 255.0) -> str:
     """Scale/crop one b-roll clip to 16:9, grade it, drift it, cut to [start,end]."""
-    dx, dy = int(W * 0.03), int(H * 0.03)
-    return (f"[{index}:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
-            f"crop={W}:{H},scale={int(W * 1.08)}:{int(H * 1.08)},"
-            f"crop={W}:{H}:x='{dx}+{dx}*sin(2*PI*t/23)':"
-            f"y='{dy}+{dy}*cos(2*PI*t/29)',fps={FPS},{BROLL_GRADE},setsar=1,"
+    chain = video_grade.broll_chain(mean_luma).replace(",setsar=1", "")
+    return (f"[{index}:v]{chain},setsar=1,"
             f"trim=start={start:.3f}:end={end:.3f},setpts=PTS-STARTPTS[bg]")
 
 
@@ -139,13 +136,15 @@ def broll_base(clips: list[dict], work: str) -> str:
     drifted, then the segments are concatenated. Returns the base video path; the
     captions and voice are burned on top afterwards by build().
     """
+    import fetch_broll  # shared with the approved renderer; no heavy import cost
     parts = []
     for i, c in enumerate(clips):
         s, e = float(c["start"]), float(c["end"])
+        lum = fetch_broll.mean_luma(c["clip"])
         seg = os.path.join(work, f"_b{i}.mp4")
         run(["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1",
              "-i", c["clip"], "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo",
-             "-filter_complex", broll_seg_chain(0, s, e),
+             "-filter_complex", broll_seg_chain(0, s, e, lum),
              "-map", "[bg]", "-map", "1:a", "-t", f"{e - s:.3f}",
              "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
              "-pix_fmt", "yuv420p", "-color_range", "tv", "-r", str(FPS),

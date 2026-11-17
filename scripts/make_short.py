@@ -385,11 +385,20 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None,
     for i, (card, end) in enumerate(zip(cards, bounds)):
         seg = os.path.join(d, f"seg_{i:02d}.mp4")
         seg_len = max(0.4, end - prev)
-        vf = (f"[1:v]scale={W}:{H}[c];[0:v][c]overlay=0:0:format=auto[v]")
+        # Limited range (tv) + bt709 to match the long-form standard. Without the
+        # explicit range the source JPEGs decode as full-range (pc) and the encode
+        # inherits yuvj420p, which plays washed-out or crushed on most players
+        # (docs/RECIPE.md; measured 2026-11-17 on a built Short: yuvj420p/pc/bt470bg).
+        vf = (f"[1:v]scale={W}:{H}[c];[0:v][c]overlay=0:0,"
+              f"format=yuv420p,setparams=range=tv:colorspace=bt709:"
+              f"color_primaries=bt709:color_trc=bt709[v]")
         cmd = ["ffmpeg", "-y", "-loop", "1", "-t", f"{seg_len:.3f}", "-i", bg,
                "-loop", "1", "-t", f"{seg_len:.3f}", "-i", card,
                "-filter_complex", vf, "-map", "[v]",
-               "-r", "30", "-pix_fmt", "yuv420p", "-c:v", "libx264",
+               "-r", "30", "-pix_fmt", "yuv420p",
+               "-color_range", "tv", "-colorspace", "bt709",
+               "-color_primaries", "bt709", "-color_trc", "bt709",
+               "-c:v", "libx264",
                "-preset", "veryfast", "-crf", "20", seg]
         run(cmd)
         parts.append(seg)

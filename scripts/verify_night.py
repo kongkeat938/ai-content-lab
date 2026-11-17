@@ -25,7 +25,8 @@ BED_MAX_HEADROOM_DB = 30.0  # ...but not so far it is inaudible
 def probe(path: str) -> dict:
     r = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries",
-         "format=duration:stream=codec_type,duration,color_range,width,height",
+         "format=duration:stream=codec_type,duration,color_range,color_space,"
+         "pix_fmt,width,height",
          "-of", "json", path], capture_output=True, text=True, check=True)
     return json.loads(r.stdout)
 
@@ -98,6 +99,17 @@ def main() -> int:
         fails.append(f"true peak {tp} above {TP_MAX} dBFS")
     if streams["video"].get("color_range") not in ("tv", "limited"):
         fails.append(f"color_range is {streams['video'].get('color_range')}, expected tv")
+    # The owner's minimum bar for EVERY channel (2026-11-17): sharp 1080p, the
+    # long-form colour standard. A 720p file or a full-range JPEG encode is not
+    # publishable, so this hard-fails it (the ch4 rail's --engine kinetic was
+    # shipping a softer look than the approved one until the grade was shared).
+    if (streams["video"].get("width"), streams["video"].get("height")) != (1920, 1080):
+        fails.append(f"picture is {streams['video'].get('width')}x"
+                     f"{streams['video'].get('height')}, expected 1920x1080")
+    if streams["video"].get("pix_fmt") != "yuv420p":
+        fails.append(f"pix_fmt is {streams['video'].get('pix_fmt')}, expected yuv420p")
+    if streams["video"].get("color_space") not in ("bt709", None, "unknown"):
+        fails.append(f"color_space is {streams['video'].get('color_space')}, expected bt709")
 
     head = bed_headroom(path)
     print(f"bed headroom  {head:.1f} dB under the voice")
