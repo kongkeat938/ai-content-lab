@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="th"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>พรีวิว — ฟอร์แมตใหม่ b-roll จริง (รอ K อนุมัติ)</title>
+  <title>พรีวิว — ฟอร์แมตใหม่ b-roll จริง (คมชัด 1080p, รอ K อนุมัติ)</title>
 <style>
  :root{--bg:#0f1115;--card:#171a21;--line:#262b36;--ink:#e8e8ea;--mut:#9aa0a6}
  *{box-sizing:border-box}
@@ -25,8 +25,8 @@
  th{background:#1c2029;color:#c9cdd4}
  .note{color:var(--mut);font-size:13px;margin-top:26px;line-height:1.7}
 </style></head><body>
-<h1>พรีวิวฟอร์แมตใหม่ — ยัง<b>ไม่</b>ตั้งเป็นมาตรฐาน รอ K ดูและอนุมัติ</h1>
-<p class="sub">วิธีใหม่ = <b>ฟุตเทจจริง (stock ฟรี)</b> 1 คลิป/beat + เกรดอุ่นเดียวกัน + การ์ดกระจกฝ้า + เสียงไทย. เรนเดอร์จริงจาก <code>scripts/make_qa_video.py --broll</code></p>
+<h1>พรีวิวฟอร์แมตใหม่ (คมชัด 1080p) — ยัง<b>ไม่</b>ตั้งเป็นมาตรฐาน รอ K ดูและอนุมัติ</h1>
+<p class="sub">วิธีใหม่ = <b>ฟุตเทจจริง (stock ฟรี)</b> 1 คลิป/beat + เกรดสะอาดเดียวกัน (ไม่ใส่เกรน/ขอบมืด) + <b>ข้อความลอย</b> ขอบดำ + เสียงไทย. เรนเดอร์จริง <b>1080p</b> จาก <code>scripts/make_qa_video.py</code></p>
 
 <div class="banner">
  🎬 <b>K ดูวิดีโอทั้ง 3 ด้านล่างแล้วตัดสิน</b> — ซ้าย = ของเดิม, กลาง = ของใหม่, ขวา = reference ของ K.
@@ -35,15 +35,17 @@
 
 <div class="grid">
  <div class="card">
-  <h2>ของใหม่ <span class="tag new">b-roll จริง · ฟรี</span></h2>
+  <h2>ของใหม่ <span class="tag new">b-roll จริง · 1080p · สะอาด</span></h2>
   <video src="media/qa_demo_new.mp4" controls playsinline preload="metadata" poster="poster.jpg"></video>
-  <div class="score"><span>Production <b>7</b>/10</span><span>Thai acceptance <b>8</b>/10</span><span>Appeal 6/10</span></div>
+  <div class="score"><span>คมชัด (sharp) <b>9</b>/10</span><span>แจ่มใส (bright) <b>9</b>/10</span><span>สะอาด <b>9</b>/10</span></div>
   <ul>
-   <li>ฟุตเทจจริง 4/4 beat (ท้องฟ้า · ทะเล · นอน · พระจันทร์)</li>
-   <li>เกรดอุ่นเดียวกันทุกคลิป ให้ดูเป็นเรื่องเดียวกัน</li>
-   <li>การ์ดกระจกฝ้า: ชิปคำถามซ้ายบน · การ์ดคำตอบล่าง · tag ช่องมุมขวา</li>
+   <li>ฟุตเทจจริง 4/4 beat (ท้องฟ้า · ทะเล · แมวหาว · พระจันทร์)</li>
+   <li>เรนเดอร์ <b>1080p</b> crf 18 — ภาพไม่ถูกบีบจนเบลอ</li>
+   <li><b>ข้อความลอย</b>: Kanit ขาว + ขอบดำหนา + เงา (ไม่มีกล่องดำ)</li>
+    <li>เกรดสะอาดทุกคลิป — <b>ตัดเกรน+ขอบมืด</b> ที่ทำให้ "ขุ่นมัว" ออกแล้ว</li>
+    <li>ปรับความสว่าง <b>รายคลิป</b> อัตโนมัติ (วัด luma จริง) ให้ทุก beat สว่างเท่ากัน</li>
    <li>เสียงไทย (edge-tts) + แคปชันซิงก์เสียง · tv colour range · -14 LUFS</li>
-   <li>Grader: <i>"designed and intentional, localized Thai educational short"</i></li>
+   <li>การ์ดข้อความเดิมหายตั้งแต่ beat 2 — แก้แล้ว (ใส่ <code>-loop 1</code>)</li>
   </ul>
  </div>
 
