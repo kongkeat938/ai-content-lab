@@ -206,7 +206,7 @@
     },
     {
       "key": "ch1_auto_202647_r8",
-      "state": "ready",
+      "state": "published",
       "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/genx-long-16da042f4a0a-af6a96/video.mp4",
       "audio_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/genx-long-16da042f4a0a-af6a96/compilation.mp3",
       "thumbnail": "assets/branding/genx/thumbs/ch1_auto_202647_r8.jpg",
@@ -243,7 +243,9 @@
           "hook_sec": 20.5,
           "true_peak_dbfs": -3.2
         }
-      }
+      },
+      "video_id": "c-bM6YwnBtI",
+      "url": "https://youtu.be/c-bM6YwnBtI"
     }
   ]
 }
