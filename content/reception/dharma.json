@@ -251,19 +251,32 @@
         "flat": 0
       },
       "at": "2026-11-16T23:29:43+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "unknown",
+      "last_shape": null,
+      "last_video_id": "s2-XVcNsDd0",
+      "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+      "hours_since_last": 2.01,
+      "stall": {
+        "stalled": false,
+        "flat": 0
+      },
+      "at": "2026-11-17T01:30:50+00:00"
     }
   ],
   "latest": {
     "allowed": true,
     "verdict": "unknown",
     "last_shape": null,
-    "last_video_id": "_a1AnQ36Faw",
+    "last_video_id": "s2-XVcNsDd0",
     "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 25.56,
+    "hours_since_last": 2.01,
     "stall": {
       "stalled": false,
       "flat": 0
     },
-    "at": "2026-11-16T23:29:43+00:00"
+    "at": "2026-11-17T01:30:50+00:00"
   }
 }
