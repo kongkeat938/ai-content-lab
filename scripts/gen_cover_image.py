@@ -57,6 +57,11 @@ STYLES = {
                   "soft blue sky and daylight, curious and friendly mood, simple "
                   "shapes, minimal flat illustration, no text, no words, "
                   "no watermark, centered subject"),
+    # Realism for the reference look (2026-11-17): the owner's target is a Veo
+    # clip, so the stills must read as photographs, not the flat "knowledge" art.
+    "photoreal": ("photorealistic documentary photograph, natural light, realistic "
+                  "texture and depth of field, cinematic, national geographic style, "
+                  "no text, no words, no watermark, no people"),
 }
 
 

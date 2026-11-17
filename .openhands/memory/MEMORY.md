@@ -6,8 +6,8 @@
 read `docs/PROJECT-MAP.md` first; never a second copy (K; `test_project_map.py`).**
 
 ## 🪪 ak's identity & team
-**Every tool/agent uses its OWN mailbox, never K's** (`test_agent_own_email.py`): ak = `ak_mail.py`;
-worker = `ak.identity.mail.<role>`. **Workers** (`team.py run <role>`) DO the work; panel advises.
+**Every tool/agent uses its OWN mailbox, never K's** (`test_agent_own_email.py`): ak = `ak_mail.py`.
+**Workers** (`team.py run <role>`) DO the work; panel advises.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP watch-hours = long-form ONLY** (Shorts don't count); steer by long-form watch-hours/week +
@@ -28,9 +28,8 @@ worker = `ak.identity.mail.<role>`. **Workers** (`team.py run <role>`) DO the wo
   `advise.py` (≥5; openrouter/ChatGPT/DeepSeek/Devin/HF all dead — don't retry). **PC1 = ak's
   hands** via `winremote` 8090/Tailscale (`topics/03`); **close PC1 windows** (K).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that can drop
-  a piece must FAIL. `.get()+continue` on a config key is a silent killer
-  (`test_no_pinned_recent_date.py`). A gate that probes an API its own token cannot read (403)
-  + `|| echo 0` is a **false pass** — use an explicit opt-in DEFAULTS OFF.
+  a piece must FAIL. A gate that probes an API its own token can't read (403) + `|| echo 0` is a
+  **false pass** — DEFAULTS OFF.
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`; a push may 403 the credential-helper → push with
   `https://x-access-token:$KONGKEAT_GH_TOKEN@...`; suite = every `scripts/test_*.py`.
@@ -40,19 +39,22 @@ worker = `ak.identity.mail.<role>`. **Workers** (`team.py run <role>`) DO the wo
   repo) — same channels/tokens. FIXED: disabled + deleted its 5 YT secrets; `aeris` = READ-ONLY.
   **`videos.update` REPLACES the whole `snippet`** (read-merge-write). `topics/05`.
 - **Repo is PUBLIC** (private would halt the rails): never commit a credential
-  (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); real ones live
-  in `CH_ACCOUNTS`; labels use `public_address()`.
+  (`test_no_committed_secrets.py`) or a real address (`test_no_committed_pii.py`); labels use
+  `public_address()`.
 - **Quota:** `videos.insert` own pool; Data API resets 08:00 UTC; a GITHUB_TOKEN push
   does NOT trigger a workflow (dispatch explicitly).
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + a union merge driver
-  (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer (`test_report_single_writer.py`).
-- **One duration parser:** `scripts/yt_duration.py` (never raises; `P0D`/`P1DT2H`; `test_duration_parse.py`).
+  (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer.
+- **One duration parser:** `yt_duration.py` (never raises; `test_duration_parse.py`).
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; a long
   hook kills retention (cap 220); never downgrade a LIVE entry. **Content dir per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) on EVERY `%G%V` rail + theme ROTATES** — else a raised cadence
   is a no-op or an add/add conflict.
 - **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` falls back to VOICE
   (`test_tts_fallback.py`).
+- **Reference look = standard** (2026-11-17): `make_qa_video.py` = photoreal still + Ken Burns +
+  Thai Q/A overlay + voice, loudnorm **-14 LUFS**; guard `test_qa_video.py`; ch4 rail `--image-style
+  photoreal`. Presenter = the only gap (paid); `--hero-dir` drops one in.
 - **A rail can die at IMPORT: its workflow installs a SUBSET of the deps its script needs,
   and `continue-on-error` turns it green.** Twice (`fetch-music` no `numpy`;
   `restore-wrongly-hidden` no `google-auth-oauthlib`). `test_workflow_deps.py` sweeps it.
@@ -61,14 +63,14 @@ worker = `ak.identity.mail.<role>`. **Workers** (`team.py run <role>`) DO the wo
   live rogue" while `feeds/videos.xml` 404'd → falls back to uploads playlist `UU<id>`; exits
   **2=BLIND** (≠0). `topics/05`.
 - **Pausing a channel drops it from each rail's `matrix`; unpausing must PUT IT BACK**
-  (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`). Mail = cloud.
+  (`test_rail_channels.py`). **Audit blind to a take-down** (→ `find_removed`).
 - **ch4 PIVOT 2026-11-16** (family → knowledge "เกร็ดความรู้รอบตัว"; old genre died, 0.7
   long-form watch-h/28d). Hook opens a question (`_CURIOSITY`, not `_TENSION`); hook
   `content/hooks/knowledge.md`. `ch4-realign.yml` renames playlists in place, but the **channel
   TITLE is NOT API-settable** → **K sets it in Studio > Customization**. The wiring must be on
   `origin/main`, else the live rail still mints the dead genre (found stale 2026-11-16).
 - **Curated angles must survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected EVERY
-  curated angle (dharma 0/41); Thai shares 3-char runs. Floor **8** (`fresh_angles`).
+  angle (dharma 0/41); Thai shares 3-char runs. Floor **8**.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md` · daily logs.
