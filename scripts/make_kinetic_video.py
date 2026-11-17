@@ -44,6 +44,10 @@ W, H = 1920, 1080
 FPS = 25
 FONT = "Kanit"
 HOLD_SEC = 9.0  # a caption animates in, holds at most this long, then leaves
+# The per-chapter illustration sits inside a frame so the moving base stays
+# visible around it (the base is what keeps every frame different; a full-frame
+# image would reintroduce the static-card problem the chapter moves away from).
+ILLUSTRATION_W, ILLUSTRATION_H = 1280, 720
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 # The motion is the point: a background filter chain with none of these
@@ -202,9 +206,47 @@ def load_lines(timing_path: str | None, total: float) -> list[dict]:
     return []
 
 
+def chapter_overlay_chain(chapters: list[dict], seed: int = 0) -> tuple[list[str], str]:
+    """Filter graph that lays one illustration per chapter over the moving base.
+
+    The panel's verdict (2026-11-16, five advisors) was that a moving gradient
+    with captions alone still reads as low-effort -- it lifts AVD only ~5->12%.
+    What escapes that signal is a picture that CHANGES as the narration moves
+    between beats, on top of a base that moves every frame. So each chapter gets
+    its own illustration, faded in/out at its own boundaries and drifted by a
+    slow sine so it is not frozen either.
+
+    Returns (filter fragments, output label). The caller supplies the chapter
+    images as inputs 1..N in the same order; input 0 is the gradient base.
+    """
+    frags = [f"[0:v]{background_chain(seed)}[bg]"]
+    prev = "[bg]"
+    for i, ch in enumerate(chapters):
+        start = float(ch["start"])
+        end = float(ch["end"])
+        # Fade the illustration in and out so a chapter change is a dissolve, not
+        # a hard cut (a cut reads as a glitch to a half-watching listener).
+        fade = min(0.6, max(0.2, (end - start) / 6.0))
+        fo = max(start, end - fade)
+        frags.append(
+            f"[{i + 1}:v]scale={ILLUSTRATION_W}:{ILLUSTRATION_H}:"
+            f"force_original_aspect_ratio=decrease,format=rgba,"
+            f"fade=t=in:st={start:.3f}:d={fade:.3f}:alpha=1,"
+            f"fade=t=out:st={fo:.3f}:d={fade:.3f}:alpha=1[il{i}]")
+        tag = f"[v{i}]"
+        # The drift keeps the illustration itself alive; the sine periods are
+        # coprime so it never visibly loops.
+        frags.append(
+            f"{prev}[il{i}]overlay="
+            f"x='(W-w)/2+10*sin(2*PI*t/23)':y='(H-h)/2-70+8*cos(2*PI*t/29)':"
+            f"enable='between(t,{start:.3f},{end:.3f})'{tag}")
+        prev = tag
+    return frags, prev
+
+
 def build(audio: str, timing_path: str | None, out: str, title: str = "",
           brand: str = "", seed: int = 0, crf: int = 24,
-          preset: str = "veryfast") -> dict:
+          preset: str = "veryfast", chapters: list[dict] | None = None) -> dict:
     total = duration(audio)
     lines = load_lines(timing_path, total)
     tmp = tempfile.mkdtemp(prefix="kinetic_")
@@ -219,22 +261,45 @@ def build(audio: str, timing_path: str | None, out: str, title: str = "",
     # 2026-11-16: "แสงอาทิตย์" came out as "บปพนฎิยแพพ..."). Pointing fontsdir at
     # the bundled Kanit fixes it; the guard test asserts fontsdir is set.
     fonts = os.path.join(ROOT, "assets", "fonts").replace("\\", "/").replace(":", "\\:")
-    vf = f"{background_chain(seed)},subtitles='{ass_arg}':fontsdir='{fonts}'"
+    subs = f"subtitles='{ass_arg}':fontsdir='{fonts}'"
 
-    run(["ffmpeg", "-y", "-loglevel", "error",
-         "-f", "lavfi", "-i", gradient_source(seed, total),
-         "-i", audio,
-         "-filter_complex", f"[0:v]{vf}[v]",
-         "-map", "[v]", "-map", "1:a:0",
-         "-c:v", "libx264", "-preset", preset, "-crf", str(crf),
-         "-pix_fmt", "yuv420p", "-r", str(FPS),
-         "-c:a", "aac", "-b:a", "192k", "-shortest",
-         "-movflags", "+faststart", out])
+    chapters = [c for c in (chapters or []) if os.path.exists(c.get("image", ""))]
+    if chapters:
+        frags, last = chapter_overlay_chain(chapters, seed)
+        frags.append(f"{last}{subs}[v]")
+        cmd = ["ffmpeg", "-y", "-loglevel", "error",
+               "-f", "lavfi", "-i", gradient_source(seed, total)]
+        for c in chapters:
+            cmd += ["-loop", "1", "-framerate", str(FPS), "-t", f"{total:.3f}",
+                    "-i", c["image"]]
+        cmd += ["-i", audio,
+                "-filter_complex", ";".join(frags),
+                "-map", "[v]", "-map", f"{len(chapters) + 1}:a:0"]
+    else:
+        vf = f"{background_chain(seed)},{subs}"
+        cmd = ["ffmpeg", "-y", "-loglevel", "error",
+               "-f", "lavfi", "-i", gradient_source(seed, total),
+               "-i", audio,
+               "-filter_complex", f"[0:v]{vf}[v]",
+               "-map", "[v]", "-map", "1:a:0"]
+
+    cmd += ["-c:v", "libx264", "-preset", preset, "-crf", str(crf),
+            "-pix_fmt", "yuv420p",
+            # verify_night requires a limited-range picture (tv). Without these
+            # libx264 tags the output pc/full-range, which fails the rail's own
+            # gate (measured 2026-11-16: the kinetic output probed color_range=pc).
+            "-color_range", "tv", "-colorspace", "bt709",
+            "-color_primaries", "bt709", "-color_trc", "bt709",
+            "-r", str(FPS),
+            "-c:a", "aac", "-b:a", "192k", "-shortest",
+            "-movflags", "+faststart", out]
+    run(cmd)
 
     info = {
         "out": out,
         "duration_sec": round(duration(out), 2),
         "captions": len(lines),
+        "chapters": len(chapters),
         "title": title,
     }
     with open(out + ".info.json", "w", encoding="utf-8") as f:
@@ -252,8 +317,15 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--crf", type=int, default=24)
     ap.add_argument("--preset", default="veryfast")
+    ap.add_argument("--chapters", default=None,
+                    help="JSON file: [{\"image\",\"start\",\"end\"}, ...] -- one "
+                         "illustration per narration beat, over the moving base")
     a = ap.parse_args()
-    info = build(a.audio, a.timing, a.out, a.title, a.brand, a.seed, a.crf, a.preset)
+    chapters = None
+    if a.chapters and os.path.exists(a.chapters):
+        chapters = json.load(open(a.chapters, encoding="utf-8"))
+    info = build(a.audio, a.timing, a.out, a.title, a.brand, a.seed, a.crf,
+                 a.preset, chapters)
     print(json.dumps(info, ensure_ascii=False))
     return 0
 

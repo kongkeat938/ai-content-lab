@@ -18,6 +18,7 @@ evidence instead of an assurance.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -38,6 +39,50 @@ def label_for_piece(stem: str) -> str:
     return _re.sub(r"^\d+[_\-]+", "", stem).replace("_", " ").strip() or stem
 
 
+def build_chapter_plan(work: str, info_path: str, images_dir: str,
+                       style: str = "knowledge", prompt: str = "",
+                       max_cards: int = 24) -> str:
+    """Write a chapters.json mapping each narration beat to its own illustration.
+
+    The panel's verdict (2026-11-16) was that a moving gradient with captions
+    alone still reads as low-effort; the picture must change as the narration
+    moves between beats. `make_compilation` already records each piece's duration
+    and the cycle count, so the same boundaries `make_chapter_video` uses give
+    every beat a start/end. One illustration is generated per (coalesced) beat and
+    named after the piece, so a rebuild reproduces the same art.
+
+    Returns the path to the plan (consumed by make_kinetic_video --chapters).
+    """
+    import make_chapter_video as _mcv
+    info = json.load(open(info_path, encoding="utf-8"))
+    segs = _mcv.coalesce(_mcv.piece_boundaries(info), max_cards)
+    if not segs:
+        raise SystemExit(f"{info_path} has no pieces; cannot plan chapters")
+    os.makedirs(images_dir, exist_ok=True)
+    plan, t = [], 0.0
+    for i, (name, dur) in enumerate(segs):
+        stem = os.path.splitext(os.path.basename(name))[0]
+        dst = os.path.join(images_dir, stem + ".jpg")
+        if not os.path.exists(dst):
+            seed = int(hashlib.sha256(stem.encode()).hexdigest()[:8], 16)
+            subj = (prompt + ", " if prompt else "") + label_for_piece(stem)
+            rc, log = run([sys.executable, os.path.join(HERE, "gen_cover_image.py"),
+                           "--out", dst, "--style", style, "--seed", str(seed),
+                           "--prompt", subj, "--width", "1280", "--height", "720"])
+            if rc != 0 or not os.path.exists(dst):
+                print(f"could not generate art for {stem}; skipping its chapter",
+                      file=sys.stderr)
+                t += dur
+                continue
+        plan.append({"image": dst, "start": round(t, 3),
+                     "end": round(t + dur, 3), "label": label_for_piece(stem)})
+        t += dur
+    out = os.path.join(work, "chapters.json")
+    json.dump(plan, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    print(f"chapter plan: {len(plan)} illustrations -> {out}")
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -50,7 +95,7 @@ def main() -> int:
     ap.add_argument("--image-prompt", default="",
                     help="subject for the generated cover (English, no text)")
     ap.add_argument("--image-style", default="dharma",
-                    choices=["dharma", "family"],
+                    choices=["dharma", "family", "genx", "knowledge"],
                     help="house style for the generated cover")
     ap.add_argument("--loop-seconds", type=float, default=24.0)
     ap.add_argument("--skip-video", action="store_true")
@@ -162,42 +207,75 @@ def main() -> int:
                    *(["--timing"] if a.engine == "kinetic" else []),
                    "--key", a.key or os.path.basename(a.content)]),
     ]
-    if not a.skip_video:
+
+    def video_step() -> tuple:
+        """The video command, resolved AFTER the audio step.
+
+        The kinetic-chapters plan needs the audio's own `info.json` (piece
+        durations and cycle count) to place each illustration at the right beat,
+        and that file does not exist until the audio step has run -- so this is
+        built lazily, not when `steps` is assembled (measured 2026-11-16: the
+        eager version printed "no audio info.json; skipping per-chapter art" and
+        shipped the plain gradient).
+        """
         if a.engine == "kinetic":
             # The ch4 pivot: a picture that moves the whole time, with captions
-            # timed to the narration, instead of one still card. No images are
-            # generated, so this branch ignores --image/--chapters on purpose.
-            steps += [("video", [sys.executable,
-                                 os.path.join(HERE, "make_kinetic_video.py"),
-                                 "--audio", mp3, "--timing", mp3 + ".timing.json",
-                                 "--out", mp4, "--title", a.title,
-                                 "--brand", a.brand])]
-        elif a.chapters:
-            steps += [("video", [sys.executable,
-                                 os.path.join(HERE, "make_chapter_video.py"),
-                                 "--audio", mp3, "--info", mp3 + ".info.json",
-                                 "--images", images_dir, "--out", mp4,
-                                 "--title", a.title, "--subtitle", a.subtitle,
-                                 "--style", a.image_style,
-                                 "--prompt", a.image_prompt])]
-        else:
-            steps += [
-                ("cover", [sys.executable, "-c",
-                           f"import sys;sys.path.insert(0,{HERE!r});import make_poster;"
-                           f"make_poster.build({image!r},{cover!r},{a.title!r},"
-                           f"{a.subtitle!r},3)"]),
-                ("video", [sys.executable, os.path.join(HERE, "make_night_video.py"),
-                           "--audio", mp3, "--image", image, "--cover", cover,
-                           "--out", mp4, "--loop-seconds", str(a.loop_seconds)]),
-            ]
+            # timed to the narration, instead of one still card. With --chapters
+            # each beat ALSO gets its own illustration over the moving base (the
+            # panel's 2026-11-16 verdict: a moving gradient alone still reads as
+            # low-effort). Without it the renderer is the plain moving base.
+            chap_args = []
+            if a.chapters:
+                info_path = mp3 + ".info.json"
+                if os.path.exists(info_path):
+                    plan = build_chapter_plan(
+                        a.work, info_path, os.path.join(a.work, "images"),
+                        style=a.image_style, prompt=a.image_prompt)
+                    chap_args = ["--chapters", plan]
+                else:
+                    print("kinetic --chapters: no audio info.json; skipping "
+                          "per-chapter art", file=sys.stderr)
+            return ("video", [sys.executable,
+                              os.path.join(HERE, "make_kinetic_video.py"),
+                              "--audio", mp3, "--timing", mp3 + ".timing.json",
+                              "--out", mp4, "--title", a.title,
+                              "--brand", a.brand, *chap_args])
+        if a.chapters:
+            return ("video", [sys.executable,
+                              os.path.join(HERE, "make_chapter_video.py"),
+                              "--audio", mp3, "--info", mp3 + ".info.json",
+                              "--images", images_dir, "--out", mp4,
+                              "--title", a.title, "--subtitle", a.subtitle,
+                              "--style", a.image_style,
+                              "--prompt", a.image_prompt])
+        return ("cover", [sys.executable, "-c",
+                          f"import sys;sys.path.insert(0,{HERE!r});import make_poster;"
+                          f"make_poster.build({image!r},{cover!r},{a.title!r},"
+                          f"{a.subtitle!r},3)"])
 
-    for name, cmd in steps:
+    def run_step(name: str, cmd: list) -> int:
         print(f"== {name} ==", flush=True)
         rc, log = run(cmd)
         sys.stdout.write(log[-2000:])
         if rc != 0:
             print(f"build failed at step '{name}' (exit {rc})", file=sys.stderr)
+        return rc
+
+    # Audio first, always: the kinetic plan depends on the audio's own info.json.
+    if run_step(*steps[0]) != 0:
+        return 2
+    if not a.skip_video:
+        if run_step(*video_step()) != 0:
             return 2
+        # The legacy poster path needs a cover before the video; its video_step
+        # returned the cover step, so run the actual poster video now.
+        if a.engine != "kinetic" and not a.chapters:
+            if run_step("video", [sys.executable,
+                                  os.path.join(HERE, "make_night_video.py"),
+                                  "--audio", mp3, "--image", image, "--cover", cover,
+                                  "--out", mp4, "--loop-seconds",
+                                  str(a.loop_seconds)]) != 0:
+                return 2
 
     if a.skip_video:
         print("video skipped; nothing to verify")
