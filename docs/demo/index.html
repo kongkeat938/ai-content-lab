@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>พรีวิว — ฟอร์แมตใหม่ b-roll จริง (รอ K อนุมัติ)</title>
+<style>
+ :root{--bg:#0f1115;--card:#171a21;--line:#262b36;--ink:#e8e8ea;--mut:#9aa0a6}
+ *{box-sizing:border-box}
+ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:28px}
+ h1{font-size:22px;margin:0 0 4px} h2{font-size:16px;margin:0 0 12px;color:#c9cdd4}
+ .sub{color:var(--mut);margin:0 0 20px;line-height:1.6}
+ .banner{background:#3a2412;border:1px solid #5a3a1a;color:#f0b46a;padding:12px 16px;border-radius:10px;margin:0 0 24px;font-size:14px;line-height:1.6}
+ .grid{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;width:420px}
+ video{width:100%;border-radius:8px;background:#000;display:block}
+ .tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+ .new{background:#12351f;color:#7ee2a8} .old{background:#2a2f3a;color:#aab} .ref{background:#3a2412;color:#f0b46a}
+ ul{color:#b8bdc6;font-size:13.5px;line-height:1.65;margin:10px 0 0;padding-left:18px}
+ code{background:#22262f;padding:1px 5px;border-radius:4px;font-size:12.5px}
+ .score{display:flex;gap:18px;margin:8px 0 0;font-size:14px}
+ .score b{color:#7ee2a8;font-size:20px}
+ .strip{display:flex;gap:8px;margin-top:10px}
+ .strip img{width:100%;border-radius:6px}
+ table{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:8px}
+ th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+ th{background:#1c2029;color:#c9cdd4}
+ .note{color:var(--mut);font-size:13px;margin-top:26px;line-height:1.7}
+</style></head><body>
+<h1>พรีวิวฟอร์แมตใหม่ — ยัง<b>ไม่</b>ตั้งเป็นมาตรฐาน รอ K ดูและอนุมัติ</h1>
+<p class="sub">วิธีใหม่ = <b>ฟุตเทจจริง (stock ฟรี)</b> 1 คลิป/beat + เกรดอุ่นเดียวกัน + การ์ดกระจกฝ้า + เสียงไทย. เรนเดอร์จริงจาก <code>scripts/make_qa_video.py --broll</code></p>
+
+<div class="banner">
+ 🎬 <b>K ดูวิดีโอทั้ง 3 ด้านล่างแล้วตัดสิน</b> — ซ้าย = ของเดิม, กลาง = ของใหม่, ขวา = reference ของ K.
+ ถ้าผ่าน ผมจะ merge PR #38 เป็นมาตรฐานงาน ch4 ครับ. (หน้านี้อยู่บน GitHub Pages จึงไม่ตายเมื่อ pod รีไซเคิล)
+</div>
+
+<div class="grid">
+ <div class="card">
+  <h2>ของใหม่ <span class="tag new">b-roll จริง · ฟรี</span></h2>
+  <video src="media/qa_demo_new.mp4" controls playsinline preload="metadata" poster="poster.jpg"></video>
+  <div class="score"><span>Production <b>7</b>/10</span><span>Thai acceptance <b>8</b>/10</span><span>Appeal 6/10</span></div>
+  <ul>
+   <li>ฟุตเทจจริง 4/4 beat (ท้องฟ้า · ทะเล · นอน · พระจันทร์)</li>
+   <li>เกรดอุ่นเดียวกันทุกคลิป ให้ดูเป็นเรื่องเดียวกัน</li>
+   <li>การ์ดกระจกฝ้า: ชิปคำถามซ้ายบน · การ์ดคำตอบล่าง · tag ช่องมุมขวา</li>
+   <li>เสียงไทย (edge-tts) + แคปชันซิงก์เสียง · tv colour range · -14 LUFS</li>
+   <li>Grader: <i>"designed and intentional, localized Thai educational short"</i></li>
+  </ul>
+ </div>
+
+ <div class="card">
+  <h2>ของเดิม <span class="tag old">ภาพนิ่ง AI</span></h2>
+  <video src="media/qa_demo.mp4" controls playsinline preload="metadata"></video>
+  <ul>
+   <li>ภาพนิ่ง AI + zoom ช้า (ไม่ใช่ฟุตเทจจริง)</li>
+   <li>Grader ให้แค่ 4-5/10 — "generic stock slop"</li>
+   <li>คือสิ่งที่ K บอกว่า "รูปแบบนี้ไม่ผ่าน"</li>
+  </ul>
+ </div>
+
+ <div class="card">
+  <h2>Reference ของ K <span class="tag ref">Google Veo · เสียเงิน</span></h2>
+  <video src="media/reference.mp4" controls playsinline preload="metadata"></video>
+  <ul>
+   <li>พิธีกร<b>คนจริง</b>ในห้องอุ่น ๆ — จุดที่ทำฟรีไม่ได้</li>
+   <li>โมเดลฟรีทำคนจริงไม่ได้ (pollinations 3-4/10; Gemini free image quota=0)</li>
+   <li>API วิดีโอเสียเงินทุกเจ้า ประมาณ $135/คลิป 30 นาที</li>
+   <li>Panel 4/4 สรุป: อย่าจ่าย อย่าปล่อยหน้า AI ใช้ฟุตเทจจริง</li>
+  </ul>
+ </div>
+</div>
+
+<h2 style="margin-top:30px">เฟรมจากวิดีโอใหม่ (4 beat)</h2>
+<div class="strip">
+ <img src="frames/f_2.5.jpg" alt="beat 1"><img src="frames/f_9.0.jpg" alt="beat 2">
+ <img src="frames/f_16.0.jpg" alt="beat 3"><img src="frames/f_24.0.jpg" alt="beat 4">
+</div>
+
+<h2 style="margin-top:30px">เจอบั๊ก 2 ตัวตอนทำเดโม (วัดสด)</h2>
+<table>
+ <tr><th>บั๊ก</th><th>อาการที่วัดได้</th><th>แก้แล้ว</th></tr>
+ <tr>
+  <td>การ์ดหายตั้งแต่ beat 2</td>
+  <td>การ์ดเป็นภาพนิ่งป้อน <code>fade</code> ไม่ <code>-loop 1</code> ตัว fade ลบการ์ดหลัง ~0.5 วิ ทำให้ beats 2..N ไม่มีข้อความ</td>
+  <td>ใส่ <code>-loop 1</code> + guard <code>test_qa_video.py</code> เช็กเฟรมช่วงท้าย (mutate แล้ว FAIL)</td>
+ </tr>
+ <tr>
+  <td>คลิปที่โหลดแล้วถูกทิ้ง</td>
+  <td><code>elif broll and not os.path.exists(clip)</code> รันรอบ 2 เจอคลิป cache แล้วข้าม แล้วตกไปใช้ still (วัดได้ 3/4 beat เป็นภาพนิ่ง)</td>
+  <td>ใช้คลิป cache ต่อ + ตั้ง <code>got_clip=True</code> ทำให้ 4/4 beat เป็นฟุตเทจจริง</td>
+ </tr>
+</table>
+
+<p class="note">
+  ฟุตเทจจาก <b>Coverr</b> (ฟรีใช้เชิงพาณิชย์ ไม่ต้องให้เครดิต). ทดสอบเต็มชุด <code>scripts/test_*.py</code> = 88 ผ่าน / 0 ตก.<br>
+  หน้านี้เป็น <b>พรีวิว</b> ยังไม่ใช่มาตรฐาน รอ K อนุมัติก่อน merge PR #38.
+</p>
+</body></html>
