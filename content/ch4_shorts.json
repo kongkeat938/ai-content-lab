@@ -448,6 +448,18 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "116": {
+      "video_id": "pPqvHkyABw4",
+      "url": "https://youtu.be/pPqvHkyABw4",
+      "title": "ทำไมดวงจันทร์ถึงเปลี่ยนรูปร่างไปมาได้ทุกคืน #Shorts",
+      "posted_at": "2026-11-17T17:56:50+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch4_shorts/116/thumb_116.jpg",
+      "thumbnail_set": false,
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
