@@ -23,6 +23,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -66,14 +67,25 @@ def build_chapter_plan(work: str, info_path: str, images_dir: str,
         if not os.path.exists(dst):
             seed = int(hashlib.sha256(stem.encode()).hexdigest()[:8], 16)
             subj = (prompt + ", " if prompt else "") + label_for_piece(stem)
-            rc, log = run([sys.executable, os.path.join(HERE, "gen_cover_image.py"),
-                           "--out", dst, "--style", style, "--seed", str(seed),
-                           "--prompt", subj, "--width", "1280", "--height", "720"])
-            if rc != 0 or not os.path.exists(dst):
-                print(f"could not generate art for {stem}; skipping its chapter",
-                      file=sys.stderr)
-                t += dur
-                continue
+            # The standard is a uniform photoreal set (the owner's reference look,
+            # docs/QA-VIDEO-STANDARD.md). gen_cover_image falls back to a procedural
+            # gradient when the free generator is rate-limited; a gradient chapter
+            # dropped into a photoreal video reads as broken, so retry, then FAIL
+            # rather than ship a mixed set. Never skip the chapter -- a generator
+            # that can drop a piece must fail, not write a partial plan.
+            for attempt in range(3):
+                rc, log = run([sys.executable, os.path.join(HERE, "gen_cover_image.py"),
+                               "--out", dst, "--style", style, "--seed", str(seed),
+                               "--prompt", subj, "--width", "1280", "--height", "720"])
+                if rc == 0 and os.path.exists(dst) and "procedural" not in log:
+                    break
+                if attempt < 2:
+                    time.sleep(4)
+            else:
+                raise SystemExit(
+                    f"no photoreal art for chapter {i + 1} ({stem}) after 3 tries; "
+                    "refusing to ship a mixed still set -- rerun when the free "
+                    "image generator is not rate-limited")
         plan.append({"image": dst, "start": round(t, 3),
                      "end": round(t + dur, 3), "label": label_for_piece(stem)})
         t += dur
