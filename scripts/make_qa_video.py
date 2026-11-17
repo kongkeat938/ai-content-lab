@@ -372,7 +372,13 @@ def build(script_path: str, out: str, work: str, style: str, voice_name: str,
         if hero and os.path.exists(hero):
             clip = hero
             got_clip = True
-        elif broll and not os.path.exists(clip):
+        elif broll and os.path.exists(clip):
+            # A cached clip from an earlier run is reused, not discarded -- the
+            # old `not os.path.exists` guard skipped the fetch AND never set
+            # got_clip, so a rebuild silently fell back to a still (measured
+            # 2026-11-17: run 2 rendered 3 of 4 beats as stills).
+            got_clip = True
+        elif broll:
             q = b.get("broll") or b.get("image", "")
             hit = fetch_broll.pick(q, avoid=used) if q else None
             if hit and fetch_broll.download(hit, clip):

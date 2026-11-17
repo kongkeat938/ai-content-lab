@@ -121,6 +121,35 @@ def main() -> int:
     if abs(after - mq.LOUD_I) > 1.5:
         fail(f"finalize left {after:.1f} LUFS (target {mq.LOUD_I}); was {before:.1f}")
 
+    # 6. A cached clip must be REUSED, not discarded. The old guard
+    #    `elif broll and not os.path.exists(clip)` skipped the fetch and never
+    #    set got_clip, so a rebuild silently fell back to a still (measured
+    #    2026-11-17: run 2 rendered 3 of 4 beats as stills). Pre-seed the work
+    #    dir with a clip and assert build() keeps it as the b-roll base.
+    import json as _json
+    bwork = os.path.join(tmp, "bw")
+    os.makedirs(bwork, exist_ok=True)
+    clip = os.path.join(bwork, "01_broll.mp4")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
+                    "-i", "color=c=green:s=640x360:d=4:r=30", "-c:v", "libx264",
+                    "-pix_fmt", "yuv420p", clip], check=True)
+    script = os.path.join(tmp, "s.json")
+    _json.dump({"title": "ทดสอบ", "beats": [
+        {"question": "คำถาม?", "answer": "คำตอบ", "broll": "blue sky"}]},
+        open(script, "w", encoding="utf-8"))
+    bout = os.path.join(tmp, "bout.mp4")
+    mq.build(script, bout, bwork, "knowledge", mq.VOICE, mq.RATE, None,
+             broll=True, brand="ทดสอบ")
+    # The cached clip is green; a fallback still would be the blue-sky generator.
+    frame = os.path.join(tmp, "bf.png")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", bout,
+                    "-frames:v", "1", frame], check=True)
+    arr = np.asarray(Image.open(frame).convert("RGB"), dtype=float)
+    g, b = arr[..., 1].mean(), arr[..., 2].mean()
+    if not (g > 40 and g > b + 30):
+        fail(f"a cached b-roll clip was discarded (frame mean G={g:.0f} B={b:.0f}); "
+             "build() fell back to a still instead of reusing the clip")
+
     shutil.rmtree(tmp, ignore_errors=True)
     print("PASS: Q/A overlay, layout, 16:9 tv-range render, burned-in text and "
           "loudness normalisation all hold")
