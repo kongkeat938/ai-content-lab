@@ -438,6 +438,16 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "115": {
+      "video_id": "sYHtBEyZERs",
+      "url": "https://youtu.be/sYHtBEyZERs",
+      "title": "ทำไมเราถึงหาวตามคนอื่นโดยที่เราไม่รู้ตัวเลย #Shorts",
+      "posted_at": "2026-11-17T03:31:24+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
