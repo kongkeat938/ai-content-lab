@@ -472,6 +472,18 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "118": {
+      "video_id": "uo5g5rX91DA",
+      "url": "https://youtu.be/uo5g5rX91DA",
+      "title": "ทำไมรุ้งกินน้ำจึงต้องมีเจ็ดสีสวยงามหลังฝนตก #Shorts",
+      "posted_at": "2026-11-18T17:23:00+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch4_shorts/118/thumb_118.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
