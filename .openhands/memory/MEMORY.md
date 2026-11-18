@@ -45,32 +45,31 @@
   ROTATES** — else a raised cadence is a no-op/conflict.
 - **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar for ALL channels** (K, 2026-11-17): 1080p crf18, yuv420p tv/bt709,
-  -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**
-  (`verify_night.py` hard-fails non-tv). **Colour tags: `-color_*` flags alone leave trc/space
-  unknown → `setparams=...range=tv` on EVERY re-encode.**
+  -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**;
+  **colour tags need `setparams=...range=tv` on every re-encode** (`-color_*` flags alone leave trc unknown).
 - **Shorts: meet the standard or NOT upload** (K, 2026-11-17), backlog too. One source
   `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709**, -14 LUFS, ≤60 s, + a **9:16 thumbnail**
   (min height 640, <2 MB). `publish_shorts.py` gates EVERY upload, HOLDS a substandard build.
   **Loudness: pin by MEASUREMENT**, not a fixed gain (`test_short_loudness.py`).
 - **Vision grader is NON-DETERMINISTIC** (same cut 9 then 5/10): never gate in CI; use metrics.
 - **A rail can die at IMPORT** (deps subset; `continue-on-error` masks it) → `test_workflow_deps.py`.
-- **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no rogue"
-  while `feeds/videos.xml` 404'd → falls back to `UU<id>`; exits **2=BLIND**. `topics/05`.
+- **A dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` while
+  `feeds/videos.xml` 404'd; exits **2=BLIND**. `topics/05`.
 - **Pausing drops a channel from each rail's `matrix`; unpausing must PUT IT BACK**
-  (`test_rail_channels.py`); `find_removed` confirms a take-down via oEmbed.
+  (`test_rail_channels.py`).
 - **ch4 PIVOT 2026-11-16** (family → knowledge; old genre died). Hook opens a question
   (`_CURIOSITY`); `content/hooks/knowledge.md`. **Channel TITLE is NOT API-settable → K sets it in
-  Studio**; the repo FOLLOWS the live name (ch4 = **"PCSEV"**), else the daily rail rewrites
-  `localizations.th_TH.title` back.
-- **Curated angles survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected every angle
-  (Thai shares 3-char runs). Floor **8**.
+  Studio**; the repo FOLLOWS the live name (ch4 = **"PCSEV"**).
+- **Curated angles survive de-dup**: a 3-char floor rejected every angle (Thai shares 3-char runs)
+  → floor **8** (`test_angle_pool.py`).
 - **One live title = one video** (`test_optimize_titles_dedup.py`): 2 dharma long-form shared a title.
 - **A truthy thumbnail URL ≠ our image set** (2026-11-18): YT serves `maxresdefault` for an AUTO
-  frame too → `--skip-existing` skipped a cover-less video forever; fix = `matches_live()`
-  correlates the served frame with our file.
+  frame too; fix = `matches_live()` correlates the served frame with our file.
 - **An animated still beats a slide-show; its LOOK must match the story** (K, 2026-11-18):
-  `make_motion_short.py` picks layers from the story's `genre` -- **dharma/genx = calm, NO mascot;
-  knowledge = mascot**; unknown → calm (`test_motion_short.py` FAILs if dharma gets a mascot).
+  `make_motion_short.py` layers come from the story's `genre` -- dharma/genx = calm (no mascot/glow),
+  knowledge = mascot (`test_motion_short.py`).
+- **Real-clip ambient video** (K, 2026-11-18): `make_ambient_video.py` joins `fetch_broll.py`
+  (Coverr) clips → loops to `--minutes` → bed -14 LUFS; guard `test_ambient_video.py`.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
