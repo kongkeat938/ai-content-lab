@@ -37,7 +37,7 @@ def main() -> None:
 
     calls: list[str] = []
 
-    async def fake_synth(text: str, out: str, voice: str) -> None:
+    async def fake_synth(text: str, out: str, voice: str, rate: str = ms.RATE) -> None:
         calls.append(voice)
         if voice == ms.VOICE_ALT:
             raise RuntimeError("No audio was received. Please verify that your parameters are correct.")

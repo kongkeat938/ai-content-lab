@@ -46,6 +46,10 @@ W, H = 1080, 1920
 FPS = 15                       # enough for smooth drift/bounce, cheap to render
 BEAT_HZ = 1.7                  # the dance tempo (light genres only)
 CAP_FONT = "Prompt-SemiBold.ttf"
+# K, 2026-11-18: "slow the speaking pace down a bit". The house voice runs at
+# make_short.RATE (-15%); a narrated still reads better slower, so this rail
+# defaults to -25% unless the story sets its own `rate`.
+RATE = "-25%"
 
 # palette per mood (top sky -> horizon -> ground)
 MOODS = {
@@ -85,6 +89,32 @@ def lerp(a, b, t):
     return tuple(int(round(a[i] + (b[i] - a[i]) * t)) for i in range(3))
 
 
+def draw_sunmoon(im: Image.Image, mood: str, seed: int) -> Image.Image:
+    """A prominent sun or moon in the sky (K, 2026-11-18: "a sun or a moon image").
+    Night moods get a pale moon with soft craters; dawn/sunset/forest get a warm
+    sun with a halo. It is painted onto the backdrop so ken-burns carries it too."""
+    d = ImageDraw.Draw(im, "RGBA")
+    cx, cy, r = int(W * 0.72), int(H * 0.15), 150
+    night = mood in ("night",)
+    body = (245, 246, 240, 245) if night else (255, 236, 178, 250)
+    halo = (220, 228, 255) if night else (255, 214, 140)
+
+    for g in range(7, 0, -1):                       # the glow halo
+        rad = r + g * 34
+        d.ellipse([cx - rad, cy - rad, cx + rad, cy + rad], fill=halo + (10,))
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=body)
+
+    if night:                                       # a few soft craters
+        rnd = random.Random(seed + 9)
+        for _ in range(6):
+            a = rnd.uniform(0, math.tau)
+            dist = rnd.uniform(0, r * 0.6)
+            cr = rnd.uniform(r * 0.10, r * 0.22)
+            px, py = cx + math.cos(a) * dist, cy + math.sin(a) * dist
+            d.ellipse([px - cr, py - cr, px + cr, py + cr], fill=(214, 216, 214, 90))
+    return im
+
+
 def backdrop(mood: str, seed: int, art: str | None) -> Image.Image:
     """A calm 1080x1920 still: a real photo when given, else a painted gradient."""
     if art and os.path.exists(art):
@@ -104,16 +134,9 @@ def backdrop(mood: str, seed: int, art: str | None) -> Image.Image:
         else:
             arr[y, :] = lerp(horizon, ground, ease((t - 0.62) / 0.38))
     im = Image.fromarray(arr)
+    im = draw_sunmoon(im, mood, seed)
 
     d = ImageDraw.Draw(im, "RGBA")
-    rnd = random.Random(seed)
-    # a soft glowing moon / sun
-    mx, my, mr = int(W * 0.74), int(H * 0.16), 90
-    for g in range(6, 0, -1):
-        rad = mr + g * 26
-        d.ellipse([mx - rad, my - rad, mx + rad, my + rad],
-                  fill=(255, 240, 200, 10))
-    d.ellipse([mx - mr, my - mr, mx + mr, my + mr], fill=(255, 246, 214, 235))
     # rolling hills near the horizon
     for band, (hy, col) in enumerate([(0.60, (0, 0, 0, 60)), (0.66, (0, 0, 0, 90))]):
         pts = [(0, H)]
@@ -370,9 +393,10 @@ def main() -> int:
 
     seq = [story["hook"], *story.get("lines", []), story.get("cta", "")]
     seq = [s for s in seq if s]
+    rate = story.get("rate", RATE)
     voice_mp3 = os.path.join(d, "voice.mp3")
     if not os.path.exists(voice_mp3):
-        asyncio.run(MS.speak(" ".join(seq), voice_mp3, args.voice or MS.VOICE))
+        asyncio.run(MS.speak(" ".join(seq), voice_mp3, args.voice or MS.VOICE, rate=rate))
     dur = MS.duration(voice_mp3)
 
     base = backdrop(mood, abs(hash(sid)) % 9999, args.art)

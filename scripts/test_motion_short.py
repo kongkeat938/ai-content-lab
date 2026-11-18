@@ -25,6 +25,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import make_motion_short as M  # noqa: E402
+MS = M.MS
 
 fails = 0
 
@@ -99,6 +100,21 @@ def main() -> int:
     moods = {m: np.asarray(M.backdrop(m, 7, None), "float").mean() for m in M.MOODS}
     check("each mood paints a backdrop", len(set(round(v, 1) for v in moods.values())) >= 3,
           str({k: round(v, 1) for k, v in moods.items()}))
+
+    # 6) a sun/moon is present and bright (K, 2026-11-18: "make it a sun/moon image").
+    sky = M.backdrop("night", 7, None).crop((int(M.W * 0.72) - 150, int(M.H * 0.15) - 150,
+                                             int(M.W * 0.72) + 150, int(M.H * 0.15) + 150))
+    sky_a = np.asarray(sky, "float")
+    bright = float((sky_a.mean(axis=2) > 200).mean())
+    check("the sky carries a bright sun/moon", bright > 0.25, f"bright fraction {bright:.2f}")
+    day = np.asarray(M.backdrop("sunset", 7, None), "float").mean()
+    night = np.asarray(M.backdrop("night", 7, None), "float").mean()
+    check("the sun/moon differs by mood (warm sun vs pale moon)", abs(day - night) > 5,
+          f"sunset {day:.1f} vs night {night:.1f}")
+
+    # 7) the speech is slower than the house rate (K: "slow the speaking pace down").
+    check("this rail speaks slower than the house -15%", M.RATE.endswith("%")
+          and int(M.RATE.strip("%")) < -15, f"RATE={M.RATE} vs house {MS.RATE}")
 
     print(f"\n{'all checks passed' if not fails else f'{fails} check(s) FAILED'}")
     return 1 if fails else 0

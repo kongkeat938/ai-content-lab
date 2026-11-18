@@ -123,13 +123,13 @@ def measure_loudness(path: str) -> tuple[float | None, float | None]:
     return i, tp
 
 
-async def _synth(text: str, out: str, voice: str) -> None:
-    await edge_tts.Communicate(text, voice, rate=RATE).save(out)
+async def _synth(text: str, out: str, voice: str, rate: str = RATE) -> None:
+    await edge_tts.Communicate(text, voice, rate=rate).save(out)
     if not (os.path.exists(out) and os.path.getsize(out) > 0):
         raise RuntimeError("empty file")
 
 
-async def speak(text: str, out: str, voice: str = VOICE) -> None:
+async def speak(text: str, out: str, voice: str = VOICE, rate: str = RATE) -> None:
     """Synthesise the line, retrying a dropped connection.
 
     edge-tts occasionally returns NoAudioReceived on a line that works on the
@@ -147,7 +147,7 @@ async def speak(text: str, out: str, voice: str = VOICE) -> None:
     last = None
     for attempt in range(4):
         try:
-            await _synth(text, out, voice)
+            await _synth(text, out, voice, rate)
             return
         except Exception as exc:            # noqa: BLE001 -- the point is to swallow any TTS fault
             last = exc
@@ -155,7 +155,7 @@ async def speak(text: str, out: str, voice: str = VOICE) -> None:
     if voice != VOICE:
         for attempt in range(2):
             try:
-                await _synth(text, out, VOICE)
+                await _synth(text, out, VOICE, rate)
                 print(f"  voice {voice} returned no audio; fell back to {VOICE}")
                 return
             except Exception as exc:        # noqa: BLE001
