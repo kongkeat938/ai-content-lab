@@ -4,7 +4,8 @@
 **Goal:** YPP = **1,000 subscribers + 4,000 long-form watch-hours / 12 months**.
 **Steer by:** long-form watch-hours/week + `retention@2min` (Shorts do NOT count toward YPP).
 **Focus:** **dharma** (96% of long-form watch time). **genx** = Shorts engine + subs.
-**kongkeat-story** = PAUSED (`content/PAUSED`) — do not build for it.
+**kongkeat-story** = ch4, **LIVE** (name **"PCSEV"**, @PCSEV). Paused 2026-11-12, **UNPAUSED
+2026-11-13** on K's order — `content/PAUSED` has no active line.
 
 > Rule (K, 2026-11-13): **search this map first. If a thing already exists, use it —
 > do not create a second one under a new name.** New file? add it here in the same commit.
