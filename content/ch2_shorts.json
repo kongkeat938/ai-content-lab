@@ -737,6 +737,16 @@
       "posted_at": "2026-11-17T01:31:23+00:00",
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "shape": "cue"
+    },
+    "120": {
+      "video_id": "e-jTBoW8hPA",
+      "url": "https://youtu.be/e-jTBoW8hPA",
+      "title": "คืนนี้ลองวางมือถือคว่ำลงแล้วฟังเสียงธรรมชาติ #Shorts",
+      "posted_at": "2026-11-18T00:50:01+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/120/thumb_120.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
