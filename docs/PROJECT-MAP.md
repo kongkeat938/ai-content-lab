@@ -27,7 +27,7 @@
 | `rogue-guard.yml` | `*/30` | hides live rogue uploads | containment |
 | `progress.yml` / `watch-hours.yml` | 07:12 / Mon 06:17 | YPP progress | the scoreboard |
 | `channel-branding.yml` / `ch2-playlists.yml` / `set-thumbnails.yml` | after 08:00 | packaging | search + conversion |
-| `make_motion_short.py` (a tool, not a rail) | by hand | an animated still Short -- ken-burns + twinkling stars + drifting leaves + a mascot that dances to the beat | a livelier Shorts shape (reach) |
+| `make_motion_short.py` (a tool, not a rail) | by hand | an animated still Short whose layers match the story's `genre` -- dharma/genx = calm (twinkle + petals + a breathing glow, no mascot), knowledge = a mascot dancing to the beat | a livelier Shorts shape (reach) that still fits the story |
 
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.
 

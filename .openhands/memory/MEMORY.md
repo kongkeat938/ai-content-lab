@@ -17,8 +17,8 @@
 
 ## 🔑 Durable principles (K)
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live**; trust order **live API >
-  output file (ffprobe/ebur128) > a test that can FAIL > a doc**; best = a **counter with an
-  invariant** (`counter_ledger.py`).
+  output file (ffprobe/ebur128) > a test that can FAIL > a doc**.
+  Best = a **counter with an invariant** (`counter_ledger.py`).
 - **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md` ← `watch_hours.json` only.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on spent quota → **per-channel secret
   = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
@@ -59,17 +59,17 @@
   (`test_rail_channels.py`); `find_removed` confirms a take-down via oEmbed.
 - **ch4 PIVOT 2026-11-16** (family → knowledge; old genre died). Hook opens a question
   (`_CURIOSITY`); `content/hooks/knowledge.md`. **Channel TITLE is NOT API-settable → K sets it in
-  Studio**; the repo must FOLLOW the live name (ch4 = **"PCSEV"**), else the daily rail rewrites
-  `localizations.th_TH.title` back (name labels only; genre word stays in keywords).
+  Studio**; the repo FOLLOWS the live name (ch4 = **"PCSEV"**), else the daily rail rewrites
+  `localizations.th_TH.title` back.
 - **Curated angles survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected every angle
   (Thai shares 3-char runs). Floor **8**.
-- **One live title = one video** (`test_optimize_titles_dedup.py`): `optimize_titles` proposed
-  titles per clip → 2 dharma long-form shared a title (fixed 2026-11-18).
+- **One live title = one video** (`test_optimize_titles_dedup.py`): 2 dharma long-form shared a title.
 - **A truthy thumbnail URL ≠ our image set** (2026-11-18): YT serves `maxresdefault` for an AUTO
-  frame too → `set_thumbnails --skip-existing` skipped a cover-less video forever; fix =
-  `matches_live()` correlates the served frame with our file.
-- **An animated still beats a slide-show** (K, 2026-11-18): `make_motion_short.py` = ken-burns +
-  twinkling stars + drifting leaves + a mascot dancing to the beat (`test_motion_short.py`).
+  frame too → `--skip-existing` skipped a cover-less video forever; fix = `matches_live()`
+  correlates the served frame with our file.
+- **An animated still beats a slide-show; its LOOK must match the story** (K, 2026-11-18):
+  `make_motion_short.py` picks layers from the story's `genre` -- **dharma/genx = calm, NO mascot;
+  knowledge = mascot**; unknown → calm (`test_motion_short.py` FAILs if dharma gets a mascot).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.

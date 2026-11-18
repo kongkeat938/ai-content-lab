@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""The animated Short must actually MOVE, layer by layer.
+"""The animated Short must MOVE, AND the look must MATCH the story (K, 2026-11-18).
 
-K asked (2026-11-18) for a still that comes alive: twinkling stars, leaves on the
-wind, a character that dances to the music. The failure mode this guards is the
-one K is complaining about -- a clip that LOOKS animated in the editor but is a
-slide-show on the feed. So this renders real frames from make_motion_short and
-measures that each layer changes between frames, and that the motion comes from
-the layers (a frozen composite is static).
+K's rule: "the one you use has to look at the story too, not just be a cartoon".
+So a dharma sleep clip must NOT get a dancing mascot -- it gets calm ambient motion
+(twinkle + drifting petals + a breathing glow). The lively mascot is only for the
+curious knowledge ("why?") genre. An unknown genre gets the calm default.
 
-It can FAIL: `frame_at(..., animate=False)` is the frozen frame; if the moving
-layers were no-ops the animated and frozen sequences would be identical and the
-"layers move" checks would read ~0.
+Two things this guard measures, both of which can FAIL:
 
-    python3 scripts/test_motion_short.py     # exit 0 = every layer moves
+  1. every layer MOVES frame-to-frame, and the motion comes from the layers (a frozen
+     composite is static);
+  2. the profile MATCHES the genre -- dharma/genx carry NO character, knowledge does;
+     an unknown genre falls back to calm.
+
+    python3 scripts/test_motion_short.py     # exit 0 = moves + matches the story
 """
 from __future__ import annotations
 
@@ -42,35 +43,57 @@ def diff(a, b) -> float:
 def main() -> int:
     dur = 8.0
     base = M.backdrop("night", 42, None)
-    stars, leaves = M.make_stars(42), M.make_leaves(42)
+    prof = M.profile_for("dharma")
+    stars, leaves = M.layers_for(42, prof)
 
-    f0 = M.frame_at(base, stars, leaves, "night", 0.0, dur)
-    f1 = M.frame_at(base, stars, leaves, "night", 0.5, dur)
+    f0 = M.frame_at(base, stars, leaves, "night", 0.0, dur, prof=prof)
+    f1 = M.frame_at(base, stars, leaves, "night", 0.5, dur, prof=prof)
 
-    # 1) stars twinkle: the star layer alone changes between two instants.
-    star0 = M.draw_stars(base, stars, 0.0)
-    star1 = M.draw_stars(base, stars, 0.6)
+    # 1) the moving layers change between two instants.
+    star0 = M.draw_stars(base, stars, 0.0, speed=prof["stars"][1])
+    star1 = M.draw_stars(base, stars, 0.6, speed=prof["stars"][1])
     check("stars twinkle", diff(star0, star1) > 0.05, f"diff {diff(star0, star1):.3f}")
 
-    # 2) leaves flutter: the leaf layer moves between two instants.
     leaf0 = M.draw_leaves(base, leaves, 0.0)
     leaf1 = M.draw_leaves(base, leaves, 0.6)
-    check("leaves flutter", diff(leaf0, leaf1) > 0.05, f"diff {diff(leaf0, leaf1):.3f}")
+    check("drift moves (petals/leaves/motes)", diff(leaf0, leaf1) > 0.05,
+          f"diff {diff(leaf0, leaf1):.3f}")
 
-    # 3) the character dances: the mascot region changes between two instants.
-    c0 = M.draw_character(base, 0.0, "night", M.beat_accent(0.0))
-    c1 = M.draw_character(base, 0.35, "night", M.beat_accent(0.35))
-    check("character dances", diff(c0, c1) > 0.5, f"diff {diff(c0, c1):.3f}")
+    br0 = M.draw_breath(base, 0.0)
+    br1 = M.draw_breath(base, 1.0)
+    check("the calm genres breathe (glow pulses)", diff(br0, br1) > 0.02,
+          f"diff {diff(br0, br1):.3f}")
 
-    # 4) the whole frame moves, and it is the layers doing it: the frozen
-    #    composite is far more static than the animated one.
+    # 2) the whole frame moves, and it is the layers doing it.
     anim = diff(f0, f1)
-    fr0 = M.frame_at(base, stars, leaves, "night", 0.0, dur, animate=False)
-    fr1 = M.frame_at(base, stars, leaves, "night", 0.5, dur, animate=False)
+    fr0 = M.frame_at(base, stars, leaves, "night", 0.0, dur, animate=False, prof=prof)
+    fr1 = M.frame_at(base, stars, leaves, "night", 0.5, dur, animate=False, prof=prof)
     frozen = diff(fr0, fr1)
-    check("the whole frame moves", anim > 1.0, f"anim diff {anim:.2f}")
+    check("the whole frame moves", anim > 0.5, f"anim diff {anim:.2f}")
     check("motion comes from the layers, not the ken-burns only",
           anim > frozen * 1.5, f"anim {anim:.2f} vs frozen {frozen:.2f}")
+
+    # 3) the LOOK matches the story (K's rule). This is the part that must FAIL if
+    #    someone gives dharma the dancing mascot.
+    dharm = M.profile_for("dharma")
+    genx = M.profile_for("genx")
+    know = M.profile_for("knowledge")
+    check("dharma has NO dancing character", dharm["character"] is None,
+          f"character={dharm['character']}")
+    check("genx has NO dancing character", genx["character"] is None,
+          f"character={genx['character']}")
+    check("knowledge DOES get the mascot", know["character"] == "mascot",
+          f"character={know['character']}")
+    check("an unknown genre falls back to the calm default",
+          M.profile_for("banana") is M.profile_for(M.DEFAULT_GENRE)
+          and M.profile_for(None)["character"] is None)
+    check("dharma drifts petals, not leaves",
+          dharm["drift"][3] == "petal", dharm["drift"][3])
+
+    # 4) the mascot really dances (the knowledge profile only).
+    c0 = M.draw_character(base, 0.0, "night", M.beat_accent(0.0))
+    c1 = M.draw_character(base, 0.35, "night", M.beat_accent(0.35))
+    check("the mascot dances", diff(c0, c1) > 0.5, f"diff {diff(c0, c1):.3f}")
 
     # 5) every mood paints a distinct backdrop (so a story can pick a palette).
     moods = {m: np.asarray(M.backdrop(m, 7, None), "float").mean() for m in M.MOODS}

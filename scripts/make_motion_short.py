@@ -44,7 +44,7 @@ import make_short as MS  # noqa: E402  (voice, loudness, fonts -- the one source
 
 W, H = 1080, 1920
 FPS = 15                       # enough for smooth drift/bounce, cheap to render
-BEAT_HZ = 1.7                  # the dance tempo (music-bed style)
+BEAT_HZ = 1.7                  # the dance tempo (light genres only)
 CAP_FONT = "Prompt-SemiBold.ttf"
 
 # palette per mood (top sky -> horizon -> ground)
@@ -54,6 +54,27 @@ MOODS = {
     "forest":  ((30, 60, 60), (120, 160, 110), (24, 40, 30)),
     "sunset":  ((120, 80, 130), (250, 170, 110), (70, 46, 54)),
 }
+
+# The look MUST match the story, not a fixed cartoon (K, 2026-11-18): a dharma
+# sleep clip gets calm ambient motion, a knowledge "why?" clip may get the lively
+# mascot. So every layer is chosen from the story's `genre`, and the default is the
+# calmest profile -- an unknown story never gets a dancing character it did not ask
+# for. `character` is None for the calm genres on purpose.
+PROFILES = {
+    # ธรรมะก่อนนอน: serene, sleepy. slow twinkle + drifting petals + a breathing
+    # glow. NO dancing character (it would break the mood).
+    "dharma":    {"stars": (30, 0.5, 10), "drift": (8, 26, 34, "petal"),
+                  "character": None, "breath": True,  "motion": 0.6},
+    # ปรัชญาชีวิต (GenX): reflective, quiet. few stars + slow dust motes + a soft
+    # glow. NO dancing character.
+    "genx":      {"stars": (18, 0.4, 9), "drift": (10, 18, 26, "mote"),
+                  "character": None, "breath": True,  "motion": 0.7},
+    # เกร็ดความรู้ "ทำไม…?" (PCSEV): curious + friendly. sparkles + a mascot that
+    # bobs and points, on the beat. This is the one genre the mascot suits.
+    "knowledge": {"stars": (40, 1.0, 12), "drift": (8, 40, 60, "leaf"),
+                  "character": "mascot", "breath": False, "motion": 1.0},
+}
+DEFAULT_GENRE = "dharma"       # the calmest profile -- a safe default
 
 
 def ease(x: float) -> float:
@@ -104,20 +125,21 @@ def backdrop(mood: str, seed: int, art: str | None) -> Image.Image:
     return im
 
 
-def ken_burns(base: Image.Image, t: float, dur: float) -> Image.Image:
+def ken_burns(base: Image.Image, t: float, dur: float, speed: float = 1.0) -> Image.Image:
     """A slow push-in so the still breathes (1.00 -> 1.06 over the clip)."""
     z = 1.0 + 0.06 * (t / max(dur, 0.001))
     cw, ch = int(W / z), int(H / z)
-    left = int((W - cw) / 2 + math.sin(t * 0.15) * 8)
-    top = int((H - ch) / 2 + math.cos(t * 0.12) * 6)
+    left = int((W - cw) / 2 + math.sin(t * 0.15 * speed) * 8)
+    top = int((H - ch) / 2 + math.cos(t * 0.12 * speed) * 6)
     crop = base.crop((left, top, left + cw, top + ch))
     return crop.resize((W, H), Image.BICUBIC)
 
 
-def make_stars(seed: int, n: int = 46) -> list[dict]:
+def make_stars(seed: int, n: int = 46, size: tuple = (6, 18)) -> list[dict]:
     rnd = random.Random(seed + 1)
+    lo, hi = size
     return [{"x": rnd.uniform(0, W), "y": rnd.uniform(0, H * 0.66),
-             "s": rnd.uniform(6, 18), "ph": rnd.uniform(0, math.tau),
+             "s": rnd.uniform(lo, hi), "ph": rnd.uniform(0, math.tau),
              "sp": rnd.uniform(0.4, 1.5), "col": rnd.choice(
                  [(255, 240, 190), (255, 255, 255), (200, 220, 255), (255, 210, 140)])}
             for _ in range(n)]
@@ -130,24 +152,33 @@ def _star(d: ImageDraw.ImageDraw, x: float, y: float, s: float, a: int, col) -> 
                (x - r * 2.2, y), (x - r * 0.5, y - r * 0.5)], fill=col + (a,))
 
 
-def draw_stars(img: Image.Image, stars: list[dict], t: float) -> Image.Image:
+def draw_stars(img: Image.Image, stars: list[dict], t: float, speed: float = 1.0) -> Image.Image:
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     for st in stars:
-        tw = 0.5 + 0.5 * math.sin(math.tau * st["sp"] * t + st["ph"])
+        tw = 0.5 + 0.5 * math.sin(math.tau * st["sp"] * speed * t + st["ph"])
         _star(d, st["x"], st["y"], st["s"] * (0.7 + 0.6 * tw), int(40 + 200 * tw), st["col"])
     glow = layer.filter(ImageFilter.GaussianBlur(7))
     out = ImageChops.screen(img.convert("RGB"), glow.convert("RGB"))
     return Image.alpha_composite(out.convert("RGBA"), layer).convert("RGB")
 
 
-def make_leaves(seed: int, n: int = 12) -> list[dict]:
+def make_leaves(seed: int, n: int = 12, kind: str = "leaf",
+                vy: tuple = (40, 90)) -> list[dict]:
     rnd = random.Random(seed + 2)
+    if kind == "leaf":
+        cols = [(120, 170, 90), (86, 140, 70), (200, 170, 70), (150, 190, 120)]
+        sz = (26, 54)
+    elif kind == "petal":
+        cols = [(255, 224, 236), (250, 200, 216), (240, 214, 224)]
+        sz = (16, 34)
+    else:  # mote -- soft dust in warm light
+        cols = [(255, 244, 214), (250, 236, 200)]
+        sz = (6, 16)
     return [{"x": rnd.uniform(0, W), "y": rnd.uniform(-H, H),
-             "vy": rnd.uniform(40, 90), "vx": rnd.uniform(-30, 30),
-             "spin": rnd.uniform(-1.6, 1.6), "sz": rnd.uniform(26, 54),
-             "ph": rnd.uniform(0, math.tau),
-             "col": rnd.choice([(120, 170, 90), (86, 140, 70), (200, 170, 70), (150, 190, 120)])}
+             "vy": rnd.uniform(*vy), "vx": rnd.uniform(-30, 30),
+             "spin": rnd.uniform(-1.6, 1.6), "sz": rnd.uniform(*sz),
+             "ph": rnd.uniform(0, math.tau), "kind": kind, "col": rnd.choice(cols)}
             for _ in range(n)]
 
 
@@ -166,14 +197,43 @@ def _leaf(d: ImageDraw.ImageDraw, x: float, y: float, sz: float, ang: float, col
     d.line(rot[:steps + 1], fill=(60, 90, 50, 220), width=2)
 
 
-def draw_leaves(img: Image.Image, leaves: list[dict], t: float) -> Image.Image:
+def _petal(d: ImageDraw.ImageDraw, x: float, y: float, sz: float, ang: float, col) -> None:
+    r = sz * 0.5
+    ca, sa = math.cos(ang), math.sin(ang)
+    rot = [(x + px * ca - py * sa, y + px * sa + py * ca)
+           for px, py in [(0, -r), (r * 0.7, 0), (0, r), (-r * 0.7, 0)]]
+    d.polygon(rot, fill=col + (200,))
+
+
+def draw_leaves(img: Image.Image, leaves: list[dict], t: float, speed: float = 1.0) -> Image.Image:
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     for lf in leaves:
-        y = (lf["y"] + lf["vy"] * t) % (H + 200) - 100
-        x = lf["x"] + lf["vx"] * t + math.sin(t * 1.1 + lf["ph"]) * 40
-        _leaf(d, x, y, lf["sz"], lf["spin"] * t + lf["ph"], lf["col"])
+        y = (lf["y"] + lf["vy"] * speed * t) % (H + 200) - 100
+        x = lf["x"] + lf["vx"] * speed * t + math.sin(t * 1.1 * speed + lf["ph"]) * 40
+        if lf["kind"] == "petal":
+            _petal(d, x, y, lf["sz"], lf["spin"] * t + lf["ph"], lf["col"])
+        elif lf["kind"] == "mote":
+            d.ellipse([x - lf["sz"], y - lf["sz"], x + lf["sz"], y + lf["sz"]],
+                      fill=lf["col"] + (150,))
+        else:
+            _leaf(d, x, y, lf["sz"], lf["spin"] * t + lf["ph"], lf["col"])
     return Image.alpha_composite(img.convert("RGBA"), layer).convert("RGB")
+
+
+def draw_breath(img: Image.Image, t: float) -> Image.Image:
+    """A soft pulsing glow at the heart of the frame -- the calm genres breathe
+    instead of dancing. ~4 s per breath, a slow in-and-out."""
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(glow)
+    k = 0.5 + 0.5 * math.sin(math.tau * t / 4.0)
+    cx, cy, r = W // 2, int(H * 0.42), int(220 + 90 * k)
+    for i in range(4, 0, -1):
+        d.ellipse([cx - r * i / 4, cy - r * i / 4, cx + r * i / 4, cy + r * i / 4],
+                  fill=(255, 236, 190, int(16 * k)))
+    soft = glow.filter(ImageFilter.GaussianBlur(40))
+    out = ImageChops.screen(img.convert("RGB"), soft.convert("RGB"))
+    return out
 
 
 def draw_character(img: Image.Image, t: float, mood: str, beat_accent: float) -> Image.Image:
@@ -243,23 +303,44 @@ def beat_accent(t: float) -> float:
     return max(0.0, 1.0 - frac * 3.0)
 
 
+def profile_for(genre: str | None) -> dict:
+    """The layer set for a story's genre. An unknown/absent genre gets the calm
+    default, so a story never accidentally gets the dancing mascot."""
+    return PROFILES.get((genre or "").strip().lower(), PROFILES[DEFAULT_GENRE])
+
+
+def layers_for(seed: int, prof: dict) -> tuple[list[dict], list[dict]]:
+    """Build the star + drift layers from a profile (counts/kinds/sizes)."""
+    n_stars, _sp, s_hi = prof["stars"]
+    stars = make_stars(seed, n=n_stars, size=(max(4, s_hi // 2), s_hi))
+    n_drift, vy_lo, vy_hi, kind = prof["drift"]
+    leaves = make_leaves(seed, n=n_drift, kind=kind, vy=(vy_lo, vy_hi))
+    return stars, leaves
+
+
 def frame_at(base: Image.Image, stars, leaves, mood: str, t: float, dur: float,
-             animate: bool = True) -> Image.Image:
+             animate: bool = True, prof: dict | None = None) -> Image.Image:
     """One composed frame. `animate=False` freezes the moving layers, so a guard
     can prove the motion comes from them and not from the encode."""
-    fr = ken_burns(base, t, dur)
+    prof = prof or PROFILES[DEFAULT_GENRE]
+    fr = ken_burns(base, t, dur, speed=prof["motion"])
     if animate:
-        fr = draw_stars(fr, stars, t)
-        fr = draw_leaves(fr, leaves, t)
-        fr = draw_character(fr, t, mood, beat_accent(t))
+        spd = prof["stars"][1]
+        fr = draw_stars(fr, stars, t, speed=spd)
+        fr = draw_leaves(fr, leaves, t, speed=prof["motion"])
+        if prof.get("breath"):
+            fr = draw_breath(fr, t)
+        if prof.get("character"):
+            fr = draw_character(fr, t, mood, beat_accent(t))
     return fr
 
 
-def render_frames(base: Image.Image, stars, leaves, mood: str, dur: float, out_dir: str) -> int:
+def render_frames(base: Image.Image, stars, leaves, mood: str, dur: float, out_dir: str,
+                  prof: dict | None = None) -> int:
     n = int(math.ceil(dur * FPS))
     for i in range(n):
         t = i / FPS
-        yield i, t, frame_at(base, stars, leaves, mood, t, dur)
+        yield i, t, frame_at(base, stars, leaves, mood, t, dur, prof=prof)
     return n
 
 
@@ -268,6 +349,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--story", required=True)
     ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--genre", default=None,
+                    help="dharma|genx|knowledge -- picks the layer profile; the story's "
+                         "`genre` field is used when this is omitted (default dharma)")
     ap.add_argument("--art", default=None, help="a still to animate (else painted)")
     ap.add_argument("--music", default=None, help="a bed; omit for voice only")
     ap.add_argument("--voice", default=None)
@@ -279,6 +363,8 @@ def main() -> int:
         story = json.load(fh)
     sid = str(story["id"])
     mood = story.get("mood", "night")
+    genre = args.genre or story.get("genre") or DEFAULT_GENRE
+    prof = profile_for(genre)
     d = os.path.join(args.out_dir, sid)
     os.makedirs(d, exist_ok=True)
 
@@ -292,7 +378,9 @@ def main() -> int:
     base = backdrop(mood, abs(hash(sid)) % 9999, args.art)
     base.save(os.path.join(d, "bg.jpg"), quality=92)
     seed = abs(hash(sid)) % 9999
-    stars, leaves = make_stars(seed), make_leaves(seed)
+    stars, leaves = layers_for(seed, prof)
+    print(f"  genre={genre}: {len(stars)} stars, {len(leaves)} drift({prof['drift'][3]}), "
+          f"character={prof.get('character') or 'none'}")
 
     # caption windows, proportional to each line's length (same rule as make_short)
     weights = [max(1, len(s)) for s in seq]
@@ -307,7 +395,7 @@ def main() -> int:
     n = 0
     prev = 0.0
     line_i = 0
-    for i, t, fr in render_frames(base, stars, leaves, mood, dur, frames):
+    for i, t, fr in render_frames(base, stars, leaves, mood, dur, frames, prof=prof):
         while line_i < len(bounds) - 1 and t >= bounds[line_i]:
             line_i += 1
         fr = caption(fr, seq[line_i])
