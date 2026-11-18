@@ -140,6 +140,37 @@ def main() -> int:
     new = [f for f in fixes_after if f not in fixes_before]
     check("this test wrote nothing into content/fixes/", not new, ", ".join(new) or "clean")
 
+    # 10. The playlist loop (measured 2026-11-18): PLAYLIST traffic earns 17.8
+    #     min/view, ~3x a video's own average, yet every long-form description had
+    #     zero link back to the playlist -- the loop was open on the side a viewer
+    #     actually reads. Each channel's description builder must carry its own
+    #     playlist URL, and it must match the playlist publish_batch inserts into.
+    #     Sweep CHANNELS (never hardcode the set) so a new channel cannot ship a
+    #     description with no loop.
+    for slug, cfg in A.CHANNELS.items():
+        desc = cfg["desc"]("ตัวอย่างหัวข้อ", 120, "/nonexistent")
+        pl = cfg.get("playlist", "")
+        check(f"{slug} description links its playlist",
+              bool(pl) and f"list={pl}" in desc,
+              f'playlist={pl!r} in desc={("list=" + pl in desc)}')
+
+    # 10b. The SEO rewrite must not strip the loop either. optimize_seo.py PUTs a
+    #      fresh Gemini description over the stored one; if it did not re-append
+    #      the playlist link, the loop would reopen on every packaging pass. Drive
+    #      the real append rule (the write path is a thin network call, so test the
+    #      same expression it uses) for every channel in its own PLAYLISTS map.
+    import optimize_seo as O  # noqa: E402
+    for slug, pl in O.PLAYLISTS.items():
+        out = O.with_loop("คำอธิบายใหม่จาก Gemini ที่ไม่มีลิงก์", slug)
+        check(f"optimize_seo keeps the {slug} loop after a rewrite",
+              f"list={pl}" in out, out[:60])
+    # Idempotent: a second pass must not double-append.
+    twice = O.with_loop(O.with_loop("ไม่มีลิงก์", "dharma"), "dharma")
+    check("optimize_seo does not double-append the loop",
+          twice.count("playlist?list=") == 1, str(twice.count("playlist?list=")))
+    check("optimize_seo covers every channel add_release writes",
+          set(O.PLAYLISTS) == set(A.CHANNELS), str(set(O.PLAYLISTS) ^ set(A.CHANNELS)))
+
     if FAILS:
         print(f"\nFAILED: {FAILS}")
         return 1

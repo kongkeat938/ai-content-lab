@@ -28,6 +28,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import yt_duration
 import gemini_text  # noqa: E402 - one reader for a Gemini reply
+import add_release_to_manifest as A  # noqa: E402 - the ONE channel/playlist source
 
 import argparse
 import json
@@ -53,6 +54,13 @@ THEMES = {
                  "ไขคำถามคาใจเรื่องท้องฟ้า ดวงดาว สัตว์ สิ่งของ และธรรมชาติรอบตัว "
                  "อธิบายเข้าใจง่าย ฟังเพลิน เหมาะเปิดฟังยามว่างและก่อนนอน"),
 }
+
+# The playlist each channel's long-form loops back into, read from the ONE source
+# (add_release_to_manifest.CHANNELS) so a playlist id is never written in two
+# places. PLAYLIST traffic earns ~17.8 min/view, ~3x a video's own average, so the
+# description the viewer reads first must carry the loop.
+PLAYLISTS = {slug: cfg["playlist"] for slug, cfg in A.CHANNELS.items()
+             if cfg.get("playlist")}
 
 PROMPT = (
     "คุณเป็นผู้เชี่ยวชาญ SEO YouTube ภาษาไทย เขียน 'คำอธิบายคลิป' และ 'แท็ก' "
@@ -140,6 +148,20 @@ def propose(title: str, theme: str) -> dict:
     return {"error": "no usable description", "raw": got}
 
 
+def with_loop(desc: str, channel: str) -> str:
+    """Append the channel's playlist link unless it is already there.
+
+    The description the viewer reads first must carry the loop (PLAYLIST traffic
+    earns ~17.8 min/view, ~3x a video's own average). A Gemini rewrite that drops
+    it reopens the loop, so every write goes through here.
+    """
+    pl = PLAYLISTS.get(channel, "")
+    if pl and pl not in desc:
+        desc = (desc + "\n\nฟังต่อเป็นชุดได้ที่นี่: "
+                f"https://www.youtube.com/playlist?list={pl}").strip()
+    return desc
+
+
 def write(vid: str, title: str, category: str, desc: str, tags: list[str],
           token: str) -> dict:
     body = {"id": vid, "snippet": {"title": title, "categoryId": category,
@@ -198,6 +220,7 @@ def main() -> int:
     print(f"=== {args.channel}: {len(vids)} video(s)")
 
     done = []
+
     for v in vids:
         s = v["snippet"]
         prop = propose(s["title"], theme)
@@ -206,6 +229,9 @@ def main() -> int:
         if not desc:
             print(f"  {v['id']}: no description ({prop.get('error')})")
             continue
+        # Keep the playlist loop in the description the viewer reads first; a
+        # rewrite that drops it reopens the loop (the measured PLAYLIST lever).
+        desc = with_loop(desc, args.channel)
         print(f"  {v['id']}  by={prop.get('by')}  desc={len(desc)}ch  tags={len(tags)}")
         print(f"     {desc[:110]}")
         if args.apply:
