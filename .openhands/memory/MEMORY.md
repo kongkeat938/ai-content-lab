@@ -1,7 +1,7 @@
 # Project Memory — ak (ai-content-lab)
 
-**Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
-**panel** (`advise.py`), not K. Keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`.
+**Agent `ak`**. Owner **K**: Thai; **measured, not claims**; ak decides via the
+**panel** (`advise.py`), not K. Keep <6,000 (`test_memory_budget.py`); detail in `topics/`.
 **Project `yt938-2`; read `docs/PROJECT-MAP.md` first (`test_project_map.py`).**
 
 ## 🪪 ak's identity & team
@@ -23,13 +23,13 @@
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on spent quota → **per-channel secret
   = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **Panel = Gemini
-  ALONE** (K, 2026-11-18); **when stuck, FOLLOW Gemini's advice** (`test_advise_panel.py`).
+  ALONE** (K, 2026-11-18); **when stuck, FOLLOW Gemini** (`test_advise_panel.py`).
   **PC1 = ak's hands** via `winremote` (`topics/03`).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that drops a piece
   must FAIL. A gate probing an API its token can't read (403)+`|| echo 0` = **false pass**.
+  **งานไม่ผ่าน gate → ถาม Gemini หาทางแก้** (`fix_with_gemini.py`; ไม่ล้าง veto).
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
-  `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 on the credential-helper → push with
-  `https://x-access-token:$KONGKEAT_GH_TOKEN@...`; suite = every `scripts/test_*.py`.
+  `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 → push with `x-access-token:` URL; suite = every `test_*.py`.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo); disabled, YT secrets deleted;

@@ -51,6 +51,23 @@ def art_ledger_path(channel: str) -> str:
     return os.path.join(ROOT, "content", f"art_ledger_{channel}.json")
 
 
+def _ask_gemini_for_fix(script: dict, reasons: list) -> None:
+    """A Short held below the minimum standard is handed to Gemini for a concrete
+    fix (K, 2026-11-18). This only ADDS a fix artifact; the Short stays held -- an
+    LLM is not a primary source, so it is re-rendered and re-measured, never waved
+    through. A dead Gemini must not stop the rail."""
+    try:
+        sys.path.insert(0, HERE)
+        import fix_with_gemini  # noqa: E402 - local module, imported lazily
+        r = fix_with_gemini.fix("shorts_script", script, reasons, key=str(script.get("id", "")))
+        if r["ok"]:
+            print(f"      -> Gemini fix saved: {fix_with_gemini.save(r)}")
+        else:
+            print(f"      -> Gemini fix unavailable ({r.get('error')}); still held")
+    except Exception as exc:  # noqa: BLE001 - the rail must survive a broken advisor
+        print(f"      -> Gemini fix skipped ({exc}); still held")
+
+
 def bed_ledger_path(channel: str) -> str:
     return os.path.join(ROOT, "content", f"bed_ledger_{channel}.json")
 
@@ -753,6 +770,7 @@ def main() -> int:
             print(f"  {sid}: HELD -- below the minimum standard, not uploading:")
             for why in reasons:
                 print(f"      - {why}")
+            _ask_gemini_for_fix(s, reasons)
             rc = 1
             continue
         print(f"  {sid}: meets the standard {metrics}")

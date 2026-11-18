@@ -195,6 +195,7 @@ jobs:
         # Release and a person has to write the manifest entry by hand.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           CONTENT="${{ steps.pick.outputs.content }}"
           KEY="${{ inputs.key }}"; KEY="${KEY:-$(basename "$CONTENT")_long}"

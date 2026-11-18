@@ -25,6 +25,7 @@ receipts/
 # long-form night builds are regenerable from content/ + scripts/
 work/
 content/*/build/
+content/fixes/
 work/gemini_proof/
 work/ch2_branding/
 work/ch2_shorts/

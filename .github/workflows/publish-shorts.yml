@@ -96,6 +96,8 @@ jobs:
           # house edge-tts voice is used, so the rail never depends on it.
           FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
           FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
+          # A Short held below the standard is handed to Gemini for a fix.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           ARGS="--channel ${{ matrix.channel }}"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi

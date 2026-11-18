@@ -187,9 +187,31 @@ def apply_qa_gate(entry: dict, receipt: dict) -> None:
     if qa["blocked"]:
         entry["state"] = "blocked"
         print(f"  QA VETO (grade {qa['grade']}): " + "; ".join(qa["reasons"]))
+        ask_gemini_for_fix(entry, qa["reasons"])
         return
     entry["state"] = "ready"
     print(f"  QA grade {qa['grade']} -- publishable")
+
+
+def ask_gemini_for_fix(entry: dict, reasons: list) -> None:
+    """A vetoed build is handed to Gemini for a concrete fix (K, 2026-11-18:
+    'คุณภาพงานที่ไม่ผ่าน เอาไปถาม gemini เลย'). This only ADDS a fix artifact -- it
+    never clears the veto: an LLM is not a primary source, so the entry stays
+    blocked until the fix is applied and re-measured. A dead Gemini must not break
+    the gate, so every failure is swallowed and printed."""
+    try:
+        sys.path.insert(0, HERE)
+        import fix_with_gemini  # noqa: E402 - local module, imported lazily
+        payload = {k: entry.get(k) for k in
+                   ("key", "title", "description", "tags", "duration_sec")}
+        r = fix_with_gemini.fix("manifest_entry", payload, reasons, key=entry.get("key", ""))
+        if r["ok"]:
+            entry["gemini_fix"] = fix_with_gemini.save(r)
+            print(f"  -> Gemini fix saved: {entry['gemini_fix']}")
+        else:
+            print(f"  -> Gemini fix unavailable ({r.get('error')}); entry stays blocked")
+    except Exception as exc:  # noqa: BLE001 - the gate must survive a broken advisor
+        print(f"  -> Gemini fix skipped ({exc}); entry stays blocked")
 
 
 def queue_entry(vids: list, entry: dict, receipt: dict) -> str:

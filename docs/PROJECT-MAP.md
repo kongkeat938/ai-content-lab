@@ -54,6 +54,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
 - **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
   packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`.
+- **Quality = Gemini (free):** the panel is Gemini alone (K, 2026-11-18). A build that FAILS a gate
+  is handed to Gemini for a fix (`scripts/fix_with_gemini.py`, wired into `qa_gate` veto and
+  `short_standard` hold; it never clears the gate). Free stack + limits: `docs/QUALITY-FREE-2026-11-18.md`.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)

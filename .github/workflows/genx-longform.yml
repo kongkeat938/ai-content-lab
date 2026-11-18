@@ -168,6 +168,7 @@ jobs:
       - name: Add the release to the genx publish manifest and start the upload
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           CONTENT="${{ steps.pick.outputs.content }}"
           KEY="${{ inputs.key }}"; KEY="${KEY:-$(basename "$CONTENT")}"
