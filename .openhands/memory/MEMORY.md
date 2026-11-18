@@ -39,29 +39,29 @@
 - **Quota:** `videos.insert` own pool; Data API resets 08:00 UTC; a GITHUB_TOKEN push does NOT
   trigger a workflow (dispatch explicitly).
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + a union merge driver
-  (`git_push_retry.sh`); a GENERATED `docs/` report needs one writer.
-- **One duration parser:** `yt_duration.py`.
+  (`git_push_retry.sh`); a GENERATED `docs/` report needs one writer. **One duration parser:**
+  `yt_duration.py`.
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; long hook
   cap 220; never downgrade a LIVE entry. **Content dir per-RUN
   (`%G%V_r${GITHUB_RUN_NUMBER}`) + theme ROTATES** — else a raised cadence is a no-op/conflict.
-- **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` falls back to VOICE.
+- **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar for ALL channels** (K, 2026-11-17): 1080p crf18, yuv420p tv/bt709,
-  -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`** —
-  both renderers import it (drifted → LapVar 15.4 vs 46.6). `verify_night.py` hard-fails
-  non-1080p/non-yuv420p/non-tv.
+  -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**
+  (drifted → LapVar 15.4 vs 46.6). `verify_night.py` hard-fails non-tv.
 - **Shorts: meet the standard or NOT upload** (K, 2026-11-17), backlog too. One source
   `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709**, -14 LUFS, ≤60 s, + a **9:16 portrait
   thumbnail** (min height 640, <2 MB — NOT 1280x720). `publish_shorts.py` gates EVERY upload and
-  HOLDS a substandard build (`test_short_standard.py`). **Loudness: pin by MEASUREMENT, never a
-  fixed gain** — a stale +2 dB on the bed path overshot to -12.8 LUFS → gate HELD it (2026-11-18);
-  fix = 2nd loudnorm pass (volume+alimiter breaks true peak), `test_short_loudness.py`.
-- **Vision grader is NON-DETERMINISTIC** (same cut scored 9 then 5/10): never gate in CI; judge by technical metrics (LapVar) + fail-able guards.
-- **A rail can die at IMPORT** (workflow installs a subset of deps; `continue-on-error`
-  turns it green) — twice; `test_workflow_deps.py` sweeps it.
+  HOLDS a substandard build (`test_short_standard.py`). **Loudness: pin by MEASUREMENT, not a fixed
+  gain** — a stale +2 dB overshot to -12.8 LUFS → gate HELD it (2026-11-18); fix = 2nd loudnorm
+  pass (`test_short_loudness.py`).
+- **Vision grader is NON-DETERMINISTIC** (same cut scored 9 then 5/10): never gate in CI; judge by
+  metrics (LapVar) + fail-able guards.
+- **A rail can die at IMPORT** (workflow installs a subset of deps; `continue-on-error` turns it
+  green) — twice; `test_workflow_deps.py` sweeps it.
 - **A dead source read as "clean" = false pass** (2026-11-16): `rogue_watch_rss.py` said "no rogue"
   while `feeds/videos.xml` 404'd → falls back to `UU<id>`; exits **2=BLIND**. `topics/05`.
 - **Pausing drops a channel from each rail's `matrix`; unpausing must PUT IT BACK**
-  (`test_rail_channels.py`). **`find_removed` confirms a take-down with a 2nd source (oEmbed)**.
+  (`test_rail_channels.py`); `find_removed` confirms a take-down via oEmbed.
 - **ch4 PIVOT 2026-11-16** (family → knowledge; old genre died). Hook opens a question
   (`_CURIOSITY`); `content/hooks/knowledge.md`. **Channel TITLE is NOT API-settable → K sets it in
   Studio**; the repo must FOLLOW the live name (ch4 = **"PCSEV"**, 2026-11-17), else the daily rail
@@ -69,14 +69,13 @@
   stays in keywords/SEO); guards `test_channel_name_live.py`, `test_ch4_channel_name.py`.
 - **Curated angles survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected every angle
   (Thai shares 3-char runs). Floor **8**.
-- **One live title = one video** (`test_optimize_titles_dedup.py`): `optimize_titles` proposed one
-  title at a time → 2 dharma long-form shipped the SAME title (measured 2026-11-18). It now reads
-  every live title first (`channel_titles`/`collides`), re-asks, then SKIPS a dup.
+- **One live title = one video** (`test_optimize_titles_dedup.py`): `optimize_titles` proposed
+  titles per clip → 2 dharma long-form shared a title (fixed 2026-11-18).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
-- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED (`uploadLimitExceeded`,
-  API-only). **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`).
+- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED (`uploadLimitExceeded`).
+  **Comment writes need `force-ssl`** (`yt_auth.py --scopes force-ssl`).
