@@ -118,8 +118,31 @@ def ask_pollinations(prompt: str) -> dict:
 ADVISORS = {"gemini": ask_gemini, "pollinations": ask_pollinations}
 
 
-def best_title(old: str, theme: str, advisors: list[str], maxlen: int = 60) -> dict:
+def _norm(title: str) -> str:
+    """Case- and whitespace-insensitive title key for collision checks."""
+    return re.sub(r"\s+", " ", (title or "").strip()).casefold()
+
+
+def collides(candidate: str, taken: dict, self_id: str) -> bool:
+    """True when a live video OTHER than `self_id` already carries this title.
+
+    `taken` (from `channel_titles`) maps a normalised title to the ids that carry
+    it, so a video never collides with its own current title (that would block
+    every legitimate retitle).
+    """
+    return bool(taken.get(_norm(candidate), {}).get("ids", set()) - {self_id})
+
+
+def best_title(old: str, theme: str, advisors: list[str], maxlen: int = 60,
+               avoid: list[str] | None = None) -> dict:
     prompt = PROMPT.format(theme=theme, old=old, maxlen=maxlen)
+    if avoid:
+        # Feed the titles already live on the channel into the ask. Measured
+        # 2026-11-18: two dharma long-form videos were both handed the identical
+        # new title, because the run proposed one title at a time with no view of
+        # the siblings. Naming them makes the model avoid a repeat.
+        prompt += ("\nชื่อที่ใช้ไปแล้วบนช่องนี้ (ห้ามซ้ำกับชื่อเหล่านี้):\n"
+                   + "\n".join(f"- {t}" for t in avoid[:40]) + "\n")
 
     def run(name: str) -> tuple[str, dict]:
         try:
@@ -188,6 +211,34 @@ def fetch(name: str, token: str, limit: int, ids: list[str],
 
 def _seconds(iso: str) -> int:
     return yt_duration.seconds(iso)
+
+
+def channel_titles(token: str) -> dict:
+    """Map normalised title -> {"ids": set of video ids, "title": raw title}.
+
+    Built from the uploads playlist, not from the run's own subset, so a proposed
+    title cannot collide with a video this run is not looking at.
+    """
+    it = _get("channels", {"part": "contentDetails", "mine": "true"}, token)["items"][0]
+    up = it["contentDetails"]["relatedPlaylists"]["uploads"]
+    ids, page = [], None
+    while True:
+        p = {"part": "contentDetails", "playlistId": up, "maxResults": "50"}
+        if page:
+            p["pageToken"] = page
+        r = _get("playlistItems", p, token)
+        ids += [x["contentDetails"]["videoId"] for x in r.get("items", [])]
+        page = r.get("nextPageToken")
+        if not page:
+            break
+    taken: dict[str, dict] = {}
+    for i in range(0, len(ids), 50):
+        for v in _get("videos", {"part": "snippet", "id": ",".join(ids[i:i + 50])},
+                      token)["items"]:
+            sn = v["snippet"]["title"]
+            e = taken.setdefault(_norm(sn), {"ids": set(), "title": sn})
+            e["ids"].add(v["id"])
+    return taken
 
 
 def only_recorded(vids: list[dict], recorded: set, allow_unrecorded: bool = False) -> list[dict]:
@@ -283,14 +334,35 @@ def main() -> int:
 
     print(f"=== {args.channel}: {len(vids)} videos\n")
     maxlen = 70 if args.longform else 60
+    # Every title live on the channel, so a proposal is checked against siblings
+    # this run is not looking at. Measured 2026-11-18: without this, two dharma
+    # long-form videos were both handed the identical new title.
+    taken = channel_titles(token)
     changes = []
     for v in vids:
-        prop = best_title(v["title"], theme, list(ADVISORS), maxlen=maxlen)
+        avoid = [e["title"] for e in taken.values() if v["id"] not in e["ids"]]
+        prop = best_title(v["title"], theme, list(ADVISORS), maxlen=maxlen,
+                          avoid=avoid)
         new = (prop.get("title") or "").strip()
         # keep the #Shorts signal the original title carried -- it costs a few
         # characters and helps YouTube keep classifying the clip as a Short
         if new and v.get("seconds", 0) <= 180 and "#Shorts" not in new:
             new = f"{new} #Shorts"
+        # Hard gate: a proposal that still repeats a sibling's live title is
+        # re-asked (the model may have ignored the avoid list), then skipped
+        # rather than shipped as a duplicate.
+        for _ in range(2):
+            if not new or not collides(new, taken, v["id"]):
+                break
+            prop = best_title(v["title"], theme, list(ADVISORS), maxlen=maxlen,
+                              avoid=avoid + [new])
+            new = (prop.get("title") or "").strip()
+            if new and v.get("seconds", 0) <= 180 and "#Shorts" not in new:
+                new = f"{new} #Shorts"
+        if new and collides(new, taken, v["id"]):
+            print(f"[DUP] {v['id']}  proposal repeats a live title; skipping\n"
+                  f"   would-be: {new}\n")
+            continue
         v["new_title"] = new
         v["keyword"] = prop.get("keyword", "")
         v["by"] = prop.get("by", "?")

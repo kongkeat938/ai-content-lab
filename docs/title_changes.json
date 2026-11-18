@@ -5995,6 +5995,20 @@
       "by": "gemini",
       "reason": "ใช้คำค้นหาที่ตรงกับพฤติกรรมคนไทยที่ชอบหาความรู้รอบตัว พร้อมกระชับชื่อเดิมให้เข้าใจง่ายและน่าสนใจขึ้นโดยไม่เกิน 60 ตัวอักษร",
       "applied_at": "2026-11-17T09:09:07.767140+00:00"
+    },
+    {
+      "id": "4EzAMP7urS4",
+      "title": "ธรรมะก่อนนอน ปล่อยวางความเครียด จิตสงบ หลับสบาย",
+      "categoryId": "22",
+      "views": 26,
+      "age_d": null,
+      "seconds": 7899,
+      "views_per_day": null,
+      "new_title": "ธรรมะก่อนนอน วางมือบนท้อง หายใจลึก ปล่อยวางความเครียด หลับสบาย",
+      "keyword": "ธรรมะก่อนนอน",
+      "by": "ak-manual",
+      "reason": "de-dup: this video and lKt_A63IUmg both carried the identical title (fixed generator in optimize_titles.py)",
+      "applied_at": "2026-11-18T11:31:30.604722+00:00"
     }
   ]
 }
