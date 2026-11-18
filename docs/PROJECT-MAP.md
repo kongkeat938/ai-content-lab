@@ -65,6 +65,10 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   entry — a reply can arrive split in two, and `parts[0]` alone cuts mid-word while the API still
   says `finishReason: STOP` (measured 2026-11-18; guard `scripts/test_gemini_text.py` sweeps the
   source). Every `ask_gemini`-style call site imports it.
+- **Vision quality check (manual, NEVER gates CI):** `scripts/grade_video_vision.py` samples N
+  frames across a finished file and asks Gemini for a 0-10 rubric score. It is non-deterministic
+  (measured 2026-11-17: the same cut scored 9 then 5/10), so a human/agent reads it — no workflow
+  calls it (guard `scripts/test_vision_grader.py` fails if a rail wires it in).
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)
