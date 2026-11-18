@@ -588,6 +588,16 @@
       "thumbnail": "work/ch1_shorts/93/thumb_93.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "94": {
+      "video_id": "Al-FbiXFZjw",
+      "url": "https://youtu.be/Al-FbiXFZjw",
+      "title": "คุณอนุญาตให้ความเงียบเป็นเพื่อนสนิทได้ #Shorts",
+      "posted_at": "2026-11-18T00:49:52+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/94/thumb_94.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
