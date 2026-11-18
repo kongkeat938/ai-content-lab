@@ -608,6 +608,16 @@
       "thumbnail": "work/ch1_shorts/95/thumb_95.jpg",
       "thumbnail_set": true,
       "shape": "cue"
+    },
+    "96": {
+      "video_id": "BqGUjJbQx6w",
+      "url": "https://youtu.be/BqGUjJbQx6w",
+      "title": "คุณมีสิทธิ์ปฏิเสธเพื่อนที่สูบพลังงานชีวิตคุณ #Shorts",
+      "posted_at": "2026-11-18T18:19:53+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/96/thumb_96.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
