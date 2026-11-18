@@ -484,6 +484,18 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "119": {
+      "video_id": "vNO51hjAhsc",
+      "url": "https://youtu.be/vNO51hjAhsc",
+      "title": "ทำไมท้องฟ้าจึงเป็นสีฟ้า ทั้งที่อวกาศนั้นมืดมิด #Shorts",
+      "posted_at": "2026-11-18T19:24:26+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch4_shorts/119/thumb_119.jpg",
+      "thumbnail_set": false,
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
