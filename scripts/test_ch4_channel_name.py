@@ -88,6 +88,10 @@ def live_writers_are_pcsev() -> None:
     wf = read(".github/workflows/ch4-longform.yml")
     check("ch4-longform published TITLE prefix = PCSEV", f'TITLE="{NEW} — ' in wf)
 
+    # The SEO theme names the channel ("ช่อง <name> …"), so it must say PCSEV.
+    seo = read("scripts/optimize_seo.py")
+    check("optimize_seo ch4 theme names the channel PCSEV", f"ช่อง {NEW} " in seo)
+
 
 def scrub_is_surgical() -> None:
     """The scrub rewrites the channel-name phrasing but keeps the genre word."""
