@@ -1,12 +1,12 @@
 # Project Memory — ak (ai-content-lab)
 
 **Agent `ak`**. Owner **K**: Thai replies, **measured evidence, not claims**; ak decides via the
-**panel** (`advise.py`), not K. Keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`/logs.
+**panel** (`advise.py`), not K. Keep <6,000 chars (`test_memory_budget.py`); detail in `topics/`.
 **Project `yt938-2`; read `docs/PROJECT-MAP.md` first (`test_project_map.py`).**
 
 ## 🪪 ak's identity & team
 **Every tool uses its OWN mailbox, never K's** (`test_agent_own_email.py`); ak = `ak_mail.py`.
-**Workers** (`team.py run <role>`) DO the work; panel advises.
+**Workers** (`team.py run <role>`) DO work.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP = long-form ONLY** (Shorts don't count); steer by long-form watch-h/week + `retention@2min`.
@@ -22,8 +22,9 @@
 - **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md` ← `watch_hours.json` only.
 - **"แยกไม่ได้" ≠ "ผิด":** a Data-API identity check dies on spent quota → **per-channel secret
   = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
-- **An LLM is not a primary source** — read the vendor's rule or measure live. Panel `advise.py`
-  (≥5; openrouter/ChatGPT/deepseek/HF dead). **PC1 = ak's hands** via `winremote` (`topics/03`).
+- **An LLM is not a primary source** — read the vendor's rule or measure live. **Panel = Gemini
+  ALONE** (K, 2026-11-18); **when stuck, FOLLOW Gemini's advice** (`test_advise_panel.py`).
+  **PC1 = ak's hands** via `winremote` (`topics/03`).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that drops a piece
   must FAIL. A gate probing an API its token can't read (403)+`|| echo 0` = **false pass**.
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
@@ -68,8 +69,8 @@
 - **An animated still beats a slide-show; its LOOK must match the story** (K, 2026-11-18):
   `make_motion_short.py` layers come from the story's `genre` -- dharma/genx = calm (no mascot/glow),
   knowledge = mascot (`test_motion_short.py`).
-- **Real-clip ambient video** (K, 2026-11-18): `make_ambient_video.py` joins `fetch_broll.py`
-  (Coverr) clips → loops to `--minutes` → bed -14 LUFS (`test_ambient_video.py`).
+- **Real-clip ambient video**: `make_ambient_video.py` joins `fetch_broll.py` clips → loops to
+  `--minutes`, bed -14 LUFS (`test_ambient_video.py`).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.

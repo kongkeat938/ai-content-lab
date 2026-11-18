@@ -59,7 +59,8 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 ## 4) Conventions (K's rules, measured)
 
 - **PCSEV** every problem: Problem → Cause → Solution → Execute → Verify (verify LIVE).
-- Times to K: **Asia/Bangkok, 24h**. Reply in **Thai**. Decisions go to the **panel** (`advise.py`, ≥5).
+- Times to K: **Asia/Bangkok, 24h**. Reply in **Thai**. Decisions go to the **panel** (`advise.py`;
+  **Gemini alone**, K 2026-11-18 -- follow its advice when stuck).
 - A guard must be able to FAIL; never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL.
 - **Archive, don't delete** (`scripts/legacy/`): keep history, cut noise. Delete only true duplicates.

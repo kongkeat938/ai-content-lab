@@ -56,12 +56,18 @@ current. Rules: **ak never signs up as K**, and if a service demands a phone num
 ak has a **team that does the work, not just advice** (`scripts/team.py`): `researcher`,
 `scriptwriter`, `packager`, `critic`, `analyst` (fast) + `engineer` (OpenHands Cloud).
 Hand a worker a task and use the artifact: `python3 scripts/team.py run packager "..."`.
-The decision panel stays separate (`advise.py`, >=5 voices). Guard `scripts/test_team.py`.
+The decision panel stays separate (`advise.py`). Guard `scripts/test_team.py`.
+
+## The advisor is Gemini alone (K, 2026-11-18)
+**ทีมที่ปรึกษา = Gemini คนเดียวพอ** (`scripts/advise.py`; one vendor, one call). The old
+five-voice / two-vendor rule is retired. **เมื่อติดปัญหา ให้ทำตามคำสั่งและคำแนะนำของ Gemini**
+-- its advice is binding, not one voice among many. Guard `scripts/test_advise_panel.py`
+fails if a default panel grows a second vendor or loses Gemini.
 
 ## Decide without waiting (K, 2026-11-11)
-Take a decision to the **panel**, not to K: presence of mind → order the events → find the
-causes → weigh pros/cons and the effect on the goal → panel (`scripts/advise.py`) → choose the
-most-gain/least-harm option → **act**. Escalate only a genuine human-at-a-browser unknown (e.g.
+Take a decision to the **panel** (Gemini, `scripts/advise.py`), not to K: presence of mind →
+order the events → find the causes → weigh pros/cons and the effect on the goal → ask Gemini →
+**follow Gemini's advice** → act. Escalate only a genuine human-at-a-browser unknown (e.g.
 OAuth re-consent). Prefer a reversible move (private) over an irreversible one (delete).
 
 ## Pod environment

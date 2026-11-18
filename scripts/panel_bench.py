@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Measure each advisor's quality and speed on checkable questions.
 
-K's rule is a panel of at least five independent advisors, and the team must be
-**fast and high quality**. Speed alone is not enough: a panelist that refuses, or
-answers an exact-format question with a paragraph, drags the whole panel down.
+K's rule (2026-11-18): the decision panel is **Gemini alone**. This tool stays as
+a **measurement** bench -- it times and scores any advisor you name (including the
+opt-in `pollinations` / OpenHands ones), so the answer is measured, not claimed.
+Speed alone is not enough: a panelist that refuses, or answers an exact-format
+question with a paragraph, is not usable.
 
 This asks every advisor a small set of probes whose answer can be checked by a
 machine (arithmetic, logic, exact-format, a Thai instruction, a counting trap),

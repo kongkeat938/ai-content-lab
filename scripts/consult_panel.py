@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Ask a panel of independent AI advisors the same brief, and collect their answers.
 
-K's standing order is to consult five advisors before committing to a plan, so the
-advice is not one model's opinion. The panel mixes vendors (Google) and model
-families (Gemini, Gemma, GPT-OSS) so the answers are less correlated than five
-prompts to one model.
+Historical tool: K's old rule was to consult five advisors. **K changed the rule
+(2026-11-18): the advisor is Gemini alone** (`scripts/advise.py`), so this
+side-by-side comparison is kept for the record / an explicit multi-vendor run,
+not as the default decision path.
 
 Reachable from the pod (measured 2026-11-05; the sandbox egress proxy stubs
 models.github.ai and every keyed vendor host, so only these two routes answer):

@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
-"""Guards the advisor panel wiring in scripts/advise.py (no network calls).
+"""Guards the advisor-panel wiring in scripts/advise.py (no network calls).
 
-The panel once shipped a name (`gemini-latest`) that was missing from ADVISORS,
-so a slot silently degraded to "(unknown advisor)" while still counting as a
-panelist. These checks make that class of bug fail loudly.
+Two rules are enforced here.
+
+1. **K's current rule (2026-11-18): the panel is Gemini alone.** *"ทีมที่ปรึกษาให้
+   ใช้ gemini คนเดียวพอ"* and *"ต้องทำตามคำสั่งและแนะนำของ gemini เมื่อติดปัญหา"*.
+   The default panel and the light panel must each resolve to exactly one vendor
+   (Gemini), not the old five voices across two vendors. If a default panel grows
+   a second vendor, or loses Gemini, this fails -- so a stray edit cannot quietly
+   undo K's rule.
+
+2. **A panel name must be registered.** The panel once shipped a name
+   (`gemini-latest`) that was missing from ADVISORS, so a slot silently degraded
+   to "(unknown advisor)" while still counting as a panelist. That class of bug
+   must fail loudly.
 """
 from __future__ import annotations
 
@@ -12,6 +22,10 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import advise  # noqa: E402
+
+# Names served by the Gemini vendor (share GEMINI_API_KEY). Anything else in a
+# default panel is a second vendor and breaks K's "Gemini alone" rule.
+GEMINI_NAMES = {"gemini", "gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview"}
 
 
 def test_every_panel_name_exists():
@@ -22,16 +36,30 @@ def test_every_panel_name_exists():
         assert not missing, f"{group} references unknown advisors: {missing}"
 
 
-def test_light_panel_is_real_and_two_vendors():
-    """The loop's own panel. Measured 2026-11-11: the scripts asked for "gemini",
-    which was not a registry key, so every one skipped it and the "panel" was
-    pollinations alone -- or empty when pollinations 400'd. It must name only
-    registered advisors and keep more than one vendor."""
+def test_default_panel_is_gemini_alone():
+    """K (2026-11-18): the panel is Gemini, one vendor. Not five voices."""
+    team = advise.resolve_team(list(advise.FAST))
+    assert len(team) == 1, f"K's rule is Gemini alone, not a panel of {team}"
+    assert team[0] in GEMINI_NAMES, f"the one advisor must be Gemini, got {team}"
+
+
+def test_light_panel_is_gemini_alone():
+    """The loop's own panel. K (2026-11-18): Gemini alone, so a stuck decision is
+    Gemini's to make and ak follows it."""
     light = getattr(advise, "LIGHT", None)
     assert light is not None, "advise.LIGHT is missing (the shared light panel)"
-    assert len(light) >= 2, light
-    assert all(n in advise.ADVISORS for n in light), light
-    assert "gemini" in light and "pollinations" in light, light
+    assert len(light) == 1, light
+    assert light[0] in GEMINI_NAMES, light
+
+
+def test_no_default_panel_uses_a_second_vendor():
+    """Sweep every default panel (a hardcoded group name is how a guard goes blind
+    to a new group): each must be Gemini only, except the opt-in DEEP team."""
+    for gname, names in vars(advise).items():
+        if not (gname.isupper() and isinstance(names, list)) or gname == "DEEP":
+            continue
+        assert all(n in GEMINI_NAMES for n in names), \
+            f"{gname} uses a second vendor: {names}"
 
 
 def test_unknown_advisor_is_loud():
@@ -58,23 +86,12 @@ def test_scripts_share_one_light_team():
             f"{name} does not use the shared light team"
 
 
-def test_default_team_has_at_least_five_independent_slots():
-    assert len(advise.FAST) >= 5, advise.FAST
-    assert len(set(advise.FAST)) == len(advise.FAST), "duplicate panelist"
-
-
-def test_default_team_spans_two_vendors():
-    # more than one vendor: pollinations is not Google.
-    assert "pollinations" in advise.FAST, advise.FAST
-
-
 def test_no_dead_vendor_is_used():
     """K's rule (2026-11-15): 'ตัวไหนติดไม่ต้องใช้เลย' -- whichever advisor is
-    blocked must not be used at all. openrouter measured DEAD (no key, every call
-    raised 'no OpenRouter key'), so it must be gone from the registry AND from every
-    panel group. This SWEEPS the module for every panel list (a hardcoded group name
-    is how a guard goes blind to a new group), so re-adding a dead vendor anywhere
-    fails here."""
+    blocked must not be used. openrouter measured DEAD (no key, every call raised
+    'no OpenRouter key'), so it must be gone from the registry AND every panel.
+    This SWEEPS the module for every panel list (a hardcoded group name is how a
+    guard goes blind to a new group), so re-adding a dead vendor anywhere fails."""
     assert "openrouter" not in advise.ADVISORS, sorted(advise.ADVISORS)
     groups = {n: v for n, v in vars(advise).items()
               if n.isupper() and isinstance(v, list)}
@@ -83,18 +100,10 @@ def test_no_dead_vendor_is_used():
         assert "openrouter" not in names, f"{gname} still uses the dead openrouter: {names}"
 
 
-def test_default_panel_yields_five_real_voices():
-    """The default team must resolve to >=5 registered voices across >=2 vendors."""
-    team = advise.resolve_team(list(advise.FAST))
-    assert len(team) >= 5, f"panel lost a voice: {team}"
-    assert len(set(team)) == len(team), f"duplicate panelist: {team}"
-    assert all(n in advise.ADVISORS for n in team), team
-    assert "pollinations" in team, team
-
-
 if __name__ == "__main__":
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
             fn()
             print(f"ok  {name}")
     print("all advise-panel checks passed")
+

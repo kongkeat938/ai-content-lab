@@ -1,42 +1,27 @@
 #!/usr/bin/env python3
-"""Ask a panel of independent AI advisors one question and print every answer.
+"""Ask the advisor panel one question and print the answer.
 
-K's rule: never bring a decision to a person; take it to an AI. K also requires
-**at least five advisors on every question** -- a single vendor is a single point
-of failure, and one dead vendor must never stop a decision. This asks the whole
-panel and reports which answered.
+K's rule (changed 2026-11-18): the advisor panel is **Gemini alone** -- one
+vendor, one model family. *"ทีมที่ปรึกษาให้ใช้ gemini คนเดียวพอ"*. And when a
+problem comes up, ak **follows Gemini's instruction**: *"ต้องทำตามคำสั่งและแนะนำ
+ของ gemini เมื่อติดปัญหา"*. So a single Gemini call is the whole panel, and its
+advice is binding when ak is stuck -- not one voice among five.
 
-Default team: **five** advisors across **two vendors** -- K's rule:
+This replaces the earlier five-voice / two-vendor rule. The five Gemini models
+and pollinations were all the *same* question asked several ways; the measured
+failure mode was a dead vendor stalling a decision (openrouter had no key, every
+call raised). One vendor that answers is more useful than five that may not.
+Measured live 2026-11-18: `ask_gemini` answers ("2+2" -> "4") and the key lists
+50 models, so Gemini text is up.
 
-  1. gemini-3.5-flash-lite  -- GEMINI_API_KEY, one independent model
-  2. gemini-3.1-flash-lite  -- same key, a second model
-  3. gemini-3.5-flash       -- same key, a third model
-  4. gemini-3-flash-preview -- same key, a fourth model
-  5. pollinations           -- a different vendor, needs no key
-
-The four Gemini entries share a key but run different models; pollinations is a
-genuinely different vendor, so the team is five opinions across two vendors, not
-five copies of one. pollinations is slower (measured 2026-11-15: 0.3-42 s), but the
-panel asks every advisor in parallel, so it only sets the worst-case wall time.
-
-**openrouter was DROPPED (2026-11-15).** Measured DEAD: no key
-(`OPENROUTER_API_KEY` empty, no `~/.pod-openrouter-key`), every call raised
-`no OpenRouter key`. K's rule: *"ตัวไหนติดไม่ต้องใช้เลย"* (whichever is blocked, do
-not use it at all). The default five span two vendors without it, so the old
-`resolve_team()` substitution is gone; `resolve_team()` now only de-duplicates.
-`scripts/test_advise_panel.py` fails if a dead vendor is re-added to the registry
-or the default team collapses to one vendor.
-
-**Deep mode** (`--deep`) adds three OpenHands Cloud conversations (its own
-DeepSeek agent, Claude Sonnet, GPT-5) on KONGKEAT_OH_KEY. They are genuinely
-independent vendors but each takes 2-20 minutes, so they are opt-in only.
+`pollinations` and the OpenHands advisors stay in the registry for an explicit
+`--only` call, but they are **not** in any default panel. `--deep` is opt-in.
 
     python3 scripts/advise.py "what should I change first?"
-    python3 scripts/advise.py --broad "add the sixth vendor"
-    python3 scripts/advise.py --deep "the slow, high-stakes question"
     python3 scripts/advise.py --extra "28-day: Shorts 30.3h, long-form 2.9h" "..."
-    python3 scripts/panel_bench.py "measure the team"
+    python3 scripts/advise.py --only pollinations "compare with another vendor"
 """
+
 from __future__ import annotations
 
 import argparse
@@ -193,10 +178,13 @@ ADVISORS = {
     "openhands-gpt": lambda p: ask_openhands(p, model="openhands/gpt-5"),
 }
 
-# The default team: five advisors across two vendors (4 Gemini models + pollinations).
-FAST = ["gemini-3.5", "gemini-3.1", "gemini-flash", "gemini-preview", "pollinations"]
+# The default team: **Gemini alone** (K, 2026-11-18). One vendor, one call. The
+# `ask_gemini` chain still falls through several Gemini models, so a busy model
+# does not stop the answer -- but the panel is one vendor, by K's rule.
+FAST = ["gemini"]
 FAST_PLUS = FAST
 BROAD = FAST
+# Opt-in only (not in any default panel): another vendor / the slow Cloud advisors.
 DEEP = ["openhands", "openhands-claude", "openhands-gpt"]
 
 
@@ -208,11 +196,12 @@ def resolve_team(names: list[str]) -> list[str]:
             out.append(name)
     return out
 
-# The small panel the learning loop and the graders ask: one Google model plus one
-# other vendor, so a decision is never one model's opinion. Defined here, next to
-# the registry, so a script cannot name an advisor that does not exist (the bug
-# that silently emptied this panel, 2026-11-11).
-LIGHT = ["gemini", "pollinations"]
+# The small panel the learning loop and the graders ask. K's rule (2026-11-18):
+# Gemini alone. The old two-vendor LIGHT pair ("gemini" + "pollinations") is gone;
+# a decision is Gemini's, and ak follows it. Defined here, next to the registry, so
+# a script cannot name an advisor that does not exist (the bug that silently
+# emptied this panel, 2026-11-11).
+LIGHT = ["gemini"]
 
 
 def advisor(name: str):
@@ -234,7 +223,7 @@ def main() -> int:
     ap.add_argument("--extra", default="", help="extra measured facts to include")
     ap.add_argument("--only", default="", help="comma list of advisors to use")
     ap.add_argument("--broad", action="store_true",
-                    help="deprecated no-op: pollinations is already in the default team")
+                    help="deprecated no-op: the default panel is Gemini alone (K, 2026-11-18)")
     ap.add_argument("--deep", action="store_true",
                     help="also ask the slow OpenHands advisors (2-20 min each)")
     ap.add_argument("--no-system", action="store_true")
