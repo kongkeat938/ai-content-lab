@@ -87,8 +87,32 @@ def main() -> int:
         fail("the night-set opening angle is abstract again; it must ask for a "
              f"concrete action. Got: {open_angle!r}")
 
+    # Retention lever #2 (measured 2026-11-18): the 120-min curve holds 97.9% at
+    # 1:12 then drops to 28.4% by 2:24 -- 71% leave inside the first piece, where
+    # the concrete opening hands over to abstract narration. The panel's fix is a
+    # doable micro-action running through the whole first piece and a bridge into
+    # the next, never a "we are done, you may leave" beat. Guard both halves so the
+    # fix cannot drift back to a self-closing piece.
+    dharma_hook = open(os.path.join(ROOT, "content", "hooks", "dharma.md"),
+                       encoding="utf-8").read().strip()
+    last = dharma_hook.splitlines()[-1]
+    bridge_cues = ("ไปต่อ", "ด้วยกัน", "ค่อย ๆ", "ค่อยๆ", "แล้วต่อ", "แล้วค่อย")
+    if not any(c in last for c in bridge_cues):
+        fail(f"the dharma hook must end with a bridge into the piece, not a close "
+             f"(a closing line is where the 71% leave). Last line: {last!r}")
+    # And the generator's prompt must carry the anti-drop rules for the open piece.
+    for needle, why in (
+        ("กติกากันคนออกกลางทาง", "the anti-drop rule block"),
+        ("ประโยคสะพาน", "the bridge instruction for the opening piece"),
+        ("อย่าจบแบบปิดประเด็น", "the no-self-close rule for later pieces"),
+    ):
+        if needle not in gen:
+            fail(f"gen_night_scripts.py lost {why} ({needle!r}); the retention fix "
+                 "has drifted back out of the prompt")
+
     print("OK: every channel hook is concrete and short (the measured retention "
-          "lever), and the night-set opening asks for a concrete action")
+          "lever), the night-set opening asks for a concrete action, and the "
+          "generator keeps a micro-action running with a bridge instead of a close")
     return 0
 
 
