@@ -43,6 +43,10 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 ## 3) Where the truth lives (do not duplicate these)
 
 - Goal + rules: `docs/GOAL.md`, `AGENTS.md` (root only), `docs/DECISION-*.md`.
+- Goal consults / panels: `docs/CONSULT-*.md` (the brief + the answer, incl. the measured numbers)
+  and `docs/PANEL-*.md`. `docs/GROWTH-PLAN-*.md` is the plan that follows a consult. The latest
+  goal consult is `docs/CONSULT-2026-11-18-goal.md` (Gemini alone) — it also records where
+  Gemini's advice **conflicts with the measured data** (genx subs).
 - Channel facts: `channels.json`, `.openhands/memory/topics/00-*.md`.
 - Channel NAMES: a channel's main title is **not API-settable** — K sets it in Studio, so the
   repo *follows* the live name (verified quota-free from RSS / channel page / oEmbed). Single
@@ -83,4 +87,4 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 `scripts/legacy/probe_advisors.py`, `scripts/legacy/studio_drive.py`.
 
 ---
-_Last audited: 2026-11-13 (ak, whole-repo pass anchored to the yt938-2 goal)._
+_Last audited: 2026-11-18 (ak, whole-repo pass anchored to the yt938-2 goal)._
