@@ -24,6 +24,8 @@ from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)
+import gemini_text  # noqa: E402 - local module: one reader for a Gemini reply
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
 
 
@@ -57,7 +59,7 @@ def ask(key: str, model: str, prompt: str) -> str:
     req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=180) as fh:
-            return json.load(fh)["candidates"][0]["content"]["parts"][0]["text"]
+            return gemini_text.text_of(json.load(fh))
     except urllib.error.HTTPError as exc:
         return f"GEMINI ERROR {exc.code}: {exc.read().decode()[:300]}"
 

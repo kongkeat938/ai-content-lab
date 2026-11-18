@@ -52,6 +52,16 @@ def _post(url: str, body: dict, headers: dict | None = None, timeout: int = 120)
         return json.load(fh)
 
 
+def _gemini_text(candidate: dict) -> str:
+    """Join EVERY text part of a candidate (one source: gemini_text.text_of). Gemini
+    sometimes splits one answer across several parts (measured 2026-11-18: a live
+    reply came back with nparts=2 and parts[0] alone cut mid-word, so the tail was
+    silently lost). Reading only parts[0] looks exactly like a truncated answer."""
+    sys.path.insert(0, HERE)
+    import gemini_text  # noqa: PLC0415 - local module
+    return gemini_text.text_of({"candidates": [candidate]})
+
+
 def ask_gemini(prompt: str, models: tuple[str, ...] = GEMINI_MODELS,
                tries: int = 3) -> str:
     key = os.environ.get("GEMINI_API_KEY")
@@ -65,7 +75,7 @@ def ask_gemini(prompt: str, models: tuple[str, ...] = GEMINI_MODELS,
             try:
                 d = _post(url, {"contents": [{"parts": [{"text": prompt}]}],
                                 "generationConfig": {"temperature": 0.7}})
-                return d["candidates"][0]["content"]["parts"][0]["text"]
+                return _gemini_text(d["candidates"][0])
             except urllib.error.HTTPError as exc:
                 last = f"{model}: HTTP {exc.code}"
                 # 503 = the shared key is momentarily saturated (four panel

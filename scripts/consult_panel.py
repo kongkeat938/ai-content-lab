@@ -30,6 +30,8 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)
+import gemini_text  # noqa: E402 - local module: one reader for a Gemini reply
 
 GEMINI = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 POLLINATIONS = "https://text.pollinations.ai/openai"
@@ -85,7 +87,7 @@ def ask_gemini(model: str, prompt: str) -> str:
             "generationConfig": {"temperature": 0.6}}
     try:
         data = json.loads(_post(GEMINI.format(model=model) + f"?key={key}", body, {}))
-        return data["candidates"][0]["content"]["parts"][0]["text"]
+        return gemini_text.text_of(data)
     except urllib.error.HTTPError as exc:
         return f"(HTTP {exc.code}: {exc.read().decode()[:200]})"
     except Exception as exc:  # noqa: BLE001

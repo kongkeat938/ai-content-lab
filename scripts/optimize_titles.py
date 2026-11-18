@@ -27,6 +27,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import yt_duration
+import gemini_text  # noqa: E402 - one reader for a Gemini reply
 
 import argparse
 import json
@@ -105,7 +106,7 @@ def ask_gemini(prompt: str) -> dict:
     body = {"contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"temperature": 0.7}}
     d = _post_json(url, body, {"Content-Type": "application/json"})
-    return _json_of(d["candidates"][0]["content"]["parts"][0]["text"])
+    return _json_of(gemini_text.text_of(d))
 
 
 def ask_pollinations(prompt: str) -> dict:

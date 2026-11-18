@@ -33,6 +33,10 @@ import time
 import urllib.error
 import urllib.request
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import gemini_text  # noqa: E402 - one reader for a Gemini reply
+
 # Independent voters. Several distinct models, so one model's blind spot is
 # caught by another instead of a single model grading its own draft.
 GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
@@ -72,7 +76,7 @@ def _gemini(prompt: str, key: str, model: str) -> str:
         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
         data=body, headers={"Content-Type": "application/json", "x-goog-api-key": key})
     with urllib.request.urlopen(req, timeout=90) as fh:
-        return json.load(fh)["candidates"][0]["content"]["parts"][0]["text"]
+        return gemini_text.text_of(json.load(fh))
 
 
 def _pollinations(prompt: str) -> str:

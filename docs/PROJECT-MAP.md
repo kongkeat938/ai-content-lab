@@ -57,6 +57,10 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - **Quality = Gemini (free):** the panel is Gemini alone (K, 2026-11-18). A build that FAILS a gate
   is handed to Gemini for a fix (`scripts/fix_with_gemini.py`, wired into `qa_gate` veto and
   `short_standard` hold; it never clears the gate). Free stack + limits: `docs/QUALITY-FREE-2026-11-18.md`.
+- **One reader for a Gemini reply:** `scripts/gemini_text.text_of` joins EVERY `content.parts`
+  entry — a reply can arrive split in two, and `parts[0]` alone cuts mid-word while the API still
+  says `finishReason: STOP` (measured 2026-11-18; guard `scripts/test_gemini_text.py` sweeps the
+  source). Every `ask_gemini`-style call site imports it.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)

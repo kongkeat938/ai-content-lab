@@ -26,6 +26,8 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)
+import gemini_text  # noqa: E402 - one reader for a Gemini reply
 # Free-tier models come and go; the first that answers wins. Measured 2026-11-04:
 # gemini-3.5-flash-lite intermittently 503s, gemini-3.1-flash-lite answered.
 MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
@@ -238,7 +240,7 @@ def ask(key: str, prompt: str) -> list:
         req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
         try:
             with urllib.request.urlopen(req, timeout=120) as fh:
-                txt = json.load(fh)["candidates"][0]["content"]["parts"][0]["text"]
+                txt = gemini_text.text_of(json.load(fh))
             return json.loads(txt)
         except urllib.error.HTTPError as e:
             last = f"{model} HTTP {e.code}"
