@@ -40,30 +40,50 @@ def receipt(hook_sec: float) -> dict:
     }
 
 
+def _no_fix(entry: dict, reasons: list) -> None:
+    """The seam a vetoed build is handed to. A test must stay offline and write
+    nothing, so it injects this no-op instead of the real Gemini hand-off
+    (measured 2026-11-18: the real one reached the live API and dropped a fix
+    artifact into content/fixes/ on every run of this very test)."""
+    entry["_fix_asked"] = list(reasons)
+
+
+def gate(entry: dict, rec: dict) -> None:
+    A.apply_qa_gate(entry, rec, fix=_no_fix)
+
+
 def main() -> int:
+    # Snapshot the fix directory first, so the final check can FAIL if this test
+    # (which exercises two vetoes) drops an artifact the way the real hand-off did.
+    fix_dir = os.path.join(A.ROOT, "content", "fixes")
+    fixes_before = sorted(os.listdir(fix_dir)) if os.path.isdir(fix_dir) else []
+
     # 1. No receipt (build skipped) -> state is left untouched, NOT blocked.
     e = {"state": "ready"}
-    A.apply_qa_gate(e, {})
+    gate(e, {})
     check("an empty receipt does not veto", e["state"] == "ready", e["state"])
 
     # 2. A good receipt -> ready.
     e = {"state": "ready"}
-    A.apply_qa_gate(e, receipt(12.0))
+    gate(e, receipt(12.0))
     check("a passing build stays ready", e["state"] == "ready", e["state"])
 
-    # 3. A 40 s hook (the real 2026-11-09 failure) -> blocked.
+    # 3. A 40 s hook (the real 2026-11-09 failure) -> blocked, and the veto is
+    #    handed to the fix seam with the measured reason (never silently dropped).
     e = {"state": "ready"}
-    A.apply_qa_gate(e, receipt(40.3))
+    gate(e, receipt(40.3))
     check("an over-long hook is vetoed", e["state"] == "blocked", e["state"])
+    check("the veto hands its reason to the fix seam",
+          any("40.3" in r for r in e.get("_fix_asked", [])), str(e.get("_fix_asked")))
 
     # 4. A passing re-grade clears an earlier veto.
     e = {"state": "blocked"}
-    A.apply_qa_gate(e, receipt(12.0))
+    gate(e, receipt(12.0))
     check("a passing re-grade clears a prior veto", e["state"] == "ready", e["state"])
 
     # 5. An already-published video is never un-published by the gate.
     e = {"state": "published", "video_id": "abc"}
-    A.apply_qa_gate(e, receipt(40.3))
+    gate(e, receipt(40.3))
     check("a published entry keeps its state", e["state"] == "published", e["state"])
 
     # 5b. A *passing* re-grade of an already-live key must not reset it to ready
@@ -71,12 +91,12 @@ def main() -> int:
     #     (night_auto_202646) was flipped published -> ready beside its live
     #     video_id, which is one --forget away from a duplicate upload.
     e = {"state": "published", "video_id": "abc"}
-    A.apply_qa_gate(e, receipt(12.0))
+    gate(e, receipt(12.0))
     check("a live video is not reset to ready by a re-grade",
           e["state"] == "published", e["state"])
     vids = [{"key": "k", "state": "published", "video_id": "abc"}]
     entry = {"key": "k", "state": "ready", "duration_sec": 7208.3}
-    A.apply_qa_gate(entry, receipt(12.0))
+    gate(entry, receipt(12.0))
     A.queue_entry(vids, entry, receipt(12.0))
     check("the manifest merge keeps a live video published",
           vids[0]["state"] == "published", vids[0]["state"])
@@ -86,7 +106,7 @@ def main() -> int:
     #    merge copies state=blocked and qa=null back over the new verdict.
     vids = [{"key": "k", "state": "blocked", "qa": None, "video_url": "old"}]
     entry = {"key": "k", "state": "ready", "duration_sec": 7208.3, "video_url": "new"}
-    A.apply_qa_gate(entry, receipt(12.0))
+    gate(entry, receipt(12.0))
     A.queue_entry(vids, entry, receipt(12.0))
     want = qa_gate.grade(receipt(12.0))["grade"]
     got = (vids[0].get("qa") or {}).get("grade")
@@ -97,7 +117,7 @@ def main() -> int:
     # 7. Without a receipt the upload record is preserved (skip path).
     vids = [{"key": "k", "state": "published", "qa": {"grade": "B"}, "video_id": "abc"}]
     entry = {"key": "k", "state": "ready"}
-    A.apply_qa_gate(entry, {})
+    gate(entry, {})
     A.queue_entry(vids, entry, {})
     check("a no-receipt re-run keeps the live record",
           vids[0]["state"] == "published" and vids[0]["video_id"] == "abc"
@@ -108,6 +128,17 @@ def main() -> int:
     check("a new key is added",
           A.queue_entry(vids, {"key": "new", "state": "ready"}, receipt(12.0)) == "added"
           and len(vids) == 1)
+
+    # 9. The default (no injected seam) still points at the real Gemini hand-off,
+    #    so production keeps asking Gemini -- the seam is for tests, not a way to
+    #    silently disable the fix. And this test must leave the tree untouched:
+    #    exercising two vetoes above must NOT drop a fix artifact (measured
+    #    2026-11-18: before the seam, every run of this test wrote one).
+    check("the fix seam defaults to the real hand-off",
+          A.apply_qa_gate.__defaults__ == (None,), str(A.apply_qa_gate.__defaults__))
+    fixes_after = sorted(os.listdir(fix_dir)) if os.path.isdir(fix_dir) else []
+    new = [f for f in fixes_after if f not in fixes_before]
+    check("this test wrote nothing into content/fixes/", not new, ", ".join(new) or "clean")
 
     if FAILS:
         print(f"\nFAILED: {FAILS}")

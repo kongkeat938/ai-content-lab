@@ -153,7 +153,7 @@ CHANNELS = {
 }
 
 
-def apply_qa_gate(entry: dict, receipt: dict) -> None:
+def apply_qa_gate(entry: dict, receipt: dict, fix=None) -> None:
     """Grade a finished build and set entry['state'] from the verdict.
 
     A blocked build is recorded but never uploaded (publish_batch skips
@@ -164,6 +164,12 @@ def apply_qa_gate(entry: dict, receipt: dict) -> None:
       verified video -- so with no receipt the state is left untouched.
     * a passing (re)grade must clear an earlier veto, or a fixed build stays
       blocked forever because the manifest hit still carries state=blocked.
+
+    `fix` is the seam a vetoed build is handed to (K, 2026-11-18). It defaults to
+    the real Gemini hand-off, but a caller that must stay offline and write nothing
+    -- a test -- injects its own. Without this seam a hermetic test that exercises a
+    veto reached the live network and wrote a fix artifact into the working tree
+    (measured 2026-11-18).
     """
     if not receipt:
         print("  no receipt here (build was skipped); leaving the state unchanged")
@@ -187,7 +193,7 @@ def apply_qa_gate(entry: dict, receipt: dict) -> None:
     if qa["blocked"]:
         entry["state"] = "blocked"
         print(f"  QA VETO (grade {qa['grade']}): " + "; ".join(qa["reasons"]))
-        ask_gemini_for_fix(entry, qa["reasons"])
+        (fix or ask_gemini_for_fix)(entry, qa["reasons"])
         return
     entry["state"] = "ready"
     print(f"  QA grade {qa['grade']} -- publishable")

@@ -27,8 +27,9 @@
   **PC1 = ak's hands** via `winremote` (`topics/03`).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps; a generator that drops a piece
   must FAIL. A gate probing an API its token can't read (403)+`|| echo 0` = **false pass**.
-- **งานไม่ผ่าน gate → ถาม Gemini หาทางแก้** (`fix_with_gemini.py`; ไม่ล้าง veto). **อ่านคำตอบ Gemini =
-  join ทุก `content.parts`** (`gemini_text.text_of`): `parts[0]` เดียวตัดกลางคำเงียบ (API ยัง `STOP`).
+- **A test hitting a veto injects the fix seam** (`apply_qa_gate(fix=)`); default = LIVE Gemini
+  + `content/fixes/`. **งานไม่ผ่าน gate → ถาม Gemini หาทางแก้** (`fix_with_gemini.py`; ไม่ล้าง veto).
+  **อ่านคำตอบ Gemini = join ทุก `content.parts`** (`gemini_text.text_of`): `parts[0]` ตัดกลางคำ.
 - **Pod env:** recycled → reinstall `ffmpeg` + `pip -r requirements.txt`; export
   `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 → push with `x-access-token:` URL; suite = every `test_*.py`.
 
