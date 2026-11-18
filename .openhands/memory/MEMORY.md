@@ -69,6 +69,9 @@
   stays in keywords/SEO); guards `test_channel_name_live.py`, `test_ch4_channel_name.py`.
 - **Curated angles survive de-dup** (`test_angle_pool.py`): a 3-char floor rejected every angle
   (Thai shares 3-char runs). Floor **8**.
+- **One live title = one video** (`test_optimize_titles_dedup.py`): `optimize_titles` proposed one
+  title at a time → 2 dharma long-form shipped the SAME title (measured 2026-11-18). It now reads
+  every live title first (`channel_titles`/`collides`), re-asks, then SKIPS a dup.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
