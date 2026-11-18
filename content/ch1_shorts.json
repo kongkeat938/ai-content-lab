@@ -598,6 +598,16 @@
       "thumbnail": "work/ch1_shorts/94/thumb_94.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "95": {
+      "video_id": "9Fe5NJX1FkA",
+      "url": "https://youtu.be/9Fe5NJX1FkA",
+      "title": "คุณไม่ต้องอธิบายความรู้สึกให้ใครเข้าใจ #Shorts",
+      "posted_at": "2026-11-18T14:59:10+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/95/thumb_95.jpg",
+      "thumbnail_set": true,
+      "shape": "cue"
     }
   }
 }
