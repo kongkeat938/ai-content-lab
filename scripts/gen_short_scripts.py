@@ -197,7 +197,7 @@ CHANNELS = {
         # The channel's long-form gets few views, so a "go watch the full clip"
         # CTA still sends viewers to a dead end. Enforced by valid().
         "forbid_cta": _BROKEN_CTA,
-        "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "เกร็ดความรู้รอบตัว"
+        "prompt": """คุณคือผู้เขียนสคริปต์ Shorts ภาษาไทยให้ช่อง "PCSEV"
 กลุ่มเป้าหมาย: คนไทยทั่วไปที่ชอบเรื่องน่ารู้สั้น ๆ เข้าใจง่าย
 
 เขียน Shorts ใหม่ {count} คลิป เรื่อง: {angles}

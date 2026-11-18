@@ -42,7 +42,7 @@ ROOT = os.path.dirname(HERE)
 CHANNELS = {
     "ch1": {"token": "YT_CH1_REFRESH_TOKEN", "name": "ตาต้า GenX"},
     "ch2": {"token": "YT_CH2_REFRESH_TOKEN", "name": "Farmmer"},
-    "ch4": {"token": "YT_CH4_REFRESH_TOKEN", "name": "เกร็ดความรู้รอบตัว"},
+    "ch4": {"token": "YT_CH4_REFRESH_TOKEN", "name": "PCSEV"},
 }
 
 # How each channel should be shelved. A rule is either `by` (shorts/long, i.e.
@@ -81,11 +81,14 @@ PLAN = {
     },
     "ch4": {
         "playlists": [
-            {"title": "เกร็ดความรู้รอบตัว — Shorts", "by": "shorts", "keep": True,
-             "rename_from": "เรื่องเล่าอบอุ่นใจ — Shorts",
+            {"title": "PCSEV — เกร็ดสั้น", "by": "shorts", "keep": True,
+             # The pivot rename to "เกร็ดความรู้รอบตัว" never landed live (quota kept
+             # deferring), so the playlists still carry the pre-pivot title. Accept
+             # either old title so the rename happens in place, never a split copy.
+             "rename_from": ["เกร็ดความรู้รอบตัว — Shorts", "เรื่องเล่าอบอุ่นใจ — Shorts"],
              "desc": "เกร็ดความรู้สั้น ๆ รอบตัว ได้ความรู้ทุกคลิป"},
-            {"title": "เกร็ดความรู้รอบตัว — ตอน", "by": "long", "keep": True,
-             "rename_from": "เรื่องเล่าอบอุ่นใจ — ตอน",
+            {"title": "PCSEV — เกร็ดรวมยาว", "by": "long", "keep": True,
+             "rename_from": ["เกร็ดความรู้รอบตัว — ตอน", "เรื่องเล่าอบอุ่นใจ — ตอน"],
              "desc": "เกร็ดความรู้รอบตัวฉบับเต็มตอน ฟังเพลินได้ทั้งวัน"},
         ],
     },
@@ -217,13 +220,18 @@ def organise(tok: str, ch_id: str, vids: list[dict], plan: list[dict], dry: bool
             rx = re.compile(spec["match"], re.I)
             members = [v for v in vids if rx.search(v["title"])]
         pl_id = have.get(spec["title"])
-        # A channel that is being renamed has playlists under the OLD title. Left
+        # A channel that is being renamed has playlists under an OLD title. Left
         # alone, the new spec would create a second, empty playlist beside the old
         # one and split the videos. `rename_from` finds the existing playlist and
         # re-titles it in place, so the id (and its videos) survive the rename.
-        old_id = have.get(spec.get("rename_from", "")) if spec.get("rename_from") else None
+        # It may be one old title or a list (ch4's pivot rename never landed, so
+        # the live playlist can still carry the pre-pivot title).
+        rf = spec.get("rename_from")
+        rf_list = rf if isinstance(rf, list) else ([rf] if rf else [])
+        old_title = next((t for t in rf_list if t in have), None)
+        old_id = have.get(old_title) if old_title else None
         if old_id and not pl_id:
-            print(f"  playlist \"{spec['rename_from']}\" -> \"{spec['title']}\" [rename in place]")
+            print(f"  playlist \"{old_title}\" -> \"{spec['title']}\" [rename in place]")
             if not dry:
                 r = api(f"https://www.googleapis.com/youtube/v3/playlists?part=snippet,status",
                         tok, "PUT", {"id": old_id, "snippet": {"title": spec["title"],

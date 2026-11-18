@@ -90,7 +90,7 @@ standard:
 python3 scripts/make_qa_video.py \
     --script work/<job>/qa.json \
     --out    work/<job>/video.mp4 \
-    --broll  --brand "เกร็ดความรู้รอบตัว"
+    --broll  --brand "PCSEV"
 ```
 
 Each beat then fetches a clip with its `broll` query (short English queries work
@@ -102,7 +102,7 @@ For the long-form (30-min) knowledge rail, the same method is the kinetic engine
 ```
 python3 scripts/build_night.py --content content/<set> --work work/ch4_know_01 \
     --engine kinetic --broll --minutes 30 --voice th-TH-NiwatNeural \
-    --brand "เกร็ดความรู้รอบตัว" --hook-file content/hooks/knowledge.md
+    --brand "PCSEV" --hook-file content/hooks/knowledge.md
 ```
 
 `build_night.py` writes `broll.json` (one real clip per beat) and passes it to

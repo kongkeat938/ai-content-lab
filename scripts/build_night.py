@@ -188,7 +188,7 @@ def main() -> int:
                     help="poster = the still card (legacy); kinetic = an "
                          "always-moving background with captions synced to the "
                          "narration (the ch4 pivot, see make_kinetic_video.py)")
-    ap.add_argument("--brand", default="เกร็ดความรู้รอบตัว",
+    ap.add_argument("--brand", default="PCSEV",
                     help="persistent corner tag for the kinetic engine")
     a = ap.parse_args()
 

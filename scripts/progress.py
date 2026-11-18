@@ -41,9 +41,9 @@ RPM = 2.0                    # USD per 1,000 long-form views (Thai, mid estimate
 HANDLES = {
     "genx": "tatagenxgeny",
     "dharma": "farmmer-n9t",
-    "kongkeat": "kongkeatpratumma",
+    "kongkeat": "PCSEV",
 }
-LABEL = {"genx": "ตาต้า GenX", "dharma": "Farmmer", "kongkeat": "เกร็ดความรู้รอบตัว"}
+LABEL = {"genx": "ตาต้า GenX", "dharma": "Farmmer", "kongkeat": "PCSEV"}
 ISSUE_TITLE = "ความคืบหน้าถึงเป้า $500/เดือน — รายงานล่าสุด"
 
 

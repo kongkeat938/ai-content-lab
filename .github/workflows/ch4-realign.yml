@@ -3,9 +3,9 @@ name: ch4-realign
 # Applies the ch4 realignment through the YouTube Data API -- no browser, no
 # Studio, no one at a machine. It does the whole rework the panel approved:
 #
-#   1. rename the channel to เกร็ดความรู้รอบตัว (brandingSettings.channel.title
-#      + localizations.th.title -- the fields the live name reads from). The 2026-11-16
-#      pivot moved the channel from family stories to general knowledge.
+#   1. align the channel name to PCSEV (set by K in Studio; the main title is not
+#      API-settable, so set_channel_name.py writes localizations.th.title + the
+#      description/keywords). The 2026-11-16 pivot moved the genre to general knowledge.
 #   2. rename its two playlists in place (channel_overhaul --rename_from, so the
 #      ids and their videos survive; a plain create would make a second, empty set)
 #   3. scrub the old name out of the live video descriptions (scrub_channel_name)

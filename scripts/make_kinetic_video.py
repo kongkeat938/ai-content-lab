@@ -374,7 +374,7 @@ def main() -> int:
     ap.add_argument("--timing", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--title", default="")
-    ap.add_argument("--brand", default="เกร็ดความรู้รอบตัว")
+    ap.add_argument("--brand", default="PCSEV")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--crf", type=int, default=24)
     ap.add_argument("--preset", default="veryfast")

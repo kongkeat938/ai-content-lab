@@ -1,6 +1,6 @@
 name: ch4-longform
 
-# Builds a ch4 (เกร็ดความรู้รอบตัว) general-knowledge long-form and puts the media
+# Builds a ch4 (PCSEV) general-knowledge long-form and puts the media
 # on a Release.
 #
 # PIVOT 2026-11-16: ch4 was เรื่องเล่าอบอุ่นใจ (warm family stories), and it was
@@ -147,12 +147,12 @@ jobs:
             --work work/ch4_know_01 \
             --out work/ch4_know_01 \
             --minutes "${{ inputs.minutes || '30' }}" \
-            --title "เกร็ดความรู้รอบตัว" \
+            --title "PCSEV" \
             --subtitle "เกร็ดน่ารู้ ฟังเพลินได้ทั้งวัน" \
             --voice th-TH-NiwatNeural \
             --engine kinetic \
             --broll \
-            --brand "เกร็ดความรู้รอบตัว" \
+            --brand "PCSEV" \
             --hook-file content/hooks/knowledge.md \
             --bed-ledger content/bed_ledger_kongkeat.json
 
@@ -202,9 +202,9 @@ jobs:
           THEME="${{ steps.pick.outputs.theme }}"
           if [ -z "$TITLE" ]; then
             if [ -n "$THEME" ]; then
-              TITLE="เกร็ดความรู้รอบตัว — $THEME"
+              TITLE="PCSEV — $THEME"
             else
-              TITLE="เกร็ดความรู้รอบตัว รวมเกร็ดน่ารู้ฟังเพลิน"
+              TITLE="PCSEV รวมเกร็ดน่ารู้ฟังเพลิน"
             fi
           fi
           MIN="${{ inputs.minutes || '30' }}"

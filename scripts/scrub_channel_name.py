@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """Rewrite a channel's old name/handle out of the descriptions of its live videos.
 
-Two renames landed on ch4. First the channel dropped the owner's personal name
+Three renames landed on ch4. First the channel dropped the owner's personal name
 (`@kongkeatpratumma`, `kongkeat pratumma`) and every clip published before
 2026-11-05 still carried it. Then the channel was renamed twice: "เรื่องเล่าการ์ตูน"
 (cartoon) to "เรื่องเล่าอบอุ่นใจ" on 2026-11-07, then to "เกร็ดความรู้รอบตัว" on
 2026-11-16 (the genre PIVOT from family stories to general knowledge -- the old
-format was one still poster looping and drew 0.7 long-form watch-hours/28d). Every
-name change left the previous title in the live descriptions, and clips on the
-*other* channels name ch4 in their "ช่องพี่น้อง" block, so they carry an old title
-too.
+format was one still poster looping and drew 0.7 long-form watch-hours/28d). The
+name is now **"PCSEV"** (set by K in Studio, 2026-11-17; the main title is not
+API-settable). Every name change left the previous title in the live descriptions,
+and clips on the *other* channels name ch4 in their "ช่องพี่น้อง" block, so they
+carry an old title too.
 
 This replaces each old token with the new one, idempotently (a description with
 no old token is skipped). Only the description changes; title and tags are
-untouched.
+untouched. The bare word "เกร็ดความรู้รอบตัว" is NOT scrubbed -- it is still the
+content genre -- only the channel-name phrasings are.
 
     python3 scripts/scrub_channel_name.py --channel ch4          # show changes
     python3 scripts/scrub_channel_name.py --channel ch4 --apply
@@ -37,12 +39,20 @@ sys.path.insert(0, HERE)
 OLD_HANDLE = "@kongkeatpratumma"
 NEW_URL = "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ"
 OLD_NAME = "kongkeat pratumma"
-NEW_NAME = "เกร็ดความรู้รอบตัว"
+NEW_NAME = "PCSEV"
 OLD_TITLE = "เรื่องเล่าการ์ตูน"
 OLD_STORY = "เรื่องเล่าอบอุ่นใจ"
 SIBLING_OLD = "เรื่องเล่าการ์ตูน — เรื่องเล่าอบอุ่นใจ"
 SIBLING_STORY = "เรื่องเล่าอบอุ่นใจ — ความทรงจำครอบครัว"
-SIBLING_NEW = "เกร็ดความรู้รอบตัว — เกร็ดน่ารู้และวิทยาศาสตร์ในชีวิตประจำวัน"
+SIBLING_NEW = "PCSEV — เกร็ดน่ารู้และวิทยาศาสตร์ในชีวิตประจำวัน"
+# The 2026-11-16 pivot wrote the channel name "เกร็ดความรู้รอบตัว" into live
+# descriptions (as the follow line and the sibling block). The channel is now
+# PCSEV, so scrub those channel-name phrasings too -- but ONLY the exact phrases,
+# never the bare word "เกร็ดความรู้รอบตัว", which is still the content genre
+# ("รวมเกร็ดความรู้รอบตัวน่าทึ่ง" must not become "รวมPCSEVน่าทึ่ง").
+FOLLOW_PIVOT = "ฝากกดติดตามช่อง เกร็ดความรู้รอบตัว"
+FOLLOW_NEW = "ฝากกดติดตามช่อง PCSEV"
+SIBLING_PIVOT = "เกร็ดความรู้รอบตัว — เกร็ดน่ารู้และวิทยาศาสตร์ในชีวิตประจำวัน"
 
 # Ordered: the longest strings first, so a later short replacement can never
 # leave a half-renamed sentence behind.
@@ -52,11 +62,13 @@ REPLACEMENTS = [
     (OLD_NAME, NEW_NAME),
     (SIBLING_OLD, SIBLING_NEW),
     (SIBLING_STORY, SIBLING_NEW),
+    (SIBLING_PIVOT, SIBLING_NEW),
+    (FOLLOW_PIVOT, FOLLOW_NEW),
     (OLD_TITLE, NEW_NAME),
     (OLD_STORY, NEW_NAME),
     ("https://www.youtube.com/" + NEW_URL, NEW_URL),
 ]
-OLD_TOKENS = (OLD_HANDLE, OLD_NAME, OLD_TITLE, OLD_STORY)
+OLD_TOKENS = (OLD_HANDLE, OLD_NAME, OLD_TITLE, OLD_STORY, FOLLOW_PIVOT, SIBLING_PIVOT)
 
 CHANNELS = {
     "ch1": ("YT_CH1_REFRESH_TOKEN", "UCI6EfsgM1HNjrYarvigxyrQ"),

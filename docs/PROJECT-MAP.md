@@ -42,6 +42,11 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 
 - Goal + rules: `docs/GOAL.md`, `AGENTS.md` (root only), `docs/DECISION-*.md`.
 - Channel facts: `channels.json`, `.openhands/memory/topics/00-*.md`.
+- Channel NAMES: a channel's main title is **not API-settable** — K sets it in Studio, so the
+  repo *follows* the live name (verified quota-free from RSS / channel page / oEmbed). Single
+  writer `scripts/set_channel_name.py` (`TARGET`); ch4 = **PCSEV** (@PCSEV). The bare genre word
+  ("เกร็ดความรู้รอบตัว") stays in keywords/SEO — only the channel-name labels/phrases are PCSEV.
+  Guard `scripts/test_ch4_channel_name.py` (fails if a rail would write the retired name back).
 - Measured history: `docs/STATUS-<date>.md`, `docs/counters.jsonl` (the counter), `docs/HEALTH.md`.
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).

@@ -62,7 +62,12 @@ CHANNELS = {
     "ch4": {
         "token": "YT_CH4_REFRESH_TOKEN", "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
         "home": "https://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ",
-        "routes": [("เกร็ดความรู้รอบตัว — Shorts", r".")],
+        # The shelf is renamed in place by channel_overhaul (to "PCSEV — เกร็ดสั้น"),
+        # but that rename waits on quota, so the live title may still be an older
+        # one. List the candidates and use whichever exists, so the door keeps a
+        # real playlist link before and after the rename.
+        "routes": [(["PCSEV — เกร็ดสั้น", "เกร็ดความรู้รอบตัว — Shorts",
+                     "เรื่องเล่าอบอุ่นใจ — Shorts"], r".")],
     },
 }
 
@@ -100,10 +105,17 @@ def playlists(yt) -> dict[str, str]:
     return {p["snippet"]["title"]: p["id"] for p in r.get("items", [])}
 
 
-def route(title: str, routes: list[tuple[str, str]]) -> str | None:
-    for name, rx in routes:
+def route(title: str, routes, have: dict[str, str]) -> str | None:
+    """The shelf title for a clip, preferring a candidate that exists right now.
+
+    A route's name may be a single title or a list of candidates (a shelf that is
+    being renamed has an old and a new title). Returning a title that exists in
+    `have` keeps the door's playlist link real across the rename.
+    """
+    for names, rx in routes:
         if re.search(rx, title, re.I):
-            return name
+            cands = names if isinstance(names, list) else [names]
+            return next((n for n in cands if n in have), cands[0])
     return None
 
 
@@ -153,7 +165,7 @@ def main() -> int:
         print(f"== {slug}: {len(shorts)} Shorts, {len(missing)} without a door")
         if not args.apply:
             for v in missing[:4]:
-                shelf = route(v["snippet"]["title"], spec["routes"])
+                shelf = route(v["snippet"]["title"], spec["routes"], pls)
                 print(f"     {v['id']} -> {shelf or '(no shelf)':28} {v['snippet']['title'][:40]}")
             if len(missing) > 4:
                 print(f"     ... and {len(missing) - 4} more")
@@ -163,7 +175,7 @@ def main() -> int:
         for v in missing:
             sn = v["snippet"]
             desc = sn.get("description") or ""
-            shelf = route(sn["title"], spec["routes"])
+            shelf = route(sn["title"], spec["routes"], pls)
             pl_id = pls.get(shelf) if shelf else None
             lines = [f"\n\n{MARKER}"]
             if pl_id:

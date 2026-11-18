@@ -43,7 +43,7 @@ ROOT = os.path.dirname(HERE)
 CHANNELS = {
     "genx": ("YT_CH1_REFRESH_TOKEN", "UCI6EfsgM1HNjrYarvigxyrQ", "ตาต้า GenX"),
     "dharma": ("YT_CH2_REFRESH_TOKEN", "UCM3QO5L_pmj34n1JVlbhh-w", "Farmmer"),
-    "kongkeat": ("YT_CH4_REFRESH_TOKEN", "UC7gCIu4G_7QCEJ8hJ-34zoQ", "เกร็ดความรู้รอบตัว"),
+    "kongkeat": ("YT_CH4_REFRESH_TOKEN", "UC7gCIu4G_7QCEJ8hJ-34zoQ", "PCSEV"),
 }
 
 
