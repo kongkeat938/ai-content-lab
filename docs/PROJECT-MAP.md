@@ -27,7 +27,8 @@
 | `rogue-guard.yml` | `*/30` | hides live rogue uploads | containment |
 | `progress.yml` / `watch-hours.yml` | 07:12 / Mon 06:17 | YPP progress | the scoreboard |
 | `channel-branding.yml` / `ch2-playlists.yml` / `set-thumbnails.yml` | after 08:00 | packaging | search + conversion |
-| `make_motion_short.py` (a tool, not a rail) | by hand | an animated still Short whose layers match the story's `genre` -- dharma/genx = calm (twinkle + petals + a breathing glow, no mascot), knowledge = a mascot dancing to the beat | a livelier Shorts shape (reach) that still fits the story |
+| `make_motion_short.py` (a tool, not a rail) | by hand | an animated still Short whose layers match the story's `genre` -- dharma/genx = calm (twinkle + petals, no mascot, no glow disc), knowledge = a mascot dancing to the beat | a livelier Shorts shape (reach) that still fits the story |
+| `make_ambient_video.py` (a tool, not a rail) | by hand | stitches real b-roll (`fetch_broll.py`, Coverr) into one long 1080x1920 ambient video, looped to `--minutes`, bed at -14 LUFS | the "join clips + 3-min music" edit K wanted, done headless |
 
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.
 
