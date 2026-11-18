@@ -27,6 +27,7 @@
 | `rogue-guard.yml` | `*/30` | hides live rogue uploads | containment |
 | `progress.yml` / `watch-hours.yml` | 07:12 / Mon 06:17 | YPP progress | the scoreboard |
 | `channel-branding.yml` / `ch2-playlists.yml` / `set-thumbnails.yml` | after 08:00 | packaging | search + conversion |
+| `link-shorts.yml` | driven by the foreman | appends the long-form playlist link to every Short's description (the reach → watch-hours funnel) | **the funnel** |
 | `make_motion_short.py` (a tool, not a rail) | by hand | an animated still Short whose layers match the story's `genre` -- dharma/genx = calm (twinkle + petals, no mascot, no glow disc), knowledge = a mascot dancing to the beat | a livelier Shorts shape (reach) that still fits the story |
 | `make_ambient_video.py` (a tool, not a rail) | by hand | stitches real b-roll (`fetch_broll.py`, Coverr) into one long 1080x1920 ambient video, looped to `--minutes`, bed at -14 LUFS | the "join clips + 3-min music" edit K wanted, done headless |
 
@@ -78,6 +79,11 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   **Gemini alone**, K 2026-11-18 -- follow its advice when stuck).
 - A guard must be able to FAIL; never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL.
+- **A rail that cannot do its job must not report success** (measured 2026-11-18: the shared
+  Data-API pool was spent every day, `link-shorts` ran the funnel as `... || true` and went
+  GREEN while the funnel stayed unwired; `set-thumbnails --check` called an unreadable API
+  "auto/other" and showed 12 live covers as unset). A spent quota is a **deferral (exit 2)**,
+  an unreadable state is **unknown, not "not ours"**. Guard `scripts/test_no_silent_funnel.py`.
 - **Archive, don't delete** (`scripts/legacy/`): keep history, cut noise. Delete only true duplicates.
 - **Shorts quality is gated before upload** (`scripts/publish_shorts.py`): aspect/colour/thumbnail
   (`short_standard.py`, `test_short_standard.py`) and loudness (measured, not a fixed gain —

@@ -86,16 +86,18 @@ def current_thumbnail(video_id: str, token: str) -> str:
     video with no custom thumbnail be skipped forever (measured 2026-11-18: video
     DHs1j6o0JE0 returned a maxres URL whose content was the auto frame, not ours).
     Compare the served bytes with the file we meant to install (`matches_live`).
+
+    Raises on a read error instead of returning "". Measured 2026-11-18: a spent
+    shared quota made `videos.list` raise 403, the old `except: return ""` turned
+    that into "auto/other", and `--check` reported a *false negative* -- 12 covers
+    that were live as ours were shown as unset. An unreadable state is not a state.
     """
-    try:
-        req = urllib.request.Request(
-            f"{READ_URL}?part=snippet&id={video_id}&fields=items/snippet/thumbnails/maxres/url",
-            headers={"Authorization": f"Bearer {token}"})
-        items = json.load(urllib.request.urlopen(req, timeout=30)).get("items", [])
-        if items:
-            return items[0]["snippet"]["thumbnails"].get("maxres", {}).get("url", "")
-    except urllib.error.HTTPError:
-        return ""
+    req = urllib.request.Request(
+        f"{READ_URL}?part=snippet&id={video_id}&fields=items/snippet/thumbnails/maxres/url",
+        headers={"Authorization": f"Bearer {token}"})
+    items = json.load(urllib.request.urlopen(req, timeout=30)).get("items", [])
+    if items:
+        return items[0]["snippet"]["thumbnails"].get("maxres", {}).get("url", "")
     return ""
 
 
@@ -120,8 +122,9 @@ def matches_live(video_id: str, path: str, token: str) -> bool:
 
     A correlation over the whole frame: the same image re-encoded scores >0.99,
     while an auto frame or any different image scores far below (measured: ours
-    0.999, an auto frame 0.43). Any read/compare error is NOT a match, so an
-    unknown never counts as done.
+    0.999, an auto frame 0.43). The API read (`current_thumbnail`) is allowed to
+    raise -- a spent quota is not "not ours" -- while any download/compare error
+    is NOT a match, so an unknown never counts as done.
     """
     url = current_thumbnail(video_id, token)
     if not url:
@@ -167,12 +170,21 @@ def main() -> int:
     print(f"channel {slug} ({man['channel_id']}) — {len(items)} thumbnail(s)")
 
     if args.check:
+        unreadable = 0
         for vid, rel in items.items():
             path = rel if os.path.isabs(rel) else os.path.join(ROOT, rel)
             have = os.path.exists(path)
-            url = current_thumbnail(vid, token)
-            live = "ours" if (have and matches_live(vid, path, token)) else "auto/other"
+            try:
+                url = current_thumbnail(vid, token)
+                live = "ours" if (have and matches_live(vid, path, token)) else "auto/other"
+            except urllib.error.HTTPError as exc:
+                # A spent quota cannot tell us what is live -- say so, do not
+                # report "auto/other" (a false negative) as if we had read it.
+                print(f"  {vid}: unreadable ({http_error(exc)})"); unreadable += 1; continue
             print(f"  {vid}: {live} {'(local file missing)' if not have else ''} {url[:70]}")
+        if unreadable:
+            print(f"{unreadable} unreadable (quota?) -- state unknown, not 'not ours'")
+            return 2
         return 0
 
     ok = failed = deferred = skipped = 0
@@ -182,12 +194,17 @@ def main() -> int:
             print(f"  {vid}: MISSING {rel}"); failed += 1; continue
         if args.dry_run:
             print(f"  {vid}: would set {rel} ({os.path.getsize(path)//1024} KB)"); continue
-        if args.skip_existing and matches_live(vid, path, token):
-            # Already serving OUR image. Re-setting is idempotent but a
-            # thumbnails.set costs real quota, and YouTube rate-limits a burst
-            # (429 uploadRateLimitExceeded, measured 2026-11-03). Do not spend
-            # quota on a video that is already done.
-            print(f"  {vid}: already set, skipped"); skipped += 1; continue
+        if args.skip_existing:
+            try:
+                already = matches_live(vid, path, token)
+            except urllib.error.HTTPError:
+                already = False   # unreadable: do not claim done, attempt the set
+            if already:
+                # Already serving OUR image. Re-setting is idempotent but a
+                # thumbnails.set costs real quota, and YouTube rate-limits a burst
+                # (429 uploadRateLimitExceeded, measured 2026-11-03). Do not spend
+                # quota on a video that is already done.
+                print(f"  {vid}: already set, skipped"); skipped += 1; continue
         good, msg = set_thumbnail(vid, path, token)
         if good:
             print(f"  {vid}: OK")

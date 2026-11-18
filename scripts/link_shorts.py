@@ -71,6 +71,58 @@ def api(path: str, token: str, method: str = "GET", body: dict | None = None) ->
         return json.load(fh)
 
 
+def _reason(exc: urllib.error.HTTPError) -> str:
+    body = exc.read().decode(errors="replace")
+    try:
+        return json.loads(body)["error"]["errors"][0]["reason"]
+    except Exception:
+        return body[:160]
+
+
+def classify_reason(reason: str, code: int) -> str:
+    """'deferred' for a spent shared quota or a burst rate limit, else 'failed'.
+
+    The 10,000-unit Data-API pool is one project shared by all three channels, and
+    the upload rails usually spend it before this one runs. A spent pool is a
+    *deferral* -- the next tick after the 08:00 UTC reset finishes the work -- and
+    must be reported as such, never swallowed into a green run. Any other error is
+    a real defect and must exit non-zero.
+    """
+    if "quotaExceeded" in reason or code == 429 or "RateLimit" in reason:
+        return "deferred"
+    return "failed"
+
+
+def shorts_missing_link(token: str, channel_id: str, marker: str,
+                        only: list | None) -> list:
+    """The Shorts whose description lacks the playlist marker (the read pass)."""
+    up = api(f"channels?part=contentDetails&id={channel_id}", token)["items"][0]
+    up = up["contentDetails"]["relatedPlaylists"]["uploads"]
+    ids, page = [], None
+    while True:
+        q = f"playlistItems?part=contentDetails&playlistId={up}&maxResults=50"
+        if page:
+            q += f"&pageToken={page}"
+        r = api(q, token)
+        ids += [i["contentDetails"]["videoId"] for i in r["items"]]
+        page = r.get("nextPageToken")
+        if not page:
+            break
+    todo = []
+    for i in range(0, len(ids), 50):
+        v = api("videos?part=snippet,contentDetails&id=" + ",".join(ids[i:i + 50]), token)
+        for x in v["items"]:
+            if seconds(x["contentDetails"]["duration"]) > 180:
+                continue                      # long-form is the destination, not a Short
+            sn = x["snippet"]
+            if marker in (sn.get("description") or ""):
+                continue                      # already funnels -- idempotent
+            if only and x["id"] not in only:
+                continue
+            todo.append(x)
+    return todo
+
+
 def seconds(iso: str) -> int:
     return yt_duration.seconds(iso)
 
@@ -99,31 +151,14 @@ def main() -> int:
     marker = f"list={playlist_id}"
     token = access_token(token_env)
 
-    up = api(f"channels?part=contentDetails&id={channel_id}", token)["items"][0]
-    up = up["contentDetails"]["relatedPlaylists"]["uploads"]
-    ids, page = [], None
-    while True:
-        q = f"playlistItems?part=contentDetails&playlistId={up}&maxResults=50"
-        if page:
-            q += f"&pageToken={page}"
-        r = api(q, token)
-        ids += [i["contentDetails"]["videoId"] for i in r["items"]]
-        page = r.get("nextPageToken")
-        if not page:
-            break
-
-    todo = []
-    for i in range(0, len(ids), 50):
-        v = api("videos?part=snippet,contentDetails&id=" + ",".join(ids[i:i + 50]), token)
-        for x in v["items"]:
-            if seconds(x["contentDetails"]["duration"]) > 180:
-                continue                      # long-form is the destination, not a Short
-            sn = x["snippet"]
-            if marker in (sn.get("description") or ""):
-                continue                      # already funnels -- idempotent
-            if args.only and x["id"] not in args.only:
-                continue
-            todo.append(x)
+    try:
+        todo = shorts_missing_link(token, channel_id, marker, args.only)
+    except urllib.error.HTTPError as exc:
+        reason = _reason(exc)          # reads the body once
+        kind = classify_reason(reason, exc.code)
+        print(f"{args.channel}: read pass {kind} ({exc.code} {reason})")
+        # A spent pool is not a green run: the funnel is unwired and no one is told.
+        return 2 if kind == "deferred" else 1
 
     print(f"{args.channel}: {len(todo)} Short(s) missing {marker}")
     for x in todo:
@@ -133,7 +168,7 @@ def main() -> int:
         return 0
 
     block = f"\n\n{lead}{url}\n\n{TAGS[args.channel]}"
-    ok = failed = 0
+    ok = failed = deferred = 0
     for x in todo:
         sn = x["snippet"]
         body = {"id": x["id"], "snippet": {
@@ -149,10 +184,20 @@ def main() -> int:
             print(f"  {x['id']}: linked")
             ok += 1
         except urllib.error.HTTPError as exc:
-            print(f"  {x['id']}: FAIL {exc.code} {exc.read().decode()[:120]}")
-            failed += 1
-    print(f"done: {ok} linked, {failed} failed")
-    return 1 if failed else 0
+            reason = _reason(exc)
+            if classify_reason(reason, exc.code) == "deferred":
+                print(f"  {x['id']}: deferred ({exc.code} {reason})")
+                deferred += 1
+            else:
+                print(f"  {x['id']}: FAIL {exc.code} {reason}")
+                failed += 1
+    print(f"done: {ok} linked, {deferred} deferred, {failed} failed")
+    if failed:
+        return 1
+    # A deferral (spent pool / burst limit) is not green: exit 2 so the run is
+    # visibly incomplete and the next tick after the reset retries, rather than
+    # a "success" that hides an unwired funnel.
+    return 2 if deferred and not ok else 0
 
 
 if __name__ == "__main__":

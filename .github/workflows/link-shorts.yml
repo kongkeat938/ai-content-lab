@@ -53,7 +53,20 @@ jobs:
           ARGS="--apply"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS=""; fi
           for v in $ONLY; do ARGS="$ARGS --only $v"; done
+          rc=0
           for ch in kongkeat dharma genx; do
             echo "== $ch =="
-            python3 scripts/link_shorts.py --channel "$ch" $ARGS || true
+            # Do NOT swallow the exit code with `|| true`. Measured 2026-11-18: a
+            # spent shared quota made every channel raise 403 quotaExceeded, the
+            # `|| true` turned the traceback into a green run, and the unwired
+            # funnel went unnoticed. link_shorts exits 2 for a deferral (spent
+            # pool -- the next tick after the 08:00 UTC reset retries) and 1 for a
+            # real defect; either must fail the job so the run is not silently green.
+            python3 scripts/link_shorts.py --channel "$ch" $ARGS || rc=$?
+            if [ "$rc" = "2" ]; then
+              echo "::warning::$ch funnel deferred (spent quota) -- retried after the reset"
+            elif [ "$rc" != "0" ]; then
+              echo "::error::$ch funnel failed (exit $rc)"
+              exit "$rc"
+            fi
           done
