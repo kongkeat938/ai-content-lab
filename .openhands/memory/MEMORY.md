@@ -69,7 +69,7 @@
   `make_motion_short.py` layers come from the story's `genre` -- dharma/genx = calm (no mascot/glow),
   knowledge = mascot (`test_motion_short.py`).
 - **Real-clip ambient video** (K, 2026-11-18): `make_ambient_video.py` joins `fetch_broll.py`
-  (Coverr) clips → loops to `--minutes` → bed -14 LUFS; guard `test_ambient_video.py`.
+  (Coverr) clips → loops to `--minutes` → bed -14 LUFS (`test_ambient_video.py`).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
