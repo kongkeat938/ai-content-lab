@@ -1,19 +1,10 @@
-# Account watch — 2026-11-18T02:37+00:00
+# Account watch — 2026-11-18T13:21+00:00
 
 ## Channel health (Data API — always available)
-- **dharma**: cannot check — 403 {
-  "error": {
-    "code": 403,
-    "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
-- **genx**: cannot check — 403 {
-  "error": {
-    "code": 403,
-    "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
+- **dharma**: clean
+- **genx**: clean
 - **aeris-music**: out of scope (handed to another AI) — not watched
-- **kongkeat-story**: cannot check — 403 {
-  "error": {
-    "code": 403,
-    "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
+- **kongkeat-story**: clean
 
 ## Inbox (IMAP — needs an app password)
 - read ch1@example.invalid: 3 flagged unread in 3 day(s); NOT read ch2@example.invalid (dharma): no app password in IMAP_ACCOUNTS; NOT read ch4@example.invalid (kongkeat-story): no app password in IMAP_ACCOUNTS
