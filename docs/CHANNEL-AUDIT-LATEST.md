@@ -1,10 +1,10 @@
-# Channel audit -- 2026-11-18 13:21 UTC
+# Channel audit -- 2026-11-18 15:21 UTC
 
 Measured live from the Data API. A video listed as "in NO manifest" was uploaded by something outside these rails.
 
 ## genx (ตาต้า GenX — ปรัชญาชีวิต)
 
-- subs=192 videos=151 views=40579 playlists=5 checked=25
+- subs=192 videos=152 views=40579 playlists=5 checked=25
 - no defects found
 
 ## dharma (Farmmer — ธรรมะก่อนนอน)
