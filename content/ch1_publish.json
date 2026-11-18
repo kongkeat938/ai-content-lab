@@ -245,7 +245,9 @@
         }
       },
       "video_id": "c-bM6YwnBtI",
-      "url": "https://youtu.be/c-bM6YwnBtI"
+      "url": "https://youtu.be/c-bM6YwnBtI",
+      "playlist_added": true,
+      "thumbnail_set": true
     }
   ]
 }
