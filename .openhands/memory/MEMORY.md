@@ -46,7 +46,8 @@
 - **TTS fallback:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar for ALL channels** (K, 2026-11-17): 1080p crf18, yuv420p tv/bt709,
   -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**
-  (`verify_night.py` hard-fails non-tv).
+  (`verify_night.py` hard-fails non-tv). **Colour tags: `-color_*` flags alone leave trc/space
+  unknown → `setparams=...range=tv` on EVERY re-encode.**
 - **Shorts: meet the standard or NOT upload** (K, 2026-11-17), backlog too. One source
   `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709**, -14 LUFS, ≤60 s, + a **9:16 thumbnail**
   (min height 640, <2 MB). `publish_shorts.py` gates EVERY upload, HOLDS a substandard build.
