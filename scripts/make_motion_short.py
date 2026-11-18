@@ -7,11 +7,16 @@ sliding over it -- the picture itself never moves, so the feed reads it as a
 slide-show and reach drops. This rail keeps the free, no-GPU pipeline but makes
 every layer move, so the frame is alive the whole way through:
 
-  * a slow ken-burns push on the still (the photo breathes);
+  * a slow ken-burns push on the still;
   * twinkling stars that pulse at their own rate (glow, additive);
   * leaves that drift and spin on a sine "wind";
   * a cute character that bounces and swings its arms on the BEAT of the music;
   * the spoken line as a caption, timed to the voice.
+
+The look follows the story's genre (K, 2026-11-18): a calm genre (dharma/genx) gets
+only the gentle layers -- twinkle + drift, NO dancing character and NO pulsing glow
+disc, which read as a shape throbbing on the beat. The lively mascot is reserved for
+the curious knowledge genre.
 
 Audio is the real narration (edge-tts, the house voice) over a free music bed,
 pinned to the house loudness (-14 LUFS / -3 dBTP) with make_short's own
@@ -65,18 +70,18 @@ MOODS = {
 # calmest profile -- an unknown story never gets a dancing character it did not ask
 # for. `character` is None for the calm genres on purpose.
 PROFILES = {
-    # ธรรมะก่อนนอน: serene, sleepy. slow twinkle + drifting petals + a breathing
-    # glow. NO dancing character (it would break the mood).
+    # ธรรมะก่อนนอน: serene, sleepy. slow twinkle + drifting petals. NO dancing
+    # character and NO pulsing glow disc (K, 2026-11-18: "just the sparkle is
+    # enough" -- the breathing circle read as a shape throbbing on the beat).
     "dharma":    {"stars": (30, 0.5, 10), "drift": (8, 26, 34, "petal"),
-                  "character": None, "breath": True,  "motion": 0.6},
-    # ปรัชญาชีวิต (GenX): reflective, quiet. few stars + slow dust motes + a soft
-    # glow. NO dancing character.
+                  "character": None, "motion": 0.6},
+    # ปรัชญาชีวิต (GenX): reflective, quiet. few stars + slow dust motes.
     "genx":      {"stars": (18, 0.4, 9), "drift": (10, 18, 26, "mote"),
-                  "character": None, "breath": True,  "motion": 0.7},
+                  "character": None, "motion": 0.7},
     # เกร็ดความรู้ "ทำไม…?" (PCSEV): curious + friendly. sparkles + a mascot that
     # bobs and points, on the beat. This is the one genre the mascot suits.
     "knowledge": {"stars": (40, 1.0, 12), "drift": (8, 40, 60, "leaf"),
-                  "character": "mascot", "breath": False, "motion": 1.0},
+                  "character": "mascot", "motion": 1.0},
 }
 DEFAULT_GENRE = "dharma"       # the calmest profile -- a safe default
 
@@ -244,21 +249,6 @@ def draw_leaves(img: Image.Image, leaves: list[dict], t: float, speed: float = 1
     return Image.alpha_composite(img.convert("RGBA"), layer).convert("RGB")
 
 
-def draw_breath(img: Image.Image, t: float) -> Image.Image:
-    """A soft pulsing glow at the heart of the frame -- the calm genres breathe
-    instead of dancing. ~4 s per breath, a slow in-and-out."""
-    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(glow)
-    k = 0.5 + 0.5 * math.sin(math.tau * t / 4.0)
-    cx, cy, r = W // 2, int(H * 0.42), int(220 + 90 * k)
-    for i in range(4, 0, -1):
-        d.ellipse([cx - r * i / 4, cy - r * i / 4, cx + r * i / 4, cy + r * i / 4],
-                  fill=(255, 236, 190, int(16 * k)))
-    soft = glow.filter(ImageFilter.GaussianBlur(40))
-    out = ImageChops.screen(img.convert("RGB"), soft.convert("RGB"))
-    return out
-
-
 def draw_character(img: Image.Image, t: float, mood: str, beat_accent: float) -> Image.Image:
     """A cute mascot that dances: bounce on the beat, squash-and-stretch, arm swing."""
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -351,8 +341,6 @@ def frame_at(base: Image.Image, stars, leaves, mood: str, t: float, dur: float,
         spd = prof["stars"][1]
         fr = draw_stars(fr, stars, t, speed=spd)
         fr = draw_leaves(fr, leaves, t, speed=prof["motion"])
-        if prof.get("breath"):
-            fr = draw_breath(fr, t)
         if prof.get("character"):
             fr = draw_character(fr, t, mood, beat_accent(t))
     return fr

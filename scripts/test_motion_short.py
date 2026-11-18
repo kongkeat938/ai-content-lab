@@ -3,7 +3,7 @@
 
 K's rule: "the one you use has to look at the story too, not just be a cartoon".
 So a dharma sleep clip must NOT get a dancing mascot -- it gets calm ambient motion
-(twinkle + drifting petals + a breathing glow). The lively mascot is only for the
+(twinkle + drifting petals). The lively mascot is only for the
 curious knowledge ("why?") genre. An unknown genre gets the calm default.
 
 Two things this guard measures, both of which can FAIL:
@@ -60,10 +60,12 @@ def main() -> int:
     check("drift moves (petals/leaves/motes)", diff(leaf0, leaf1) > 0.05,
           f"diff {diff(leaf0, leaf1):.3f}")
 
-    br0 = M.draw_breath(base, 0.0)
-    br1 = M.draw_breath(base, 1.0)
-    check("the calm genres breathe (glow pulses)", diff(br0, br1) > 0.02,
-          f"diff {diff(br0, br1):.3f}")
+    # K (2026-11-18): "just the sparkle is enough" -- the calm genres must carry NO
+    # pulsing glow disc, and no layer may leave a drawn circle on the frame. This can
+    # FAIL: re-adding a breath/glow layer to a calm profile trips it.
+    check("the calm genres carry no pulsing glow layer",
+          "breath" not in prof and not hasattr(M, "draw_breath"),
+          f"profile keys {sorted(prof)}")
 
     # 2) the whole frame moves, and it is the layers doing it.
     anim = diff(f0, f1)
