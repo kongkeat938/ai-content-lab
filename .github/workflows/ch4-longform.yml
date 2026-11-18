@@ -100,8 +100,10 @@ jobs:
                         "เกร็ดความรู้ที่ฟังแล้วต้องร้องอ๋อ"
                         "วิทยาศาสตร์ในครัวและในบ้านของเรา"
                         "คำถามเด็ก ๆ ที่ผู้ใหญ่ก็ยังตอบไม่ได้")
-                wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
-                THEME="${THEMES[$wk]}"
+                # Rotate per RUN, not per ISO week: a week-based index would ship
+                # the same theme on every build in a week if the cadence rose.
+                n=$(ls -d content/ch4_know_* 2>/dev/null | wc -l)
+                THEME="${THEMES[$(( n % ${#THEMES[@]} ))]}"
                 python3 scripts/gen_knowledge_scripts.py \
                   --theme "$THEME" --out "$CONTENT" --count 12
               fi

@@ -36,7 +36,13 @@ on:
         description: "true to generate a fresh content set with Gemini"
         default: "false"
   schedule:
-    - cron: "47 4 * * 2"   # Tuesdays 04:47 UTC -- dharma owns Mon, ch4 owns Thu
+    # Twice a week: Tuesday 04:47 and Saturday 04:47 UTC. Raised 1 -> 2/week on
+    # 2026-11-19 (panel/Gemini, measured: genx retains best of the fleet --
+    # averageViewPercentage 12.3% vs dharma 6.3% -- but earns the least watch-time
+    # from too few uploads, 9h/28d = 3% of the 307h/28d pace). dharma owns
+    # Mon/Wed/Thu, ch4 owns Thu.
+    - cron: "47 4 * * 2"
+    - cron: "47 4 * * 6"
 
 permissions:
   contents: write
@@ -89,8 +95,12 @@ jobs:
                         "ปล่อยความคาดหวังของคนอื่น" "เลิกเปรียบเทียบตัวเองกับคนอื่น"
                         "ให้อภัยตัวเองในอดีต" "วางความโกรธที่เก็บไว้นาน"
                         "อยู่คนเดียวอย่างสงบ" "กลับมาอยู่กับปัจจุบัน")
-                wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
-                THEME="${THEMES[$wk]}"
+                # Rotate per RUN, not per ISO week. With 2 builds/week a week-based
+                # index shipped the SAME theme twice in a week -- the "repetitious
+                # content" shape the panel warned about. The count of prior
+                # ch1_auto_* sets is a run counter, so each run advances the theme.
+                n=$(ls -d content/ch1_auto_* 2>/dev/null | wc -l)
+                THEME="${THEMES[$(( n % ${#THEMES[@]} ))]}"
                 python3 scripts/gen_philosophy_scripts.py \
                   --theme "$THEME" --out "$CONTENT" --count 10
               fi

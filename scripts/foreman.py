@@ -35,13 +35,30 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("KONGKEAT_GH_TOKEN")
 API = "https://api.github.com"
 
-# The night (dharma long-form) rail's own cadence, in builds per week. Kept here
-# as the single source the backfill threshold is derived from, so raising the rail
+# Long-form build cadences, in builds per week, one constant per rail. Kept here
+# as the single source each backfill threshold is DERIVED from, so raising a rail
 # cadence cannot leave the foreman's backfill behind (measured 2026-11-13: the
-# rail was raised to 2/week but the foreman still only backfilled after 6 days, so
-# a dropped tick would have waited days). `test_foreman_cadence.py` reads the
-# workflow's cron count and asserts this matches it.
-NIGHT_BUILDS_PER_WEEK = 2
+# night rail was raised to 2/week but the foreman still only backfilled after 6
+# days, so a dropped tick would have waited days). `test_foreman_cadence.py` reads
+# each workflow's cron count and asserts the matching constant.
+#
+# Raised 2026-11-19 (panel/Gemini, measured): dharma earns 71 YPP watch-hours /
+# 28 days (23% of the 307h/28d pace) at 2/week, so 2 -> 3/week; genx earns 9h
+# (3%) with BETTER retention (averageViewPercentage 12.3% vs 6.3%) but only 1
+# upload/week, so 1 -> 2/week. Each video stays genuinely different (rotated
+# theme, fresh content set) so a raised cadence is not "repetitious content".
+NIGHT_BUILDS_PER_WEEK = 3
+GENX_BUILDS_PER_WEEK = 2
+CH4_BUILDS_PER_WEEK = 1
+
+
+def backfill_window_days(per_week: int) -> float:
+    """The backfill window (in days) for a rail that builds `per_week` times.
+
+    One full inter-build gap plus a day of slack: a healthy week never triggers it,
+    a dropped tick is refilled within a day.
+    """
+    return 7.0 / per_week + 1.0
 
 
 def gh(path: str, method: str = "GET", body: dict | None = None) -> dict:
@@ -288,25 +305,29 @@ def main() -> int:
     #    means it is a new video, not a re-run). The rail fingerprints its own
     #    content, so a repeat on unchanged material is a cheap skip.
     n_age = last_success_min("night-compilation", ids)
-    night_window = (7.0 / NIGHT_BUILDS_PER_WEEK + 1) * 24 * 60  # 4 days at 2/week
+    night_window = backfill_window_days(NIGHT_BUILDS_PER_WEEK) * 24 * 60
     if n_age is None or n_age > night_window:
         plan.append(("night-compilation", {"generate": "true"}))
 
-    # 5b. Keep the ch4 family rail fed too: a weekly build if the newest is over
-    #     6 days old. generate=true so the scheduled path mints a fresh set.
+    # 5b. Keep the ch4 family rail fed too: a build if the newest is over its
+    #     window old. generate=true so the scheduled path mints a fresh set.
     #     Skipped while the channel is paused (content/PAUSED).
     if ch4_paused:
         print("  ch4-longform: skipped, the channel is paused (content/PAUSED)")
     else:
         c4_age = last_success_min("ch4-longform", ids)
-        if c4_age is None or c4_age > 6 * 24 * 60:
+        ch4_window = backfill_window_days(CH4_BUILDS_PER_WEEK) * 24 * 60
+        if c4_age is None or c4_age > ch4_window:
             plan.append(("ch4-longform", {"generate": "true"}))
 
     # 5b-ii. Keep the genx rail fed: genx had the most Shorts and no long-form at
     #        all (measured 2026-11-07), so its funnel pointed at an empty playlist.
-    #        A weekly build if the newest is over 6 days old.
+    #        Cadence raised 1 -> 2/week on 2026-11-19 (panel/Gemini, measured: genx
+    #        retains best of the fleet but earns the least watch-time from too few
+    #        uploads). Window DERIVED from GENX_BUILDS_PER_WEEK.
     gx_age = last_success_min("genx-longform", ids)
-    if gx_age is None or gx_age > 6 * 24 * 60:
+    genx_window = backfill_window_days(GENX_BUILDS_PER_WEEK) * 24 * 60
+    if gx_age is None or gx_age > genx_window:
         plan.append(("genx-longform", {"generate": "true"}))
 
     # 5c. Titles and thumbnails: the pass that changes every title and every ugly

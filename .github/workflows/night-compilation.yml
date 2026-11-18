@@ -33,13 +33,16 @@ on:
         description: "Real music bed to loop under the voice (e.g. assets/music/bed-middleway.mp3); blank = synthesised fallback"
         default: ""
   schedule:
-    # Twice a week: Monday 02:17 and Thursday 02:17 UTC. Measured 2026-11-13:
-    # dharma earns 61 YPP-qualifying watch-hours / 28 days but needs 4,000 in 365d
-    # (~5x), and the advisor panel named long-form cadence the binding constraint.
-    # The panel also said to step up, not jump: 1 -> 2/week first, with each video
-    # genuinely different (rotated theme, fresh content set, different bed). A
-    # 2-hour file is not a daily post; two a week is the measured next step.
+    # Three times a week: Monday, Wednesday and Thursday 02:17 UTC. Measured
+    # 2026-11-13: dharma earns 61 YPP-qualifying watch-hours / 28 days but needs
+    # 4,000 in 365d (~5x), and the advisor panel named long-form cadence the
+    # binding constraint. Stepped 1 -> 2/week on 2026-11-13, then 2 -> 3/week on
+    # 2026-11-19 (panel/Gemini, measured 71h/28d = 23% of the 307h/28d pace). The
+    # panel said to step up, not jump: each video stays genuinely different
+    # (rotated theme, fresh content set, different bed). A 2-hour file is not a
+    # daily post; three a week is the measured next step.
     - cron: "17 2 * * 1"
+    - cron: "17 2 * * 3"
     - cron: "17 2 * * 4"
 
 permissions:
@@ -96,15 +99,19 @@ jobs:
                         "ความเหงาในตอนกลางคืน" "ปล่อยวางความโกรธและความน้อยใจ"
                         "ความรักตัวเองและการยอมรับ" "ขอบคุณสิ่งเล็ก ๆ ในชีวิต"
                         "ปล่อยวางความกลัวอนาคต" "ความสงบในความไม่แน่นอน")
-                wk=$(( 10#$(date -u +%V) % ${#THEMES[@]} ))
                 # Prefer the theme the analytics loop learned from the long-form
                 # videos that actually earned YPP watch-hours (rotated per run, so
                 # a raised cadence does not ship one theme repeatedly); fall back
-                # to the fixed weekly list when no learned theme exists yet.
+                # to the fixed list when no learned theme exists yet. The fallback
+                # also rotates per RUN (a prior night_auto_* count), not per ISO
+                # week -- with 3 builds/week a week-based index would ship the same
+                # fallback theme on every build in a week.
+                n=$(ls -d content/night_auto_* 2>/dev/null | wc -l)
                 python3 scripts/gen_night_scripts.py \
                   --out "$CONTENT" --count 8 --channel dharma --from-insights \
                   || python3 scripts/gen_night_scripts.py \
-                       --theme "${THEMES[$wk]}" --out "$CONTENT" --count 8 --channel dharma
+                       --theme "${THEMES[$(( n % ${#THEMES[@]} ))]}" \
+                       --out "$CONTENT" --count 8 --channel dharma
               fi
             else
               CONTENT="content/night_dharma_01"
