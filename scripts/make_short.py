@@ -51,9 +51,14 @@ WHITE = (250, 250, 252)
 # House targets (see docs/RECIPE.md): -14 LUFS integrated, true peak <= -3 dBFS.
 LUFS, TP = -14, -3.0
 COMP_TH, COMP_RATIO = "-24dB", 6
-# A bed eats the headroom loudnorm needs to reach -14 LUFS in linear mode, so the
-# bed path adds this much gain before the limiter. Measured 2026-11-07.
-BED_GAIN_DB = 2.0
+# A bed eats the headroom loudnorm needs to reach -14 LUFS in linear mode. This
+# was a fixed +2 dB from 2026-11-07, when bed_gain() was a fixed 0.18 that left
+# the mix far below target. bed_gain() now places the bed ~11 LU under the voice
+# (2026-11-09), so the mix already sits at voice level and loudnorm reaches -14
+# on its own; the +2 dB double-counted and overshot to ~-12.8 LUFS (measured
+# 2026-11-18: bed path -12.8, no-bed -14.1), which the Shorts gate then HELD.
+# The bed path is no longer boosted; normalise() pins the result to target and
+# corrects once if it still misses.
 # How far under the voice the bed sits. Measured 2026-11-09: the old fixed 0.18
 # (-14.9 dB) put a -22 LUFS bed at -36.9 LUFS -- ~16 LU below the voice, i.e.
 # effectively silent, which is why the owner could not hear the music at all.
@@ -96,6 +101,26 @@ def measure_audio(path: str) -> float | None:
             except ValueError:
                 return None
     return None
+
+
+def measure_loudness(path: str) -> tuple[float | None, float | None]:
+    """(integrated LUFS, true peak dBFS) of a file, each None if unreadable."""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", path,
+                        "-af", "ebur128=peak=true", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    i = tp = None
+    for line in r.stderr.splitlines():
+        if "I:" in line and "LUFS" in line:
+            try:
+                i = float(line.split("I:")[1].split("LUFS")[0].strip())
+            except ValueError:
+                pass
+        if "Peak:" in line and "dBFS" in line:
+            try:
+                tp = float(line.split("Peak:")[1].split("dBFS")[0].strip())
+            except ValueError:
+                pass
+    return i, tp
 
 
 async def _synth(text: str, out: str, voice: str) -> None:
@@ -278,7 +303,7 @@ def caption_image(text: str, out: str, big: bool = False, panel: bool = True) ->
     im.save(out)
 
 
-def normalise(src: str, out: str, gain_db: float = 0.0) -> None:
+def normalise(src: str, out: str) -> None:
     """Two-pass loudnorm to -14 LUFS with a hard ceiling at -3 dBFS.
 
     A single-pass loudnorm does not honour the true-peak target reliably: measured
@@ -286,10 +311,10 @@ def normalise(src: str, out: str, gain_db: float = 0.0) -> None:
     is required to keep. The two-pass form measures first, then applies the
     measured values, and alimiter is a final guarantee rather than a hope.
 
-    gain_db is applied after loudnorm, before the limiter. With a music bed mixed
-    in, loudnorm's linear mode cannot reach -14 without breaking the ceiling (the
-    bed eats the headroom), so the bed path adds +2 dB and lets alimiter hold the
-    peak. Measured 2026-11-07: bed path -15.5 -> -14.2 LUFS, TP -2.98 dBTP.
+    loudnorm in linear mode can miss the integrated target when the mix carries a
+    music bed (the bed eats the headroom). The finished wav is measured and, if it
+    is off target, one closed-loop pass pins it -- so the output is at -14 LUFS by
+    measurement, not by a fixed guess that drifts when the mix changes.
     """
     # acompressor first: a bare narrator read has ~18 dB of crest factor, so
     # loudnorm alone cannot reach -14 LUFS without the true peak breaking -3 dBFS.
@@ -302,13 +327,25 @@ def normalise(src: str, out: str, gain_db: float = 0.0) -> None:
     tail = r.stderr[r.stderr.rfind("{"):]
     tail = tail[:tail.rfind("}") + 1]
     m = json.loads(tail)
-    gain = f",volume={gain_db}dB" if gain_db else ""
     run(["ffmpeg", "-y", "-i", src, "-af",
          f"{chain}:measured_I={m['input_i']}:measured_TP={m['input_tp']}"
          f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
-         f":offset={m['target_offset']}:linear=true{gain},"
+         f":offset={m['target_offset']}:linear=true,"
          f"alimiter=limit={TP}dB:level=disabled",
          "-ar", "48000", "-c:a", "pcm_s16le", out])
+    # A bed can leave loudnorm short of the target (measured 2026-11-18: a bed mix
+    # landed -15.4 LUFS). Correct with a SECOND loudnorm pass, not a raw volume
+    # gain: loudnorm trades loudness against the true peak, so it reaches -14 while
+    # keeping -3 dBTP, whereas volume+alimiter pushed the true peak to -2.4 (over
+    # the ceiling). Skipped when already on target, so a correct build is untouched.
+    got = measure_audio(out)
+    if got is not None and abs(got - LUFS) > 0.3:
+        tmp = out + ".pin.wav"
+        run(["ffmpeg", "-y", "-i", out, "-af",
+             f"acompressor=threshold={COMP_TH}:ratio={COMP_RATIO}:attack=3:release=120,"
+             f"loudnorm=I={LUFS}:TP={TP}:LRA=11,alimiter=limit={TP}dB:level=disabled",
+             "-ar", "48000", "-c:a", "pcm_s16le", tmp])
+        os.replace(tmp, out)
 
 
 def spoken_sequence(script: dict, cta_mid: bool = False) -> list[str]:
@@ -436,7 +473,7 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None,
     else:
         run(["ffmpeg", "-y", "-i", voice_mp3, "-ar", "48000", mixed])
     norm = os.path.join(d, "norm.wav")
-    normalise(mixed, norm, gain_db=BED_GAIN_DB if (music and os.path.exists(music)) else 0.0)
+    normalise(mixed, norm)
     run(["ffmpeg", "-y", "-i", silent, "-i", norm, "-map", "0:v", "-map", "1:a",
          "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", out])
     print(f"  {sid}: {duration(out):.1f}s -> {out}")

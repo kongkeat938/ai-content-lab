@@ -61,6 +61,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - A guard must be able to FAIL; never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL.
 - **Archive, don't delete** (`scripts/legacy/`): keep history, cut noise. Delete only true duplicates.
+- **Shorts quality is gated before upload** (`scripts/publish_shorts.py`): aspect/colour/thumbnail
+  (`short_standard.py`, `test_short_standard.py`) and loudness (measured, not a fixed gain —
+  `test_short_loudness.py`). A build that misses the standard is HELD, not uploaded.
 - One project, one goal. A task that does not serve YPP is out of scope — say so, don't build it.
 
 ## 5) Archived (kept for history, no live references)
