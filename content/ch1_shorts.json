@@ -628,6 +628,16 @@
       "thumbnail": "work/ch1_shorts/97/thumb_97.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "98": {
+      "video_id": "UnP6FhcVmQs",
+      "url": "https://youtu.be/UnP6FhcVmQs",
+      "title": "คุณมีสิทธิ์ทิ้งความแค้นไปได้เลยโดยไม่ต้องรอคำขอโทษจากใคร #Shorts",
+      "posted_at": "2026-11-19T17:44:11+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/98/thumb_98.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
