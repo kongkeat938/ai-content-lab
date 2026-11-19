@@ -42,6 +42,23 @@ def check(name: str, ok: bool, got: str = "") -> None:
         FAILS.append(name)
 
 
+def cron_weekdays(src: str) -> list[int]:
+    """The weekdays (0=Sun..6=Sat) a workflow's crons land on.
+
+    Only `* * *` day-of-week crons with a fixed weekday are counted; a `*`
+    (every day) is ignored because it has no inter-build gap to reason about.
+    """
+    days = []
+    for m in re.finditer(r"^\s*-\s*cron:\s*\"([^\"]+)\"", src, re.M):
+        parts = m.group(1).split()
+        if len(parts) != 5:
+            continue
+        dow = parts[4]
+        if dow.isdigit():
+            days.append(int(dow) % 7)
+    return sorted(set(days))
+
+
 def main() -> int:
     for wf_name, const in RAILS:
         wf = os.path.join(ROOT, ".github", "workflows", wf_name)
@@ -52,6 +69,22 @@ def main() -> int:
               n_crons >= 1 and want == n_crons,
               "" if n_crons >= 1 and want == n_crons
               else f"the rail has {n_crons} cron(s); set {const} to match")
+
+        # The backfill window must EXCEED the longest real gap between crons, or the
+        # foreman fires an extra build every week (measured 2026-11-19: a Mon/Wed/Thu
+        # dharma rail has a 4-day Thu->Mon gap but a 7/3+1 = 3.33-day window).
+        # The gap set is a cycle, so its max is rotation-invariant (sorting the
+        # weekdays is safe: Sun=0 wraps correctly) and it must always sum to 7 --
+        # that sum is the invariant that catches a cron-parsing slip.
+        days = cron_weekdays(src)
+        if len(days) > 1:
+            gaps = [days[i + 1] - days[i] for i in range(len(days) - 1)]
+            gaps.append((days[0] + 7) - days[-1])
+            window = foreman.backfill_window_days(want)
+            check(f"{wf_name}: backfill window {window:.2f}d > max cron gap {max(gaps)}d",
+                  window > max(gaps),
+                  "" if window > max(gaps) else "space the crons evenly or the foreman over-fires")
+            check(f"{wf_name}: cron gaps sum to 7 (parsed {days})", sum(gaps) == 7)
 
     # Every long-form backfill window must be DERIVED, not a stale literal.
     fsrc = open(os.path.join(HERE, "foreman.py"), encoding="utf-8").read()

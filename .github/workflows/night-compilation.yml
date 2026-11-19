@@ -33,17 +33,22 @@ on:
         description: "Real music bed to loop under the voice (e.g. assets/music/bed-middleway.mp3); blank = synthesised fallback"
         default: ""
   schedule:
-    # Three times a week: Monday, Wednesday and Thursday 02:17 UTC. Measured
-    # 2026-11-13: dharma earns 61 YPP-qualifying watch-hours / 28 days but needs
-    # 4,000 in 365d (~5x), and the advisor panel named long-form cadence the
+    # Three times a week, evenly spaced: Monday, Wednesday and Friday 02:17 UTC.
+    # Measured 2026-11-13: dharma earns 61 YPP-qualifying watch-hours / 28 days but
+    # needs 4,000 in 365d (~5x), and the advisor panel named long-form cadence the
     # binding constraint. Stepped 1 -> 2/week on 2026-11-13, then 2 -> 3/week on
     # 2026-11-19 (panel/Gemini, measured 71h/28d = 23% of the 307h/28d pace). The
     # panel said to step up, not jump: each video stays genuinely different
     # (rotated theme, fresh content set, different bed). A 2-hour file is not a
     # daily post; three a week is the measured next step.
+    #
+    # Evenly spaced on purpose: the foreman's backfill window is 7/3 + 1 = 3.33
+    # days, so a 4-day gap (Thu -> Mon) would make it fire a 4th build every week.
+    # Mon/Wed/Fri keeps the longest gap at 3 days. `test_foreman_cadence.py`
+    # asserts the window exceeds the real cron gap, so this cannot silently return.
     - cron: "17 2 * * 1"
     - cron: "17 2 * * 3"
-    - cron: "17 2 * * 4"
+    - cron: "17 2 * * 5"
 
 permissions:
   contents: write
