@@ -57,3 +57,9 @@ jobs:
       # appearing in the code) must fail the job, not just be reported.
       - name: Compliance invariants
         run: python3 scripts/policy_check.py
+
+      # K's rule: nothing enters main without a recorded Gemini APPROVE. The count
+      # is printed on every run so the unreviewed debt stays visible instead of
+      # becoming a number nobody looks at (Gemini, 2026-11-19).
+      - name: Gemini review ledger
+        run: python3 scripts/review_ledger.py --status

@@ -70,6 +70,15 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   frames across a finished file and asks Gemini for a 0-10 rubric score. It is non-deterministic
   (measured 2026-11-17: the same cut scored 9 then 5/10), so a human/agent reads it — no workflow
   calls it (guard `scripts/test_vision_grader.py` fails if a rail wires it in).
+- **Gemini review ledger (K, 2026-11-19):** *"งานที่ไม่ผ่านการตรวจจาก gemini — K ห้ามอัพ"*. Every
+  code change (`scripts/*.py`, `.github/workflows/*.yml`) must carry a recorded Gemini APPROVE in
+  `docs/reviews/ledger.json`; the verdict text is the evidence file it points at. The entry stores
+  the sha256 the reviewer saw, so editing an approved file makes it **stale → re-review**, and
+  editing a **baseline** file (one that predates the rule) drops its exemption. `approved` and
+  `baseline` are never the same thing: baseline is **visible debt**, not permission.
+  `scripts/review_ledger.py --status` prints `approved N / baseline M` every CI run;
+  guard `scripts/test_review_ledger.py` proves 10 failure paths. Never edit an evidence file to
+  make it read APPROVE — ask Gemini again.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)

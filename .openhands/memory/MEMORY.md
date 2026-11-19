@@ -25,9 +25,11 @@
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **Panel = Gemini
   ALONE** (K, 2026-11-18); **when stuck, FOLLOW Gemini** (`test_advise_panel.py`). **PC1 = ak's
   hands** via `winremote` (`topics/03`).
-- **A guard must be able to FAIL;** never hardcode the set it sweeps, nor a threshold derived from it
-  (a literal 8 d hid a night rail dead 66 h as "fresh", `topics/05`). A gate probing an API its token
-  can't read (403)+`|| echo 0` = **false pass**. A generator that drops a piece must FAIL.
+- **ไม่ผ่าน Gemini = K ห้ามอัพ** (2026-11-19): APPROVE ใน `docs/reviews/ledger.json`; digest เปลี่ยน
+  = stale ต้องรีวิวใหม่; baseline = **หนี้ ไม่ใช่คำอนุมัติ**. `topics/06`.
+- **A guard must FAIL;** never hardcode the set it sweeps, nor a threshold derived from it (a literal
+  8 d hid a night rail dead 66 h as "fresh", `topics/05`). A gate probing an unreadable API (403)
+  +`|| echo 0` = **false pass**. A generator that drops a piece must FAIL.
 - **A test hitting a veto injects the fix seam** (`apply_qa_gate(fix=)`); default = LIVE Gemini +
   `content/fixes/`. **งานไม่ผ่าน gate → ถาม Gemini** (`fix_with_gemini.py`; ไม่ล้าง veto). **อ่าน
   Gemini = join ทุก `content.parts`** (`gemini_text.text_of`); `parts[0]` ตัดกลางคำ.
@@ -43,19 +45,19 @@
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + a union merge driver
   (`git_push_retry.sh`); a GENERATED `docs/` report needs ONE writer. **One duration parser**
   `yt_duration.py`.
-- **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; hook cap
+- **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; hook
   220; never downgrade a LIVE entry. **Content dir per-RUN + theme ROTATES per-RUN count, NEVER
   `date +%V`** (a week index ships one theme twice/week). **Backfill window `7/n+1` assumes EVENLY
   spaced crons** — a 4-day gap under a 3.33-day window over-fires (Mon/Wed/Fri, not Mon/Wed/Thu).
 - **GitHub cron fires** (23/100) but late. Schedule = bonus, foreman backfill = truth.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar, ALL channels** (K, 2026-11-17): 1080p crf18, yuv420p tv/bt709,
-  -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**;
-  **colour tags need `setparams=...range=tv`** on re-encode.
+  -14 LUFS, clean grade, floating Thai text, 1.06x lanczos. **ONE source `video_grade.py`**; colour
+  tags need `setparams=...range=tv` on re-encode.
 - **Shorts: meet the standard or NOT upload** (K, 2026-11-17), backlog too. One source
-  `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709**, -14 LUFS, ≤60 s, + a **9:16 thumbnail**
-  (min height 640, <2 MB). `publish_shorts.py` gates EVERY upload, HOLDS a substandard build.
-  **Loudness pinned by MEASUREMENT** (`test_short_loudness.py`).
+  `short_standard.py`: 1080x1920 9:16, **yuv420p tv/bt709**, -14 LUFS, ≤60 s, + **9:16 thumbnail**
+  (min 640 h, <2 MB). `publish_shorts.py` gates EVERY upload, HOLDS substandard; loudness by
+  MEASUREMENT (`test_short_loudness.py`).
 - **Vision grader NON-DETERMINISTIC** (same cut 9 then 5/10): never gate in CI; use metrics.
 - **A rail can die at IMPORT** (deps subset; `continue-on-error` masks it) → `test_workflow_deps.py`.
 - **A dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` while
@@ -66,16 +68,15 @@
   (`_CURIOSITY`); `content/hooks/knowledge.md`. **Channel TITLE NOT API-settable → K sets it in
   Studio**; repo FOLLOWS the live name (ch4 = **"PCSEV"**).
 - **Curated angles survive de-dup**: a 3-char floor rejected every angle (Thai shares 3-char runs)
-  → floor **8** (`test_angle_pool.py`). **One live title = one video**.
-- **A truthy thumbnail URL ≠ our image set** (2026-11-18): YT serves `maxresdefault` for an AUTO
-  frame too; `matches_live()` correlates the served frame with our file.
+  → floor **8**. **One live title = one video**.
+- **A truthy thumbnail URL ≠ our image**: YT serves `maxresdefault` for an AUTO frame too;
+  `matches_live()` correlates the served frame with our file.
 - **An animated still beats a slide-show; its LOOK must match the story** (K, 2026-11-18):
   `make_motion_short.py` layers come from the story's `genre` (`test_motion_short.py`).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
-- **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
-  **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
-- **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
+- **Automation:** GH Actions only (watchdog → foreman → rails); kill `content/STOP`.
+  **Publish:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`. 1 channel = 1 Google account.
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED (`uploadLimitExceeded`).
 - **Comment writes need `force-ssl`**; pinned Short CTA 403s until then.
