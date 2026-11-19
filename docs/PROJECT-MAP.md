@@ -77,7 +77,7 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   editing a **baseline** file (one that predates the rule) drops its exemption. `approved` and
   `baseline` are never the same thing: baseline is **visible debt**, not permission.
   `scripts/review_ledger.py --status` prints `approved N / baseline M` every CI run;
-  guard `scripts/test_review_ledger.py` proves 10 failure paths. Never edit an evidence file to
+  guard `scripts/test_review_ledger.py` proves 14 failure paths. Never edit an evidence file to
   make it read APPROVE — ask Gemini again.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 

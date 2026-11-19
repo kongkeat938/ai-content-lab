@@ -71,24 +71,43 @@ def save(ledger: dict, path: str = LEDGER) -> None:
         fh.write("\n")
 
 
+VERDICTS = ("APPROVE WITH CHANGES", "APPROVE", "REJECT")
+# a decision is often written after its label on the same line ("คำตัดสิน: APPROVE")
+LABELS = ("คำตัดสิน", "verdict", "decision")
+
+
 def verdict_of(evidence_path: str) -> str | None:
     """'APPROVE' / 'APPROVE WITH CHANGES' / 'REJECT', or None if unreadable.
 
     An unreadable or missing evidence file is None, never "approved": an unknown
     must not read as a pass (the thumbnail `--skip-existing` trap, 2026-11-18).
+
+    The verdict is the decision written on its own line, not any occurrence of the
+    word: a real reply can say "pointing at a REJECT file is impossible" while
+    approving, and a whole-text search reads that as REJECT (measured 2026-11-19,
+    on this project's own evidence). So a line counts only when it *starts* with a
+    verdict once markdown decoration and list numbering are stripped, and the last
+    such line wins -- a reply that changes its mind ends with the decision.
     """
     try:
         text = open(evidence_path, encoding="utf-8").read()
     except OSError:
         return None
-    flat = " ".join(text.split())
-    if "REJECT" in flat:
-        return "REJECT"
-    if "APPROVE WITH CHANGES" in flat:
-        return "APPROVE WITH CHANGES"
-    if "APPROVE" in flat:
-        return "APPROVE"
-    return None
+    found = None
+    for line in text.splitlines():
+        bare = line.strip().lstrip("-*>#0123456789.)( ").replace("*", "").strip()
+        low = bare.lower()
+        for label in LABELS:
+            at = low.rfind(label)
+            if at != -1:
+                bare = bare[at + len(label):].strip(" :*")
+                break
+        upper = bare.upper()
+        for verdict in VERDICTS:
+            if upper.startswith(verdict):
+                found = verdict
+                break
+    return found
 
 
 def check(ledger: dict | None = None, root: str = ROOT) -> tuple[list[str], dict]:
@@ -146,10 +165,48 @@ def check(ledger: dict | None = None, root: str = ROOT) -> tuple[list[str], dict
     return problems, stats
 
 
+def record(name: str, evidence: str, root: str = ROOT, commit: str = "") -> tuple[bool, str]:
+    """Add one approved entry, refusing unless the evidence really says APPROVE.
+
+    Hand-editing the JSON is how a typo becomes an approval nobody can trace, and
+    how an entry gets recorded for a verdict that was never given. The verdict is
+    re-read from the evidence file here, so `--record` cannot manufacture a pass.
+    """
+    target = os.path.join(root, name)
+    if not os.path.isfile(target):
+        return False, f"{name}: no such file -- nothing to record"
+    ev_path = os.path.join(root, evidence)
+    verdict = verdict_of(ev_path)
+    if verdict != "APPROVE":
+        return False, (f"{name}: evidence {evidence} reads {verdict!r}, not APPROVE -- "
+                       "ask Gemini again, do not edit the evidence")
+    ledger = load(os.path.join(root, "docs", "reviews", "ledger.json"))
+    ledger.setdefault("approved", {})[name] = {
+        "sha256": sha256_of(target),
+        "verdict": "APPROVE",
+        "commit": commit,
+        "evidence": evidence,
+    }
+    (ledger.get("baseline") or {}).pop(name, None)
+    save(ledger, os.path.join(root, "docs", "reviews", "ledger.json"))
+    return True, f"{name}: recorded as approved against {evidence}"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Gemini review ledger for code changes")
     ap.add_argument("--status", action="store_true", help="print counts and the unreviewed list")
+    ap.add_argument("--record", metavar="FILE", help="record an APPROVE for one file")
+    ap.add_argument("--evidence", metavar="PATH", help="the verdict text backing --record")
+    ap.add_argument("--commit", default="", help="the commit the approval belongs to")
     args = ap.parse_args()
+
+    if args.record:
+        if not args.evidence:
+            print("--record needs --evidence (the Gemini reply on disk)")
+            return 2
+        ok, msg = record(args.record, args.evidence, commit=args.commit)
+        print(msg)
+        return 0 if ok else 1
 
     ledger = load()
     problems, stats = check(ledger)

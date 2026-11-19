@@ -56,9 +56,9 @@
    "verdict": "APPROVE"
   },
   "scripts/review_ledger.py": {
-   "commit": "(pending)",
-   "evidence": "docs/reviews/2026-11-19-review-ledger.txt",
-   "sha256": "ad9679a579b40035d80c699914c918aff968707e233302d2e37608036293cf08",
+   "commit": "fc79eb7",
+   "evidence": "docs/reviews/2026-11-19-verdict-parser-fix.txt",
+   "sha256": "06c0a5311df99cb6224b1cb922fe35516f3e61d27c98c1bfbb7368d9845b108a",
    "verdict": "APPROVE"
   },
   "scripts/test_foreman_cadence.py": {
@@ -74,9 +74,9 @@
    "verdict": "APPROVE"
   },
   "scripts/test_review_ledger.py": {
-   "commit": "(pending)",
-   "evidence": "docs/reviews/2026-11-19-review-ledger.txt",
-   "sha256": "0fbead0765663987f0751f5b8bdb3f281cf9b9052b74e923333f2ead028ed7da",
+   "commit": "fc79eb7",
+   "evidence": "docs/reviews/2026-11-19-verdict-parser-fix.txt",
+   "sha256": "24c78298e2f868ef4f56421628c542e544946e173ef686861978d5d45a724a8d",
    "verdict": "APPROVE"
   },
   "scripts/test_vision_grader.py": {

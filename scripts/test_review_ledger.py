@@ -147,7 +147,49 @@ def main() -> int:
               stats["reviewable"] == 4 and any("brand_new.py" in p for p in problems),
               str(stats))
 
-        # 10. The real repo must be clean right now, or the rule is already broken.
+        # 10. `--record` must refuse a verdict that is not APPROVE. Otherwise the
+        #     tool that exists to make the rule checkable could manufacture a pass
+        #     by pointing at a file Gemini actually rejected.
+        os.makedirs(os.path.join(tmp, "docs", "reviews"), exist_ok=True)
+        with open(os.path.join(tmp, "docs", "reviews", "ledger.json"), "w", encoding="utf-8") as fh:
+            fh.write('{"approved": {}, "baseline": {}}')
+        with open(os.path.join(tmp, "docs", "reviews", "no.txt"), "w", encoding="utf-8") as fh:
+            fh.write("APPROVE WITH CHANGES\n")
+        ok, msg = R.record("scripts/a.py", "docs/reviews/no.txt", root=tmp)
+        led = json.load(open(os.path.join(tmp, "docs", "reviews", "ledger.json")))
+        check("--record refuses a non-APPROVE verdict",
+              not ok and "not APPROVE" in msg and "scripts/a.py" not in led.get("approved", {}),
+              msg[:90])
+
+        # 11. ...and must accept a real one, storing the digest it just read and
+        #     dropping the baseline exemption for that file.
+        build(tmp, {"scripts/a.py": "print('a2')\n"})
+        ok, msg = R.record("scripts/a.py", "docs/reviews/ev.txt", root=tmp, commit="abc123")
+        led = json.load(open(os.path.join(tmp, "docs", "reviews", "ledger.json")))
+        entry = led.get("approved", {}).get("scripts/a.py", {})
+        check("--record stores a real APPROVE with the current digest",
+              ok and entry.get("sha256") == digest(os.path.join(tmp, "scripts/a.py"))
+              and entry.get("commit") == "abc123"
+              and "scripts/a.py" not in led.get("baseline", {}),
+              str(entry)[:90])
+
+        # 12. The verdict is the decision on its own line, not any occurrence of the
+        #     word. A real Gemini reply can say "pointing at a REJECT file is
+        #     impossible" while approving -- a whole-text search read that as REJECT
+        #     and refused a genuine approval (measured 2026-11-19 on this project's
+        #     own evidence). The last decision line wins.
+        with open(os.path.join(tmp, "docs", "reviews", "prose.txt"), "w", encoding="utf-8") as fh:
+            fh.write("1. There is no way to record a REJECT as a pass.\n"
+                     "2. **คำตัดสิน: APPROVE**\n")
+        check("a REJECT mentioned in prose does not flip the verdict",
+              R.verdict_of(os.path.join(tmp, "docs", "reviews", "prose.txt")) == "APPROVE",
+              str(R.verdict_of(os.path.join(tmp, "docs", "reviews", "prose.txt"))))
+        with open(os.path.join(tmp, "docs", "reviews", "flip.txt"), "w", encoding="utf-8") as fh:
+            fh.write("APPROVE\n... later, after seeing the diff:\nREJECT\n")
+        check("the last decision line wins",
+              R.verdict_of(os.path.join(tmp, "docs", "reviews", "flip.txt")) == "REJECT")
+
+        # 13. The real repo must be clean right now, or the rule is already broken.
         problems, stats = R.check(root=R.ROOT)
         check("the live repo has no review problems", not problems,
               "; ".join(problems)[:200])
