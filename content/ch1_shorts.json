@@ -638,6 +638,16 @@
       "thumbnail": "work/ch1_shorts/98/thumb_98.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "99": {
+      "video_id": "cNv8M7x8Rv8",
+      "url": "https://youtu.be/cNv8M7x8Rv8",
+      "title": "คุณมีสิทธิ์เลือกเหนื่อยน้อยลงและมีความสุขมากกว่าเดิม #Shorts",
+      "posted_at": "2026-11-19T19:49:00+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/99/thumb_99.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
