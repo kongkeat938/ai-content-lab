@@ -618,6 +618,16 @@
       "thumbnail": "work/ch1_shorts/96/thumb_96.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "97": {
+      "video_id": "bDwxSSeUyPg",
+      "url": "https://youtu.be/bDwxSSeUyPg",
+      "title": "คุณมีสิทธิ์วางภาระที่แบกไว้ลงโดยไม่ต้องรู้สึกว่าตัวเองล้มเหลว #Shorts",
+      "posted_at": "2026-11-19T01:34:10+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/97/thumb_97.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
