@@ -234,3 +234,34 @@ run-to-run (same id never twice in a row) = a flaky read, not a removal. Fix: `o
 vetoes a live clip and marks an unconfirmed one as unconfirmed. Control ids: `AAAAAAAAAAA`=404,
 `NlxhKLTuQp4`=403. Same class as the `rogue_watch_rss` "dead source read as clean" trap: a single
 source is never proof -- diff it against a second one.
+
+## A DERIVED window needs a DERIVED health threshold (measured 2026-11-19)
+All three long-form rails (`night-compilation`, `genx-longform`, `ch4-longform`) carried the
+literal `EXPECTED = 11520` (8 d) in `health.py` while the foreman's real backfill windows are
+3.33 d / 4.50 d / 8.00 d. Measured consequence: `night-compilation`'s last success was 66 h
+old (Wednesday's cron never fired) and the report still printed **"all rails fresh"** — the one
+report whose job is to catch a silence could not see one, at 2.4x the rail's own window.
+
+Why the existing guard missed it: `test_watchdog.py` check 5b sweeps foreman gates by regexing
+`last_success_min("X")` followed by a numeric `> N`. The long-form rails compute their window
+through `backfill_window_days()`, so there is no literal for that regex — the three rails were
+silently outside the sweep (verified: the sweep parses 21 gates and none of them is a long-form rail).
+
+Fix: `health.longform_expected(per_week, workflow)` = `backfill_window_days(per_week)*1440`
++ 2 chain ticks (240 min, the same margin `EXPECTED["foreman"]=240` takes over the 120-min tick)
++ the rail's own `timeout-minutes` (120). Result: 5160 / 6840 / 11880 min.
+
+Guard (`test_foreman_cadence.py`), three checks per rail, each proven to FAIL:
+* threshold must be **above** the window (else a healthy rail false-alarms);
+* threshold must stay **under 2x** the window (else a dead rail reads fresh — the actual bug);
+* the value must be **derived** from `foreman.<CONST>`, never a literal that happens to pass.
+
+Mutation-tested: restoring the old `11520` literals makes the guard exit 1 with
+`too loose ... a rail dead twice its window still reads fresh` and
+`too tight ... fires on a healthy rail` (ch4). With the fix: rc=0.
+
+## GitHub cron: it fires, but late (measured 2026-11-19)
+`gh run list --limit 100` = 23 `schedule` events, so the old "no schedule event has ever fired"
+notes in `set-thumbnails.yml` / `health.py` / `watchdog.py` are stale. But it is unreliable:
+the Thu 03:37 UTC `ch4-longform` cron and the Wed 02:17 UTC `night-compilation` cron both did
+not fire on 2026-11-18/19. Treat a schedule as a bonus; the foreman backfill is the guarantee.

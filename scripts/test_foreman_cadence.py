@@ -111,6 +111,38 @@ def main() -> int:
               not (n_crons > 1 and week_based),
               "theme index uses date +%V; use a per-run counter" if week_based else "")
 
+    # The health report must be able to SEE a silence on these rails. Measured
+    # 2026-11-19: all three carried the literal 11520 (8 d) while the night rail's
+    # real backfill window is 3.33 d, so a night rail dead for 6 days still read
+    # "all rails fresh" -- the one report that exists to catch a silence could not.
+    # The watchdog sweep cannot cover this: it parses numeric `> N` gates only, so
+    # a window derived through backfill_window_days() is invisible to it.
+    #
+    # Two bounds, both needed. Below the foreman's window is a false alarm on a
+    # healthy rail. Above twice that window is a silence the report would miss --
+    # the shape the old 8-day literals had (night: 2.4x its own window).
+    import health  # noqa: PLC0415
+    for wf_name, const in RAILS:
+        rail = wf_name.removesuffix(".yml")
+        exp = health.EXPECTED.get(rail)
+        if exp is None:
+            check(f"health watches {wf_name}", False, "add it to health.EXPECTED")
+            continue
+        window_min = foreman.backfill_window_days(getattr(foreman, const)) * 24 * 60
+        check(f"{wf_name}: health threshold {exp} min is inside "
+              f"({window_min:.0f}, {2 * window_min:.0f}] min",
+              window_min < exp <= 2 * window_min,
+              "" if window_min < exp <= 2 * window_min
+              else ("too tight: fires on a healthy rail" if exp <= window_min
+                    else "too loose: a rail dead twice its window still reads fresh"))
+
+    # And it must be DERIVED. A literal that happens to pass today is the exact
+    # shape that went stale when the cadence was raised 2 -> 3/week.
+    hsrc = open(os.path.join(HERE, "health.py"), encoding="utf-8").read()
+    for _, const in RAILS:
+        check(f"health derives the threshold from {const}",
+              re.search(rf"longform_expected\(\s*foreman\.{const}", hsrc) is not None)
+
     if FAILS:
         print(f"\nFAILED: {FAILS}")
         return 1

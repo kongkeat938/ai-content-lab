@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -30,13 +31,43 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 REPO = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("KONGKEAT_GH_TOKEN")
+sys.path.insert(0, HERE)
+
+import foreman  # noqa: E402 -- the long-form cadence constants live there
+
+CHAIN_TICK_MIN = 120     # watchdog.yml ticks the foreman every 2 h
+WORKFLOW_DIR = os.path.join(ROOT, ".github", "workflows")
+
+
+def longform_expected(per_week: int, workflow: str) -> int:
+    """Health threshold for a rail the foreman backfills past a DERIVED window.
+
+    The foreman dispatches such a rail only when its last success is older than
+    `backfill_window_days(per_week)`, so the window alone is not a fault -- and a
+    rail's own run can take its full `timeout-minutes` before that success is
+    recorded. Measured 2026-11-19, every one of these thresholds was the literal
+    11520 (8 d) while the night rail's real window is 3.33 d: a night rail dead
+    for 6 days still read "fresh", so the report that exists to catch a silence
+    could not see one. Derived here so raising a cadence cannot leave it behind.
+
+    Slack is two chain ticks (one for the dispatch latency, one dropped tick --
+    the same margin `EXPECTED["foreman"]=240` takes over the 120-min tick) plus
+    the rail's own run time.
+    """
+    window = foreman.backfill_window_days(per_week) * 24 * 60
+    src = open(os.path.join(WORKFLOW_DIR, workflow + ".yml"), encoding="utf-8").read()
+    m = re.search(r"timeout-minutes:\s*(\d+)", src)
+    runtime = int(m.group(1)) if m else 0
+    return int(window) + 2 * CHAIN_TICK_MIN + runtime
+
 
 # workflow name -> (how often it should succeed, in minutes)
 # Intervals are set against the rail's REAL driver, not its nominal cron. GitHub's
 # cron is unreliable here (measured 2026-11-07), so most rails are actually driven
 # by the watchdog chain, which ticks the foreman every 2 h -- a threshold below
-# that fires on a perfectly healthy chain. A weekly rail gets 8 days. Silence is
-# the bug: a rail that has never succeeded is stale, not fine.
+# that fires on a perfectly healthy chain. Silence is the bug: a rail that has
+# never succeeded is stale, not fine. The long-form rails are computed from the
+# foreman's own cadence (see `longform_expected`), never typed as a literal.
 EXPECTED = {
     "foreman": 240,              # the driver; the chain ticks it every 2 h, so allow one dropped tick
     "set-thumbnails": 360,       # foreman gate 180 + one 120-min chain tick
@@ -53,9 +84,10 @@ EXPECTED = {
     "publish-ch4": 1700,
     "watch-hours": 11520,        # weekly
     "check-duplicates": 11520,   # weekly Monday
-    "night-compilation": 11520,  # Mon+Thu crons (raised to 2/week 2026-11-13)
-    "genx-longform": 11520,      # weekly Tuesday
-    "ch4-longform": 11520,       # weekly Thursday
+    "night-compilation": longform_expected(foreman.NIGHT_BUILDS_PER_WEEK,
+                                           "night-compilation"),
+    "genx-longform": longform_expected(foreman.GENX_BUILDS_PER_WEEK, "genx-longform"),
+    "ch4-longform": longform_expected(foreman.CH4_BUILDS_PER_WEEK, "ch4-longform"),
     # Driven only by the chain (no reliable cron). They were invisible to this
     # report until 2026-11-09, which is how "fetch music" failed for a day with
     # nobody told: an unwatched rail looks exactly like a working one. The
