@@ -265,3 +265,21 @@ Mutation-tested: restoring the old `11520` literals makes the guard exit 1 with
 notes in `set-thumbnails.yml` / `health.py` / `watchdog.py` are stale. But it is unreliable:
 the Thu 03:37 UTC `ch4-longform` cron and the Wed 02:17 UTC `night-compilation` cron both did
 not fire on 2026-11-18/19. Treat a schedule as a bonus; the foreman backfill is the guarantee.
+
+## Git: a fresh pod must set the union merge driver (measured 2026-11-20)
+`.gitattributes` ships `merge=unionjson` for `content/upload_log.json`,
+`content/*_shorts_remakes.json`, `content/art_ledger_*.json`, `content/bed_ledger_*.json`,
+`content/reception/*.json`, `content/rogue_hidden.json` — but the **driver itself lives in
+git config**, and the workflows / `git_push_retry.sh` are the only places that set it.
+A fresh pod therefore conflicts on the first `git pull`:
+
+    git config merge.unionjson.driver "python3 scripts/git_union_merge.py %O %A %B"
+
+Measured: pulling 45 rail commits conflicted on `content/art_ledger_dharma.json` and
+`content/bed_ledger_genx.json`. With the driver set, the merge was clean; a deep path
+compare confirmed nothing was lost (merged 36 leaf paths; 0 origin paths missing, 0 base
+paths missing).
+
+**A shallow graft also fakes divergence**: `git rev-list --count origin/main..HEAD` read 1
+and the merge-base pointed at our own HEAD. After `git fetch --unshallow` the truth was
+`ahead 0, behind 45`. Never read ahead/behind on a shallow clone.
