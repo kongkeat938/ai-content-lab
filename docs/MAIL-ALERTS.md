@@ -1,4 +1,4 @@
-# Account watch — 2026-11-19T07:58+00:00
+# Account watch — 2026-11-20T01:41+00:00
 
 ## Channel health (Data API — always available)
 - **dharma**: cannot check — 403 {
@@ -16,5 +16,6 @@
     "message": "The request cannot be completed because you have exceeded your \u003ca href=\"/youtube/data/getting-started#quot
 
 ## Inbox (IMAP — needs an app password)
-- read ch1@example.invalid: 0 flagged unread in 3 day(s); NOT read ch2@example.invalid (dharma): no app password in IMAP_ACCOUNTS; NOT read ch4@example.invalid (kongkeat-story): no app password in IMAP_ACCOUNTS
+- read ch1@example.invalid: 1 flagged unread in 3 day(s); NOT read ch2@example.invalid (dharma): no app password in IMAP_ACCOUNTS; NOT read ch4@example.invalid (kongkeat-story): no app password in IMAP_ACCOUNTS
+- :email: alert 1 — recorded privately, not printed here
 
