@@ -648,6 +648,16 @@
       "thumbnail": "work/ch1_shorts/99/thumb_99.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "100": {
+      "video_id": "mbXsLVQstxI",
+      "url": "https://youtu.be/mbXsLVQstxI",
+      "title": "คุณมีสิทธิ์วางภาระที่แบกไว้บนบ่าลงได้เลย #Shorts",
+      "posted_at": "2026-11-20T01:42:45+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/100/thumb_100.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
