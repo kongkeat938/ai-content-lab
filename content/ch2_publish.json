@@ -415,7 +415,9 @@
         }
       },
       "video_id": "6tTda1sruHg",
-      "url": "https://youtu.be/6tTda1sruHg"
+      "url": "https://youtu.be/6tTda1sruHg",
+      "playlist_added": true,
+      "thumbnail_set": true
     },
     {
       "key": "night_auto_202647_r23",
@@ -455,7 +457,9 @@
         }
       },
       "video_id": "6tTda1sruHg",
-      "url": "https://youtu.be/6tTda1sruHg"
+      "url": "https://youtu.be/6tTda1sruHg",
+      "playlist_added": true,
+      "thumbnail_set": true
     }
   ]
 }
