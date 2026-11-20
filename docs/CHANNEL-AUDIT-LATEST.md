@@ -1,4 +1,4 @@
-# Channel audit -- 2026-11-20 09:46 UTC
+# Channel audit -- 2026-11-20 13:39 UTC
 
 Measured live from the Data API. A video listed as "in NO manifest" was uploaded by something outside these rails.
 
@@ -9,7 +9,7 @@ Measured live from the Data API. A video listed as "in NO manifest" was uploaded
 
 ## dharma (Farmmer — ธรรมะก่อนนอน)
 
-- subs=155 videos=165 views=39442 playlists=4 checked=25
+- subs=155 videos=166 views=39442 playlists=4 checked=25
 - DEFECT: 2 videos share the title: นิทานธรรมะก่อนนอน ปล่อยวางความทุกข์ก่อนนอน #Shorts
 
 ## kongkeat-story (PCSEV)
