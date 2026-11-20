@@ -39,7 +39,7 @@
   `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`**. `topics/05`.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential or address
   (`test_no_committed_{secrets,pii}.py`).
-- **Quota:** `videos.insert` own pool; reset 08:00 UTC; a token push ≠ a run.
+- **Quota:** `videos.insert` own pool; reset 08:00 UTC; token push ≠ run.
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; hook cap
@@ -79,5 +79,5 @@
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
-- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 BLOCKED (`uploadLimitExceeded`).
+- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps, not upload cap.
 - **Comment writes need `force-ssl`**; pinned Short CTA 403s until then.

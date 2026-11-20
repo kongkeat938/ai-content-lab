@@ -58,6 +58,7 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   ("เกร็ดความรู้รอบตัว") stays in keywords/SEO — only the channel-name labels/phrases are PCSEV.
   Guard `scripts/test_ch4_channel_name.py` (fails if a rail would write the retired name back).
 - Measured history: `docs/STATUS-<date>.md`, `docs/counters.jsonl` (the counter), `docs/HEALTH.md`.
+  Latest: `docs/STATUS-2026-11-20.md` (loudness fix closed + why the motion clips wait: cap 3/3).
 - **Two systems, one handoff folder** (2026-11-19): `scripts/generative_art.py` renders pictures on
   PC1 into a library (`scripts/art_library.py` reads that library over HTTP); `scripts/parallel_pipeline.py`
   builds clips from those pictures and **gates every clip through `short_standard.verify_short`** —
