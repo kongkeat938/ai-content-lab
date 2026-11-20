@@ -520,6 +520,18 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "122": {
+      "video_id": "S3EPfGsJhRM",
+      "url": "https://youtu.be/S3EPfGsJhRM",
+      "title": "ทำไมเราจึงมองเห็นฟ้าแลบก่อนที่จะได้ยินเสียงฟ้าร้อง #Shorts",
+      "posted_at": "2026-11-20T01:42:33+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch4_shorts/122/thumb_122.jpg",
+      "thumbnail_set": false,
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
