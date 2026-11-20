@@ -767,6 +767,16 @@
       "thumbnail": "work/ch2_shorts/122/thumb_122.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "123": {
+      "video_id": "8PHXO87u3EI",
+      "url": "https://youtu.be/8PHXO87u3EI",
+      "title": "คืนนี้ลองใช้วิธีวางความเครียดทิ้งไว้ข้างหมอนก่อนหลับตา #Shorts",
+      "posted_at": "2026-11-20T03:43:52+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/123/thumb_123.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
