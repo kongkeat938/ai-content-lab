@@ -757,6 +757,16 @@
       "thumbnail": "work/ch2_shorts/121/thumb_121.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "122": {
+      "video_id": "nf1q-BhHIwI",
+      "url": "https://youtu.be/nf1q-BhHIwI",
+      "title": "คืนนี้ลองทำสิ่งนี้แล้วคุณจะหลับลึกกว่าที่เคย #Shorts",
+      "posted_at": "2026-11-20T01:42:33+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/122/thumb_122.jpg",
+      "thumbnail_set": false,
+      "shape": "cue"
     }
   }
 }
