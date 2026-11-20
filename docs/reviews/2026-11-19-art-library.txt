@@ -1,0 +1,10 @@
+Model: gemini-3.5-flash-lite
+Prompt sha256: f37da62604a02597eb27fd7e90cb525f96260f78dd25e51730413d0a72aa5c18
+At: 2026-11-19 17:55 (Asia/Bangkok)
+Round: 2 (after fixes)
+
+- The lock is now centralized in `make_short.ledger_lock` (using `fcntl` on Linux and `msvcrt` on Windows) and is shared cleanly by both `library_art` and `parallel_pipeline._claim`.
+- No claim path races because read-pick-write operations are correctly enclosed within the exclusive context manager.
+- The guards are rigorous and properly test both the successful enforcement and the intentional failure states (dead library gate and unlocked parallel race condition).
+
+VERDICT: APPROVE

@@ -52,13 +52,13 @@ def _probe(path: str) -> dict:
         ["ffprobe", "-v", "error", "-show_entries",
          "stream=codec_type,width,height,pix_fmt,color_range,color_space:"
          "format=duration", "-of", "json", path],
-        capture_output=True, text=True)
+        capture_output=True, text=True, stdin=subprocess.DEVNULL)
     return json.loads(r.stdout or "{}")
 
 
 def _loudness(path: str) -> tuple[float | None, float | None]:
     r = subprocess.run(["ffmpeg", "-i", path, "-af", "ebur128=peak=true", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, stdin=subprocess.DEVNULL)
     i = tp = None
     for ln in r.stderr.splitlines():
         s = ln.strip()

@@ -37,6 +37,18 @@ def check(name: str, ok: bool, detail: str = "") -> None:
         fails += 1
 
 
+def _lapvar(im) -> float:
+    a = np.asarray(im.convert("L"), "float")
+    k = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]], "float")
+    from numpy.lib.stride_tricks import sliding_window_view
+    return float((sliding_window_view(a, (3, 3)) * k).sum(axis=(2, 3)).var())
+
+
+def _src(fn) -> str:
+    import inspect
+    return inspect.getsource(fn)
+
+
 def diff(a, b) -> float:
     return float(np.abs(np.asarray(a, "float") - np.asarray(b, "float")).mean())
 
@@ -45,18 +57,18 @@ def main() -> int:
     dur = 8.0
     base = M.backdrop("night", 42, None)
     prof = M.profile_for("dharma")
-    stars, leaves = M.layers_for(42, prof)
+    stars, fx = M.layers_for(42, prof)
 
-    f0 = M.frame_at(base, stars, leaves, "night", 0.0, dur, prof=prof)
-    f1 = M.frame_at(base, stars, leaves, "night", 0.5, dur, prof=prof)
+    f0 = M.frame_at(base, stars, fx, "night", 0.0, dur, prof=prof)
+    f1 = M.frame_at(base, stars, fx, "night", 0.5, dur, prof=prof)
 
     # 1) the moving layers change between two instants.
     star0 = M.draw_stars(base, stars, 0.0, speed=prof["stars"][1])
     star1 = M.draw_stars(base, stars, 0.6, speed=prof["stars"][1])
     check("stars twinkle", diff(star0, star1) > 0.05, f"diff {diff(star0, star1):.3f}")
 
-    leaf0 = M.draw_leaves(base, leaves, 0.0)
-    leaf1 = M.draw_leaves(base, leaves, 0.6)
+    leaf0 = M.draw_fx(base, fx[0], 0.0)
+    leaf1 = M.draw_fx(base, fx[0], 0.6)
     check("drift moves (petals/leaves/motes)", diff(leaf0, leaf1) > 0.05,
           f"diff {diff(leaf0, leaf1):.3f}")
 
@@ -69,8 +81,8 @@ def main() -> int:
 
     # 2) the whole frame moves, and it is the layers doing it.
     anim = diff(f0, f1)
-    fr0 = M.frame_at(base, stars, leaves, "night", 0.0, dur, animate=False, prof=prof)
-    fr1 = M.frame_at(base, stars, leaves, "night", 0.5, dur, animate=False, prof=prof)
+    fr0 = M.frame_at(base, stars, fx, "night", 0.0, dur, animate=False, prof=prof)
+    fr1 = M.frame_at(base, stars, fx, "night", 0.5, dur, animate=False, prof=prof)
     frozen = diff(fr0, fr1)
     check("the whole frame moves", anim > 0.5, f"anim diff {anim:.2f}")
     check("motion comes from the layers, not the ken-burns only",
@@ -91,7 +103,7 @@ def main() -> int:
           M.profile_for("banana") is M.profile_for(M.DEFAULT_GENRE)
           and M.profile_for(None)["character"] is None)
     check("dharma drifts petals, not leaves",
-          dharm["drift"][3] == "petal", dharm["drift"][3])
+          "petal" in [k for k, _n in dharm["fx"]], str(dharm["fx"]))
 
     # 4) the mascot really dances (the knowledge profile only).
     c0 = M.draw_character(base, 0.0, "night", M.beat_accent(0.0))
@@ -113,6 +125,56 @@ def main() -> int:
     night = np.asarray(M.backdrop("night", 7, None), "float").mean()
     check("the sun/moon differs by mood (warm sun vs pale moon)", abs(day - night) > 5,
           f"sunset {day:.1f} vs night {night:.1f}")
+
+    # 7) K (2026-11-19): "ความละเอียดภาพไม่สวย ขุ่นมัวไม่เอา ขอสดใส" -- the picture must
+    #    be SHARP. `backdrop()` used to blur the art by 1.5px, which threw away 85% of
+    #    its detail (LapVar 6.8 -> 1.0). This can FAIL: re-adding any blur trips it.
+    from PIL import Image as _I
+    art = "/tmp/_guard_art.png"
+    _I.new("RGB", (M.W, M.H), (90, 120, 150)).save(art)
+    detail = _I.new("RGB", (M.W, M.H))
+    px = detail.load()
+    for yy in range(0, M.H, 4):
+        for xx in range(0, M.W, 4):
+            px[xx, yy] = (255, 255, 255)
+    detail.save(art)
+    check("backdrop() does NOT blur the art (K: no ขุ่นมัว)",
+          _lapvar(M.backdrop("night", 3, art)) > _lapvar(_I.open(art)) * 0.9,
+          f"lapvar {_lapvar(M.backdrop('night', 3, art)):.1f} vs source {_lapvar(_I.open(art)):.1f}")
+    check("ken_burns resamples with lanczos, not bicubic",
+          "LANCZOS" in _src(M.ken_burns) and "BICUBIC" not in _src(M.ken_burns))
+
+    # 8) K (2026-11-19): the caption must sit in the UPPER-MIDDLE, not at the foot
+    #    where the Shorts UI covers it. Measured from the pixels it actually paints.
+    fr = M.frame_at(base, stars, fx, "night", 0.0, dur, prof=prof)
+    capped = M.caption(fr, "หายใจเข้าลึก ๆ แล้วปล่อยออกช้า ๆ")
+    _d = np.asarray(capped, "float") - np.asarray(fr, "float")
+    rows = np.where(np.abs(_d).sum(axis=(1, 2)) > 50)[0]
+    cy = (rows.min() + rows.max()) / 2 / M.H if len(rows) else 1.0
+    check("caption sits above the middle (not under the Shorts UI)", cy < 0.5,
+          f"caption centre at {cy:.0%} of height")
+    check("caption stays clear of the bottom UI band", rows.max() / M.H < 0.72,
+          f"lowest caption row at {rows.max() / M.H:.0%}")
+
+    # 9) K (2026-11-19): "ฝน วงกลมเล็กๆ ใบไม้ร่วง หิมะ น้ำตก ภูเขาไฟระเบิด หรืออะไรก็ได้
+    #    อีกเยอะ" -- the effect set must be RICH, and each effect must MOVE. This
+    #    can FAIL: dropping back to one drifting kind trips the count check.
+    check("many effect kinds exist (not just one)", len(M.KINDS) >= 10,
+          f"{len(M.KINDS)} kinds: {sorted(M.KINDS)}")
+    for want in ("rain", "snow", "leaf", "waterfall", "lava", "bubble", "heart", "confetti"):
+        check(f"effect '{want}' is available", want in M.KINDS)
+    moving = []
+    for kind in sorted(M.KINDS):
+        parts = M.make_particles(7, 12, kind, salt=1)
+        a = M.draw_fx(base, parts, 0.0)
+        b = M.draw_fx(base, parts, 0.45)
+        moving.append((kind, diff(a, b)))
+    still = [k for k, d in moving if d <= 0.02]
+    check("every effect actually moves", not still,
+          f"static: {still}" if still else f"{len(moving)} kinds move")
+    # a profile must combine several effects, not one.
+    thin = [g for g, p in M.PROFILES.items() if len(p["fx"]) < 2]
+    check("every profile layers at least 2 effects", not thin, f"thin: {thin}" if thin else "all >= 2")
 
     # 7) the speech is slower than the house rate (K: "slow the speaking pace down").
     check("this rail speaks slower than the house -15%", M.RATE.endswith("%")

@@ -1,0 +1,9 @@
+Verbatim line from `scripts/make_short.py`:
+`    subprocess.run(cmd, check=True, capture_output=True, stdin=subprocess.DEVNULL)`
+
+The string `stdin=subprocess.DEVNULL` occurs 3 times in the file.
+
+- Does closing stdin on every subprocess call introduce any correctness, security or behavioural regression? No. Background processes run non-interactively and do not require terminal input; detaching stdin prevents them from inadvertently blocking on TTY reads (SIGTTIN).
+- Is it minimal and complete? Yes.
+
+APPROVE

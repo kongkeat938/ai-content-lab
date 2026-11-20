@@ -1,0 +1,5 @@
+- Correctness: The changes correctly compute `TP_WAV` dynamically from the upload gate targets minus the AAC mux margin, avoiding over-clipping and handling sample vs. true peak plateaus.
+- Gate loosening: The upload gate (`short_standard.verify_short()`) is untouched; the fix adapts the WAV creation ceiling (`GATE_TP_CEIL = std.LOUD_TP + std.TP_TOL`) rather than loosening the rules.
+- Hardcoded thresholds: Thresholds such as `GATE_TP_CEIL` and `AAC_MUX_MARGIN` are clearly defined at the module level using constants and dynamic gate references instead of hiding magic numbers in the normalization logic.
+
+APPROVE: All measured loudness constraints and gate parameters are safely addressed without loosening the validation standards.

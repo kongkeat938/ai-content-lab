@@ -44,11 +44,15 @@ def main() -> int:
     check("it never prints the token value", "fake-token-for-the-guard" not in out)
 
     print("it will not claim a stop it cannot measure")
-    # With no client credentials it cannot test the grant, so it must assume alive
-    # rather than report a false "already dead".
+    # With no client credentials it cannot test the grant, so the answer must be
+    # "unknown" -- never True (that would print "ALIVE" from a blind run) and never
+    # False (that would claim a stop it never saw).
     for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET"):
         os.environ.pop(k, None)
-    check("still_alive() is True when it cannot test", rt.still_alive("genx", "x") is True)
+    check("still_alive() is None (not measured) when it cannot test",
+          rt.still_alive("genx", "x") is None, repr(rt.still_alive("genx", "x")))
+    check("an unmeasured grant never reads as alive", rt.still_alive("genx", "x") is not True)
+    check("an unmeasured grant never reads as dead", rt.still_alive("genx", "x") is not False)
 
     print()
     if FAILS:

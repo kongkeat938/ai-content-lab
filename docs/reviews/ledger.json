@@ -7,6 +7,12 @@
    "sha256": "fa1c5b34629a78415c38ab8f744fbbb12f3d992c0d4727afcd51f55b6e11c75e",
    "verdict": "APPROVE"
   },
+  ".github/workflows/cred-transport.yml": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-cred-transport-yml.txt",
+   "sha256": "e5cbe8daa53534684d21b0a0b76ea965bf3c1fa7fa2c4dc4507eb8dacd06178f",
+   "verdict": "APPROVE"
+  },
   ".github/workflows/genx-longform.yml": {
    "commit": "bf4c727",
    "evidence": "docs/reviews/2026-11-19-cadence-raise.txt",
@@ -17,6 +23,12 @@
    "commit": "ebd489e",
    "evidence": "docs/reviews/2026-11-19-cadence-raise.txt",
    "sha256": "7690754c61b795220e3baf358be547603208d53ca17220650e393c34b8ad395a",
+   "verdict": "APPROVE"
+  },
+  ".github/workflows/publish-motion.yml": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-publish-motion-workflow.txt",
+   "sha256": "5132527766f47196d3393e62d031e3013ae825ba8189ea5171c8b47d8187837d",
    "verdict": "APPROVE"
   },
   ".github/workflows/selftest.yml": {
@@ -31,10 +43,34 @@
    "sha256": "e4b21a1b23e8ee7c56ed14bd3b5713d3b1fa5ebf3ac50d139f0735cd0bba16e7",
    "verdict": "APPROVE"
   },
+  "scripts/ak_mail.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-ak_mail-py.txt",
+   "sha256": "e6e6f3376caee90926bee5214456722d0df6eeabf6028d97652695f3d30a7c6e",
+   "verdict": "APPROVE"
+  },
+  "scripts/art_library.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-art-library.txt",
+   "sha256": "792177f5af3014f991e27d8613cbc4239328c052bab7f35264cfd8ae6de4550c",
+   "verdict": "APPROVE"
+  },
+  "scripts/fetch_secret.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-fetch_secret-py.txt",
+   "sha256": "bf737625c55d74b149d643d093d8002e8c3bb793d8152a9773ba6632359e0dc2",
+   "verdict": "APPROVE"
+  },
   "scripts/foreman.py": {
    "commit": "bf4c727",
    "evidence": "docs/reviews/2026-11-19-cadence-raise.txt",
    "sha256": "647edfc1ff07b57be84dfbd62e4a915514afa8bd22c82cd686745cbd26b79736",
+   "verdict": "APPROVE"
+  },
+  "scripts/generative_art.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-generative_art-py.txt",
+   "sha256": "d7ee3d776403356be8d14a0e8fa23b5970b6fa7437a90c9747e98a399e292397",
    "verdict": "APPROVE"
   },
   "scripts/grade_video_vision.py": {
@@ -49,10 +85,46 @@
    "sha256": "c3865c354db3515a6fc5f0b53cb65b930c1bdfbd844a549defd2f59e7b16361f",
    "verdict": "APPROVE"
   },
+  "scripts/make_motion_short.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-motion-sharp-fx.txt",
+   "sha256": "3a75d09b9c5c2739825d7cd8aa1017bc78c98e5348576464f1fb39b604fbdb62",
+   "verdict": "APPROVE"
+  },
+  "scripts/make_poster.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-make_poster-py.txt",
+   "sha256": "ce9729cc394fd78a7e723010008982e38dffdcadd31b7ea7e42f6456869f0d7a",
+   "verdict": "APPROVE"
+  },
+  "scripts/make_short.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-20-make-short-aac-margin.txt",
+   "sha256": "8bbbe6b90c771e14556b5b501c33e4248700d2c389491958120b69dcaceed65a",
+   "verdict": "APPROVE"
+  },
+  "scripts/make_short_thumbnail.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-short-thumbnail-wrap.txt",
+   "sha256": "28d4a4289fb7ae288a3c7d7501a37990e2ca790e998d44a02dcc07e1b8477ad8",
+   "verdict": "APPROVE"
+  },
   "scripts/optimize_seo.py": {
    "commit": "902d323",
    "evidence": "docs/reviews/2026-11-19-playlist-loop.txt",
    "sha256": "ffcad32b5d4762f40a62edc1d55c81a8ce3e04a7d91efcb8306c88b240270569",
+   "verdict": "APPROVE"
+  },
+  "scripts/parallel_pipeline.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-parallel-pipeline-music.txt",
+   "sha256": "4896fc893f19ba258711d374710011ab4ecd2be8a65a25ab4b00b09dcf210c6e",
+   "verdict": "APPROVE"
+  },
+  "scripts/publish_motion.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-publish-motion-stdin-followup.txt",
+   "sha256": "edcbbe5548d05a60a2ac64f6d00281ffda2d407d4c6fdb89b8e33f777d79a49b",
    "verdict": "APPROVE"
   },
   "scripts/review_ledger.py": {
@@ -61,10 +133,40 @@
    "sha256": "06c0a5311df99cb6224b1cb922fe35516f3e61d27c98c1bfbb7368d9845b108a",
    "verdict": "APPROVE"
   },
+  "scripts/revoke_token.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-revoke_token-py.txt",
+   "sha256": "7071a7f026cb3fab84409a38b05f18a5b005db5bfd16248ad7ce4e58ba1ff56f",
+   "verdict": "APPROVE"
+  },
+  "scripts/short_standard.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-short-standard-stdin.txt",
+   "sha256": "9d71751926801cd35f2f3d50ee5603e83856c50ec2c9c86b8ddd71ed006c88bd",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_art_library.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-art-library.txt",
+   "sha256": "70fe85f7ccfffdb2f04feb05f8e233e124f32f5d44ef5bbf81e079969dbbe1aa",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_fetch_secret.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test_fetch_secret-py.txt",
+   "sha256": "78073e48c67866e5915591c8dc2f1222b9f02f4266f415d86d051c833801b208",
+   "verdict": "APPROVE"
+  },
   "scripts/test_foreman_cadence.py": {
    "commit": "ed20ce1",
    "evidence": "docs/reviews/2026-11-19-ed20ce1-health-threshold.txt",
    "sha256": "a7a193be452563aece6af36fae2f9e950215c2abf00e697e64074cd5251eecb8",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_generative_art.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-generative_art-py.txt",
+   "sha256": "961f6fc011378b7012201d5d98bd04542f130c774417f88733d83f370fd9ffd6",
    "verdict": "APPROVE"
   },
   "scripts/test_manifest_qa.py": {
@@ -73,10 +175,64 @@
    "sha256": "270f67e10c0b591e7b48dba2403700382e0d23e57f5fd536eee54e1e158891df",
    "verdict": "APPROVE"
   },
+  "scripts/test_motion_short.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-motion-sharp-fx.txt",
+   "sha256": "15813bec5c173a22ef7fbf93620673c11750a5a51c52f9ad6a20cadd82b0137d",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_parallel_pipeline.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test-parallel-pipeline-music.txt",
+   "sha256": "7034fa536aab564f0ec37d4b07c24690f281d74ea2cc0ff9afb44aaa15a302f9",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_pod_account_login.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test_pod_account_login-py.txt",
+   "sha256": "366eeaacaa6de08128db874711785cdf0e346408d66caa73e78b849c358fe6e6",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_poster_fit.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test_poster_fit-py.txt",
+   "sha256": "2940db716073dd77ad250bd17db8c0bda8822093bfa8977dfc5272586b600b0f",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_publish_motion.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test-publish-motion-stdin.txt",
+   "sha256": "2544e6e23a2113cdbd2383e96b5d7a9a5a894eaaf969e7288747f59dd581d49d",
+   "verdict": "APPROVE"
+  },
   "scripts/test_review_ledger.py": {
    "commit": "fc79eb7",
    "evidence": "docs/reviews/2026-11-19-verdict-parser-fix.txt",
    "sha256": "24c78298e2f868ef4f56421628c542e544946e173ef686861978d5d45a724a8d",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_revoke_token.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test_revoke_token-py.txt",
+   "sha256": "351b8b4ae067b0ae57b6ad22a86005f7f0a20e27989bb77edb30874aba00c8f1",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_short_loudness.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-20-test-short-loudness-ceiling.txt",
+   "sha256": "a5c95c970716c48f12e3bb8bccc694eb4bdd6a17a51619c6ea0a90519dc58278",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_short_thumbnail_wrap.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-short-thumbnail-wrap.txt",
+   "sha256": "faf33670ef2e879ce002b98620143e76501acdcb68883b18f6c4c5a4ec910801",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_subprocess_stdin.py": {
+   "commit": "",
+   "evidence": "docs/reviews/2026-11-19-test-subprocess-stdin.txt",
+   "sha256": "f1b964bfecd337cd07b7125d9b49423c75636ba86d6d0febdf27cd8d3d6f3018",
    "verdict": "APPROVE"
   },
   "scripts/test_vision_grader.py": {
@@ -114,10 +270,6 @@
   ".github/workflows/counter-ledger.yml": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "4c1f2149246d4a59ce47a11b829921ece1209e32dea1281b58efebff1e909045"
-  },
-  ".github/workflows/cred-transport.yml": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "db3b730f2adb6c0e8210b902e6e083de91dff34356d77f9617baf20e09996ebb"
   },
   ".github/workflows/delete-video.yml": {
    "reason": "predates the rule (2026-11-19)",
@@ -219,10 +371,6 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "089b17bf8231d10858e761d4c71c178982a8c8dc86013a9e797953fca095a5ed"
   },
-  "scripts/ak_mail.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "d8b01c4381489f61d0a92a0ecc101cece74580ff7f2922ae743b155180d3d569"
-  },
   "scripts/analytics.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "16ef91c510541371ba2363cc0580c63ab339615c1427457f923b8b9567907d34"
@@ -319,10 +467,6 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "a7470f8d24527bc1d80a522a71b29f3999539e6656d71e5212d42622781a2c36"
   },
-  "scripts/fetch_secret.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "7bc50dbbd8ee9cd4a430cd026c363fbd3d7f7517d96061b0ae7db6df30874a92"
-  },
   "scripts/fix_with_gemini.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "64aa4d567ae3146e1f36cc5ecee1c2cc07ca4e194e597726056196b667d40ac0"
@@ -399,29 +543,13 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "d040404ba96ab3d9973de2a2e5f96779c2f046132422a520b68de304acbf630c"
   },
-  "scripts/make_motion_short.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "34edd333de8d4ad1231b4d8e2e45645e111b958eaf8dfba62fadbdb8deeae0cc"
-  },
   "scripts/make_night_video.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "454e01dd7fdbb436379d0e09aa7889b9ab706ffb87926402a12554447450a15f"
   },
-  "scripts/make_poster.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "d88817e5d42293e751ff14a8250cdae87f7c10739736ecd83ab165380cdd529b"
-  },
   "scripts/make_qa_video.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "8d652cc04644f11da441c62f190021958b227b5308261b9df51d08f7284226c8"
-  },
-  "scripts/make_short.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "e57a0e24801601f7bb48934e09e10da6427fd9ca2b571c375c84a637088ee628"
-  },
-  "scripts/make_short_thumbnail.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "c28f0268c3077cbe29f4be98afcf421fafd230ff0451531df4dd1554ca9989ed"
   },
   "scripts/make_thumbnail.py": {
    "reason": "predates the rule (2026-11-19)",
@@ -539,10 +667,6 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "d0a377cd3d5ef2fdf8589cf8d2cc07b5bba7c19c58f730e3ec9abed23272eef5"
   },
-  "scripts/revoke_token.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "e5db8bbd43aae004ec8b47a506c30f6dbb9aa310ca3ca182c4199846a00da91c"
-  },
   "scripts/rogue_watch_rss.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "22becee4464dd37aa7105275ca82ebe5055ad9ddda52acefbb6534c5739d0de9"
@@ -574,10 +698,6 @@
   "scripts/short_doors.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "a4112779b04c811d08e65d9913c0f6263e57ad2e269874ffbdfa2f23afbcaa46"
-  },
-  "scripts/short_standard.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "3f5f10b82b1bcf972c6415a561f85ab8cc488841834102352320372ceef81ba1"
   },
   "scripts/studio_ai.py": {
    "reason": "predates the rule (2026-11-19)",
@@ -747,10 +867,6 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "4127d4995e4de970720a67b68685d1ba334356f94b40ec58823ee52cdeddd2ee"
   },
-  "scripts/test_motion_short.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "4b8451442904c1c9462d868a4b9629be969182d7dd12520a0a48e03c0f836e1b"
-  },
   "scripts/test_music_beds.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "c34d210b2d3076f53d89dc04924aafe6edfa6b6168d9a029451f8dfb3f94ebae"
@@ -831,14 +947,6 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "a18969d33c08407d4cc45ad44aa7b311676803143ed9168ab0dcb07de10f5d80"
   },
-  "scripts/test_pod_account_login.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "5c52125f03f399da5e918effa1f4984440a428ef20c1269fc771c4ae42853984"
-  },
-  "scripts/test_poster_fit.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "eb0fca5246c3d3346c74abbc8420076c237c77c556955586e68eaf84d737df9a"
-  },
   "scripts/test_private_videos.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "f7fe674ec620e80cabd1d7e0de727bfe1dc8ce30b9279ee16845fd1c955a83ff"
@@ -895,10 +1003,6 @@
    "reason": "predates the rule (2026-11-19)",
    "sha256": "bf528b49935ca64468fff652603059c010e45200e6fa6308c1fad781708d5089"
   },
-  "scripts/test_revoke_token.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "4a45fb23052989ce3d41983caeac82c600f99c6800bc5ea01ac09a8b181592e1"
-  },
   "scripts/test_rogue_alert_body.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "f09695aea19659cab437f67a88a2fb363b2db0b1e1aa2dbe282a93408d4d6c93"
@@ -918,10 +1022,6 @@
   "scripts/test_short_caption.py": {
    "reason": "predates the rule (2026-11-19)",
    "sha256": "914a0c5ac293a163d2730bbb7c852af1e5c85fdda1ebe07a830ce8309c6fdf35"
-  },
-  "scripts/test_short_loudness.py": {
-   "reason": "predates the rule (2026-11-19)",
-   "sha256": "0449ae1db6b7168a515375be7590c76177c09b81f976bb700329f25024ed17c4"
   },
   "scripts/test_short_standard.py": {
    "reason": "predates the rule (2026-11-19)",

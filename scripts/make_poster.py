@@ -11,7 +11,10 @@ Usage:
 import argparse
 import math
 import os
+import unicodedata
+from functools import lru_cache
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -44,37 +47,65 @@ def grade(im: Image.Image) -> Image.Image:
 
     Saturation is raised (not lowered) because the vignette and the shadow
     crush both drain colour; reference posters sit around 0.30-0.60.
+
+    Vectorised with numpy (already a declared dependency): the previous
+    per-pixel Python loop cost 0.43 s for one 1920x1080 poster, and the rails
+    build one per chapter.
     """
     im = ImageEnhance.Color(im).enhance(1.35)
     im = ImageEnhance.Contrast(im).enhance(1.10)
-    px = im.load()
-    for y in range(0, im.height, 2):               # step 2 for speed
-        for x in range(0, im.width, 2):
-            r, g, b = px[x, y]
-            lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
-            # shadows -> teal, highlights -> orange
-            r = int(max(0, min(255, r + (lum - 0.5) * 22)))
-            b = int(max(0, min(255, b - (lum - 0.5) * 22)))
-            g = int(max(0, min(255, g + (lum - 0.5) * 3)))
-            px[x, y] = (r, g, b)
-    return im
+    a = np.asarray(im, dtype=np.float32)
+    lum = (0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]) / 255.0
+    shift = (lum - 0.5)[..., None]
+    # shadows -> teal, highlights -> orange
+    a[..., 0] += shift[..., 0] * 22
+    a[..., 2] -= shift[..., 0] * 22
+    a[..., 1] += shift[..., 0] * 3
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGB")
+
+
+@lru_cache(maxsize=8)
+def _vignette_mask(w: int, h: int, strength: float) -> Image.Image:
+    """The radial mask for one size, built once and reused across posters.
+
+    The docstring below used to claim it was reused; it was not, and a rail builds
+    one poster per chapter at the same size, so the same mask was rebuilt each
+    time (0.23 s of the 0.53 s per card, measured 2026-11-19).
+    """
+    mask = Image.new("L", (w, h), 0)
+    d = ImageDraw.Draw(mask)
+    cx, cy = w / 2, h / 2
+    maxd = math.hypot(cx, cy)
+    step = 6
+    for y in range(0, h, step):
+        for x in range(0, w, step):
+            dist = math.hypot(x - cx, y - cy) / maxd
+            v = int(255 * min(1.0, max(0.0, (dist - 0.30) / 0.70)) * strength)
+            d.rectangle([x, y, x + step, y + step], fill=v)
+    return mask.filter(ImageFilter.GaussianBlur(60))
 
 
 def vignette(im: Image.Image, strength: float = 0.85) -> Image.Image:
     """Radial darkening, built once per size and reused as a mask."""
-    mask = Image.new("L", (im.width, im.height), 0)
-    d = ImageDraw.Draw(mask)
-    cx, cy = im.width / 2, im.height / 2
-    maxd = math.hypot(cx, cy)
-    step = 6
-    for y in range(0, im.height, step):
-        for x in range(0, im.width, step):
-            dist = math.hypot(x - cx, y - cy) / maxd
-            v = int(255 * min(1.0, max(0.0, (dist - 0.30) / 0.70)) * strength)
-            d.rectangle([x, y, x + step, y + step], fill=v)
-    mask = mask.filter(ImageFilter.GaussianBlur(60))
+    mask = _vignette_mask(im.width, im.height, strength)
     dark = Image.new("RGB", im.size, (0, 0, 0))
     return Image.composite(dark, im, mask)
+
+
+def scrim(im: Image.Image, top: int, bottom: int, pad: int = 46,
+          fill: int = 150) -> Image.Image:
+    """A soft dark band behind the text block, so text never sits on a highlight.
+
+    Measured 2026-11-19 by the vision grader on 4 of 10 published clips: Thai
+    text over a candle flame was unreadable ("ข้อความทับซ้อนกับแสงเทียน", scored
+    5/10 twice). A stroke alone cannot fix that -- a bright, busy background
+    needs the text lifted off it, which is what the reference posters do.
+    """
+    layer = Image.new("L", im.size, 0)
+    d = ImageDraw.Draw(layer)
+    d.rectangle([0, max(0, top - pad), im.width, min(im.height, bottom + pad)], fill=fill)
+    layer = layer.filter(ImageFilter.GaussianBlur(48))
+    return Image.composite(Image.new("RGB", im.size, (8, 7, 6)), im, layer)
 
 
 def draw_text(d: ImageDraw.ImageDraw, xy, text, f, fill, anchor="la",
@@ -113,9 +144,36 @@ def _halign(side: str) -> str:
     return {"left": "l", "center": "m", "right": "r"}[side]
 
 
+# Thai vowels that are written BEFORE the consonant they belong to. They must
+# never end a line: "โดยไม่ต้องแบกโ" / "ลก" reads as "โลก" split in half. Measured
+# 2026-11-19: 276 of the real poster/hook titles in content/ broke this way under
+# a plain character wrap, at the sizes the rails actually use.
+LEADING_VOWELS = set("เแโใไ")
+# Characters that cannot begin a line because they hang off the one before it:
+# the following vowels, the repeat mark, and every combining mark (tone marks,
+# vowel signs above/below). Measured on the same sweep: after fixing only the
+# leading vowels, "ว่" / "าเรา" appeared -- า is a following vowel, not a mark.
+NO_LINE_START = set("ะาำๅๆ")
+
+
+def _starts_a_cluster(ch: str) -> bool:
+    """True if `ch` may legally begin a line."""
+    if not ch:
+        return True
+    if unicodedata.category(ch[0]) in ("Mn", "Mc", "Me"):
+        return False
+    return ch[0] not in NO_LINE_START
+
+
 def wrap_lines(d: ImageDraw.ImageDraw, text: str, f: ImageFont.FreeTypeFont,
                max_w: float) -> list[str]:
-    """Greedy character wrap -- Thai has no word spaces, so wrap on characters."""
+    """Greedy character wrap that breaks only between Thai clusters.
+
+    Thai has no word spaces, so wrapping on characters is right -- but a break is
+    only legal between *clusters*. A line may not end with a leading vowel, and the
+    next line may not start with a mark or a following vowel; when it would, the
+    last cluster moves down instead.
+    """
     if not text:
         return []
     lines: list[str] = []
@@ -128,8 +186,18 @@ def wrap_lines(d: ImageDraw.ImageDraw, text: str, f: ImageFont.FreeTypeFont,
         if not cur or d.textlength(cur + ch, font=f) <= max_w:
             cur += ch
         else:
-            lines.append(cur)
-            cur = ch
+            keep = cur
+            while keep and (keep[-1] in LEADING_VOWELS or not _starts_a_cluster(ch)):
+                ch = keep[-1] + ch
+                keep = keep[:-1]
+            if keep:
+                lines.append(keep)
+                cur = ch
+            else:
+                # One cluster is wider than the frame; breaking it is the lesser
+                # evil, and fit_text() will shrink the font until it is not.
+                lines.append(cur)
+                cur = ch
     if cur or not lines:
         lines.append(cur)
     return lines
@@ -165,7 +233,10 @@ def text_layout(title: str, subtitle: str, layout: int, chapter: str = "") -> di
         fc, cs, clines = None, 0, []
     t_lh = int(ts * 1.22)
     s_lh = int(ss * 1.35)
-    block_h = t_lh * len(tlines) + (16 + s_lh * len(slines) if slines else 0)
+    # 16px read as cramped under a 156px title (vision grader, 2026-11-19:
+    # "ตำแหน่งอยู่ชิดกับหัวข้อมากเกินไป"); the gap scales with the title size.
+    gap = max(28, int(ts * 0.26))
+    block_h = t_lh * len(tlines) + (gap + s_lh * len(slines) if slines else 0)
     center_y = int(H * rule_y)
     top = center_y - block_h // 2
     x = W // 2 if side == "center" else (SAFE if side == "left" else W - SAFE)
@@ -173,19 +244,29 @@ def text_layout(title: str, subtitle: str, layout: int, chapter: str = "") -> di
             "title_lines": tlines, "title_font": ft, "title_size": ts, "title_lh": t_lh,
             "sub_lines": slines, "sub_font": fs, "sub_size": ss, "sub_lh": s_lh,
             "chapter_lines": clines, "chapter_font": fc, "chapter_size": cs,
-            "center_y": center_y, "block_h": block_h, "top": top, "bottom": top + block_h}
+            "center_y": center_y, "block_h": block_h, "top": top, "bottom": top + block_h,
+            "gap": gap}
 
 
 def build(image_path: str, out: str, title: str, subtitle: str,
           layout: int, chapter: str = "", index: str = "") -> None:
-    im = cover(Image.open(image_path).convert("RGB"), W, H)
+    try:
+        src = Image.open(image_path)
+        src.load()
+    except (OSError, ValueError) as exc:
+        # A corrupt or non-image source is a content problem, and the rails call
+        # this per chapter: name the file instead of dying inside Pillow.
+        raise SystemExit(f"make_poster: cannot read {image_path}: {exc}") from exc
+    im = cover(src.convert("RGB"), W, H)
     im = grade(im)
     im = vignette(im)
-    d = ImageDraw.Draw(im, "RGBA")
 
     lay = text_layout(title, subtitle, layout, chapter)
     x, ha = lay["x"], lay["halign"]
     f_idx = font("Kanit-Bold.ttf", 34)
+
+    im = scrim(im, lay["top"], lay["bottom"])
+    d = ImageDraw.Draw(im, "RGBA")
 
     # letterbox bars
     d.rectangle([0, 0, W, BAR], fill=(0, 0, 0))
@@ -205,7 +286,7 @@ def build(image_path: str, out: str, title: str, subtitle: str,
         draw_text(d, (x, ty + i * lay["title_lh"] + lay["title_lh"] // 2), ln,
                   lay["title_font"], (247, 243, 236), anchor=f"{ha}m",
                   stroke=2, stroke_fill=(10, 8, 6))
-    sy = ty + lay["title_lh"] * len(lay["title_lines"]) + 16
+    sy = ty + lay["title_lh"] * len(lay["title_lines"]) + lay["gap"]
     for i, ln in enumerate(lay["sub_lines"]):
         draw_text(d, (x, sy + i * lay["sub_lh"] + lay["sub_lh"] // 2), ln,
                   lay["sub_font"], (198, 190, 178), anchor=f"{ha}m")
@@ -223,6 +304,7 @@ def build(image_path: str, out: str, title: str, subtitle: str,
     im = Image.composite(Image.new("RGB", (W, H), (255, 255, 255)), im,
                          noise.point(lambda v: 18 if v > 200 else 0))
 
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     im.save(out, quality=92, subsampling=1)
 
 

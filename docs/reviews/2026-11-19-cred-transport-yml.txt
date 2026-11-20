@@ -1,0 +1,10 @@
+file: .github/workflows/cred-transport.yml
+model: gemini-3.1-flash-lite
+prompt: gemini_review (ak batch 2026-11-19, temperature 0.2)
+---
+1) ไฟล์นี้เป็น GitHub Action สำหรับส่งผ่านความลับ (Secret) จาก Repository ไปยัง Pod โดยใช้การเข้ารหัส RSA เพื่อป้องกันการรั่วไหลผ่าน Log ความเสี่ยงหลักคือการจัดการ Secret ที่ต้องมั่นใจว่าไม่มีการพิมพ์ค่าจริงออกมาใน Log
+
+2) ปัญหา:
+- บรรทัด 72: `print(f"PLAINTEXT_LEN={len(value)}")` แม้จะไม่ใช่ค่าจริง แต่การเปิดเผยความยาวของ Secret อาจช่วยให้ผู้โจมตีทำ Brute-force ได้ง่ายขึ้นหากทราบรูปแบบของข้อมูล (เช่น ความยาวของ API Key) ควรพิจารณาลบออกหากไม่จำเป็นต่อการ Debug
+
+3) คำตัดสิน: APPROVE

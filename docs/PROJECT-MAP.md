@@ -28,7 +28,8 @@
 | `progress.yml` / `watch-hours.yml` | 07:12 / Mon 06:17 | YPP progress | the scoreboard |
 | `channel-branding.yml` / `ch2-playlists.yml` / `set-thumbnails.yml` | after 08:00 | packaging | search + conversion |
 | `link-shorts.yml` | driven by the foreman | appends the long-form playlist link to every Short's description (the reach → watch-hours funnel) | **the funnel** |
-| `make_motion_short.py` (a tool, not a rail) | by hand | an animated still Short whose layers match the story's `genre` -- dharma/genx = calm (twinkle + petals, no mascot, no glow disc), knowledge = a mascot dancing to the beat | a livelier Shorts shape (reach) that still fits the story |
+| `publish-motion.yml` (`publish_motion.py`) | on demand (workflow_dispatch) | ships an animated-still Short through the SAME gates as publish-shorts: cap, gap, `short_standard` gate, bed ledger, `record_key` namespacing | a livelier Shorts shape (reach) that cannot dodge the Shorts rules |
+| `make_motion_short.py` (the builder behind that rail) | called by the rail | layers match the story's `genre` -- dharma/genx = calm (twinkle + petals, no mascot, no glow disc), knowledge = a mascot dancing to the beat | the visual itself |
 | `make_ambient_video.py` (a tool, not a rail) | by hand | stitches real b-roll (`fetch_broll.py`, Coverr) into one long 1080x1920 ambient video, looped to `--minutes`, bed at -14 LUFS | the "join clips + 3-min music" edit K wanted, done headless |
 
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.
@@ -36,7 +37,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 ## 2) The one login path (do NOT add a second)
 
 - **Headless (no human, the normal path):** `scripts/yt_auth.py` — refresh token in a repo
-  secret. `scripts/fetch_secret.py NAME` pulls any repo secret onto the pod (encrypted transit).
+  secret. `scripts/fetch_secret.py NAME` pulls any repo secret onto the pod (encrypted transit,
+  `.github/workflows/cred-transport.yml`). `scripts/revoke_token.py SLUG` proves a leaked token is
+  dead (tri-state: "not measured" never reads as "dead").
 - **Pod browser login (only when Studio needs it):** `scripts/pod_account_login.py`
   (`--from-secret` reads `OWNER_LOGIN_PASSWORDS`). Password is **never** typed by hand or by K.
 - **Do not** add another login script. `scripts/legacy/pod_mail_login.py` was a duplicate → archived.
@@ -55,6 +58,13 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   ("เกร็ดความรู้รอบตัว") stays in keywords/SEO — only the channel-name labels/phrases are PCSEV.
   Guard `scripts/test_ch4_channel_name.py` (fails if a rail would write the retired name back).
 - Measured history: `docs/STATUS-<date>.md`, `docs/counters.jsonl` (the counter), `docs/HEALTH.md`.
+- **Two systems, one handoff folder** (2026-11-19): `scripts/generative_art.py` renders pictures on
+  PC1 into a library (`scripts/art_library.py` reads that library over HTTP); `scripts/parallel_pipeline.py`
+  builds clips from those pictures and **gates every clip through `short_standard.verify_short`** —
+  the same gate the upload rail uses — so a substandard clip is never reported as built. The systems
+  touch only through the pool directory; `test_parallel_pipeline.py` proves it by blocking the renderer
+  import. One claim path: `make_short.ledger_lock` (exclusive lock; `library_art` and
+  `parallel_pipeline._claim` both use it) — without it two builders take one picture.
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
 - **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,

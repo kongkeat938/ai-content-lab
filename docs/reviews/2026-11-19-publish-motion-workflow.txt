@@ -1,0 +1,5 @@
+ก) concurrency group ชื่ออะไร: `shorts-upload-motion`
+ข) step ที่รัน guard ชื่ออะไร: `Guard the motion rail`
+ค) step สุดท้ายรันสคริปต์อะไร: `scripts/git_push_retry.sh` (ผ่านคำสั่ง bash)
+
+คำตัดสิน: APPROVE

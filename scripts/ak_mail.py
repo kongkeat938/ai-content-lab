@@ -24,7 +24,10 @@ still exited 0 -- so the mailbox existed but was never recorded, and the next se
 "no ak mailbox in the vault". That silent partial write is why ak kept "forgetting" its own
 mailbox. `cmd_new` now exits 1 if the vault write does not verify.
 
-Provider: mail.tm (domain fldubai.com). Measured 2026-11-13 from the pod: create 201,
+Provider: mail.tm. The domain is **swept from `GET /domains` at create time**, never hardcoded:
+measured 2026-11-19 the literal `fldubai.com` had been retired and every create returned
+422 `The domain "fldubai.com" is not valid`, so `new` failed forever while the code still
+looked correct. Measured 2026-11-13 from the pod: create 201,
 token 200, read 200 -- but `POST /token` can 401 for a few seconds right after create, and
 the token body is longer than a small read buffer, so we read the whole body and retry.
 """
@@ -42,9 +45,31 @@ import urllib.request
 API = "https://api.mail.tm"
 VAULT_ANCHOR = "94068e1c-c98c-4f3b-96f5-0df4a1e9a78a"
 VAULT_KEY = "ak.identity.mailbox"
-DOMAIN = "fldubai.com"
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) Chrome/126.0 Safari/537.36",
       "Accept": "application/json", "Content-Type": "application/json"}
+
+
+def _domains() -> list[str]:
+    """Active public domains, swept from the provider. A literal domain goes stale and
+    then `new` fails forever with a 422 that looks like a transient provider error."""
+    try:
+        with urllib.request.urlopen(urllib.request.Request(f"{API}/domains", headers=UA),
+                                    timeout=25) as r:
+            raw = json.loads(r.read().decode())
+    except Exception as e:                              # noqa: BLE001
+        print(f"FAIL: cannot read mail.tm domains: {e}", file=sys.stderr)
+        return []
+    items = raw if isinstance(raw, list) else raw.get("hydra:member", [])
+    out = []
+    for d in items:
+        if not isinstance(d, dict):
+            continue
+        if d.get("isActive") is False or d.get("isPrivate") is True:
+            continue
+        dom = d.get("domain")
+        if isinstance(dom, str) and dom:
+            out.append(dom)
+    return out
 
 
 def _roster() -> list[str]:
@@ -130,8 +155,11 @@ def _vault(method: str, value: dict | None = None,
 
 
 def _new_account() -> dict:
+    domains = _domains()
+    if not domains:
+        raise SystemExit("FAIL: mail.tm reported no active public domain -- cannot create a mailbox")
     for _ in range(3):
-        addr = f"akmail{secrets.token_hex(3)}@{DOMAIN}"
+        addr = f"akmail{secrets.token_hex(3)}@{secrets.choice(domains)}"
         pw = "Ak-" + secrets.token_urlsafe(14)
         status, body = _req(f"{API}/accounts", {"address": addr, "password": pw}, "POST")
         if status != 201:

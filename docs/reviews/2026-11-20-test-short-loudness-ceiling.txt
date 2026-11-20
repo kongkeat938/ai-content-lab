@@ -1,0 +1,6 @@
+- The new checks genuinely constrain the pipeline because they explicitly verify mathematical relationships (`M.TP_WAV <= M.GATE_TP_CEIL - 0.3` and `M.GATE_TP_CEIL == std.LOUD_TP + std.TP_TOL`) and inspect source code strings, rather than just asserting constant values.
+- No existing guard was weakened and the upload gate was not touched; the test strictly adds deterministic assertions to prevent intermittent regressions.
+- The string-match check (`"TP={TP_WAV}" in src`) is a reasonable wiring guard because it ensures `normalise()` is dynamically configured using the derived WAV ceiling variable instead of hardcoded values, matching the pipeline's architectural fix.
+- Verbatim line: `    print(f"  {'ok  ' if ok else 'FAIL'} {name}" + (f" -- {detail}" if detail and not ok else ""))`
+
+APPROVE

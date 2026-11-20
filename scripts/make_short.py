@@ -21,12 +21,15 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import contextlib
 import hashlib
 import json
 import math
 import os
 import subprocess
 import sys
+import time
+import urllib.request
 
 import edge_tts
 from PIL import Image, ImageDraw, ImageFont
@@ -35,6 +38,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
+
+import short_standard as std  # noqa: E402  (needs HERE on sys.path first)
 FONTS = os.path.join(ROOT, "assets", "fonts")
 VOICE = "th-TH-NiwatNeural"      # calm male narrator, the channel's voice
 # The changed voice a withheld channel comes back with (2026-11-10). A five-advisor
@@ -51,6 +56,14 @@ WHITE = (250, 250, 252)
 # House targets (see docs/RECIPE.md): -14 LUFS integrated, true peak <= -3 dBFS.
 LUFS, TP = -14, -3.0
 COMP_TH, COMP_RATIO = "-24dB", 6
+# The ceiling the WAV must reach is NOT the house -3 dBTP: the upload gate holds a
+# file at LOUD_TP+TP_TOL (-2.5 dBTP) and the AAC mux raises the true peak again
+# (measured up to +0.30 dB over 20 runs, 2026-11-20), so a WAV that just meets -3.0
+# can still be held at upload time. Both numbers are read from the gate and from
+# that measurement -- tightening this must never be done by loosening the gate.
+GATE_TP_CEIL = std.LOUD_TP + std.TP_TOL
+AAC_MUX_MARGIN = 0.35           # measured max +0.30 dB, rounded up
+TP_WAV = GATE_TP_CEIL - AAC_MUX_MARGIN
 # A bed eats the headroom loudnorm needs to reach -14 LUFS in linear mode. This
 # was a fixed +2 dB from 2026-11-07, when bed_gain() was a fixed 0.18 that left
 # the mix far below target. bed_gain() now places the bed ~11 LU under the voice
@@ -86,14 +99,14 @@ def font(name: str, size: int) -> ImageFont.FreeTypeFont:
 
 
 def run(cmd: list) -> None:
-    subprocess.run(cmd, check=True, capture_output=True)
+    subprocess.run(cmd, check=True, capture_output=True, stdin=subprocess.DEVNULL)
 
 
 def measure_audio(path: str) -> float | None:
     """Integrated loudness (LUFS) of a file, or None if it cannot be read."""
     r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", path,
                         "-af", "ebur128=framelog=quiet", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, stdin=subprocess.DEVNULL)
     for line in r.stderr.splitlines():
         if "I:" in line and "LUFS" in line:
             try:
@@ -107,7 +120,7 @@ def measure_loudness(path: str) -> tuple[float | None, float | None]:
     """(integrated LUFS, true peak dBFS) of a file, each None if unreadable."""
     r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", path,
                         "-af", "ebur128=peak=true", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, stdin=subprocess.DEVNULL)
     i = tp = None
     for line in r.stderr.splitlines():
         if "I:" in line and "LUFS" in line:
@@ -320,7 +333,7 @@ def normalise(src: str, out: str) -> None:
     # loudnorm alone cannot reach -14 LUFS without the true peak breaking -3 dBFS.
     # Measured on the first GenX Short, this chain lands at -14.x LUFS / -3.0 dBTP.
     chain = (f"acompressor=threshold={COMP_TH}:ratio={COMP_RATIO}:attack=3:release=120,"
-             f"loudnorm=I={LUFS}:TP={TP}:LRA=11")
+             f"loudnorm=I={LUFS}:TP={TP_WAV}:LRA=11")
     r = subprocess.run(["ffmpeg", "-hide_banner", "-i", src,
                         "-af", chain + ":print_format=json", "-f", "null", "-"],
                        capture_output=True, text=True)
@@ -331,19 +344,48 @@ def normalise(src: str, out: str) -> None:
          f"{chain}:measured_I={m['input_i']}:measured_TP={m['input_tp']}"
          f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
          f":offset={m['target_offset']}:linear=true,"
-         f"alimiter=limit={TP}dB:level=disabled",
+         f"alimiter=limit={TP_WAV}dB:level=disabled",
          "-ar", "48000", "-c:a", "pcm_s16le", out])
     # A bed can leave loudnorm short of the target (measured 2026-11-18: a bed mix
-    # landed -15.4 LUFS). Correct with a SECOND loudnorm pass, not a raw volume
+    # landed -15.4 LUFS). Correct with a MEASURED closed loop, not a raw volume
     # gain: loudnorm trades loudness against the true peak, so it reaches -14 while
     # keeping -3 dBTP, whereas volume+alimiter pushed the true peak to -2.4 (over
     # the ceiling). Skipped when already on target, so a correct build is untouched.
-    got = measure_audio(out)
-    if got is not None and abs(got - LUFS) > 0.3:
+    #
+    # Measured 2026-11-19: a 2.6 s clip sat at -16.1 LUFS with the true peak already
+    # at -3.0, so loudnorm had no headroom and every loudnorm-only retry plateaued at
+    # -17..-18. A short clip has a high crest factor, so reaching -14 means taking
+    # the peaks down: gain up, limit at the ceiling, measure, repeat. The loop reads
+    # the target from LUFS/TP -- the gain is derived from measurement, never fixed.
+    #
+    # The limiter is sample-peak, so the TRUE peak lands above it (measured -2.4 with
+    # a -3.0 limit). The ceiling therefore drives the limiter too: each pass lowers
+    # it by the overshoot it measured, instead of assuming a fixed margin.
+    #
+    # The loop aims at TP_WAV, not the house TP: the upload gate holds at -2.5 dBTP
+    # and the AAC mux adds up to +0.30 dB, so a WAV sitting at -3.0 could still be
+    # held (measured 1/10 test runs, 2026-11-20). Aiming lower is the fix Gemini
+    # chose; loosening the gate was rejected.
+    limit = TP_WAV
+    for _ in range(10):
+        lufs, peak = measure_loudness(out)
+        if lufs is None:
+            break
+        loud_ok = abs(lufs - LUFS) <= 0.3
+        peak_ok = peak is None or peak <= TP_WAV
+        if loud_ok and peak_ok:
+            break
+        gain = 0.0 if loud_ok else min(LUFS - lufs, 12.0)
+        if peak is not None and peak > TP_WAV:
+            # alimiter limits the SAMPLE peak, so the true peak plateaus above the
+            # limit (measured 2026-11-20: limits -3.0/-3.3/-3.6 all left the true
+            # peak at -2.8; -4.0 moved it to -3.1). Stepping down one-for-one needs
+            # several passes to clear that plateau, so the loop gets enough of them.
+            limit -= max(0.15, peak - TP_WAV)
         tmp = out + ".pin.wav"
         run(["ffmpeg", "-y", "-i", out, "-af",
-             f"acompressor=threshold={COMP_TH}:ratio={COMP_RATIO}:attack=3:release=120,"
-             f"loudnorm=I={LUFS}:TP={TP}:LRA=11,alimiter=limit={TP}dB:level=disabled",
+             f"volume={gain:.2f}dB,alimiter=limit={limit:.2f}dB:attack=2:release=60:"
+             f"level=disabled",
              "-ar", "48000", "-c:a", "pcm_s16le", tmp])
         os.replace(tmp, out)
 
@@ -500,8 +542,153 @@ def pick_art(art_dir: str, sid: str) -> str | None:
     return os.path.join(art_dir, pool[h % len(pool)])
 
 
+@contextlib.contextmanager
+def ledger_lock(ledger_path: str | None):
+    """Hold an exclusive lock on a ledger file for a read-pick-write.
+
+    One implementation for every claim path (this module and parallel_pipeline).
+    Measured 2026-11-19: two clip builders sharing a ledger without this picked
+    the same free picture and both wrote themselves down, so two clips shipped
+    one image. The lock file is separate from the ledger (`<ledger>.lock`) so the
+    ledger itself stays a plain JSON file a human can read.
+    """
+    if not ledger_path:
+        yield
+        return
+    lock_path = ledger_path + ".lock"
+    os.makedirs(os.path.dirname(os.path.abspath(lock_path)), exist_ok=True)
+    fh = open(lock_path, "w")
+    try:
+        _lock(fh)
+        yield
+    finally:
+        try:
+            _unlock(fh)
+        finally:
+            fh.close()
+
+
+def _lock(fh) -> None:
+    try:
+        import fcntl
+        fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+    except ImportError:
+        import msvcrt
+        fh.seek(0)
+        while True:
+            try:
+                msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 1)
+                return
+            except OSError:
+                time.sleep(0.05)
+
+
+def _unlock(fh) -> None:
+    try:
+        import fcntl
+        fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+    except ImportError:
+        import msvcrt
+        fh.seek(0)
+        msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+
+
+def _library_index(url: str, ttl: float = 600.0) -> list[str]:
+    """Filenames in the PC1 art library, cached locally for `ttl` seconds.
+
+    A 5,000-piece index is a few hundred KB; refetching it per clip would be slow
+    and rude to the link, so it is cached under work/. The cache is keyed on the
+    URL: measured 2026-11-19, a single shared cache file let a test server's
+    8-piece index answer for the real library and every clip fell back.
+    """
+    tag = hashlib.sha256(url.rstrip("/").encode("utf-8")).hexdigest()[:12]
+    cache = os.path.join(ROOT, "work", f".art_library_index_{tag}.json")
+    try:
+        if os.path.exists(cache) and time.time() - os.path.getmtime(cache) < ttl:
+            with open(cache, encoding="utf-8") as fh:
+                return json.load(fh).get("files", [])
+    except (OSError, ValueError):
+        pass
+    try:
+        with urllib.request.urlopen(url.rstrip("/") + "/index.json", timeout=60) as fh:
+            data = json.loads(fh.read().decode("utf-8"))
+    except Exception:  # noqa: BLE001 - an unreachable PC1 must fall back, not crash
+        return []
+    files = sorted(i["file"] for i in data.get("items", [])
+                   if str(i.get("file", "")).lower().endswith(".png"))
+    try:
+        os.makedirs(os.path.dirname(cache), exist_ok=True)
+        tmp = cache + ".part"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump({"files": files}, fh)
+        os.replace(tmp, cache)
+    except OSError:
+        pass
+    return files
+
+
+def library_art(d: str, sid: str, library_url: str, ledger_path: str | None) -> str | None:
+    """Claim one picture from the PC1 art library that no other clip uses.
+
+    Same rule as unique_art(): one clip, one image, never shared. The library is
+    a fixed set, so the identity check is the file name (each piece is rendered
+    from its own generator/seed) and the md5 is recorded in the committed ledger
+    exactly as before. Returns None when the library cannot be read, so the
+    caller falls back to generating.
+
+    The read-pick-write is done under an exclusive lock on the ledger. Measured
+    2026-11-19 (Gemini review of this path): without it, two clip builders running
+    at once both read the same ledger, both pick the same free piece, and both
+    write themselves down -- the exact "two clips share one image" the owner
+    forbade. The lock is what makes the ledger a claim rather than a note.
+    """
+    cache = os.path.join(d, "art.jpg")
+    if os.path.exists(cache):
+        return cache
+    files = _library_index(library_url)
+    if not files:
+        return None
+    with ledger_lock(ledger_path):
+        used: dict[str, str] = {}
+        if ledger_path and os.path.exists(ledger_path):
+            try:
+                with open(ledger_path, encoding="utf-8") as fh:
+                    used = json.load(fh).get("md5", {})
+            except (OSError, ValueError):
+                used = {}
+        taken = {v for v in used.values()}
+        start = int(hashlib.sha256(sid.encode("utf-8")).hexdigest()[:8], 16) % len(files)
+        for bump in range(min(len(files), 64)):
+            name = files[(start + bump) % len(files)]
+            if name in taken:
+                continue
+            try:
+                with urllib.request.urlopen(
+                        library_url.rstrip("/") + "/" + name, timeout=120) as fh:
+                    data = fh.read()
+            except Exception:  # noqa: BLE001 - try the next piece
+                continue
+            md5 = hashlib.md5(data).hexdigest()
+            if used.get(md5, sid) != sid:
+                continue
+            os.makedirs(d, exist_ok=True)
+            with open(cache, "wb") as fh:
+                fh.write(data)
+            if ledger_path:
+                used[md5] = sid
+                tmp = f"{ledger_path}.{os.getpid()}.part"
+                os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
+                with open(tmp, "w", encoding="utf-8") as fh:
+                    json.dump({"md5": used}, fh, ensure_ascii=False, indent=2)
+                os.replace(tmp, ledger_path)
+            print(f"  art {sid}: library {name} md5 {md5[:8]}")
+            return cache
+    return None
+
+
 def unique_art(d: str, sid: str, hook: str, art_style: str | None,
-               art_dir: str | None, ledger_path: str | None) -> str | None:
+               art_dir: str | None, ledger_path: str | None,
+               library_url: str | None = None) -> str | None:
     """One image that no other clip uses. Measured 2026-11-09: pick_art over a
     10-still pool gave each ch4 image to ~5 of its 49 live Shorts, ch2 to ~11 of
     104. The owner forbade repeats, so a new Short now gets a picture generated
@@ -513,6 +700,13 @@ def unique_art(d: str, sid: str, hook: str, art_style: str | None,
     cache = os.path.join(d, "art.jpg")
     if os.path.exists(cache):
         return cache
+    if library_url:
+        # The PC1 library is the preferred source: pieces are rendered ahead of
+        # time at 2K, so a clip costs no generation call. An empty/unreachable
+        # library returns None and the code below generates one as before.
+        got = library_art(d, sid, library_url, ledger_path)
+        if got:
+            return got
     if not art_style:
         return pick_art(art_dir, sid)
     import gen_cover_image as G
@@ -555,6 +749,9 @@ def main() -> int:
                     "gen_cover_image style (dharma|family); preferred over --art-dir")
     ap.add_argument("--art-ledger", help="JSON file recording every generated image's "
                     "md5, so a clip can never reuse another clip's picture")
+    ap.add_argument("--art-library", help="URL of the PC1 art library (e.g. "
+                    "https://host/art). When set it is preferred over generating: one "
+                    "unused piece is pulled and recorded in --art-ledger")
     ap.add_argument("--music", help="optional bed to mix under the voice")
     ap.add_argument("--cta-mid", action="store_true",
                     help="speak the CTA after the story's peak instead of at the tail "
@@ -579,7 +776,8 @@ def main() -> int:
             art = args.art
         elif args.art_style:
             art = unique_art(os.path.join(args.out_dir, s["id"]), s["id"], s.get("hook", ""),
-                             args.art_style, args.art_dir, args.art_ledger)
+                             args.art_style, args.art_dir, args.art_ledger,
+                             args.art_library)
         else:
             art = pick_art(args.art_dir, s["id"])
         build(s, args.out_dir, art, args.music, cta_mid=args.cta_mid, voice=args.voice)

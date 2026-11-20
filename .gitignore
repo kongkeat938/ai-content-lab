@@ -31,5 +31,11 @@ work/ch2_branding/
 work/ch2_shorts/
 .aider*
 
+# rendered art is regenerable (scripts/generative_art.py) and 3.5 GB on disk --
+# measured 2026-11-19: a broad `git add` would have swept the whole library in.
+assets/art/library/
+# the claim ledger's lock is runtime state, not content
+content/*.json.lock
+
 # scratch/advisor work (may hold API keys + session cookies)
 .stockwork/

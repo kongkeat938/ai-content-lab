@@ -55,9 +55,9 @@ def loudness(path: str) -> tuple[float | None, float | None]:
     return i, tp
 
 
-def synth_voice(path: str, volume_db: float) -> None:
+def synth_voice(path: str, volume_db: float, dur: float = 20) -> None:
     run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-         "-f", "lavfi", "-i", "anoisesrc=d=20:c=pink:r=48000",
+         "-f", "lavfi", "-i", f"anoisesrc=d={dur}:c=pink:r=48000",
          "-af", f"acompressor=threshold=-20dB:ratio=3,volume={volume_db}dB",
          "-ar", "48000", path])
 
@@ -127,6 +127,17 @@ def main() -> int:
         ok, why = on_target(norm_m)
         check("bed path lands at the target", ok, why)
 
+        # Path 3: a SHORT clip at the true-peak ceiling. Measured 2026-11-19: a
+        # 2.6 s read normalised to -16.1 LUFS with the peak already at -3.0, and a
+        # loudnorm-only retry made it WORSE (-17.9) because there was no headroom.
+        # The loop must still reach the target by taking the peaks down.
+        short_voice = os.path.join(d, "short_voice.wav")
+        synth_voice(short_voice, -14, dur=2.6)
+        norm_s = os.path.join(d, "norm_short.wav")
+        M.normalise(short_voice, norm_s)
+        ok, why = on_target(norm_s)
+        check("a 2.6 s clip at the peak ceiling still lands at the target", ok, why)
+
         # The end-to-end check: mux the normalised bed audio into a real Short and
         # run the SAME gate that HELD the -12.3 LUFS clip. It must now pass.
         short = os.path.join(d, "short.mp4")
@@ -154,6 +165,18 @@ def main() -> int:
     check("build() calls normalise() with no fixed gain",
           "normalise(mixed, norm)" in src)
     check("no BED_GAIN_DB constant remains", "BED_GAIN_DB" not in src)
+
+    # The WAV ceiling must sit BELOW the upload gate by at least the AAC overshoot.
+    # Without this the only guard on the ceiling is the probabilistic end-to-end
+    # check above, which failed just 1 run in 10 -- a regression could slip through
+    # nine runs out of ten. This check fails on the FIRST run instead.
+    check("the WAV ceiling keeps an AAC margin under the upload gate",
+          M.TP_WAV <= M.GATE_TP_CEIL - 0.3,
+          f"TP_WAV={M.TP_WAV} gate_ceiling={M.GATE_TP_CEIL}")
+    check("the WAV ceiling is derived from the gate, not a literal",
+          M.GATE_TP_CEIL == std.LOUD_TP + std.TP_TOL,
+          f"GATE_TP_CEIL={M.GATE_TP_CEIL} vs {std.LOUD_TP + std.TP_TOL}")
+    check("normalise() targets the WAV ceiling", "TP={TP_WAV}" in src)
 
     print()
     if FAILS:

@@ -1,0 +1,86 @@
+name: publish-motion
+
+# Ships a MOTION Short (an animated still) on the same gates as publish-shorts.
+# Measured 2026-11-19: `make_motion_short.py` was a tool, not a rail -- the four
+# clips K asked to publish had no path that carried the cap, the gap, the pace
+# gate, the standard gate or the bed ledger. `scripts/publish_motion.py` is that
+# path; this workflow is how it runs, so a motion clip can never be a way around
+# the rules the other Shorts rail obeys.
+#
+# Deliberately NOT on a schedule and NOT on push: a motion clip is a deliberate
+# act, and the channel's own drip already comes from publish-shorts. This runs
+# when a human (or K's agent) asks for one specific story.
+on:
+  workflow_dispatch:
+    inputs:
+      story:
+        description: "story file, e.g. content/motion/03.json"
+        required: true
+      channel:
+        description: "dharma|genx|kongkeat (blank = the story's genre)"
+        default: ""
+      privacy:
+        description: "private|unlisted|public"
+        default: "private"
+      dry_run:
+        description: "true to build + gate + print the body, upload nothing"
+        default: "false"
+
+permissions:
+  contents: write   # commit the record + the cap ledger back
+
+jobs:
+  motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      # The same lock publish-shorts uses per channel: a motion clip and a pool
+      # Short must never upload and push at the same moment (measured 2026-11-09:
+      # they did, and a rebase conflict lost a live remake id).
+      group: shorts-upload-motion
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ffmpeg + Thai fonts + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-tlwg-garuda fonts-tlwg-kinnari fonts-tlwg-norasi
+          pip install --quiet -r requirements.txt
+
+      - name: Guard the motion rail
+        run: python3 scripts/test_publish_motion.py
+
+      - name: Publish the motion Short
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
+          YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
+          YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
+        run: |
+          ARGS="--story ${{ github.event.inputs.story }} --privacy ${{ github.event.inputs.privacy }}"
+          if [ -n "${{ github.event.inputs.channel }}" ]; then ARGS="$ARGS --channel ${{ github.event.inputs.channel }}"; fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          python3 scripts/publish_motion.py $ARGS
+
+      - name: Push the record and the cap ledger
+        if: always()
+        run: |
+          git config user.name "openhands"
+          git config user.email "openhands@all-hands.dev"
+          git config merge.unionjson.driver "python3 scripts/git_union_merge.py %O %A %B"
+          git add content/ch1_shorts.json content/ch2_shorts.json content/ch4_shorts.json \
+                  content/upload_log.json content/upload_limit.json \
+                  content/bed_ledger_*.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to record"
+            exit 0
+          fi
+          git commit -m "publish(motion): record the Short and its cap"
+          git pull --rebase --autostash origin main
+          bash scripts/git_push_retry.sh

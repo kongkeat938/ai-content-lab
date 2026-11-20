@@ -10,6 +10,18 @@ name: cred-transport
 # The pod runs:  scripts/fetch_secret.py IMAP_ACCOUNTS
 # which triggers this workflow, reads the ciphertext from the run log, and decrypts
 # it locally.
+#
+# Two things this file deliberately does NOT do:
+#
+#   * It does not load a secret table. Only `secrets[inputs.secret_name]` is read,
+#     so the repository's other secrets never enter this job at all.
+#
+#   * It does not authenticate anything with the run id it prints. That prefix is
+#     only a *rejection* filter: the pod takes the run id from the authenticated
+#     `gh run list --json databaseId` and throws away any log line carrying a
+#     different one, so a line from an older run cannot be mistaken for this run's
+#     ciphertext. A forged id cannot make a line accepted -- it can only make it
+#     ignored. Measured 2026-11-19; guarded by scripts/test_fetch_secret.py.
 
 on:
   workflow_dispatch:
@@ -34,16 +46,11 @@ jobs:
         env:
           PUBKEY_B64: ${{ inputs.pubkey }}
           WANTED: ${{ inputs.secret_name }}
-          IMAP_VALUE: ${{ secrets.IMAP_ACCOUNTS }}
-          GEMINI_VALUE: ${{ secrets.GEMINI_API_KEY }}
-          YT_CLIENT_ID_VALUE: ${{ secrets.YT_CLIENT_ID }}
-          YT_CLIENT_SECRET_VALUE: ${{ secrets.YT_CLIENT_SECRET }}
-          YT_ALT_CLIENT_ID_VALUE: ${{ secrets.YT_ALT_CLIENT_ID }}
-          YT_ALT_CLIENT_SECRET_VALUE: ${{ secrets.YT_ALT_CLIENT_SECRET }}
-          YT_CH1_ALT_REFRESH_TOKEN_VALUE: ${{ secrets.YT_CH1_ALT_REFRESH_TOKEN }}
-          YT_CH2_ALT_REFRESH_TOKEN_VALUE: ${{ secrets.YT_CH2_ALT_REFRESH_TOKEN }}
-          YT_CH4_ALT_REFRESH_TOKEN_VALUE: ${{ secrets.YT_CH4_ALT_REFRESH_TOKEN }}
-          OWNER_LOGIN_VALUE: ${{ secrets.OWNER_LOGIN_PASSWORDS }}
+          # Only the secret that was asked for enters this job. GitHub supports
+          # indexing the secrets context by name, so there is no table here and no
+          # second place to edit when a new secret is added -- and, more to the
+          # point, the other ten secrets never reach this process at all.
+          WANTED_VALUE: ${{ secrets[inputs.secret_name] }}
         run: |
           pip install --quiet cryptography
           python3 - <<'PY'
@@ -52,29 +59,24 @@ jobs:
           from cryptography.hazmat.primitives.asymmetric import padding
 
           wanted = os.environ["WANTED"]
-          table = {
-              "IMAP_ACCOUNTS": os.environ.get("IMAP_VALUE", ""),
-              "GEMINI_API_KEY": os.environ.get("GEMINI_VALUE", ""),
-              "YT_CLIENT_ID": os.environ.get("YT_CLIENT_ID_VALUE", ""),
-              "YT_CLIENT_SECRET": os.environ.get("YT_CLIENT_SECRET_VALUE", ""),
-              "YT_ALT_CLIENT_ID": os.environ.get("YT_ALT_CLIENT_ID_VALUE", ""),
-              "YT_ALT_CLIENT_SECRET": os.environ.get("YT_ALT_CLIENT_SECRET_VALUE", ""),
-              "YT_CH1_ALT_REFRESH_TOKEN": os.environ.get("YT_CH1_ALT_REFRESH_TOKEN_VALUE", ""),
-              "YT_CH2_ALT_REFRESH_TOKEN": os.environ.get("YT_CH2_ALT_REFRESH_TOKEN_VALUE", ""),
-              "YT_CH4_ALT_REFRESH_TOKEN": os.environ.get("YT_CH4_ALT_REFRESH_TOKEN_VALUE", ""),
-              "OWNER_LOGIN_PASSWORDS": os.environ.get("OWNER_LOGIN_VALUE", ""),
-          }
-          value = table.get(wanted, "")
+          value = os.environ.get("WANTED_VALUE", "")
           if not value:
+              # Say why AND fail the job. Exiting 0 here would paint the run green
+              # while handing back no secret -- the pod reports it, but anyone
+              # reading the Actions list sees success. A run that produced nothing
+              # must not look like a run that worked.
               print(f"EMPTY: no secret named {wanted} is visible to this workflow")
-              raise SystemExit(0)
+              raise SystemExit(1)
 
           pub = serialization.load_pem_public_key(
               base64.b64decode(os.environ["PUBKEY_B64"]))
           ct = pub.encrypt(value.encode(), padding.OAEP(
               mgf=padding.MGF1(algorithm=hashes.SHA256()),
               algorithm=hashes.SHA256(), label=None))
-          # Only the ciphertext leaves this job.
-          print("CIPHERTEXT_B64=" + base64.b64encode(ct).decode())
+          # Only the ciphertext leaves this job. The run id prefixes it so the pod
+          # can prove the line came from the run it dispatched, not from an older
+          # cred-transport run still in the log listing.
+          print("CIPHERTEXT_B64=" + os.environ["GITHUB_RUN_ID"] + ":" +
+                base64.b64encode(ct).decode())
           print(f"PLAINTEXT_LEN={len(value)}")
           PY

@@ -66,11 +66,20 @@ def frame_from_video(path: str) -> Image.Image:
             os.remove(tmp)
 
 
+CLOSERS = "?!)」』”’"  # a closing mark never opens a line on its own
+
+
 def wrap(draw: ImageDraw.ImageDraw, text: str, f, max_w: int) -> list[str]:
     lines, cur = [], ""
     for ch in text:
         if draw.textlength(cur + ch, font=f) <= max_w or not cur:
             cur += ch
+        elif ch in CLOSERS:
+            # Measured 2026-11-19: the per-character split left "?" alone on the
+            # last line. Attach a closing mark to the line it closes even if the
+            # line then overhangs by one glyph -- an orphan mark reads as a typo.
+            lines.append(cur + ch)
+            cur = ""
         else:
             lines.append(cur)
             cur = ch
@@ -114,7 +123,9 @@ def build(art: str | None, video: str | None, hook: str, out: str) -> str:
     f = _font(size)
     lines = wrap(d, hook.strip(), f, W - 2 * margin)
     lh = size + int(size * 0.28)
-    y = int(H * 0.12)
+    # 0.16 not 0.12: a vision check (2026-11-19) put the gold bar too close to the
+    # top edge, where YouTube's Shorts UI overlays its own chrome.
+    y = int(H * 0.16)
     d.rectangle([margin, y, margin + 14, y + lh * len(lines) - int(size * 0.28)], fill=GOLD)
     for i, ln in enumerate(lines):
         d.text((margin + 34, y), ln, font=f, fill=GOLD if i == 0 else WHITE,

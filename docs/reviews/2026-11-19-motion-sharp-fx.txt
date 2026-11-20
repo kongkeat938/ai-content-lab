@@ -1,0 +1,26 @@
+Gemini review -- 2026-11-19 -- make_motion_short.py (sharp + caption upper-middle + 14 particle effects)
+
+OWNER REQUESTS (K, 2026-11-19):
+  1. ความละเอียดภาพไม่สวย ขุ่นมัวไม่เอา ขอสดใส
+  2. ภาพไม่ต้องเบลอ คำบรรยายเอาไว้ช่วงบนมากลาง มันบังเวลาดูในมือถือ
+  3. ทำฟรุ้งฟริ้งเคลื่อนไหว ใช้เป็นฝน วงกลมเล็กๆ ใบไม้ร่วง หิมะ น้ำตก ภูเขาไฟระเบิดหรือ อะไรก็ได้อีกเยอะ
+
+MEASURED BEFORE -> AFTER:
+  LapVar (sharpness)     169  -> 763..1571 (5-9x)
+  backdrop blur          GaussianBlur(1.5) -> none (lapvar 81069 -> 81069 guard)
+  ken_burns resample     BICUBIC -> LANCZOS
+  caption centre         90% of height -> 34% (bottom 37%, clear of mobile UI)
+  effect kinds           1 (petal) -> 14
+  short_standard gate    FAIL (720p) -> PASS x3 (1080x1920, -14.0/-14.1 LUFS, -3.0 dBTP)
+  guard can FAIL         yes -- reverting the fixes trips 4 checks
+
+GEMINI VERDICT:
+**APPROVE**
+
+### Reasons:
+1. **Satisfies K's requests directly:**
+   - *Picture quality ("ขอสดใส", not muddy):* Removed the `GaussianBlur(1.5)`, upgraded Ken Burns interpolation to `LANCZOS`, added `video_grade.GRADE` chain, and tightened CRF from 20 to 18 with a `slow` preset. The LapVar metrics jump (169 to 763-1571) confirm a sharp, high-contrast, vivid output.
+   - *Caption placement:* Moved from the foot (90%) to `CAPTION_CY=0.34` (upper-middle), removing the overlap with the TikTok/Shorts UI.
+   - *Animated effects ("ฝน วงกลมเล็กๆ ใบไม้ร่วง หิมะ น้ำตก..."):* Replaced the single-drift mechanism with a comprehensive particle system (`KINDS` containing 14 effects and multiple physics modes).
+2. **Correctness & Robustness:** Clean implementation with proper fallback handling, proportional bounds, and guards for unknown effects (`FX_COUNT.get`).
+3. **Performance Traps:** The renderer targets **YouTube Shorts** (short-form vertical video, typically under 60 seconds) rendered at 15fps. At 15fps, the per-frame cost of the particle draw loop is well within acceptable generation bounds for Shorts. The comment about a "20-min long-form" does not apply here; this script is exclusively for shorts generation (`make_motion_short.py`), where render times remain short and efficient.
