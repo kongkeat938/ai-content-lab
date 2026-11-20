@@ -303,19 +303,32 @@
         "flat": 0
       },
       "at": "2026-11-20T01:41:55+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "unknown",
+      "last_shape": null,
+      "last_video_id": "nf1q-BhHIwI",
+      "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
+      "hours_since_last": 2.01,
+      "stall": {
+        "stalled": false,
+        "flat": 0
+      },
+      "at": "2026-11-20T03:43:05+00:00"
     }
   ],
   "latest": {
     "allowed": true,
     "verdict": "unknown",
     "last_shape": null,
-    "last_video_id": "B-vWNEgv_Yk",
+    "last_video_id": "nf1q-BhHIwI",
     "reason": "the last post is not measurable yet (fresh window / spent quota) -- keeping the current shape",
-    "hours_since_last": 24.14,
+    "hours_since_last": 2.01,
     "stall": {
       "stalled": false,
       "flat": 0
     },
-    "at": "2026-11-20T01:41:55+00:00"
+    "at": "2026-11-20T03:43:05+00:00"
   }
 }
