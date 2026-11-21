@@ -1,0 +1,6 @@
+- Checked `mix()`: Both `loudnorm` filter passes correctly set `TP=-2.0` (True-Peak target moved from `-1.5` to `-2.0` dBTP).
+- Target `I=-14` (LUFS) is kept unchanged.
+- Verified that `stdin=subprocess.DEVNULL` is present across all subprocess and probe calls (stdin closed, no silent skip).
+- All changes are correct and nothing else broke.
+
+คำตัดสิน: APPROVE

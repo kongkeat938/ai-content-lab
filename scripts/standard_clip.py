@@ -148,10 +148,10 @@ def mix(narr: str, music_wav: str, total: float, tmp: str) -> str:
         "-ac", "2", "-c:a", "pcm_f32le", mixwav])
     probe = subprocess.run(
         ["ffmpeg", "-hide_banner", "-nostats", "-i", mixwav, "-af",
-         "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-"],
+         "loudnorm=I=-14:TP=-2.0:LRA=11:print_format=json", "-f", "null", "-"],
         capture_output=True, text=True, stdin=subprocess.DEVNULL)
     d = json.loads(re.search(r'\{[^{}]*"input_i"[^{}]*\}', probe.stderr, re.S).group(0))
-    ln = (f"loudnorm=I=-14:TP=-1.5:LRA=11:measured_I={d['input_i']}"
+    ln = (f"loudnorm=I=-14:TP=-2.0:LRA=11:measured_I={d['input_i']}"
           f":measured_TP={d['input_tp']}:measured_LRA={d['input_lra']}"
           f":measured_thresh={d['input_thresh']}:offset={d['target_offset']}:linear=true")
     norm = os.path.join(tmp, "mix_norm.wav")
