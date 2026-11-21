@@ -164,9 +164,9 @@
    "verdict": "APPROVE"
   },
   "scripts/standard_clip.py": {
-   "commit": "e7d7372",
-   "evidence": "docs/reviews/2026-11-21-standard-clip.txt",
-   "sha256": "4f7628e64527d1dd3861308d9325edd7cded3623e57744c64819c7c41914aaf9",
+   "commit": "0b6fa9f",
+   "evidence": "docs/reviews/2026-11-21-standard-clip-tp.txt",
+   "sha256": "e0b7093cfa13f6cb297edcec14b1b0ff65cc131b189052c09223650c957cebf8",
    "verdict": "APPROVE"
   },
   "scripts/test_art_library.py": {
