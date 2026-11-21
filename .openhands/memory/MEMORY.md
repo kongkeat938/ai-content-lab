@@ -72,11 +72,13 @@
   `matches_live()` correlates.
 - **Animated still LOOK must match the story**: `make_motion_short.py` layers by `genre`; ship
   via `publish_motion.py` (**`motion-<id>`**, story ids collide with the pool's).
-- **AI gen LOCAL**: `parallel_pipeline.py art|clips`→`publish_motion.py` (gate `verify_short`); SD-Turbo→RealESRGAN×4; `topics/06`, MAP §3.
+- **AI gen**: MAP §3.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
+  **⛔ STOP ACTIVE (K 2026-11-20): do NOT re-enable rails/upload — K orders. NEW sys =
+  VIDEO-SYSTEM-NEW → `recovered/VIDEO-SYSTEM-NEW/`.**
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps, not upload cap.

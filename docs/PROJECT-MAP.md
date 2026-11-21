@@ -10,6 +10,11 @@
 > Rule (K, 2026-11-13): **search this map first. If a thing already exists, use it —
 > do not create a second one under a new name.** New file? add it here in the same commit.
 
+> **⛔ STATUS 2026-11-21 — `content/STOP` is ACTIVE (K's order 2026-11-20): auto-upload and
+> clip creation are PAUSED; K orders uploads himself. Do NOT re-enable the old rails. The NEW
+> system K is building = VIDEO-SYSTEM-NEW (spec `docs/VIDEO-SYSTEM-NEW.md`; recovered code +
+> gaps in `recovered/VIDEO-SYSTEM-NEW/`, see its README).**
+
 ---
 
 ## 1) The rails that matter (34 workflows; the ones driving the goal)

@@ -1,0 +1,6 @@
+STOP — auto-upload / clip-creation paused by K's order (2026-11-20/21).
+
+K's words: "หยุดสร้างคลิปให้หมด งานรออัพก็หยุดให้หมด" and "ระบบอัพออโต้หยุดไว้ก่อน
+K จะสั่งให้อัพเอง". Every rail must refuse (exit 3) while this file exists.
+
+K deletes this file (and re-enables rails) himself when he wants production/upload to resume.
