@@ -55,6 +55,12 @@
    "sha256": "792177f5af3014f991e27d8613cbc4239328c052bab7f35264cfd8ae6de4550c",
    "verdict": "APPROVE"
   },
+  "scripts/clip_standard.py": {
+   "commit": "e7d7372",
+   "evidence": "docs/reviews/2026-11-21-standard-clip.txt",
+   "sha256": "a5ef9b5ae33d220bd92b70a82985a1979b7d97f4cd8ced168a9e4ec59d89fc6f",
+   "verdict": "APPROVE"
+  },
   "scripts/fetch_secret.py": {
    "commit": "",
    "evidence": "docs/reviews/2026-11-19-fetch_secret-py.txt",
@@ -83,6 +89,12 @@
    "commit": "ed20ce1",
    "evidence": "docs/reviews/2026-11-19-ed20ce1-health-threshold.txt",
    "sha256": "c3865c354db3515a6fc5f0b53cb65b930c1bdfbd844a549defd2f59e7b16361f",
+   "verdict": "APPROVE"
+  },
+  "scripts/kill_switch.py": {
+   "commit": "e7d7372",
+   "evidence": "docs/reviews/2026-11-21-standard-clip.txt",
+   "sha256": "58e757375f1831eb058b24a42e4a37ff27ae60bd57b9cd4f309e1dc6b54346f7",
    "verdict": "APPROVE"
   },
   "scripts/make_motion_short.py": {
@@ -143,6 +155,12 @@
    "commit": "",
    "evidence": "docs/reviews/2026-11-19-short-standard-stdin.txt",
    "sha256": "9d71751926801cd35f2f3d50ee5603e83856c50ec2c9c86b8ddd71ed006c88bd",
+   "verdict": "APPROVE"
+  },
+  "scripts/standard_clip.py": {
+   "commit": "e7d7372",
+   "evidence": "docs/reviews/2026-11-21-standard-clip.txt",
+   "sha256": "4f7628e64527d1dd3861308d9325edd7cded3623e57744c64819c7c41914aaf9",
    "verdict": "APPROVE"
   },
   "scripts/test_art_library.py": {
