@@ -1,0 +1,8 @@
+Gemini code review:
+
+1. **No committed secret/PII**: Checked. No credentials, tokens, or personal identifying information are present in the scripts, test files, or CI workflow configuration.
+2. **Every subprocess closes stdin**: Checked. `subprocess.run` (and `subprocess.CompletedProcess` helpers) in both `scripts/durability_guard.py` and `scripts/test_durability_guard.py` explicitly use `stdin=subprocess.DEVNULL`.
+3. **The durability guard must FAIL on uncommitted/unpushed/untracked-critical state and the test must prove it can fail (not a happy-path check)**: Checked. `scripts/durability_guard.py` comprehensively checks for uncommitted changes, unpushed commits, missing upstream tracking, and untracked critical paths (`content/image_vault.json`, `assets/queue/index.json`). `scripts/test_durability_guard.py` creates a temporary throwaway repository with a bare remote and explicitly asserts that failure occurs on every individual failure mode.
+4. **The selftest change is safe**: Checked. The GitHub Actions workflow modification runs existing and new test scripts safely under standard isolation bounds, runs policy and ledger checks, and correctly passes `--allow-no-upstream` (via the `CI` environment variable) for the durability guard.
+
+คำตัดสิน: APPROVE
