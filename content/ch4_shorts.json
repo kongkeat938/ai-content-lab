@@ -532,6 +532,18 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "123": {
+      "video_id": "ciZxxc6lN6w",
+      "url": "https://youtu.be/ciZxxc6lN6w",
+      "title": "ทำไมนกจึงต้องบินเรียงตัวเป็นรูปตัววีบนท้องฟ้า #Shorts",
+      "posted_at": "2026-11-21T06:27:58+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch4_shorts/123/thumb_123.jpg",
+      "thumbnail_set": false,
+      "shape": "cue",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }
