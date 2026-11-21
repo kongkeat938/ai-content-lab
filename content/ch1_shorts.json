@@ -688,6 +688,26 @@
     "thumb_size": "1080x1920",
     "thumb_bytes": 262098
    }
+  },
+  "genx_s2": {
+   "video_id": "Ft2tdrQPoG8",
+   "url": "https://youtu.be/Ft2tdrQPoG8",
+   "title": "ใจเบาลงในคืนนี้ #Shorts",
+   "posted_at": "2026-11-21T15:30:45Z",
+   "source": "",
+   "start": 0.0,
+   "long_url": "https://youtu.be/Cthry44lIYw",
+   "gate": {
+    "size": "1080x1920",
+    "pix_fmt": "yuv420p",
+    "color_range": "tv",
+    "colorspace": "bt709",
+    "lufs": -14.7,
+    "true_peak": -3.1,
+    "duration_sec": 45.0,
+    "thumb_size": "1080x1920",
+    "thumb_bytes": 147026
+   }
   }
  }
 }

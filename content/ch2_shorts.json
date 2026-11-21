@@ -807,6 +807,26 @@
     "thumb_size": "1080x1920",
     "thumb_bytes": 305758
    }
+  },
+  "dharma_s2": {
+   "video_id": "1m8S0tEsy4E",
+   "url": "https://youtu.be/1m8S0tEsy4E",
+   "title": "หลับลึกถึงเช้า #Shorts",
+   "posted_at": "2026-11-21T15:30:51Z",
+   "source": "",
+   "start": 0.0,
+   "long_url": "https://youtu.be/Quk0hvVLcBM",
+   "gate": {
+    "size": "1080x1920",
+    "pix_fmt": "yuv420p",
+    "color_range": "tv",
+    "colorspace": "bt709",
+    "lufs": -14.4,
+    "true_peak": -3.2,
+    "duration_sec": 45.0,
+    "thumb_size": "1080x1920",
+    "thumb_bytes": 295256
+   }
   }
  }
 }
