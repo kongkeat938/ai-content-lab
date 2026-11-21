@@ -103,6 +103,12 @@
    "sha256": "58e757375f1831eb058b24a42e4a37ff27ae60bd57b9cd4f309e1dc6b54346f7",
    "verdict": "APPROVE"
   },
+  "scripts/longform_clip.py": {
+   "commit": "f55e8b2",
+   "evidence": "docs/reviews/2026-11-21-longform-clip.txt",
+   "sha256": "2adc7430e465a0501ca02226ae5cb325e90ca7ff4574b244ba2f85fc65635616",
+   "verdict": "APPROVE"
+  },
   "scripts/make_motion_short.py": {
    "commit": "",
    "evidence": "docs/reviews/2026-11-19-motion-sharp-fx.txt",
