@@ -460,6 +460,28 @@
       "url": "https://youtu.be/6tTda1sruHg",
       "playlist_added": true,
       "thumbnail_set": true
+    },
+    {
+      "key": "std_dharma_01",
+      "state": "published",
+      "video_url": "https://raw.githubusercontent.com/kongkeat938/ai-content-lab/main/docs/demo/media/dharma_01.mp4",
+      "audio_url": "",
+      "thumbnail": "",
+      "duration_sec": 19.1,
+      "title": "ใจที่สงบ",
+      "description": "ใจที่สงบไม่ได้มาจากการบังคับ แต่มันเกิดจากการที่เราเลิกต่อสู้กับความคิด นั่งลงฟังเพียงลมหายใจ #ธรรมะ #สมาธิ #ปล่อยวาง",
+      "tags": [
+        "ธรรมะ",
+        "สมาธิ",
+        "ปล่อยวาง",
+        "นอนหลับ",
+        "ใจสงบ"
+      ],
+      "category_id": "22",
+      "privacy": "private",
+      "video_id": "odba-TS_hQo",
+      "url": "https://youtu.be/odba-TS_hQo",
+      "thumbnail_set": false
     }
   ]
 }
