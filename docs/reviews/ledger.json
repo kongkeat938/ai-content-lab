@@ -32,9 +32,9 @@
    "verdict": "APPROVE"
   },
   ".github/workflows/selftest.yml": {
-   "commit": "(pending)",
-   "evidence": "docs/reviews/2026-11-19-selftest-ci-step.txt",
-   "sha256": "bf7987f2850ab2e678e3a4099517534c7d96f0fc2ba91004cf9f317ad1be2cfb",
+   "commit": "25198b0",
+   "evidence": "docs/reviews/2026-11-21-durability.txt",
+   "sha256": "f3727902bcca0ad49718fe984aafede25a59fdb4f129ffeb1ba5ed4eeb657d6b",
    "verdict": "APPROVE"
   },
   "scripts/add_release_to_manifest.py": {
@@ -59,6 +59,12 @@
    "commit": "e7d7372",
    "evidence": "docs/reviews/2026-11-21-standard-clip.txt",
    "sha256": "a5ef9b5ae33d220bd92b70a82985a1979b7d97f4cd8ced168a9e4ec59d89fc6f",
+   "verdict": "APPROVE"
+  },
+  "scripts/durability_guard.py": {
+   "commit": "25198b0",
+   "evidence": "docs/reviews/2026-11-21-durability.txt",
+   "sha256": "1e78334a8168981b2f6d1dc9d001df0d55ba85879ce989491e7cca093521e02c",
    "verdict": "APPROVE"
   },
   "scripts/fetch_secret.py": {
@@ -167,6 +173,12 @@
    "commit": "",
    "evidence": "docs/reviews/2026-11-19-art-library.txt",
    "sha256": "70fe85f7ccfffdb2f04feb05f8e233e124f32f5d44ef5bbf81e079969dbbe1aa",
+   "verdict": "APPROVE"
+  },
+  "scripts/test_durability_guard.py": {
+   "commit": "25198b0",
+   "evidence": "docs/reviews/2026-11-21-durability.txt",
+   "sha256": "c3aa3669e213a0f0f7ed126f648c4f1be5bbd093c78f1ac56b17355b6d9d3bcd",
    "verdict": "APPROVE"
   },
   "scripts/test_fetch_secret.py": {
