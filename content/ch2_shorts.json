@@ -777,6 +777,16 @@
       "thumbnail": "work/ch2_shorts/123/thumb_123.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "124": {
+      "video_id": "kakNxjAmkds",
+      "url": "https://youtu.be/kakNxjAmkds",
+      "title": "คืนนี้ลองเลิกคิดเรื่องงานแล้วปล่อยวางทันที #Shorts",
+      "posted_at": "2026-11-21T06:27:36+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/124/thumb_124.jpg",
+      "thumbnail_set": true,
+      "shape": "cue"
     }
   }
 }
