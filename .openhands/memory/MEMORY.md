@@ -43,7 +43,8 @@
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; hook cap
   220; never downgrade a LIVE entry. **Theme ROTATES per-RUN count, NEVER `date +%V`**. **Backfill
-  `7/n+1` needs EVENLY spaced crons** (Mon/Wed/Fri, not Mon/Wed/Thu).
+  `7/n+1` needs EVENLY spaced crons** (Mon/Wed/Fri, not Mon/Wed/Thu). **Approved-standard clip =
+  `longform-standard.yml` (CI, never uploads; a pod render dies ~19 min in).**
 - **GitHub cron** fires 23/100 but late; foreman backfill = truth. **All rails can be `disabled_manually`
   at once (no `content/STOP`)** → measure `actions/workflows` first, re-enable + dispatch `watchdog`.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
