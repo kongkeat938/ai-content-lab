@@ -77,8 +77,8 @@
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
-  **⛔ STOP ACTIVE (K 2026-11-20): do NOT re-enable rails/upload — K orders. NEW sys =
-  VIDEO-SYSTEM-NEW → `recovered/VIDEO-SYSTEM-NEW/`.**
+  **Measured 2026-11-21: NO STOP file; 29 rails `disabled_manually` → production is manual
+  by ak, upload only when K orders.** NEW sys = VIDEO-SYSTEM-NEW → `recovered/VIDEO-SYSTEM-NEW/`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps, not upload cap.

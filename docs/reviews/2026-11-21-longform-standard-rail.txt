@@ -1,0 +1,21 @@
+Gemini review of `.github/workflows/longform-standard.yml` (new rail, 2026-11-21)
+
+Asked: manual dispatch only, must not upload, must fail when clip_standard fails, approved standard untouched, fresh-runner traps, kill switch.
+
+จากการตรวจสอบไฟล์ `.github/workflows/longform-standard.yml` ตามหลักการของ K (measured evidence, guards must be able to FAIL) ขอสรุปผลการตรวจสอบในแต่ละประเด็นดังนี้ครับ:
+
+1. **Secrets / PII / Hardcoded credentials:** ไม่พบการ hardcode รหัสผ่านหรือ API keys มีการใช้ `GITHUB_TOKEN` มาตรฐานอย่างถูกต้อง
+2. **Failure Handling (Guards must fail loudly):** ขั้นตอนรันสคริปต์ไม่มีการใช้ `|| true` หรือคำสั่งกลบความผิดพลาด ตัว GitHub Actions จะล้มเหลวทันทีเมื่อ Python script คืนค่า non-zero exit code
+3. **No YouTube Upload Path:** ตรวจสอบแล้ว ไม่มีขั้นตอน (steps) หรือคำสั่งใดที่เกี่ยวข้องกับการอัปโหลดขึ้น YouTube มีเพียงการสร้าง Release และแนบไฟล์ MP4 เท่านั้น
+4. **Standard Preservation (720p, tv/bt709, -14 LUFS, two-pass):** ตัว workflow ส่งผ่านสคริปต์ `scripts/longform_clip.py` ซึ่งเรียกใช้มาตรฐานที่ผ่านการอนุมัติแล้ว ไม่มีการแก้พารามิเตอร์ข้ามขั้นตอนในไฟล์ YAML
+5. **Runner Traps (Ubuntu, dependencies, font, disk, model, permissions):** 
+   - ติดตั้ง ffmpeg, ตั้งค่าฟอนต์ที่ `assets/fonts/Kanit-SemiBold.ttf`
+   - กำหนดโฟลเดอร์สำหรับโมเดลและ RealESRGAN ไว้ที่ `/tmp` เพื่อป้องกันปัญหาพื้นที่ดิสก์เต็ม
+   - ตั้งค่าสิทธิ์ `permissions: contents: write` สำหรับการสร้าง GitHub Release
+6. **Kill Switch:** กำหนดตัวแปร `CONTENT_STOP_PATH: /tmp/nostop` เพื่อรองรับเงื่อนไข kill switch ตามที่ระบุ
+
+**สิ่งที่ควรทำก่อน/หลัง (ถ้ามี):**
+- ก่อนรันจริง ควรตรวจสอบว่าสิทธิ์ของ `GITHUB_TOKEN` ในระดับ Repository Settings อนุญาตให้สร้าง Release ได้หรือไม่
+
+คำตัดสิน: APPROVE 
+

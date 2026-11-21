@@ -1,0 +1,97 @@
+name: longform-standard
+
+# Builds one long-form clip at the standard K approved (SD-Turbo scenes ->
+# RealESRGAN x4 -> 720p Ken-Burns shots, Thai narration, MusicGen bed, two-pass
+# -14 LUFS) and gates it with clip_standard.py. It NEVER uploads: the finished
+# MP4 goes to a Release + an artifact for K to approve, and only K orders an
+# upload.
+#
+# Why this lives in CI and not on the pod: measured 2026-11-21, two pod runs died
+# ~19 min in (sandbox MISSING) during scene generation, so a 40-60 min render
+# cannot live on a sandbox that is recycled. A GitHub runner has 4 vCPU / 16 GB
+# and a 150 min job limit.
+on:
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: "spec file under content/standard/"
+        default: "content/standard/dharma_long_01.json"
+      out:
+        description: "output file name"
+        default: "dharma_long_01.mp4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: longform-standard
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Refuse a spec that is not there
+        run: |
+          test -f "${{ inputs.spec }}" || { echo "::error::no such spec: ${{ inputs.spec }}"; exit 1; }
+
+      - name: ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -1
+
+      - name: Python deps
+        run: python3 -m pip install --quiet --no-cache-dir -r requirements.txt
+
+      - name: AI deps (torch CPU, diffusers, spandrel, transformers)
+        run: bash scripts/restore_env.sh
+
+      - name: Disk before
+        run: df -h / /tmp
+
+      - name: Build the clip (gated by clip_standard)
+        env:
+          # a manual dispatch IS the deliberate run the kill switch allows
+          CONTENT_STOP_PATH: /tmp/nostop
+          HF_HOME: /tmp/hf
+          TMPDIR: /tmp
+        run: |
+          mkdir -p out
+          python3 scripts/longform_clip.py \
+            --spec "${{ inputs.spec }}" \
+            --out "out/${{ inputs.out }}"
+
+      - name: Measure the output
+        run: |
+          df -h / /tmp
+          ffprobe -v error -show_entries \
+            format=duration,size,bit_rate:stream=codec_name,width,height,r_frame_rate,pix_fmt \
+            -of json "out/${{ inputs.out }}"
+
+      - name: Keep the clip (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ inputs.out }}"
+          path: "out/${{ inputs.out }}"
+          retention-days: 30
+
+      - name: Publish the clip to a Release (link for K, not an upload)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="longform-${{ inputs.out }}-${{ github.run_number }}"
+          gh release create "$tag" "out/${{ inputs.out }}" \
+            --repo "${{ github.repository }}" \
+            --title "$tag" \
+            --notes "Long-form clip built from ${{ inputs.spec }} by the approved rail (longform_clip.py) and gated by clip_standard.py. Not uploaded to YouTube -- K decides." \
+            || gh release upload "$tag" "out/${{ inputs.out }}" \
+               --repo "${{ github.repository }}" --clobber
+          gh release view "$tag" --repo "${{ github.repository }}" --json url --jq .url

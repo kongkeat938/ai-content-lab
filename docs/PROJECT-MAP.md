@@ -10,10 +10,13 @@
 > Rule (K, 2026-11-13): **search this map first. If a thing already exists, use it —
 > do not create a second one under a new name.** New file? add it here in the same commit.
 
-> **⛔ STATUS 2026-11-21 — `content/STOP` is ACTIVE (K's order 2026-11-20): auto-upload and
-> clip creation are PAUSED; K orders uploads himself. Do NOT re-enable the old rails. The NEW
-> system K is building = VIDEO-SYSTEM-NEW (spec `docs/VIDEO-SYSTEM-NEW.md`; recovered code +
-> gaps in `recovered/VIDEO-SYSTEM-NEW/`, see its README).**
+> **STATUS 2026-11-21 (measured, not a doc claim) — there is NO `content/STOP` file (removed at
+> `eec3d78` on K's order), but **29 workflows are `disabled_manually`** (9 active), so no rail
+> produces or uploads on its own. Standing shape: **manual production by ak; K orders every
+> upload**; a deliberate manual run passes `CONTENT_STOP_PATH=/tmp/nostop`. Do NOT re-enable the
+> rails without K. The NEW system K is building = VIDEO-SYSTEM-NEW (spec
+> `docs/VIDEO-SYSTEM-NEW.md`; recovered code + gaps in `recovered/VIDEO-SYSTEM-NEW/`, see its
+> README).**
 
 > **Durability (K, 2026-11-21 — the pod is recycled, so loose work is lost):** a session MUST
 > leave the repo pushed. `scripts/durability_guard.py` FAILS on an uncommitted/unpushed tree or
@@ -40,6 +43,7 @@
 | `link-shorts.yml` | driven by the foreman | appends the long-form playlist link to every Short's description (the reach → watch-hours funnel) | **the funnel** |
 | `publish-motion.yml` (`publish_motion.py`) | on demand (workflow_dispatch) | ships an animated-still Short through the SAME gates as publish-shorts: cap, gap, `short_standard` gate, bed ledger, `record_key` namespacing | a livelier Shorts shape (reach) that cannot dodge the Shorts rules |
 | `make_motion_short.py` (the builder behind that rail) | called by the rail | layers match the story's `genre` -- dharma/genx = calm (twinkle + petals, no mascot, no glow disc), knowledge = a mascot dancing to the beat | the visual itself |
+| `longform-standard.yml` (new 2026-11-21) | **manual dispatch only** (`spec`, `out`) | runs the approved `longform_clip.py` on a GitHub runner (not the pod: two pod runs died ~19 min in), gates it with `clip_standard.py`, and puts the MP4 on a Release + artifact for K. **Never uploads.** | the long-form watch-hours lever |
 | `make_ambient_video.py` (a tool, not a rail) | by hand | stitches real b-roll (`fetch_broll.py`, Coverr) into one long 1080x1920 ambient video, looped to `--minutes`, bed at -14 LUFS | the "join clips + 3-min music" edit K wanted, done headless |
 
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.

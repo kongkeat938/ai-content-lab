@@ -19,6 +19,12 @@
    "sha256": "68799281cbd1e33ff75f6ba6dd303ee44eecb6208c9481f8cc0d17b4999f3bc3",
    "verdict": "APPROVE"
   },
+  ".github/workflows/longform-standard.yml": {
+   "commit": "3915496",
+   "evidence": "docs/reviews/2026-11-21-longform-standard-rail.txt",
+   "sha256": "6058fb5c93077e4e64ce953aaa4912e641ed8f718f23f9edb1fb130844b58cfd",
+   "verdict": "APPROVE"
+  },
   ".github/workflows/night-compilation.yml": {
    "commit": "ebd489e",
    "evidence": "docs/reviews/2026-11-19-cadence-raise.txt",
