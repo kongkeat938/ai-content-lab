@@ -1,0 +1,17 @@
+{
+  "channel": "dharma",
+  "title": "ใจที่สงบ",
+  "subtitle": "ฟังเพียงลมหายใจ",
+  "narration": [
+    "ใจที่สงบ ไม่ได้มาจากการบังคับ",
+    "แต่มันเกิดจากการที่เราเลิกต่อสู้กับความคิด",
+    "นั่งลงเฉย ๆ ฟังเพียงลมหายใจ"
+  ],
+  "prompts": [
+    "a serene Thai temple at dawn, golden mist between white stupas, lotus pond, warm sunrise light, cinematic photography, shallow depth of field, ultra detailed",
+    "a Buddhist monk in an orange robe walking a stone path at sunrise, soft fog, ancient Thai temple behind, cinematic photography, ultra detailed",
+    "rows of candle flames inside a dark Thai meditation hall, warm amber glow, deep shadows, smoke haze, cinematic photography, ultra detailed",
+    "layered misty mountains at dawn in northern Thailand, floating fog, pastel sky, a tiny temple on the ridge, cinematic landscape photography, ultra detailed",
+    "a single pink lotus opening on still dark water at first light, dewdrops, soft reflection, macro cinematic photography, ultra detailed"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "channel": "genx",
+  "title": "ปล่อยความโกรธก่อนนอน",
+  "subtitle": "คืนนี้ใจจะเบาลง",
+  "narration": [
+    "ความโกรธที่เราแบกไว้ ไม่มีใครมองเห็น",
+    "ลองวางมือบนอก หายใจเข้าลึก ๆ แล้วปล่อยออกยาว ๆ",
+    "ค่อย ๆ วางความหนักลงทีละเปลาะ คืนนี้ใจจะเบาลง"
+  ],
+  "prompts": [
+    "a person sitting by a window at night, rain on the glass, calm blue light, soft reflection, cinematic photography, ultra detailed",
+    "a silhouette breathing slowly, chest rising, warm lamp glow in a quiet dark room, cinematic photography, shallow depth of field, ultra detailed",
+    "a full moon over a calm city skyline at night, soft haze, deep blue tones, cinematic photography, ultra detailed",
+    "a single warm bedside lamp glowing in a dark bedroom, folded hands resting, peaceful mood, cinematic photography, ultra detailed",
+    "still water surface with gentle ripples reflecting moonlight, night, tranquil, macro cinematic photography, ultra detailed"
+  ]
+}

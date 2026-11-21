@@ -1,0 +1,17 @@
+{
+  "channel": "kongkeat",
+  "title": "ท้องฟ้าไม่ได้สีฟ้า",
+  "subtitle": "แล้วทำไมเราเห็นเป็นสีฟ้า",
+  "narration": [
+    "รู้ไหมว่าจริง ๆ แล้วท้องฟ้าไม่ได้มีสีฟ้า",
+    "แสงอาทิตย์กระเจิงเมื่อชนโมเลกุลในอากาศ",
+    "สีฟ้ากระจายได้ไกลกว่า เราจึงเห็นฟ้าเป็นสีฟ้าทุกวัน"
+  ],
+  "prompts": [
+    "a vast clear blue sky over a quiet landscape, soft clouds, bright daylight, cinematic landscape photography, ultra detailed",
+    "a beam of sunlight passing through a glass prism, splitting into a rainbow, dark background, cinematic macro photography, ultra detailed",
+    "abstract glowing particles scattering light in a dark medium, blue light spreading, scientific visualization, cinematic, ultra detailed",
+    "a calm ocean horizon meeting a pale blue sky, soft haze, cinematic landscape photography, ultra detailed",
+    "a deep starry night sky with the milky way, no moon, crystal clear, cinematic astrophotography, ultra detailed"
+  ]
+}
