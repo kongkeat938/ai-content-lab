@@ -114,8 +114,8 @@ def build(video: str, start: float, dur: float, title: str, cta: str, out: str) 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--video", required=True)
-    ap.add_argument("--start", type=float, required=True)
+    ap.add_argument("--video", default="")
+    ap.add_argument("--start", type=float, default=0.0)
     ap.add_argument("--dur", type=float, default=46.0)
     ap.add_argument("--title", required=True)
     ap.add_argument("--cta", required=True)
@@ -126,17 +126,26 @@ def main() -> int:
     ap.add_argument("--channel", default="", choices=["", "genx", "dharma"])
     ap.add_argument("--long-url", default="", help="public URL of the long video this Short points at")
     ap.add_argument("--ledger-key", default="")
+    ap.add_argument("--reuse", action="store_true",
+                    help="gate + upload an existing build instead of cutting it again")
     args = ap.parse_args()
 
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    build(args.video, args.start, args.dur, args.title, args.cta, args.out)
-    i, tp = loudness(args.out)
-    if i is not None:
-        print(f"  loudness: {i} LUFS" + (f", TP {tp} dBTP" if tp is not None else ""))
-    r = run([sys.executable, os.path.join(HERE, "make_short_thumbnail.py"),
-             "--video", args.out, "--hook", args.title, "--out", args.thumb])
-    if r.returncode != 0:
-        print(r.stderr[-600:], file=sys.stderr)
+    if args.reuse:
+        missing = [p for p in (args.out, args.thumb) if not os.path.exists(p)]
+        if missing:
+            sys.exit(f"--reuse needs an existing build: missing {missing}")
+    else:
+        if not args.video:
+            sys.exit("--video is needed unless --reuse")
+        os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+        build(args.video, args.start, args.dur, args.title, args.cta, args.out)
+        i, tp = loudness(args.out)
+        if i is not None:
+            print(f"  loudness: {i} LUFS" + (f", TP {tp} dBTP" if tp is not None else ""))
+        r = run([sys.executable, os.path.join(HERE, "make_short_thumbnail.py"),
+                 "--video", args.out, "--hook", args.title, "--out", args.thumb])
+        if r.returncode != 0:
+            print(r.stderr[-600:], file=sys.stderr)
     import short_standard
     ok, reasons, metrics = short_standard.verify_short(args.out, args.thumb)
     print(json.dumps({"verdict": "pass" if ok else "fail", "reasons": reasons,
@@ -158,6 +167,35 @@ CH = {
 }
 
 
+DAILY_CAP = 3          # same ceiling as publish_shorts.py -- one place owns the number
+MIN_GAP_HOURS = 2.0    # the burst, not the count, is what leaves videos at zero views
+
+
+def cap_block(channel_id: str, log: dict, now=None) -> str | None:
+    """None = the channel may upload now; a string = why it must wait.
+
+    The log is injected so a test can prove a refusal without touching the real ledger.
+    """
+    from datetime import datetime, timedelta, timezone
+
+    now = now or datetime.now(timezone.utc)
+    stamps = []
+    for ts in (log.get("channels", {}) or {}).get(channel_id, []):
+        try:
+            t = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if now - t <= timedelta(hours=24):
+            stamps.append(t)
+    if len(stamps) >= DAILY_CAP:
+        return f"daily cap {DAILY_CAP} reached ({len(stamps)} uploads in 24 h)"
+    if stamps:
+        gap = (now - max(stamps)).total_seconds() / 3600
+        if gap < MIN_GAP_HOURS:
+            return f"only {gap:.2f} h since the last upload (min {MIN_GAP_HOURS} h)"
+    return None
+
+
 def upload(args, metrics: dict) -> int:
     import json as _json
     from datetime import datetime, timezone
@@ -170,6 +208,12 @@ def upload(args, metrics: dict) -> int:
     env, channel_id, ledger_path, blurb, hashtags = CH[args.channel]
     if not args.long_url:
         sys.exit("--upload needs --long-url (a private video cannot be linked to)")
+    log_path = os.path.join(ROOT, "content", "upload_log.json")
+    log = _json.load(open(log_path, encoding="utf-8"))
+    hold = cap_block(channel_id, log)
+    if hold:
+        print(f"  HOLD: {hold} -- not uploading (gate the queue, do not flood)")
+        return 0
     yt = build("youtube", "v3", credentials=Credentials(access_token(env)),
                cache_discovery=False)
     title = f"{args.title} #Shorts"[:100]
@@ -195,8 +239,6 @@ def upload(args, metrics: dict) -> int:
                           "long_url": args.long_url, "gate": metrics}
     _json.dump(led, open(ledger_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
-    log_path = os.path.join(ROOT, "content", "upload_log.json")
-    log = _json.load(open(log_path, encoding="utf-8"))
     log.setdefault("channels", {}).setdefault(channel_id, []).append(
         datetime.now(timezone.utc).isoformat())
     _json.dump(log, open(log_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

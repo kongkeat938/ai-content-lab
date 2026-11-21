@@ -62,8 +62,15 @@ The decision panel stays separate (`advise.py`). Guard `scripts/test_team.py`.
 **"Gemini ลบไปเลย ไม่ต้องใช้ระบบนี้มาตรวจแล้ว"** — the Gemini review ledger, the approval
 rule ("งานไม่ผ่าน Gemini = ห้ามอัพ"), and the Gemini auto-fix are **removed**. There is no
 panel verdict to wait for: a build that passes a gate that can FAIL (measured live) is done.
-**Only K approves a publish.** `scripts/advise.py` / `scripts/team.py` still exist as
-optional drafting help but are **not** an approval step.
+
+## ak publishes on its own (K, 2026-11-21)
+**"ตอนนี้ระบบสร้างคลิปได้มาตรฐานแล้ว ยกเลิกกฏรอ K อนุมัติอัพออกเลย อัพได้ตลอดเวลาเลย แล้วแต่
+ak บริหาร"** — the old "K alone approves a publish" rule is **gone**. ak uploads whenever the
+build passes a gate that can FAIL (measured live); no approval step, no waiting for K.
+What still binds: the gates themselves (`clip_standard`, `short_standard`, `qa_gate`), the
+daily cap, the cadence rule (step up, don't jump), and "meet the standard or do NOT upload".
+Guard `scripts/test_upload_autonomy.py` fails if an approval rule creeps back into the docs
+or into a publish path.
 
 ## Decide without waiting (K, 2026-11-11)
 Make the technical decision yourself: presence of mind → order the events → find the causes →

@@ -95,8 +95,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`.
 - **Quality = measured gates only** (K, 2026-11-21: Gemini ออกจากระบบตรวจแล้ว). No review
   ledger, no panel verdict, no auto-fix. A gate that can FAIL + a live measurement is the
-  whole bar; **K alone approves a publish**. `scripts/advise.py`/`team.py` = optional
-  drafting help, never an approval step.
+  whole bar. **ak publishes on its own** (K, 2026-11-21: "ยกเลิกกฏรอ K อนุมัติอัพออกเลย
+  อัพได้ตลอดเวลาเลย แล้วแต่ ak บริหาร") — guard `scripts/test_upload_autonomy.py`.
+  `scripts/advise.py`/`team.py` = optional drafting help, never an approval step.
 - **Long clip → Short with a link (K, 2026-11-21):** `scripts/shorts_from_long.py` cuts a
   45-46 s vertical from a finished long clip (16:9 floats on its own blurred copy; Thai text
   burned through **libass** — this ffmpeg has no `drawtext`), gates it with `short_standard`,
@@ -116,7 +117,7 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   calls it (guard `scripts/test_vision_grader.py` fails if a rail wires it in).
 - **No reviewer in the loop (K, 2026-11-21):** *"Gemini ลบไปเลย ไม่ต้องใช้ระบบนี้มาตรวจแล้ว"* —
   the review ledger, its `docs/reviews/` evidence and the Gemini auto-fix are **deleted**.
-  A gate that can FAIL + a live measurement is the bar; **K alone approves a publish**.
+  A gate that can FAIL + a live measurement is the bar; **ak publishes on its own**.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)

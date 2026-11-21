@@ -26,8 +26,8 @@
 - **"แยกไม่ได้" ≠ "ผิด":** quota-dead identity check → **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** via `winremote` (`topics/03`).
-- **Gemini ออกจากระบบตรวจแล้ว (K, 2026-11-21)** — ledger/`docs/reviews/`/auto-fix ถูกลบ;
-  มาตรฐาน = gate ที่ FAIL ได้ + วัดสด; **K คนเดียวอนุมัติปล่อย**.
+- **Gemini ออกจากระบบตรวจแล้ว + K ยกเลิกการรออนุมัติ (2026-11-21)** — ledger/`docs/reviews/`
+  ถูกลบ; **ak อัพเองได้ทุกเมื่อที่ gate ผ่าน** (`test_upload_autonomy.py`); gate/cap/cadence ยังผูก.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
 - **Veto test injects the fix seam** (`apply_qa_gate(fix=)`).
@@ -77,8 +77,8 @@
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
-  **No STOP file; 29 rails `disabled_manually` → production is manual by ak, upload only when K
-  orders.** NEW sys → `recovered/VIDEO-SYSTEM-NEW/`.
+  **No STOP file; 29 rails `disabled_manually` → production is manual by ak; ak uploads on its
+  own.** NEW sys → `recovered/VIDEO-SYSTEM-NEW/`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps.
