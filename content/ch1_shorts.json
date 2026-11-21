@@ -658,6 +658,16 @@
       "thumbnail": "work/ch1_shorts/100/thumb_100.jpg",
       "thumbnail_set": false,
       "shape": "cue"
+    },
+    "101": {
+      "video_id": "ynZVpwhgawE",
+      "url": "https://youtu.be/ynZVpwhgawE",
+      "title": "คุณมีสิทธิ์ที่จะเลิกทำตัวให้เก่งตลอดเวลาได้แล้ว #Shorts",
+      "posted_at": "2026-11-21T06:27:26+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/101/thumb_101.jpg",
+      "thumbnail_set": true,
+      "shape": "cue"
     }
   }
 }
