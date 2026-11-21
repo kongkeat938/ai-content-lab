@@ -84,10 +84,20 @@ def narrate(lines: list[str], out: str) -> None:
 
 
 def music(out: str, seconds: float) -> None:
-    sys.path.insert(0, os.path.join(ROOT, "recovered", "VIDEO-SYSTEM-NEW", "scripts"))
-    import ai_music
-    ai_music.build("calm ambient meditation, soft warm pads, no drums, slow, peaceful",
-                   seconds, out)
+    import torch
+    import scipy.io.wavfile as wavfile
+    from transformers import AutoProcessor, MusicgenForConditionalGeneration
+
+    torch.set_num_threads(4)
+    proc = AutoProcessor.from_pretrained("facebook/musicgen-small")
+    model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-small")
+    inputs = proc(text=["calm ambient meditation, soft warm pads, no drums, slow, peaceful"],
+                  return_tensors="pt", padding=True)
+    with torch.no_grad():
+        audio = model.generate(**inputs, max_new_tokens=int(seconds * 50),
+                               do_sample=True, guidance_scale=3.0)
+    rate = model.config.audio_encoder.sampling_rate
+    wavfile.write(out, rate, audio[0, 0].numpy())
 
 
 def shots(paths: list[str], tmp: str) -> list[str]:
