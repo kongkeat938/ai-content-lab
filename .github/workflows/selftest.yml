@@ -53,6 +53,11 @@ jobs:
           done
           exit $fail
 
+      # Durability: a pod recycle must never lose work again. Fails when the tree
+      # is dirty or commits are unpushed (skipped in CI, which has no upstream).
+      - name: Durability guard
+        run: python3 scripts/durability_guard.py
+
       # A hard compliance invariant (a committed credential, or a fraud primitive
       # appearing in the code) must fail the job, not just be reported.
       - name: Compliance invariants

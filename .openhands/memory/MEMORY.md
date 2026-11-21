@@ -30,7 +30,7 @@
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
 - **Veto test injects the fix seam** (`apply_qa_gate(fix=)`). **อ่าน Gemini = join ทุก `content.parts`** (`gemini_text.text_of`).
 - **Pod env:** recycled → `ffmpeg` + `pip -r requirements.txt`; `GH_TOKEN=$KONGKEAT_GH_TOKEN`;
-  push 403 → `x-access-token:` URL; suite = every `test_*.py`. **Set the union driver before
+  push 403 → `x-access-token:` URL; suite = every `test_*.py`. **งานต้องออกจาก pod** = `durability_guard.py` (dirty/unpushed → FAIL) + `restore_env.sh` (AI libs). **Set the union driver before
   `git pull`** and **`--unshallow` before reading ahead/behind** (`topics/05`).
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)

@@ -15,6 +15,11 @@
 > system K is building = VIDEO-SYSTEM-NEW (spec `docs/VIDEO-SYSTEM-NEW.md`; recovered code +
 > gaps in `recovered/VIDEO-SYSTEM-NEW/`, see its README).**
 
+> **Durability (K, 2026-11-21 — the pod is recycled, so loose work is lost):** a session MUST
+> leave the repo pushed. `scripts/durability_guard.py` FAILS on an uncommitted/unpushed tree or
+> an untracked vault/queue; `scripts/restore_env.sh` reinstalls the AI libs after a recycle
+> (weights download on first use, so nothing big lives only in the pod). Test proves it can fail.
+
 ---
 
 ## 1) The rails that matter (34 workflows; the ones driving the goal)
