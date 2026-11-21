@@ -113,7 +113,8 @@ def bed_for(clip_id: str, out: str) -> str:
                          % len(MUSIC_ROOT_HZ)]
     rc = subprocess.call([sys.executable, os.path.join(HERE, "make_bed.py"),
                           "--out", out, "--seconds", "60", "--root", f"{root}"],
-                         env=dict(os.environ, CONTENT_STOP_PATH="/tmp/no-stop-bed"))
+                         env=dict(os.environ, CONTENT_STOP_PATH="/tmp/no-stop-bed"),
+                         stdin=subprocess.DEVNULL)
     return out if rc == 0 and os.path.exists(out) else ""
 
 
@@ -195,7 +196,7 @@ def produce_one(story_path: str, channel: str, dry_run: bool,
                 cmd += ["--music", bed]
         print(f"  rendering: {' '.join(os.path.basename(c) for c in cmd[:1])} "
               f"-> {os.path.relpath(out, ROOT)}", flush=True)
-        rc = subprocess.call(cmd)
+        rc = subprocess.call(cmd, stdin=subprocess.DEVNULL)
         if rc != 0:
             print(f"FAILED {clip_id}: renderer exited {rc}", file=sys.stderr)
             return 1
