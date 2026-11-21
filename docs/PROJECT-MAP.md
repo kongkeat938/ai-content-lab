@@ -102,6 +102,14 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   burned through **libass** — this ffmpeg has no `drawtext`), gates it with `short_standard`,
   then `--upload` posts it public with the **long URL in the description** (a Short has no
   clickable link) and records it in `content/<ch>_shorts.json` + `upload_log.json`.
+- **Content research → story spec (K, 2026-11-21):** `scripts/research_niche.py` measures the
+  niche live (`search.list` + `videos.list`, 100 quota units per query) and our own uploads
+  (`Analytics` avg view %), writing `docs/RESEARCH-<date>-niche.md`. Its numbers set the story
+  rules: winners' **median length 85.7 min**, title = problem + promised time + outcome.
+  A story ships as `content/standard/<ch>_story_NN.json` with `"kind": "story"` + `chapters`
+  + `loop_note` (the 90-min version is `make_compilation.py --minutes 90`, no re-cut).
+  Guard `scripts/test_story_specs.py` (schema, 120-400 lines, ≤80 chars/line, Thai-only
+  narration, unique live title) — it feeds a broken copy through itself to prove it can FAIL.
 - **Vision quality check (manual, NEVER gates CI):** `scripts/grade_video_vision.py` samples N
   frames across a finished file and asks Gemini for a 0-10 rubric score. It is non-deterministic
   (measured 2026-11-17: the same cut scored 9 then 5/10), so a human/agent reads it — no workflow
