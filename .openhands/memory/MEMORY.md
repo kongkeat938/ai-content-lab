@@ -28,11 +28,10 @@
   `docs/reviews/ledger.json` (digest = ที่ Gemini เห็น; แก้ 1 ไบต์ = stale; baseline = **หนี้**).
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
-- **Veto test injects the fix seam** (`apply_qa_gate(fix=)`; LIVE Gemini → `fix_with_gemini.py`). **อ่าน Gemini = join ทุก `content.parts`** (`gemini_text.text_of`).
+- **Veto test injects the fix seam** (`apply_qa_gate(fix=)`). **อ่าน Gemini = join ทุก `content.parts`** (`gemini_text.text_of`).
 - **Pod env:** recycled → `ffmpeg` + `pip -r requirements.txt`; `GH_TOKEN=$KONGKEAT_GH_TOKEN`;
-  push 403 → `x-access-token:` URL; suite = every `test_*.py`. **Set the union driver
-  before `git pull`** (fresh pod has none) and **`--unshallow` before reading ahead/behind**
-  (`topics/05`).
+  push 403 → `x-access-token:` URL; suite = every `test_*.py`. **Set the union driver before
+  `git pull`** and **`--unshallow` before reading ahead/behind** (`topics/05`).
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
@@ -45,7 +44,8 @@
 - **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; hook cap
   220; never downgrade a LIVE entry. **Theme ROTATES per-RUN count, NEVER `date +%V`**. **Backfill
   `7/n+1` needs EVENLY spaced crons** (Mon/Wed/Fri, not Mon/Wed/Thu).
-- **GitHub cron** fires 23/100 but late; foreman backfill = truth.
+- **GitHub cron** fires 23/100 but late; foreman backfill = truth. **All rails can be `disabled_manually`
+  at once (no `content/STOP`)** → measure `actions/workflows` first, re-enable + dispatch `watchdog`.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar, ALL channels**: 1080p crf18, tv/bt709, -14 LUFS, clean grade,
   floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**; colour tags need
@@ -60,8 +60,7 @@
   a live video not in a manifest may be a rail upload not yet pulled — `git fetch` first.
   **ffmpeg/git inherit stdin → SIGTTIN freezes the run** (state TNl):
   `stdin=subprocess.DEVNULL` (`test_subprocess_stdin.py`).
-- **Dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` while
-  `feeds/videos.xml` 404'd; exits **2=BLIND**.
+- **Dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` on 404; exits **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** (`test_rail_channels.py`).
 - **ch4 PIVOT 2026-11-16** (family → knowledge). Hook opens a question (`_CURIOSITY`);
   `content/hooks/knowledge.md`. **TITLE NOT API-settable → K sets it in Studio**; repo follows
@@ -73,6 +72,7 @@
   `matches_live()` correlates.
 - **Animated still LOOK must match the story**: `make_motion_short.py` layers by `genre`; ship
   via `publish_motion.py` (**`motion-<id>`**, story ids collide with the pool's).
+- **AI gen LOCAL, no quota**: SD-Turbo 640→RealESRGAN×4 (**`spandrel`**) =2560; MusicGen; detail gate = ratio vs bicubic of the SAME frame (≥1.15×). `topics/06`.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
