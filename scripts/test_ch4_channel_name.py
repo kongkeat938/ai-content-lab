@@ -139,6 +139,32 @@ def rename_survives_quota() -> None:
           sd.route("x", routes, {f"{NEW} — เกร็ดสั้น": "PL2"}) == f"{NEW} — เกร็ดสั้น")
 
 
+RETIRED_GENRE = ("เรื่องเล่าอบอุ่นใจ", "รวมเรื่องครอบครัว")
+
+
+def queue_problems(manifest: dict) -> list[str]:
+    """The real failure mode: a retired-genre video queued for a knowledge channel."""
+    out = []
+    for v in manifest.get("videos", []):
+        if v.get("state") == "published":
+            continue
+        title = str(v.get("title", ""))
+        if any(g in title for g in RETIRED_GENRE):
+            out.append(f"pending {v.get('key')} carries the retired genre: {title[:40]}")
+    return out
+
+
+def queue_is_knowledge() -> None:
+    import json
+
+    man = json.load(open(os.path.join(ROOT, "content", "ch4_publish.json"), encoding="utf-8"))
+    bad = queue_problems(man)
+    check("no PENDING ch4 entry carries the retired family genre", not bad, "; ".join(bad))
+    fake = {"videos": [{"key": "x", "state": "queued",
+                        "title": "เรื่องเล่าอบอุ่นใจ รวมเรื่องครอบครัว 3"}]}
+    check("the queue check can FAIL", len(queue_problems(fake)) == 1, str(queue_problems(fake)))
+
+
 def main() -> int:
     print("ch4 channel-name labels are PCSEV")
     label_is_pcsev()
@@ -148,6 +174,8 @@ def main() -> int:
     scrub_is_surgical()
     print("the rename survives the quota wait")
     rename_survives_quota()
+    print("the long-form queue stays knowledge-only")
+    queue_is_knowledge()
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} check(s): {', '.join(FAILS)}")

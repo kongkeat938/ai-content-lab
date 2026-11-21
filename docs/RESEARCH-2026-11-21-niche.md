@@ -142,7 +142,7 @@ Measured live from the YouTube Data/Analytics API (not from an article).
    "รวมเรื่องเล่าก่อนนอน 4 เรื่อง ฮีลใจ หลับทันที" 105 นาที 5,113/วัน, นิทานพื้นบ้าน 64-154 นาที
    ล้วนเกิน 4,000 views/วัน → **เรื่องเล่าเป็นแกนได้ ไม่ต้องเป็นการสอน**
 5. **ของเรา**: Shorts ทำ reach ได้จริง (avg view % 46-111%, ~1,000 views/คลิป) แต่ไม่นับชั่วโมง YPP;
-   kongkeat retention ต่ำสุด (avg view % 13-40%) → ยังไม่ควรเพิ่ม cadence ช่องนั้น
+   PCSEV (ch4) retention ต่ำสุด (avg view % 13-40%) → ยังไม่ควรเพิ่ม cadence ช่องนั้น
 
 ## เรื่องใหม่ที่เขียนจากกติกาข้างบน
 

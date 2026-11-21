@@ -4,8 +4,11 @@
 **Goal:** YPP = **1,000 subscribers + 4,000 long-form watch-hours / 12 months**.
 **Steer by:** long-form watch-hours/week + `retention@2min` (Shorts do NOT count toward YPP).
 **Focus:** **dharma** (96% of long-form watch time). **genx** = Shorts engine + subs.
-**kongkeat-story** = ch4, **LIVE** (name **"PCSEV"**, @PCSEV). Paused 2026-11-12, **UNPAUSED
-2026-11-13** on K's order — `content/PAUSED` has no active line.
+**PCSEV** = ch4 (internal slug `kongkeat-story`), **LIVE** (@PCSEV). Paused 2026-11-12,
+**UNPAUSED 2026-11-13** on K's order — `content/PAUSED` has no active line.
+**Direction (measured live 2026-11-21):** เกร็ดความรู้/วิทยาศาสตร์ "ทำไม…" — the 5-step
+P/C/S/E/V explainer, Shorts-first (12/12 newest uploads are `#Shorts`); the family/story genre
+is retired (its 4 long-forms are published and the queue is closed).
 
 > Rule (K, 2026-11-13): **search this map first. If a thing already exists, use it —
 > do not create a second one under a new name.** New file? add it here in the same commit.

@@ -64,8 +64,9 @@
   (`test_subprocess_stdin.py`).
 - **Dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` on 404; exits **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** (`test_rail_channels.py`).
-- **ch4 PIVOT (family → knowledge)**: hook opens a question (`_CURIOSITY`),
-  `content/hooks/knowledge.md`. **TITLE NOT API-settable → K sets it in Studio**; ch4 = **"PCSEV"**.
+- **ch4 = PCSEV = เกร็ดความรู้/วิทยาศาสตร์ "ทำไม"** (Shorts-first, 5 ขั้น P/C/S/E/V; hook =
+  คำถาม `_CURIOSITY`, `content/hooks/knowledge.md`); family/story genre **ปลดระวาง** (คิวปิด).
+  slug ในโค้ดยังเป็น `kongkeat-story`. **TITLE NOT API-settable → K ตั้งใน Studio**.
 - **Angle de-dup floor = 8** (a 3-char floor rejected all Thai runs; `test_angle_pool.py`).
   **One live title = one video**.
 - **Thumb ผิดแนว = สร้างจากเฟรม (การ์ดดำ)** → `--gen-art`.
