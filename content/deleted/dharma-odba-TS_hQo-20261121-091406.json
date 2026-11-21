@@ -1,0 +1,80 @@
+{
+ "kind": "youtube#video",
+ "etag": "eDbmjAPoJBMzN9HlgUByv7w5awU",
+ "id": "odba-TS_hQo",
+ "snippet": {
+  "publishedAt": "2026-11-21T08:43:35Z",
+  "channelId": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "title": "ใจที่สงบ",
+  "description": "ใจที่สงบไม่ได้มาจากการบังคับ แต่มันเกิดจากการที่เราเลิกต่อสู้กับความคิด นั่งลงฟังเพียงลมหายใจ #ธรรมะ #สมาธิ #ปล่อยวาง",
+  "thumbnails": {
+   "default": {
+    "url": "https://i9.ytimg.com/vi/odba-TS_hQo/default.jpg?sqp=COi_hdgG&rs=AOn4CLB4NCg_3VGxgCTr8dGjwi-xy-UqAA",
+    "width": 120,
+    "height": 90
+   },
+   "medium": {
+    "url": "https://i9.ytimg.com/vi/odba-TS_hQo/mqdefault.jpg?sqp=COi_hdgG&rs=AOn4CLDZ43HX5QBYRhMNPPEFOIbLDFv-yg",
+    "width": 320,
+    "height": 180
+   },
+   "high": {
+    "url": "https://i9.ytimg.com/vi/odba-TS_hQo/hqdefault.jpg?sqp=COi_hdgG&rs=AOn4CLDEPa4EePs_s_RvxRLH4WVWnDkU1A",
+    "width": 480,
+    "height": 360
+   },
+   "standard": {
+    "url": "https://i9.ytimg.com/vi/odba-TS_hQo/sddefault.jpg?sqp=COi_hdgG&rs=AOn4CLDdeaI8XRgT5IEZH72pVcqgQf5Csw",
+    "width": 640,
+    "height": 480
+   },
+   "maxres": {
+    "url": "https://i9.ytimg.com/vi/odba-TS_hQo/maxresdefault.jpg?sqp=COi_hdgG&rs=AOn4CLAl_BYXDRFiOfgihF7zWtF-5KLhTg",
+    "width": 1280,
+    "height": 720
+   }
+  },
+  "channelTitle": "Farmmer — ธรรมะก่อนนอน",
+  "tags": [
+   "ธรรมะ",
+   "นอนหลับ",
+   "ปล่อยวาง",
+   "สมาธิ",
+   "ใจสงบ"
+  ],
+  "categoryId": "22",
+  "liveBroadcastContent": "none",
+  "defaultLanguage": "th",
+  "localized": {
+   "title": "ใจที่สงบ",
+   "description": "ใจที่สงบไม่ได้มาจากการบังคับ แต่มันเกิดจากการที่เราเลิกต่อสู้กับความคิด นั่งลงฟังเพียงลมหายใจ #ธรรมะ #สมาธิ #ปล่อยวาง"
+  },
+  "defaultAudioLanguage": "th"
+ },
+ "contentDetails": {
+  "duration": "PT20S",
+  "dimension": "2d",
+  "definition": "hd",
+  "caption": "false",
+  "licensedContent": false,
+  "contentRating": {},
+  "projection": "rectangular",
+  "hasCustomThumbnail": false
+ },
+ "status": {
+  "uploadStatus": "processed",
+  "privacyStatus": "private",
+  "license": "youtube",
+  "embeddable": true,
+  "publicStatsViewable": true,
+  "madeForKids": false,
+  "selfDeclaredMadeForKids": false
+ },
+ "statistics": {
+  "viewCount": "0",
+  "likeCount": "0",
+  "dislikeCount": "0",
+  "favoriteCount": "0",
+  "commentCount": "0"
+ }
+}
