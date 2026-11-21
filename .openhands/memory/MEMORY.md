@@ -72,7 +72,7 @@
   `matches_live()` correlates.
 - **Animated still LOOK must match the story**: `make_motion_short.py` layers by `genre`; ship
   via `publish_motion.py` (**`motion-<id>`**, story ids collide with the pool's).
-- **AI gen LOCAL, no quota**: SD-Turbo 640→RealESRGAN×4 (**`spandrel`**) =2560; MusicGen; detail gate = ratio vs bicubic of the SAME frame (≥1.15×). `topics/06`.
+- **AI gen LOCAL**: `parallel_pipeline.py art|clips`→`publish_motion.py` (gate `verify_short`); SD-Turbo→RealESRGAN×4; `topics/06`, MAP §3.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.

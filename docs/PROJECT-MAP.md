@@ -59,13 +59,22 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   Guard `scripts/test_ch4_channel_name.py` (fails if a rail would write the retired name back).
 - Measured history: `docs/STATUS-<date>.md`, `docs/counters.jsonl` (the counter), `docs/HEALTH.md`.
   Latest: `docs/STATUS-2026-11-20.md` (loudness fix closed + why the motion clips wait: cap 3/3).
-- **Two systems, one handoff folder** (2026-11-19): `scripts/generative_art.py` renders pictures on
-  PC1 into a library (`scripts/art_library.py` reads that library over HTTP); `scripts/parallel_pipeline.py`
-  builds clips from those pictures and **gates every clip through `short_standard.verify_short`** —
-  the same gate the upload rail uses — so a substandard clip is never reported as built. The systems
-  touch only through the pool directory; `test_parallel_pipeline.py` proves it by blocking the renderer
-  import. One claim path: `make_short.ledger_lock` (exclusive lock; `library_art` and
-  `parallel_pipeline._claim` both use it) — without it two builders take one picture.
+- **THE NEW SYSTEM — A/B generative-art → parallel-pipeline (2026-11-19; the newest production
+  system — search here first, do NOT rebuild it under a new name).**
+  - **A (render):** `python3 scripts/parallel_pipeline.py art --pool work/pool --count N` →
+    `scripts/generative_art.py` (SD-Turbo 640→RealESRGAN×4 via `spandrel`) writes PNGs into the pool.
+    Runs on PC1 **or** this pod (needs `torch`/`diffusers`/`spandrel`).
+  - **B (build):** `python3 scripts/parallel_pipeline.py clips --pool work/pool --stories content/motion/*.json`
+    → claims a picture (never twice; `make_short.ledger_lock`) and builds a clip via `make_short` **with
+    music**, gated through `short_standard.verify_short` (the same gate as upload). Reads `library_art`
+    over HTTP (`ART_LIBRARY_URL`) when the pool is empty.
+  - **Upload:** `publish-motion.yml` (`publish_motion.py`) ships an animated-still Short through the same
+    gates (cap, gap, `short_standard`, bed ledger, `motion-<id>` namespacing).
+  - **Proof it is decoupled:** `test_parallel_pipeline.py` blocks the renderer import → clips still build 4/4.
+  - **Live state (2026-11-21):** pool empty; `torch`/`diffusers`/`spandrel` NOT installed in this pod;
+    PC1 not drivable from the pod (tailnet NXDOMAIN, no `PC1_MCP_TOKEN`); `ART_LIBRARY_URL` unset.
+    → to build clips now: install the renderer deps here, bring PC1 up, or supply `ART_LIBRARY_URL`.
+    Stories ready: `content/motion/01-04.json` (dharma×2, genx, knowledge).
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
 - **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
