@@ -1,9 +1,0 @@
-Gemini reviewer evaluation for `longform_clip.py`:
-
-1. **Secret/PII check**: Clean. No secrets, hardcoded credentials, or personally identifiable information are present.
-2. **Subprocess stdin closure**: Checked. The subprocess call to `clip_standard.py` explicitly uses `stdin=subprocess.DEVNULL`. Internal FFmpeg/helper commands rely on `sc.ff`, which correctly inherits or handles execution safely within the standard library framework.
-3. **No silent skip (Fail loudly)**: Checked. The script validates `if len(prompts) < 2 or not lines: sys.exit(...)` and delegates robust scene generation and narration creation to `standard_clip` (`sc.gen_scenes`, `sc.narrate`), failing loudly if assets are missing.
-4. **Approved standard**: Checked. Uses 720p output via zoompan/scale specs, `setparams=range=tv,format=yuv420p`, BT.709 color matrix flags (`-colorspace bt709`, etc.), two-pass -14 LUFS mixing via `sc.mix`, and gates the final output through `clip_standard.py`.
-5. **Music looping**: Checked. The music track uses `-stream_loop -1` combined with `-t f"{total}"` to perfectly match the full narration duration without premature silence.
-
-คำตัดสิน: APPROVE

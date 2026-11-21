@@ -21,14 +21,13 @@
   (`counter_ledger.py`).
 - **Times to K = Thai (UTC+7) `HH:MM`**. `PROGRESS.md` ← `watch_hours.json`.
 - **"แยกไม่ได้" ≠ "ผิด":** quota-dead identity check → **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
-- **An LLM is not a primary source** — read the vendor's rule or measure live. **Panel = Gemini
-  ALONE** (K, 2026-11-18); **when stuck, FOLLOW Gemini** (`test_advise_panel.py`). **PC1 = ak's
+- **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** via `winremote` (`topics/03`).
-- **งานไม่ผ่าน Gemini = K ห้ามอัพ** (2026-11-19): โค้ดทุกไฟล์ต้องมี APPROVE ใน
-  `docs/reviews/ledger.json` (digest = ที่ Gemini เห็น; แก้ 1 ไบต์ = stale; baseline = **หนี้**).
+- **Gemini ออกจากระบบตรวจแล้ว (K, 2026-11-21)** — ledger/`docs/reviews/`/auto-fix ถูกลบ;
+  มาตรฐาน = gate ที่ FAIL ได้ + วัดสด; **K คนเดียวอนุมัติปล่อย**.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
-- **Veto test injects the fix seam** (`apply_qa_gate(fix=)`). **อ่าน Gemini = join ทุก `content.parts`** (`gemini_text.text_of`).
+- **Veto test injects the fix seam** (`apply_qa_gate(fix=)`).
 - **Pod env:** recycled → `ffmpeg` + `pip -r requirements.txt`; `GH_TOKEN=$KONGKEAT_GH_TOKEN`;
   push 403 → `x-access-token:` URL; suite = every `test_*.py`. **งานต้องออกจาก pod** = `durability_guard.py` (dirty/unpushed → FAIL) + `restore_env.sh` (AI libs). **Set the union driver before
   `git pull`** and **`--unshallow` before reading ahead/behind** (`topics/05`).

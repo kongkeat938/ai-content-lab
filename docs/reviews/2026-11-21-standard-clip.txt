@@ -1,9 +1,0 @@
-Gemini code reviewer checking `ai-content-lab` against K's rules:
-
-1. **No committed secret/PII**: Checked. No hardcoded tokens, passwords, or personal info found.
-2. **Every subprocess closes stdin (`stdin=subprocess.DEVNULL`)**: Checked. All instances of `subprocess.run` explicitly include `stdin=subprocess.DEVNULL`.
-3. **No silent skip -- a missing piece must fail loudly**: Checked. Missing specifications, audio tracks, or frames raise exceptions or exit with non-zero status codes.
-4. **The clip meets the approved standard (720p, two-pass -14 LUFS, gated by clip_standard)**: Checked. `standard_clip.py` builds the required 720p 16:9 yuv420p video, runs two-pass loudness adjustment targeting -14 LUFS, and validates via `clip_standard.verify_clip`.
-5. **No reliance on ephemeral pod state**: Checked. Weights download if missing, and paths are handled cleanly using relative paths from repository root or temporary directories.
-
-คำตัดสิน: APPROVE

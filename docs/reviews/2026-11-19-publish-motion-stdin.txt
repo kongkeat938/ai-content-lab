@@ -1,6 +1,0 @@
-CANARY:
-`        r = subprocess.run(cmd, capture_output=True, text=True,`
-`                           stdin=subprocess.DEVNULL)`
-String occurs 5 times in the file.
-
-APPROVE WITH CHANGES

@@ -1,4 +1,0 @@
-- Line: `        capture_output=True, text=True, stdin=subprocess.DEVNULL)`
-- Count: 2
-
-APPROVE

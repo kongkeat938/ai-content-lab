@@ -1,3 +1,6 @@
+> **RETIRED (K, 2026-11-21):** "Gemini ลบไปเลย ไม่ต้องใช้ระบบนี้มาตรวจแล้ว" — the review
+> ledger / auto-fix described here is deleted. Kept as history only.
+
 # คุณภาพเท่า Gemini — ทุกอย่างฟรี (K, 2026-11-18)
 
 คำถาม K: *"ทำยังไงให้ได้คุณภาพเหมือน gemini ทุกอย่างฟรี"*

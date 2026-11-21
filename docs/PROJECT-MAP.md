@@ -93,26 +93,22 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
 - **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
   packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`.
-- **Quality = Gemini (free):** the panel is Gemini alone (K, 2026-11-18). A build that FAILS a gate
-  is handed to Gemini for a fix (`scripts/fix_with_gemini.py`, wired into `qa_gate` veto and
-  `short_standard` hold; it never clears the gate). Free stack + limits: `docs/QUALITY-FREE-2026-11-18.md`.
-- **One reader for a Gemini reply:** `scripts/gemini_text.text_of` joins EVERY `content.parts`
-  entry — a reply can arrive split in two, and `parts[0]` alone cuts mid-word while the API still
-  says `finishReason: STOP` (measured 2026-11-18; guard `scripts/test_gemini_text.py` sweeps the
-  source). Every `ask_gemini`-style call site imports it.
+- **Quality = measured gates only** (K, 2026-11-21: Gemini ออกจากระบบตรวจแล้ว). No review
+  ledger, no panel verdict, no auto-fix. A gate that can FAIL + a live measurement is the
+  whole bar; **K alone approves a publish**. `scripts/advise.py`/`team.py` = optional
+  drafting help, never an approval step.
+- **Long clip → Short with a link (K, 2026-11-21):** `scripts/shorts_from_long.py` cuts a
+  45-46 s vertical from a finished long clip (16:9 floats on its own blurred copy; Thai text
+  burned through **libass** — this ffmpeg has no `drawtext`), gates it with `short_standard`,
+  then `--upload` posts it public with the **long URL in the description** (a Short has no
+  clickable link) and records it in `content/<ch>_shorts.json` + `upload_log.json`.
 - **Vision quality check (manual, NEVER gates CI):** `scripts/grade_video_vision.py` samples N
   frames across a finished file and asks Gemini for a 0-10 rubric score. It is non-deterministic
   (measured 2026-11-17: the same cut scored 9 then 5/10), so a human/agent reads it — no workflow
   calls it (guard `scripts/test_vision_grader.py` fails if a rail wires it in).
-- **Gemini review ledger (K, 2026-11-19):** *"งานที่ไม่ผ่านการตรวจจาก gemini — K ห้ามอัพ"*. Every
-  code change (`scripts/*.py`, `.github/workflows/*.yml`) must carry a recorded Gemini APPROVE in
-  `docs/reviews/ledger.json`; the verdict text is the evidence file it points at. The entry stores
-  the sha256 the reviewer saw, so editing an approved file makes it **stale → re-review**, and
-  editing a **baseline** file (one that predates the rule) drops its exemption. `approved` and
-  `baseline` are never the same thing: baseline is **visible debt**, not permission.
-  `scripts/review_ledger.py --status` prints `approved N / baseline M` every CI run;
-  guard `scripts/test_review_ledger.py` proves 14 failure paths. Never edit an evidence file to
-  make it read APPROVE — ask Gemini again.
+- **No reviewer in the loop (K, 2026-11-21):** *"Gemini ลบไปเลย ไม่ต้องใช้ระบบนี้มาตรวจแล้ว"* —
+  the review ledger, its `docs/reviews/` evidence and the Gemini auto-fix are **deleted**.
+  A gate that can FAIL + a live measurement is the bar; **K alone approves a publish**.
 - **Not a place for truth:** a new file with a `b/c/d` suffix. Extend the dated file instead.
 
 ## 4) Conventions (K's rules, measured)

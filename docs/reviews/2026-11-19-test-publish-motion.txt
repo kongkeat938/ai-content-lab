@@ -1,7 +1,0 @@
-ก) `PS.uploads_in_last_24h = lambda c, m: 0` และ `PS.hours_since_last_upload = lambda c, m: None` (รวมถึงกรณีที่เซ็ตค่า `PS.DAILY_CAP` และ `PS.MIN_GAP_HOURS / 2`)
-
-ข) ตรวจสอบว่า `key` ที่ใช้บันทึกสตอรี่ (ที่แปลงร่างเป็น `PM.record_key(...)`) ไม่มีอยู่ซ้ำซ้อนใน `pool` และ `manifest` ของช่องนั้นๆ เพื่อป้องกันการเขียนทับ ID ที่ไลฟ์อยู่จริง
-
-ค) `check(0 <= i_std < i_ins, "standard gate runs before videos().insert", f"std@{i_std} insert@{i_ins}")`
-
-คำตัดสิน: APPROVE

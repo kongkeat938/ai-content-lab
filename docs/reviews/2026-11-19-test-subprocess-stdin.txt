@@ -1,7 +1,0 @@
-(a) `for path in sorted(glob.glob(os.path.join(ROOT, "**", "*.py"), recursive=True)):`
-(b) `if n > allowed:`
-(c) Since the file is brand new, it is not in the baseline `debt` dict. Therefore, `debt.get(name, 0)` returns `0`. If it contains one bare call, `n` is `1`. The comparison `1 > 0` is true, so it gets added to `fails` and causes the guard test to fail.
-
-REMAINING CONCRETE DEFECTS: None. The implementation correctly handles AST parsing, aliasing, recursion, filtering of hidden/test paths, and enforces the ratchet.
-
-APPROVE

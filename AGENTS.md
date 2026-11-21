@@ -58,17 +58,18 @@ ak has a **team that does the work, not just advice** (`scripts/team.py`): `rese
 Hand a worker a task and use the artifact: `python3 scripts/team.py run packager "..."`.
 The decision panel stays separate (`advise.py`). Guard `scripts/test_team.py`.
 
-## The advisor is Gemini alone (K, 2026-11-18)
-**ทีมที่ปรึกษา = Gemini คนเดียวพอ** (`scripts/advise.py`; one vendor, one call). The old
-five-voice / two-vendor rule is retired. **เมื่อติดปัญหา ให้ทำตามคำสั่งและคำแนะนำของ Gemini**
--- its advice is binding, not one voice among many. Guard `scripts/test_advise_panel.py`
-fails if a default panel grows a second vendor or loses Gemini.
+## Gemini is out of the gate (K, 2026-11-21)
+**"Gemini ลบไปเลย ไม่ต้องใช้ระบบนี้มาตรวจแล้ว"** — the Gemini review ledger, the approval
+rule ("งานไม่ผ่าน Gemini = ห้ามอัพ"), and the Gemini auto-fix are **removed**. There is no
+panel verdict to wait for: a build that passes a gate that can FAIL (measured live) is done.
+**Only K approves a publish.** `scripts/advise.py` / `scripts/team.py` still exist as
+optional drafting help but are **not** an approval step.
 
 ## Decide without waiting (K, 2026-11-11)
-Take a decision to the **panel** (Gemini, `scripts/advise.py`), not to K: presence of mind →
-order the events → find the causes → weigh pros/cons and the effect on the goal → ask Gemini →
-**follow Gemini's advice** → act. Escalate only a genuine human-at-a-browser unknown (e.g.
-OAuth re-consent). Prefer a reversible move (private) over an irreversible one (delete).
+Make the technical decision yourself: presence of mind → order the events → find the causes →
+weigh pros/cons against the goal → act → verify live. Escalate only a genuine
+human-at-a-browser unknown (e.g. OAuth re-consent). Prefer a reversible move (private) over an
+irreversible one (delete).
 
 ## Pod environment
 Recycled often: reinstall `ffmpeg` + `pip install -r requirements.txt` each session; re-export
