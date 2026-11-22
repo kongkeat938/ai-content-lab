@@ -23,18 +23,21 @@
   output file (ffprobe/ebur128) > a test that can FAIL > a doc**. Best = a **counter with an invariant**
   (`counter_ledger.py`).
 - **Times to K = Thai (UTC+7) `HH:MM`**; `PROGRESS.md` ← `watch_hours.json`.
-- **"แยกไม่ได้" ≠ "ผิด":** quota-dead identity check → **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
+- **"แยกไม่ได้" ≠ "ผิด":** quota-dead check → **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** via `winremote` (`topics/03`).
-- **Gemini ออกจากระบบตรวจแล้ว + K ยกเลิกการรออนุมัติ (2026-11-21)** — ledger/`docs/reviews/`
-  ถูกลบ; **ak อัพเองได้ทุกเมื่อที่ gate ผ่าน** (`test_upload_autonomy.py`); gate/cap/cadence ยังผูก.
+- **ak อัพเองได้เมื่อ gate ผ่าน** (2026-11-21) — ไม่มี ledger/รออนุมัติ; gate/cap/cadence ยังผูก.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
 - **Veto test injects the fix seam** (`apply_qa_gate(fix=)`).
-- **Pod env:** recycled → `ffmpeg` + `pip -r requirements.txt`; `GH_TOKEN=$KONGKEAT_GH_TOKEN`;
-  push 403 → `x-access-token:` URL; suite = every `test_*.py`; **งานต้องออกจาก pod** =
-  `durability_guard.py` + `restore_env.sh`; union driver before `git pull`, `--unshallow` before
-  ahead/behind (`topics/05`).
+- **Pod env:** recycled → `pip -r requirements.txt`; no root → `pip install static-ffmpeg` then copy
+  ffmpeg+ffprobe to `~/.local/bin` and prepend it to `PATH`; **a secret is injected only if its NAME
+  appears in the command** (`YT_CH4_REFRESH_TOKEN="$YT_CH4_REFRESH_TOKEN"`) — else "Missing
+  credentials"; `git` identity resets too. `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 →
+  `x-access-token:` URL; suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` +
+  `restore_env.sh`; union driver before `git pull`, `--unshallow` before ahead/behind (`topics/05`).
+- **Advisors:** `council3.py` + `advise.py` + `team.py`. วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations`
+  (อีก 3 ค่ายไม่มี route) → quorum ล้มให้ retry 1 ครั้ง แล้ว `--vendors gemini,pollinations`.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
@@ -44,10 +47,9 @@
 - **Quota:** `videos.insert` own pool; reset 08:00 UTC; token push ≠ run.
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
-- **Long-form rails:** `skip` ≠ `skip_pub`; empty receipt ≠ bad video; gate before queue; hook cap
-  220; never downgrade a LIVE entry. **Theme ROTATES per-RUN count, NEVER `date +%V`**. **Backfill
-  `7/n+1` needs EVENLY spaced crons**. **Approved-standard clip = `longform-standard.yml`** (CI,
-  never uploads; a pod render dies ~19 min in).
+- **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
+  entry; theme rotates per RUN count; backfill needs evenly spaced crons. **A pod render dies ~19 min
+  in → approved clip = `longform-standard.yml`** (CI, never uploads).
 - **GitHub cron** fires 23/100 but late; foreman backfill = truth. **All rails can be `disabled_manually`
   at once (no `content/STOP`)** → measure `actions/workflows` first, re-enable + dispatch `watchdog`.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
@@ -70,10 +72,8 @@
 - **Angle de-dup floor = 8** (a 3-char floor rejected all Thai runs; `test_angle_pool.py`).
   **One live title = one video**.
 - **Thumb ผิดแนว = สร้างจากเฟรม (การ์ดดำ)** → `--gen-art`.
-- **A truthy thumb URL ≠ our image set**: YT serves `maxresdefault` for an AUTO frame too;
-  `matches_live()` correlates.
-- **Animated still LOOK must match the story**: `make_motion_short.py` layers by `genre`; ship via
-  `publish_motion.py` (**`motion-<id>`**; story ids collide with the pool's).
+- **Thumb URL ≠ ของเรา** (AUTO frame ก็ได้ `maxresdefault`) → เช็ค 8×8 diff (`matches_live()`).
+- **Animated still ต้องตรงเรื่อง**: `make_motion_short.py` แยกตาม `genre`; ส่ง `publish_motion.py` (`motion-<id>`).
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
