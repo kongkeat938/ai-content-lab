@@ -109,5 +109,7 @@ human-at-a-browser unknown (e.g. OAuth re-consent). Prefer a reversible move (pr
 irreversible one (delete).
 
 ## Pod environment
-Recycled often: reinstall `ffmpeg` + `pip install -r requirements.txt` each session; re-export
-`GH_TOKEN` (`KONGKEAT_GH_TOKEN`). Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.
+Recycled often: reinstall `ffmpeg` + `pip install -r requirements.txt` each session. **Push with
+`python3 scripts/gh_auth.py push`** — it restores the credential from the KV vault, because
+`GITHUB_TOKEN` is read-only, the classic PAT is revoked, and `gh` hands git the read-only env token
+first (403 "denied to kongkeat938"). Full suite: `for t in scripts/test_*.py; do python3 "$t"; done`.

@@ -26,6 +26,12 @@ is retired (its 4 long-forms are published and the queue is closed).
 > an untracked vault/queue; `scripts/restore_env.sh` reinstalls the AI libs after a recycle
 > (weights download on first use, so nothing big lives only in the pod). Test proves it can fail.
 
+> **GitHub push needs no human (2026-11-22):** `scripts/gh_auth.py status|setup|push` restores the
+> credential from the KV vault (`ak.github.token`) with `OPENHANDS_API_KEY` alone — `GITHUB_TOKEN`
+> is read-only and the classic PAT was revoked. Push through it, not raw `git push`: `gh` hands
+> git the read-only env token first (403 "denied to kongkeat938"). Revoke the grant at GitHub →
+> Settings → Applications → Authorized OAuth Apps → gh CLI.
+
 ---
 
 ## 1) The rails that matter (34 workflows; the ones driving the goal)
