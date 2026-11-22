@@ -111,7 +111,7 @@ def setup() -> int:
         print(f"{source} token rejected by GitHub ({status}) -- cannot push")
         return 1
     repo = subprocess.run(["git", "remote", "get-url", "origin"], cwd=ROOT,
-                          capture_output=True, text=True).stdout.strip()
+                          capture_output=True, text=True, stdin=subprocess.DEVNULL).stdout.strip()
     slug = repo.split("github.com/")[-1].removesuffix(".git") if "github.com/" in repo else ""
     perm = {}
     if slug:
@@ -124,7 +124,7 @@ def setup() -> int:
     subprocess.run(["git", "config", "--local", "credential.helper",
                     '!f() { echo username=x-access-token; '
                     'echo "password=$(cat $HOME/.config/gh/token)"; }; f'],
-                   cwd=ROOT, check=True)
+                   cwd=ROOT, check=True, stdin=subprocess.DEVNULL)
     print(f"credential ready | {who.get('login')} | source {source} | "
           f"push={perm.get('push')} admin={perm.get('admin')}")
     if not perm.get("push"):
@@ -135,7 +135,8 @@ def setup() -> int:
 
 def push() -> int:
     env = {k: v for k, v in os.environ.items() if k not in SHADOWING}
-    r = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, env=env)
+    r = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, env=env,
+                       stdin=subprocess.DEVNULL)
     return r.returncode
 
 

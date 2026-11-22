@@ -11,6 +11,7 @@ broken spec through the same checks.
 """
 from __future__ import annotations
 
+import glob
 import json
 import os
 import sys
@@ -25,7 +26,37 @@ MAX_TITLE = 95
 MAX_HOOK = 220
 
 
+def _compilation_problems(spec: dict, titles: set[str], name: str) -> list[str]:
+    """A compilation reads `parts_dir` + `topics`, not `narration`/`prompts`."""
+    out = []
+    for key in ("channel", "title", "subtitle", "parts_dir", "topics"):
+        if not spec.get(key):
+            out.append(f"{name}: missing '{key}'")
+    if out:
+        return out
+    parts = sorted(glob.glob(os.path.join(ROOT, spec["parts_dir"], "*.txt")))
+    if not parts:
+        out.append(f"{name}: parts_dir {spec['parts_dir']} holds no .txt part")
+    elif len(parts) != len(spec["topics"]):
+        out.append(f"{name}: {len(parts)} part file(s) for {len(spec['topics'])} topics -- "
+                   f"a dropped part must FAIL, never ship a partial set")
+    for part in parts:
+        text = open(part, encoding="utf-8").read()
+        if not text.strip():
+            out.append(f"{name}: {os.path.basename(part)} is empty")
+        elif any(c.isascii() and c.isalpha() for c in text):
+            out.append(f"{name}: Latin letters in {os.path.basename(part)}")
+    if len(spec["title"]) > MAX_TITLE:
+        out.append(f"{name}: title is {len(spec['title'])} chars (max {MAX_TITLE})")
+    if spec["title"] in titles:
+        out.append(f"{name}: title duplicates another live spec -- one live title, one video")
+    titles.add(spec["title"])
+    return out
+
+
 def problems(spec: dict, titles: set[str], name: str) -> list[str]:
+    if spec.get("parts_dir"):
+        return _compilation_problems(spec, titles, name)
     out = []
     for key in ("channel", "title", "subtitle", "narration", "prompts"):
         if not spec.get(key):
@@ -83,6 +114,14 @@ def main() -> int:
     caught = problems(broken, set(), "broken-copy")
     if len(caught) < 4:
         print(f"FAIL: the guard let a broken spec through ({caught})")
+        return 1
+
+    # The compilation branch must be able to FAIL: one topic with no part file.
+    broken_comp = {"channel": "kongkeat", "title": "t", "subtitle": "s",
+                   "parts_dir": "content/standard/kongkeat_long_01",
+                   "topics": ["a", "b", "c"]}
+    if not any("part file(s)" in c for c in problems(broken_comp, set(), "broken-comp")):
+        print("FAIL: a compilation with a dropped part was not caught")
         return 1
     print(f"OK: {len(names)} spec(s) renderable, titles unique, and the guard rejects "
           f"{len(caught)} faults in a broken copy")

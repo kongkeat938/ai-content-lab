@@ -101,7 +101,7 @@ PALETTES = {
 
 
 def run(cmd: list) -> None:
-    subprocess.run(cmd, check=True, capture_output=True)
+    subprocess.run(cmd, check=True, capture_output=True, stdin=subprocess.DEVNULL)
 
 
 def sha(data: bytes) -> str:
@@ -300,7 +300,8 @@ def probe(path: str) -> dict:
     out = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries",
          "format=duration:stream=codec_type,width,height,pix_fmt,color_range,r_frame_rate",
-         "-of", "json", path], capture_output=True, text=True, check=True).stdout
+         "-of", "json", path], capture_output=True, text=True, check=True,
+        stdin=subprocess.DEVNULL).stdout
     d = json.loads(out)
     v = next((s for s in d["streams"] if s["codec_type"] == "video"), {})
     return {"duration": float(d["format"]["duration"]),
@@ -313,7 +314,7 @@ def loudness(path: str) -> tuple:
     out = subprocess.run(
         ["ffmpeg", "-hide_banner", "-nostats", "-i", path, "-map", "0:a:0",
          "-af", "ebur128=peak=true", "-f", "null", "-"],
-        capture_output=True, text=True).stderr
+        capture_output=True, text=True, stdin=subprocess.DEVNULL).stderr
     tail = out.split("Summary:")[-1]
     i = re.search(r"I:\s*(-?\d+\.\d+)\s*LUFS", tail)
     p = re.search(r"Peak:\s*(-?\d+\.\d+)\s*dBFS", tail)

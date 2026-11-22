@@ -43,7 +43,7 @@
   `build_night.py` เจอบทเคยออกอากาศ = **exit 3**; guard `test_content_no_repeat.py`. AI gen ล่ม → procedural.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS**: `ax-workspace` (disabled); **rogue-guard hid 6 of our fresh clips** (manifests
+- **"Rogue" = OURS**: `ax-workspace` auto-shorts (disabled); **rogue-guard hid 6 of our fresh clips** (manifests
   unpushed) → hide only on RSS-confirm or 24 h; `keep_clips_live.py` restores. **`videos.update` REPLACES
   the whole `snippet`/`status`**. `topics/05`.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.

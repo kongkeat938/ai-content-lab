@@ -66,9 +66,15 @@ def main() -> int:
     ac._comment_hidden = lambda newly: comments.append(newly)
 
     report = {"kongkeat-story": {"channel": {"id": "UC4"}, "defects": [LIVE, OLD]}}
+    ledger = tmp / "content" / "rogue_hidden.json"
     try:
-        ac.hide_live_rogue(report)
+        # 2026-11-22: a clip must be CONFIRMED rogue before it is hidden -- the
+        # guard hid six of our own fresh uploads because a manifest lagged.
+        ac.hide_live_rogue(report, ledger_path=str(ledger))
+        if [x for x in log if x[0] == "update"]:
+            fail("an unconfirmed fresh clip was hidden; a lagging manifest is not evidence")
 
+        ac.hide_live_rogue(report, confirmed={"ROGUE1"}, ledger_path=str(ledger))
         updates = [x for x in log if x[0] == "update"]
         if len(updates) != 1 or updates[0][1] != "ROGUE1":
             fail(f"expected exactly one update for ROGUE1, got {updates}")
@@ -86,7 +92,7 @@ def main() -> int:
             fail("the take-down was not reported on the alert issue")
 
         # Idempotent: a second run must not re-hide or re-append.
-        ac.hide_live_rogue(report)
+        ac.hide_live_rogue(report, confirmed={"ROGUE1"}, ledger_path=str(ledger))
         if len([x for x in log if x[0] == "update"]) != 1:
             fail("a re-run re-hid an already-hidden clip; the ledger is not respected")
         led2 = json.load(open(tmp / "content" / "rogue_hidden.json", encoding="utf-8"))
