@@ -22,7 +22,7 @@
 - **PCSEV = Problem→Cause→Solution→Execute→Verify.** Verify **live**; trust **live API >
   output file (ffprobe/ebur128) > a test that can FAIL > a doc**. Best = a **counter with an invariant**
   (`counter_ledger.py`).
-- **Times to K = Thai (UTC+7) `HH:MM`**; `PROGRESS.md` ← `watch_hours.json`.
+- **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
 - **"แยกไม่ได้" ≠ "ผิด":** quota-dead check → **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** via `winremote` (`topics/03`).
@@ -37,8 +37,9 @@
 - **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations` →
   quorum ล้มให้ retry 1 ครั้ง (`--vendors gemini,pollinations`).
 
-- **MV:** ภาพใหม่ทุกคลิป, stamp `content/art_ledger_mv.json` (`make_mv.py`+`mv_run.py`); sha ซ้ำ = FAIL
-  (`test_mv_fresh_art.py`); AI gen ล่ม (429/503) → procedural art.
+- **MV:** ภาพใหม่ทุกคลิป, stamp `content/art_ledger_mv.json` (`make_mv.py`+`mv_run.py`); sha ซ้ำ = FAIL;
+  arc 6 แบบ + เพลงห้ามซ้ำในช่อง. **เนื้อเรื่อง:** `content/content_ledger.json` (parts sha/เพลง/arc/ชื่อ) —
+  `build_night.py` เจอบทเคยออกอากาศ = **exit 3**; guard `test_content_no_repeat.py`. AI gen ล่ม → procedural.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
@@ -49,21 +50,18 @@
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
-  entry; theme rotates per RUN count; backfill needs evenly spaced crons. **A pod render dies ~19 min
-  in → approved clip = `longform-standard.yml`** (CI, never uploads).
+  entry; theme rotates per RUN count. **A pod render dies ~19 min in → `longform-standard.yml`** (CI).
 - **GitHub cron** fires 23/100 but late; foreman backfill = truth; rails can be `disabled_manually`
   → measure `actions/workflows` before trusting "it runs".
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar, ALL channels**: 1080p crf18, tv/bt709, -14 LUFS, clean grade,
   floating Thai text, 1.06x lanczos; **ONE grade source `video_grade.py`** (`setparams=range=tv`).
-- **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920,
-  yuv420p tv/bt709, -14 LUFS, ≤60 s, + 9:16 thumb (≥640, <2 MB); `publish_shorts.py` gates every
-  upload. **`alimiter` limits SAMPLE peak → true peak plateaus above it**: `TP_WAV` = gate − AAC
+- **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920 tv/bt709,
+  -14 LUFS, ≤60 s, 9:16 thumb; `publish_shorts.py` gates every upload. **`alimiter` limits SAMPLE peak → true peak plateaus above it**: `TP_WAV` = gate − AAC
   overshoot, never `TP+0.3` (`test_short_loudness.py`).
 - **Vision grader NON-DETERMINISTIC**: judge by metrics, never CI.
-- **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`. **A stale tree fakes "missing"**
-  (`git fetch` first). **ffmpeg/git inherit stdin → SIGTTIN freezes** → `stdin=DEVNULL`
-  (`test_subprocess_stdin.py`).
+- **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; a stale tree fakes "missing"
+  (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`.
 - **Dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` on 404; exits **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** (`test_rail_channels.py`).
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); family genre ปลดระวาง;

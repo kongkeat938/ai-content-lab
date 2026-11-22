@@ -578,6 +578,34 @@
       "video_id": "rkvLICChhaE",
       "url": "https://youtu.be/rkvLICChhaE",
       "thumbnail_set": true
+    },
+    {
+      "key": "mv_2026-11-22_03",
+      "state": "published",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/longform-mv_2026-11-22_03/video.mp4",
+      "thumbnail": "assets/branding/farmmer/thumbs/mv_2026-11-22_03.jpg",
+      "duration_sec": 3600.0,
+      "title": "เพลงกล่อมนอน 1 ชั่วโมง หลับลึก ตื่นมาใจเบา",
+      "description": "เพลงกล่อมนอน 1 ชั่วโมง หลับลึก ตื่นมาใจเบา หลับลึก ตื่นมาใจเบา\n\nไม่มีคำพูด ไม่มีโฆษณา — มีเพียงดนตรีเบา ๆ กับภาพเคลื่อนไหวช้า ๆ 12 ภาพ ที่เปลี่ยนไปเรื่อย ๆ\n\nเปิดฟังได้ทุกเวลา ทั้งก่อนนอน ตอนอ่านหนังสือ ตอนทำงาน หรือตอนต้องการความสงบ\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปใหม่ทุกวัน",
+      "tags": [
+        "เพลงบรรเลง",
+        "ฟังก่อนนอน",
+        "สมาธิ",
+        "ผ่อนคลาย",
+        "ใจสงบ",
+        "ดนตรีบำบัด",
+        "เพลงกล่อมนอน",
+        "ambient",
+        "sleep music",
+        "ธรรมะ"
+      ],
+      "category_id": "10",
+      "privacy": "public",
+      "built": "2026-11-22T08:39+0000",
+      "note": "MV series: fresh sha-stamped art (content/art_ledger_mv.json)",
+      "video_id": "HkFULkG2sRk",
+      "url": "https://youtu.be/HkFULkG2sRk",
+      "thumbnail_set": true
     }
   ]
 }

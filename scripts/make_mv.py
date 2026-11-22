@@ -81,6 +81,18 @@ SCENES = {
 }
 
 
+# A visual story per MV. K's rule covers the CONTENT too: a follower who watches
+# every clip must see something new, so two MVs never share an arc (nor a music
+# bed) on the same channel.
+ARCS = {
+    "dawn-flow": {"pals": ["sand", "ember"], "gens": ["flow", "contour", "moire"]},
+    "water-glass": {"pals": ["teal", "midnight"], "gens": ["truchet", "voronoi", "moire"]},
+    "forest-lines": {"pals": ["sage", "teal"], "gens": ["contour", "dgrowth", "voronoi"]},
+    "night-orbit": {"pals": ["midnight", "violet"], "gens": ["attractor", "harmonograph", "superformula"]},
+    "ember-reaction": {"pals": ["ember", "rose"], "gens": ["reaction", "dgrowth", "flow"]},
+    "ink-mandala": {"pals": ["ink", "violet"], "gens": ["superformula", "harmonograph", "truchet"]},
+}
+
 PALETTES = {
     "dharma": ["midnight", "ink", "violet", "teal"],
     "genx": ["sand", "sage", "ember", "ink"],
@@ -177,13 +189,15 @@ def _img_gemini(prompt: str, seed: int, w: int, h: int) -> bytes | None:
     return None
 
 
-def _img_procedural(mv_id: str, i: int, style: str) -> tuple:
+def _img_procedural(mv_id: str, i: int, style: str, arc: str = "") -> tuple:
     """Generative art: no network, a new picture for every (mv, slot) seed."""
     import io
 
     import generative_art as ga
     names = sorted(ga.GENERATORS)
-    pals = PALETTES.get(style, PALETTES["dharma"])
+    spec = ARCS.get(arc) or {}
+    names = spec.get("gens") or names
+    pals = spec.get("pals") or PALETTES.get(style, PALETTES["dharma"])
     seed = int(hashlib.sha256(f"{mv_id}:proc:{i}".encode()).hexdigest()[:8], 16)
     for attempt in range(6):
         gen = names[(seed + attempt) % len(names)]
@@ -200,7 +214,7 @@ def _img_procedural(mv_id: str, i: int, style: str) -> tuple:
 
 
 def generate_images(mv_id: str, style: str, n: int, out_dir: str, ledger: dict,
-                    source: str = "auto") -> list:
+                    source: str = "auto", arc: str = "") -> list:
     """A fresh picture per slot, or FAIL -- never a picture another MV owns.
 
     Source chain (auto): gemini image -> pollinations -> procedural art. Both AI
@@ -226,7 +240,7 @@ def generate_images(mv_id: str, style: str, n: int, out_dir: str, ledger: dict,
                 data = gen_cover_image.from_pollinations(prompt, seed, W, H, tries=2)
                 used = "pollinations"
             if data is None and source in ("auto", "procedural"):
-                data, extra = _img_procedural(mv_id, i + attempt, style)
+                data, extra = _img_procedural(mv_id, i + attempt, style, arc)
                 used = "procedural"
             if not data:
                 time.sleep(2)
@@ -363,11 +377,30 @@ def main() -> int:
     ap.add_argument("--music", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--work", default=None)
+    ap.add_argument("--arc", default="auto",
+                    help="visual story for this MV; 'auto' picks the first arc the "
+                         "channel has not used")
+    ap.add_argument("--channel", default="dharma")
     ap.add_argument("--resume", action="store_true",
                     help="reuse the images a failed run already stamped")
     ap.add_argument("--source", default="auto",
                     choices=["auto", "gemini", "pollinations", "procedural"])
     a = ap.parse_args()
+
+    import content_ledger as cl
+    used = [rec.get("arc") for rec in cl.load()["videos"].values()
+            if rec.get("channel") == a.channel and rec.get("arc")]
+    if a.arc == "auto":
+        a.arc = next((x for x in ARCS if x not in used), "")
+        if not a.arc:
+            sys.exit("FAIL: every arc is used on this channel; add one to ARCS")
+    elif a.arc in used:
+        sys.exit(f"FAIL: arc {a.arc} already aired on {a.channel}")
+    music_sha = cl.file_sha(os.path.join(ROOT, a.music) if not os.path.isabs(a.music) else a.music)
+    for key, rec in cl.load()["videos"].items():
+        if rec.get("channel") == a.channel and (rec.get("music") or {}).get("sha256") == music_sha:
+            sys.exit(f"FAIL: music bed already used by {key} on {a.channel}")
+    print(f"== arc: {a.arc}")
 
     ledger = load_ledger()
     existing = ledger["mvs"].get(a.mv_id)
@@ -389,7 +422,7 @@ def main() -> int:
         print(f"== images: {a.images} fresh, style {a.style}")
         images = generate_images(a.mv_id, a.style, a.images,
                                  os.path.join(ROOT, "assets", "art", "mv", a.mv_id),
-                                 ledger, source=a.source)
+                                 ledger, source=a.source, arc=a.arc)
     # Stamp the claim before the long render: a crash must not free the images.
     ledger["mvs"][a.mv_id] = {"title": a.title, "style": a.style, "created":
                               time.strftime("%Y-%m-%dT%H:%M:%S%z"), "images": images,
@@ -408,6 +441,8 @@ def main() -> int:
     if v["verdict"] != "pass":
         sys.exit(f"FAIL: {v['failures']}")
 
+    cl.stamp(a.mv_id, a.channel, [], title=a.title, music=a.music, arc=a.arc,
+             kind="music")
     ledger["mvs"][a.mv_id]["video"] = {
         "path": os.path.relpath(a.out, ROOT), "sha256": file_sha(a.out),
         "duration": v["duration"], "lufs": v["lufs"], "true_peak": v["true_peak"]}

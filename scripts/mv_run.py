@@ -150,6 +150,10 @@ def main() -> int:
                         "at": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "channel": a.channel}
     with open(LEDGER, "w", encoding="utf-8") as fh:
         json.dump(ledger, fh, ensure_ascii=False, indent=2)
+    import content_ledger as cl
+    arc = cl.load()["videos"].get(p["mv_id"], {}).get("arc", "")
+    cl.stamp(p["mv_id"], a.channel, [], title=p["title"], music=p["music"], arc=arc,
+             url=rec["published"].get("url", ""), kind="music")
     print(f"LIVE: {rec['published']['url']}")
     return 0
 

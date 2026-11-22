@@ -1,0 +1,308 @@
+{
+  "version": 1,
+  "videos": {
+    "night_90_2026-11-22": {
+      "channel": "dharma",
+      "kind": "narration",
+      "title": "ธรรมะก่อนนอน 90 นาที ปล่อยวางความกังวล หลับลึกถึงเช้า จิตสงบผ่อนคลาย",
+      "url": "https://youtu.be/Is-VYMhhPvc",
+      "parts": [
+        {
+          "id": "01_open.txt",
+          "sha256": "c3855781ddee626bfe09c1f0082f7f6e7adfe11366d9ad3206d511f71578dbdb",
+          "words": 47
+        },
+        {
+          "id": "02_body.txt",
+          "sha256": "5630c240806e62c92e092da4c056436910b01a7737834d8e0957fc1cb34165ba",
+          "words": 26
+        },
+        {
+          "id": "03_breath.txt",
+          "sha256": "0a0428d7bdc1578b382746b5ce84d6e919a542d1fde60ebb33edc53b63ccfc33",
+          "words": 25
+        },
+        {
+          "id": "04_letgo.txt",
+          "sha256": "22dd4597373a3fef9184c4d06cb4acaed44fb1b95707d378a03a684f15b12ad8",
+          "words": 34
+        },
+        {
+          "id": "05_forgive.txt",
+          "sha256": "d9e7cd72a03bbe91ed3102581f97f4dff923c2c2251799d878b5a840d28c40b9",
+          "words": 26
+        },
+        {
+          "id": "06_gratitude.txt",
+          "sha256": "c6b0be182284e102f71d5f65c19add800277baa44ab0aadf3957e60c4cc40bab",
+          "words": 34
+        },
+        {
+          "id": "07_impermanence.txt",
+          "sha256": "3f1949017e2f88e74ecee1d9247b0d4fe1c6cbdb229f50619f5fa3b3df43eea8",
+          "words": 26
+        },
+        {
+          "id": "08_metta.txt",
+          "sha256": "8071c2dc90cf5b99fb0c552561b25696101c6b1ea7246b8e86d38fa28b703c6e",
+          "words": 26
+        }
+      ],
+      "content_dir": "content/standard/dharma_long_01",
+      "source": "proven (build log 2026-11-22)"
+    },
+    "genx_comp_90_2026-11-22": {
+      "channel": "genx",
+      "kind": "narration",
+      "title": "ปรัชญาชีวิต 90 นาที",
+      "url": "https://youtu.be/VjmZyCpqyPk",
+      "parts": [
+        {
+          "id": "01_open.txt",
+          "sha256": "2cff106bd3c1f404a32248ae14550730f810f59146024315a2e957c979648548",
+          "words": 37
+        },
+        {
+          "id": "02_body.txt",
+          "sha256": "b420e9264f25cf78a8bdd460fa71e0acc918ed232e37964db0b7c75a51d01b0d",
+          "words": 33
+        },
+        {
+          "id": "03_breath.txt",
+          "sha256": "9331883887b94c9a288b6ffc264e35b2a9f99f3be8c4874e1220c02200d63135",
+          "words": 35
+        },
+        {
+          "id": "04_letgo.txt",
+          "sha256": "2ed1b13c5a58101f464b86f3dc1f0cceb679ab6627f4c07ae8f10728118ef325",
+          "words": 30
+        },
+        {
+          "id": "05_forgive.txt",
+          "sha256": "e6fdd93f0edb07fb0baa023691d02523f9c5ee71e0efc29ed443af2f69ff1f63",
+          "words": 24
+        },
+        {
+          "id": "06_gratitude.txt",
+          "sha256": "f9d56ec2834d693775128f79a36d9833396b16a088af4d7af84971df55837c3b",
+          "words": 31
+        },
+        {
+          "id": "07_impermanence.txt",
+          "sha256": "2722d4a03217009e9d30bcbb85a3e0390d95ac6201a61ac0e755f1be997de45e",
+          "words": 25
+        },
+        {
+          "id": "08_metta.txt",
+          "sha256": "c495fc167beb57fe2663750f2288c069a939ee8766eea846cbb11817008ba5a1",
+          "words": 30
+        }
+      ],
+      "content_dir": "content/standard/genx_long_01",
+      "source": "proven (build log 2026-11-22)"
+    },
+    "kongkeat_comp_90_2026-11-22": {
+      "channel": "kongkeat-story",
+      "kind": "narration",
+      "title": "เกร็ดความรู้รอบตัว 90 นาที 16 เรื่องที่คุณเคยสงสัย แต่ไม่เคยได้คำตอบ",
+      "url": "https://youtu.be/v1zuKqbhBe4",
+      "parts": [
+        {
+          "id": "01_sky.txt",
+          "sha256": "70eb2329def63cac491a420696210a62b237b07ed5432a900941e5d103038c3e",
+          "words": 15
+        },
+        {
+          "id": "02_sea_salt.txt",
+          "sha256": "ab9c319fbb566bc98d775916219571a9be968e47abc3ccbaf97eb8d787f603bd",
+          "words": 20
+        },
+        {
+          "id": "03_yawn.txt",
+          "sha256": "dd55be9f03e0cfac0cdd2c14dafd914c60bbe8f29dbaaf85857f719c14a46675",
+          "words": 18
+        },
+        {
+          "id": "04_cat_blink.txt",
+          "sha256": "a5af1a89191930355900cdb036c352232112d0d9ed743d0078395b3d8f36dae0",
+          "words": 27
+        },
+        {
+          "id": "05_thunder.txt",
+          "sha256": "1f27440aa6b1c4ac72d2099ecb2fb71ea3946b237f14ea2d537ef6d483bd1502",
+          "words": 18
+        },
+        {
+          "id": "06_ice_float.txt",
+          "sha256": "b1b09a09290a33859a6515bec5e2371f2f716b63579609882135e5fcbce11c8e",
+          "words": 18
+        },
+        {
+          "id": "07_leaf_color.txt",
+          "sha256": "f1000169baa8de3b7e13e0dbb1a125722624061556082d07396d88914d9bebc0",
+          "words": 21
+        },
+        {
+          "id": "08_keys.txt",
+          "sha256": "33a23be4883a5f36dddb5a03503bb48cf76a5c7e1352b13ffadd5728c0618270",
+          "words": 24
+        },
+        {
+          "id": "09_ship.txt",
+          "sha256": "ef03aab8f544356fbda78f46e5acb13b10c923d514330a76d7727df488d05c7c",
+          "words": 23
+        },
+        {
+          "id": "10_sunset.txt",
+          "sha256": "af525633036973b0f5291a19d39339a82dccdb013d95edfe84b178f935553167",
+          "words": 25
+        },
+        {
+          "id": "11_own_voice.txt",
+          "sha256": "88ad04da1905c4d7db998f88b1e91e24df57e5e7f7a4d2d75b03909c761f9ef5",
+          "words": 23
+        },
+        {
+          "id": "12_honey.txt",
+          "sha256": "8aa13d9aa04949c8b610bb48336ca9653e9708a11df6b36e9775eaea25ef7ed2",
+          "words": 21
+        },
+        {
+          "id": "13_insects_light.txt",
+          "sha256": "434bdf0b34e8e34d6d3450f4705b900030f4b9c535656ee723ba74ba9b70cc87",
+          "words": 26
+        },
+        {
+          "id": "14_blink.txt",
+          "sha256": "33bd57c82975b4ca257052bafb49832d9fb80e7b5351ee569b863719ea7c4c3e",
+          "words": 24
+        },
+        {
+          "id": "15_glass_hot.txt",
+          "sha256": "7e850846eaa7567e9dd9f25074cc3403149969ba7692dfd80992f2e70f4b4fed",
+          "words": 21
+        },
+        {
+          "id": "16_dreams.txt",
+          "sha256": "ea557d1a03a34f4f0d048b6b8f54f3b9c998af5597c0b3f3ad536da75d7170a5",
+          "words": 26
+        }
+      ],
+      "content_dir": "content/standard/kongkeat_long_01",
+      "source": "proven (build log 2026-11-22)"
+    },
+    "mv_2026-11-22_01": {
+      "channel": "dharma",
+      "kind": "music",
+      "arc": "abstract-midnight",
+      "url": "https://youtu.be/7zALsTXwueU",
+      "title": "เพลงธรรมะบรรเลง 1 ชั่วโมง ฟังก่อนนอน ใจสงบ",
+      "parts": [],
+      "music": {
+        "path": "assets/music/bed-calm-ambient-space-texture.mp3",
+        "sha256": "77f9a97978e03f545ec1495436f644dcc3cb4d5701f9b58b28a52491cf6a1284"
+      },
+      "source": "proven (art ledger)"
+    },
+    "mv_2026-11-22_02": {
+      "channel": "dharma",
+      "kind": "music",
+      "arc": "abstract-ink",
+      "url": "https://youtu.be/rkvLICChhaE",
+      "title": "เพลงสมาธิบรรเลง 1 ชั่วโมง นั่งสมาธิ ผ่อนคลาย",
+      "parts": [],
+      "music": {
+        "path": "assets/music/bed-calm-a-soothing-song-mp3.mp3",
+        "sha256": "a1c5676ba4c08bea673d28f573bb8c30138791fc755a39b0a253ce8a3e74c9b4"
+      },
+      "source": "proven (art ledger)"
+    },
+    "mv_2026-11-22_03": {
+      "parts": [],
+      "channel": "dharma",
+      "kind": "music",
+      "stamped": "2026-11-22T08:40:02+0000",
+      "title": "เพลงกล่อมนอน 1 ชั่วโมง หลับลึก ตื่นมาใจเบา",
+      "arc": "dawn-flow",
+      "music": {
+        "path": "assets/music/bed-calm-ambient-game.mp3",
+        "sha256": "350605d53f3e60e5af0ae23eb677d9a924c7d503a348741b9148086a4f219a98"
+      },
+      "url": "https://youtu.be/HkFULkG2sRk"
+    }
+  },
+  "unverified": {
+    "night_120": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_110": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_dharma_01": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_money_01": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_sleep_01": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_middleway_01": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_auto_202645": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_auto_202646": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_auto_202646_r18": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_auto_202647_r19": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_auto_202647_r22": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "night_auto_202647_r23": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "ch2_std_long_01": {
+      "channel": "dharma",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "ch1_std_long_01": {
+      "channel": "genx",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "ch4_family_long_01": {
+      "channel": "kongkeat-story",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "ch4_family_long_02": {
+      "channel": "kongkeat-story",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "ch4_auto_202645_long": {
+      "channel": "kongkeat-story",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    },
+    "ch4_auto_202646_long": {
+      "channel": "kongkeat-story",
+      "why": "published before the content ledger existed; no manifest field records the source"
+    }
+  }
+}

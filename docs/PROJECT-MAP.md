@@ -51,6 +51,8 @@ is retired (its 4 long-forms are published and the queue is closed).
 
 | `make_mv.py` + `mv_run.py` (MV series, new 2026-11-22) | by hand, repeatable | builds a music video: **fresh art per MV**, gated (-14 LUFS, TP<=-3.0, 1080p tv), published, and stamped image->MV->URL in `content/art_ledger_mv.json`. Art source chain: gemini image -> pollinations -> procedural `generative_art.py` (both AI routes were down 2026-11-22: 429 quota / 503). Guard `test_mv_fresh_art.py` FAILS on a reused image, a missing stamp, a missing file, or an unverified video | long-form watch-hours without narration |
 
+| `content_ledger.py` (story no-repeat, new 2026-11-22) | checked by `build_night.py` before every render, stamped after a passing gate | `content/content_ledger.json` records each video's parts (text sha256), music bed, visual arc and title. A part that already aired makes the build exit 3. `check` fails on a shared part, a repeated title or a repeated bed on one channel; 18 older videos sit in `unverified` with the reason (no source field existed). Guard `test_content_no_repeat.py` | **the "new story every clip" rule** |
+
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.
 
 ## 2) The one login path (do NOT add a second)

@@ -188,6 +188,8 @@ def main() -> int:
                     help="poster = the still card (legacy); kinetic = an "
                          "always-moving background with captions synced to the "
                          "narration (the ch4 pivot, see make_kinetic_video.py)")
+    ap.add_argument("--channel", default="dharma",
+                    help="channel the build is for (content ledger grouping)")
     ap.add_argument("--brand", default="PCSEV",
                     help="persistent corner tag for the kinetic engine")
     a = ap.parse_args()
@@ -199,6 +201,19 @@ def main() -> int:
         hook_text = open(a.hook_file, encoding="utf-8").read().strip()
     elif a.hook_file:
         print(f"hook file {a.hook_file} not found; using --hook", file=sys.stderr)
+
+    # K's rule (2026-11-22): the STORY must be new too, not just the picture. A
+    # part that already aired in another video makes this build fail, before any
+    # render time is spent.
+    import content_ledger as _cl
+    ledger_key = a.key or os.path.basename(os.path.normpath(a.content))
+    story_parts = _cl.parts_of(a.content)
+    aired = _cl.used_parts(_cl.load(), ledger_key)
+    clash = {p["id"]: aired[p["sha256"]] for p in story_parts if p["sha256"] in aired}
+    if clash:
+        print(f"FAIL: these parts already aired in another video: {clash}",
+              file=sys.stderr)
+        return 3
 
     out = a.out or a.work
     os.makedirs(a.work, exist_ok=True)
@@ -373,6 +388,10 @@ def main() -> int:
         receipt["video_info"] = json.load(open(vin, encoding="utf-8"))
     json.dump(receipt, open(os.path.join(out, "receipt.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=2)
+    if rc == 0:
+        _cl.stamp(ledger_key, a.channel, story_parts, title=a.title,
+                  music=a.bed_file or "")
+        print(f"content stamped: {ledger_key} ({len(story_parts)} parts)")
     print(json.dumps({"verdict": verdict}, ensure_ascii=False))
     return 0 if rc == 0 else 1
 
