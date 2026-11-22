@@ -42,11 +42,12 @@
   `build_night.py` เจอบทเคยออกอากาศ = **exit 3**; guard `test_content_no_repeat.py`. AI gen ล่ม → procedural.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
-  `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`**. `topics/05`.
+- **"Rogue" = OURS**: `ax-workspace` (disabled); **rogue-guard hid 6 of our fresh clips** (manifests
+  unpushed) → hide only on RSS-confirm or 24 h; `keep_clips_live.py` restores. **`videos.update` REPLACES
+  the whole `snippet`/`status`**. `topics/05`.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address
   (`test_no_committed_{secrets,pii}.py`).
-- **Quota:** `videos.insert` own pool; reset 08:00 UTC.
+- **Quota:** `videos.insert` pool; reset 08:00 UTC.
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE

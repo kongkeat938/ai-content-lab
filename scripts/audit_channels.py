@@ -424,13 +424,32 @@ def alert_live_rogue(report: dict) -> None:
         print(f"rogue alert step skipped: {exc}")
 
 
-def _live_rogue_ids(defects: list) -> list:
-    """The (video_id, title) of each LIVE rogue upload named in a defect list."""
+MIN_AGE_HOURS = 24.0
+
+
+def _live_rogue_ids(defects: list, confirmed=None, min_age_hours: float = MIN_AGE_HOURS) -> list:
+    """The (video_id, title) of each LIVE rogue upload that may be hidden.
+
+    Measured 2026-11-22: this hid six of OUR OWN clips. A pod build records its
+    video in `content/*_publish.json` locally; when those commits are not pushed
+    (push 403) the runner's copy still says "unrecorded", so a fresh clip looks
+    exactly like the rogue stream. "Not in our manifest" is therefore not
+    evidence. A clip is only hidden when an INDEPENDENT source names it (the RSS
+    watcher, `ROGUE <ch> <id>`) or when it has stayed unrecorded for a full day.
+    """
+    confirmed = set(confirmed or ())
     out = []
     for d in defects:
-        m = re.match(r"video (\S+) is UNRECORDED.*LIVE rogue upload outside the rails: (.*)$", d)
-        if m:
-            out.append((m.group(1), m.group(2)))
+        m = re.match(r"video (\S+) is UNRECORDED and published ([\d.]+)d ago"
+                     r".*LIVE rogue upload outside the rails: (.*)$", d)
+        if not m:
+            continue
+        vid, age, title = m.group(1), float(m.group(2)), m.group(3)
+        if vid in confirmed or age * 24 >= min_age_hours:
+            out.append((vid, title))
+        else:
+            print(f"  kept live: {vid} ({age:.1f}d old, no independent rogue signal; "
+                  f"a lagging manifest is not evidence)")
     return out
 
 
@@ -448,7 +467,18 @@ def merge_hidden(ledger: list, hidden: list) -> list:
     return ledger
 
 
-def hide_live_rogue(report: dict) -> None:
+def _confirmed_rogues(path: str) -> set:
+    """Video ids the RSS watcher named as rogue (`ROGUE <ch> <id> ...`)."""
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as fh:
+            return {m.group(1) for m in
+                    (re.search(r"ROGUE \S+ (\S{11})", ln) for ln in fh) if m}
+    except OSError:
+        return set()
+
+
+def hide_live_rogue(report: dict, confirmed=None, min_age_hours: float = MIN_AGE_HOURS,
+                    ledger_path: str = "") -> None:
     """Pause each LIVE rogue clip (privacyStatus=private) -- reversible, no delete.
 
     Measured 2026-11-11: a second stream inserts clips our code never writes at a
@@ -461,7 +491,7 @@ def hide_live_rogue(report: dict) -> None:
     later run skips it and the decision is auditable.
     """
     root = os.path.dirname(HERE)
-    ledger_path = os.path.join(root, "content", "rogue_hidden.json")
+    ledger_path = ledger_path or os.path.join(root, "content", "rogue_hidden.json")
     try:
         ledger = json.load(open(ledger_path, encoding="utf-8")).get("hidden", [])
     except (OSError, ValueError):
@@ -471,7 +501,8 @@ def hide_live_rogue(report: dict) -> None:
     for slug, r in report.items():
         ch = r.get("channel") or {}
         ch_id = ch.get("id")
-        for vid, title in _live_rogue_ids(r.get("defects") or []):
+        for vid, title in _live_rogue_ids(r.get("defects") or [], confirmed,
+                                          min_age_hours):
             if vid in already:
                 continue
             try:
@@ -497,6 +528,8 @@ def hide_live_rogue(report: dict) -> None:
 
 def _comment_hidden(newly: list) -> None:
     """Say on the alert issue which clips were paused, so the action is visible."""
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return          # only the rail has an issue to comment on
     repo = os.environ.get("GITHUB_REPOSITORY", "kongkeat938/ai-content-lab")
     title = "Channel audit: a live upload stream outside the rails"
     try:
@@ -529,6 +562,12 @@ def main() -> int:
                     help="also write docs/CHANNEL-AUDIT-LATEST.md")
     ap.add_argument("--alert", action="store_true",
                     help="open/update a GitHub issue when a LIVE rogue upload is found")
+    ap.add_argument("--rogue-ids-file", default="work/rogue_rss.txt",
+                    help="output of rogue_watch_rss.py; its ROGUE lines are the "
+                         "independent evidence a clip is not ours")
+    ap.add_argument("--min-age-hours", type=float, default=MIN_AGE_HOURS,
+                    help="hide an unrecorded clip only after it stayed unrecorded "
+                         "this long (a manifest can lag a real upload)")
     ap.add_argument("--hide-live-rogue", action="store_true",
                     help="pause (private, reversible) each LIVE rogue clip; never deletes")
     a = ap.parse_args()
@@ -611,7 +650,7 @@ def main() -> int:
     if a.alert:
         alert_live_rogue(report)
     if a.hide_live_rogue:
-        hide_live_rogue(report)
+        hide_live_rogue(report, _confirmed_rogues(a.rogue_ids_file), a.min_age_hours)
     return 0
 
 
