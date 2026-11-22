@@ -29,15 +29,13 @@
 - **ak อัพเองได้เมื่อ gate ผ่าน** (2026-11-21) — ไม่มี ledger/รออนุมัติ; gate/cap/cadence ยังผูก.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
-- **Veto test injects the fix seam** (`apply_qa_gate(fix=)`).
-- **Pod env:** recycled → `pip -r requirements.txt`; no root → `pip install static-ffmpeg` then copy
-  ffmpeg+ffprobe to `~/.local/bin` and prepend it to `PATH`; **a secret is injected only if its NAME
-  appears in the command** (`YT_CH4_REFRESH_TOKEN="$YT_CH4_REFRESH_TOKEN"`) — else "Missing
-  credentials"; `git` identity resets too. `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 →
+- **Pod env:** reset → `pip -r requirements.txt` + `pip install static-ffmpeg` (copy ffmpeg/ffprobe →
+  `~/.local/bin`, prepend `PATH`); **a secret is injected only if its NAME is in the command** (else
+  "Missing credentials"); git identity resets. `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 →
   `x-access-token:` URL; suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` +
-  `restore_env.sh`; union driver before `git pull`, `--unshallow` before ahead/behind (`topics/05`).
-- **Advisors:** `council3.py` + `advise.py` + `team.py`. วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations`
-  (อีก 3 ค่ายไม่มี route) → quorum ล้มให้ retry 1 ครั้ง แล้ว `--vendors gemini,pollinations`.
+  `restore_env.sh`; `--unshallow` before ahead/behind (`topics/05`).
+- **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations` →
+  quorum ล้มให้ retry 1 ครั้ง (`--vendors gemini,pollinations`).
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
@@ -54,8 +52,7 @@
   at once (no `content/STOP`)** → measure `actions/workflows` first, re-enable + dispatch `watchdog`.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar, ALL channels**: 1080p crf18, tv/bt709, -14 LUFS, clean grade,
-  floating Thai text, 1.06x lanczos. **ONE grade source `video_grade.py`**; `setparams=range=tv`
-  on re-encode.
+  floating Thai text, 1.06x lanczos; **ONE grade source `video_grade.py`** (`setparams=range=tv`).
 - **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920,
   yuv420p tv/bt709, -14 LUFS, ≤60 s, + 9:16 thumb (≥640, <2 MB); `publish_shorts.py` gates every
   upload. **`alimiter` limits SAMPLE peak → true peak plateaus above it**: `TP_WAV` = gate − AAC
