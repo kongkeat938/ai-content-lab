@@ -94,6 +94,11 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
     → to build clips now: install the renderer deps here, bring PC1 up, or supply `ART_LIBRARY_URL`.
     Stories ready: `content/motion/01-04.json` (dharma×2, genx, knowledge).
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
+- **What already exists:** `docs/INVENTORY-2026-11-22.md` (repo/workflows/releases/issues,
+  OpenHands conversations, and the capability map that names the owner of every job). Read it
+  before creating anything — K, 2026-11-22: "เราเคยทำทุกอย่างมาหมดแล้ว".
+- **How work runs now:** `docs/SYSTEM-STRUCTURE-2026-11-22.md` (L0 CEO → L1 council3 → L2 build
+  → L3 gate → L4 publish → L5 counter; the six rules; the loop stages and their preconditions).
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
 - **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
   packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`

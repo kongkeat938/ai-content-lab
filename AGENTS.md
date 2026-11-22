@@ -63,6 +63,13 @@ The decision panel stays separate (`advise.py`). Guard `scripts/test_team.py`.
 rule ("งานไม่ผ่าน Gemini = ห้ามอัพ"), and the Gemini auto-fix are **removed**. There is no
 panel verdict to wait for: a build that passes a gate that can FAIL (measured live) is done.
 
+## ระบบโครงสร้างใหม่ — ทำงานตามนี้ทุกครั้ง (K, 2026-11-22)
+"ต่อจากนี้ให้ทำงานตามระบบโครงสร้างใหม่ด้วย" → `docs/SYSTEM-STRUCTURE-2026-11-22.md`
+(L0 CEO ak → L1 council3 คิด/ตรวจ/ตัดสิน → L2 worker สร้าง → L3 gate ที่ FAIL ได้ → L4 publish
+ที่บันทึก receipt → L5 counter พิสูจน์ว่าขยับ). **ก่อนสร้างอะไรใหม่ อ่าน
+`docs/INVENTORY-2026-11-22.md` ก่อนเสมอ** — ของส่วนใหญ่มีอยู่แล้ว (232 scripts, 112 tests,
+39 workflows, 127 OpenHands conversations); ถ้าอยู่ในตาราง ให้ต่อยอด ไม่ใช่ทำสำเนาใหม่.
+
 ## ระบบผู้ช่วย 3 ชั้น (K, 2026-11-22)
 K's table measured five camps alive (pollinations, Gemini, KiloCode, G4FSpace, Yqcloud).
 A decision now goes through **three layers of thinking** (`scripts/council3.py`, guard
