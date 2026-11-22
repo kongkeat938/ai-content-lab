@@ -75,8 +75,8 @@
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
 - **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
-  **No STOP file; 29 rails `disabled_manually` → production is manual by ak; ak uploads on its
-  own.** NEW sys → `recovered/VIDEO-SYSTEM-NEW/`.
+  **No STOP; 29 rails disabled → ak produces manually and uploads on its own.** NEW sys →
+  `recovered/VIDEO-SYSTEM-NEW/`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps.
