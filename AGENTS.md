@@ -63,6 +63,24 @@ The decision panel stays separate (`advise.py`). Guard `scripts/test_team.py`.
 rule ("งานไม่ผ่าน Gemini = ห้ามอัพ"), and the Gemini auto-fix are **removed**. There is no
 panel verdict to wait for: a build that passes a gate that can FAIL (measured live) is done.
 
+## ระบบผู้ช่วย 3 ชั้น (K, 2026-11-22)
+K's table measured five camps alive (pollinations, Gemini, KiloCode, G4FSpace, Yqcloud).
+A decision now goes through **three layers of thinking** (`scripts/council3.py`, guard
+`scripts/test_council3.py`):
+
+1. **L1 THINK** — every camp answers the same question + the same measured FACTS, in parallel.
+   A dead camp is named in `draft_errors`, never silently dropped.
+2. **L2 CHECK** — every draft is critiqued by a **different** camp (numbers vs FACTS, unsupported
+   claims, logic, risk). A draft nobody critiques **FAILS** the run.
+3. **L3 DECIDE** — one synthesizer must answer DECISION / REASONS / NOT / CONFIDENCE / NUMBERS.
+   A number ≥100 (or a decimal) in the decision that is **not in FACTS FAILS** — that is how an
+   invented channel figure is caught.
+
+Quorum and cross-check are gates: < `--min-vendors` answering, or a panel too small to critique
+every draft, exits **2** (deferral) instead of pretending the council decided.
+`advise.py` stays the quick one-camp ask (Gemini, 2026-11-18). The council is help, never an
+approval step — `test_upload_autonomy.py` still binds.
+
 ## ak publishes on its own (K, 2026-11-21)
 **"ตอนนี้ระบบสร้างคลิปได้มาตรฐานแล้ว ยกเลิกกฏรอ K อนุมัติอัพออกเลย อัพได้ตลอดเวลาเลย แล้วแต่
 ak บริหาร"** — the old "K alone approves a publish" rule is **gone**. ak uploads whenever the

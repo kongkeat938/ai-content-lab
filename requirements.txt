@@ -16,3 +16,8 @@ google-auth-oauthlib>=1.2
 # remote_browser.py). A recycled pod loses this, and the helpers then die with
 # "need websocket-client" -- so it belongs here, not in a one-off pip install.
 websocket-client>=1.7
+
+# Optional: the keyless camps K's 2026-11-22 table measured (KiloCode, G4FSpace,
+# Yqcloud) are reached through g4f's provider list. Without it, advise.py falls
+# back to a per-camp OpenAI-compatible route from <PREFIX>_BASE_URL/_API_KEY/_MODEL.
+g4f>=0.5

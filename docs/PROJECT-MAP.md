@@ -96,7 +96,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
 - **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
-  packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`.
+  packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`
+  (camps: gemini, pollinations, kilocode, g4fspace, yqcloud — the last three via g4f, keyless);
+  3-layer council `scripts/council3.py`.
 - **Quality = measured gates only** (K, 2026-11-21: Gemini ออกจากระบบตรวจแล้ว). No review
   ledger, no panel verdict, no auto-fix. A gate that can FAIL + a live measurement is the
   whole bar. **ak publishes on its own** (K, 2026-11-21: "ยกเลิกกฏรอ K อนุมัติอัพออกเลย
@@ -127,8 +129,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 ## 4) Conventions (K's rules, measured)
 
 - **PCSEV** every problem: Problem → Cause → Solution → Execute → Verify (verify LIVE).
-- Times to K: **Asia/Bangkok, 24h**. Reply in **Thai**. Decisions go to the **panel** (`advise.py`;
-  **Gemini alone**, K 2026-11-18 -- follow its advice when stuck).
+- Times to K: **Asia/Bangkok, 24h**. Reply in **Thai**. Decisions go to the **3-layer council**
+  (`scripts/council3.py`, K 2026-11-22): L1 ทุกค่ายคิดขนาน → L2 ค่ายอื่นวิจารณ์ร่าง →
+  L3 ตัดสิน (ห้ามอ้างตัวเลขที่ไม่มีใน FACTS). `advise.py` = ถามเร็วค่ายเดียว (Gemini, K 2026-11-18).
 - A guard must be able to FAIL; never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL.
 - **A rail that cannot do its job must not report success** (measured 2026-11-18: the shared

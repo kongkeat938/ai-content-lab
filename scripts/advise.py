@@ -167,6 +167,50 @@ def ask_openhands(prompt: str, model: str | None = None, poll_seconds: int = 120
     raise RuntimeError("no assistant reply before the deadline")
 
 
+def ask_openai_compatible(prefix: str, prompt: str) -> str:
+    """A vendor behind an OpenAI-compatible /chat/completions endpoint.
+
+    K's 2026-11-22 table lists KiloCode / G4FSpace / Yqcloud as alive; their
+    routes are not in this repo, so each is configured with <PREFIX>_BASE_URL,
+    <PREFIX>_API_KEY and <PREFIX>_MODEL. Left unset it raises "not configured",
+    which the council reports by name -- a missing camp is never silently dropped.
+    """
+    base = (os.environ.get(f"{prefix}_BASE_URL") or "").strip()
+    key = (os.environ.get(f"{prefix}_API_KEY") or "").strip()
+    model = (os.environ.get(f"{prefix}_MODEL") or "").strip()
+    if not (base and key and model):
+        raise RuntimeError(f"{prefix}: set {prefix}_BASE_URL/_API_KEY/_MODEL")
+    body = {"model": model, "messages": [{"role": "user", "content": prompt}]}
+    d = _post(base.rstrip("/") + "/chat/completions", body,
+              headers={"Content-Type": "application/json",
+                       "Authorization": f"Bearer {key}"}, timeout=180)
+    text = (d["choices"][0]["message"].get("content") or "").strip()
+    if not text:
+        raise RuntimeError(f"{prefix}: empty reply")
+    return text
+
+
+def ask_g4f(provider_name: str, prompt: str, model: str = "") -> str:
+    """A camp reached through g4f's provider list (keyless), e.g. KiloCode.
+
+    Measured 2026-11-22 from this pod: KiloCode 1.5 s, Yqcloud 1.6 s, G4FSpace 43 s
+    -- all answered. g4f is optional; without it this falls back to an
+    OpenAI-compatible route configured by <PREFIX>_BASE_URL/_API_KEY/_MODEL.
+    """
+    try:
+        import g4f  # noqa: PLC0415
+        from g4f.client import Client  # noqa: PLC0415
+    except ImportError:
+        return ask_openai_compatible(provider_name.upper(), prompt)
+    provider = getattr(g4f.Provider, provider_name)
+    r = Client(provider=provider).chat.completions.create(
+        model=model, messages=[{"role": "user", "content": prompt}], timeout=180)
+    text = (r.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError(f"{provider_name}: empty reply")
+    return text
+
+
 ADVISORS = {
     # A short alias the light panel asks for. Measured 2026-11-11: four scripts
     # (studio_ai, video_review, diagnose_videos, panel_scorecard) asked for
@@ -186,6 +230,11 @@ ADVISORS = {
     "openhands": ask_openhands,
     "openhands-claude": lambda p: ask_openhands(p, model="openhands/claude-sonnet-4-5"),
     "openhands-gpt": lambda p: ask_openhands(p, model="openhands/gpt-5"),
+    # K's 2026-11-22 table: these camps are alive but their routes are not in the
+    # repo -- each resolves only when its own env route is set (see above).
+    "kilocode": lambda p: ask_g4f("KiloCode", p),
+    "g4fspace": lambda p: ask_g4f("G4FSpace", p),
+    "yqcloud": lambda p: ask_g4f("Yqcloud", p),
 }
 
 # The default team: **Gemini alone** (K, 2026-11-18). One vendor, one call. The
