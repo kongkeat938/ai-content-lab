@@ -31,7 +31,8 @@
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
 - **Pod env:** reset → `pip -r requirements.txt` + `pip install static-ffmpeg` (copy ffmpeg/ffprobe →
   `~/.local/bin`, prepend `PATH`); **a secret is injected only if its NAME is in the command** (else
-  "Missing credentials"); git identity resets. **push 403 with every token → K must grant access**;
+  "Missing credentials"); git identity resets. **push:** `gh` device flow → `~/.config/gh/token`
+  (`repo`+`workflow`), then **`env -u GITHUB_TOKEN -u GH_TOKEN`** or gh hands git the read-only env token (403);
   suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` + `restore_env.sh`;
   `--unshallow` before ahead/behind (`topics/05`).
 - **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations`
