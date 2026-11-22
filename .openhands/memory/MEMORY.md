@@ -59,7 +59,7 @@
   floating Thai text, 1.06x lanczos; **ONE grade `video_grade.py`** (`setparams=range=tv`).
 - **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920 tv/bt709,
   -14 LUFS, ≤60 s, 9:16 thumb; `publish_shorts.py` gates every upload. **`alimiter` limits SAMPLE peak**: `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.
-- **Vision grader NON-DETERMINISTIC** → judge by metrics, never CI.
+- **Vision grader NON-DETERMINISTIC** → judge metrics, not CI.
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; a stale tree fakes "missing"
   (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`.
 - **Dead source read as "clean" = false pass**: RSS 404 → `UU<id>`; exits **2=BLIND**.
