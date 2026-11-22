@@ -265,12 +265,13 @@ def _pick_unique_bed(pool: list[str], key: str | None, ledger: str | None) -> st
     return random.choice(pool)
 
 
-def mix(voice: str, bed: str, out: str) -> None:
+def mix(voice: str, bed: str, out: str,
+        headroom_db: float = BED_UNDER_VOICE_DB) -> None:
     v_lufs, _ = make_audio.measure(voice)
     b_lufs, _ = make_audio.measure(bed)
     if "?" in (v_lufs, b_lufs):
         raise RuntimeError(f"could not measure levels (voice={v_lufs} bed={b_lufs})")
-    target_bed = float(v_lufs) - BED_UNDER_VOICE_DB
+    target_bed = float(v_lufs) - headroom_db
     gain = target_bed - float(b_lufs)
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", voice, "-i", bed,
          "-filter_complex",
@@ -279,7 +280,7 @@ def mix(voice: str, bed: str, out: str) -> None:
          f"alimiter=limit=0.85[out]",
          "-map", "[out]", "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", out])
     print(f"  bed {b_lufs} -> {target_bed:.1f} LUFS "
-          f"({BED_UNDER_VOICE_DB:.0f} dB under a {v_lufs} LUFS voice, gain {gain:+.1f} dB)")
+          f"({headroom_db:.0f} dB under a {v_lufs} LUFS voice, gain {gain:+.1f} dB)")
 
 
 def main() -> None:
@@ -294,6 +295,11 @@ def main() -> None:
                          "export); omit to pick a validator-passing bed from "
                          "assets/music. There is no synthesised fallback: the "
                          "drone was forbidden, so a clean voice is used instead.")
+    ap.add_argument("--bed-headroom", type=float, default=BED_UNDER_VOICE_DB,
+                    help="dB the bed sits under the voice (default %(default)s). "
+                         "verify_night measures p90-p5 window levels, which reads "
+                         "~16 dB lower than this LUFS gap, so a build that fails "
+                         "the 30 dB ceiling can be re-cut with a smaller value")
     ap.add_argument("--bed-ledger", default=None,
                     help="JSON file recording which build used which bed, so two "
                          "videos do not share one")
@@ -356,7 +362,7 @@ def main() -> None:
         bed = bed_for(total, a.work, a.bed_file, a.key or a.out, a.bed_ledger)
         if bed:
             mixed = os.path.join(a.work, "mixed.wav")
-            mix(voice, bed, mixed)
+            mix(voice, bed, mixed, a.bed_headroom)
             bed_used = True
         else:
             # No real music available: ship the clean narration rather than a hum.
@@ -379,7 +385,7 @@ def main() -> None:
         "lufs": lufs,
         "true_peak_dbfs": peak,
         "bed": bed_used,
-        "bed_under_voice_db": BED_UNDER_VOICE_DB,
+        "bed_under_voice_db": a.bed_headroom,
         "voice": VOICE,
     }
     json.dump(info, open(a.out + ".info.json", "w", encoding="utf-8"),
