@@ -55,7 +55,9 @@ Measured blocker (2026-11-22): `push` returns **403** → stage 2 and 3 are unsa
 Enabling them now would re-post videos, which is worse than being manual.
 
 ## 6) Escalation and stop rules
-- A genuine human-at-a-browser unknown (OAuth re-consent, a phone number ak cannot own) → ask K.
+- A genuine human-at-a-browser unknown (a phone number ak cannot own) → ask K. **A Google login is
+NOT one of these any more:** `scripts/yt_auth_device.py` gives K an 8-character code for
+`google.com/device` on the phone (K works from a phone; noVNC is unusable there, 2026-11-22).
 - Prefer the reversible move (private / draft / hold) over the irreversible (delete).
 - A rail that fails twice → stop it, write PCSEV with the measured cause, fix, then re-enable.
 - `content/STOP` still halts everything; it does not exist today (measured).
