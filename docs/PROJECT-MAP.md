@@ -75,7 +75,8 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   ("เกร็ดความรู้รอบตัว") stays in keywords/SEO — only the channel-name labels/phrases are PCSEV.
   Guard `scripts/test_ch4_channel_name.py` (fails if a rail would write the retired name back).
 - Measured history: `docs/STATUS-<date>.md`, `docs/counters.jsonl` (the counter), `docs/HEALTH.md`.
-  Latest: `docs/STATUS-2026-11-20.md` (loudness fix closed + why the motion clips wait: cap 3/3).
+  Latest: `docs/STATUS-2026-11-22.md` (live counters, 28-day LF watch-hours 82.7, the two new
+  long clips got 4 and 2 views in 11 h = distribution is the bottleneck).
 - **THE NEW SYSTEM — A/B generative-art → parallel-pipeline (2026-11-19; the newest production
   system — search here first, do NOT rebuild it under a new name).**
   - **A (render):** `python3 scripts/parallel_pipeline.py art --pool work/pool --count N` →
