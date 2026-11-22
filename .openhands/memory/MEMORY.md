@@ -46,7 +46,7 @@
   unpushed) → hide only on RSS-confirm or 24 h; `keep_clips_live.py` restores. **`videos.update` REPLACES
   the whole `snippet`/`status`**. `topics/05`.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
-- **Quota:** `videos.insert` pool; reset 08:00 UTC.
+- **Quota:** `videos.insert` pool; reset 08:00 UTC
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
