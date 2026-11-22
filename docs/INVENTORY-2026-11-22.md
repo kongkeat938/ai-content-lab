@@ -78,3 +78,17 @@ Assets: 55 music beds, art ledgers per channel (`content/art_ledger_*.json`), be
 2. 29 production rails disabled → no production loop (see `SYSTEM-STRUCTURE-2026-11-22.md` §5).
 3. Pages builds fail 13/49 — a docs/report writer is racing itself.
 4. 4 open issues are unowned failure reports (#43, #45, #46, #49).
+
+## 7) Advisors — measured live 2026-11-22 10:05 Thai
+| system | what it is | measured today |
+|---|---|---|
+| `scripts/council3.py` | 3-layer council, `DEFAULT_VENDORS` = 5 camps, L3 judge = gemini | **OK 132.5 s** — L1 2/5 answered, L2 2/2 critiqued, L3 decision 9/10 |
+| `scripts/advise.py` | flat panel, 10 advisors (`--broad`, `--deep`) | **OK** — `--only gemini` answered 1/1 |
+| `scripts/team.py` | workers (researcher/scriptwriter/packager/critic/analyst/engineer) | available |
+
+Camp status (measured, not assumed):
+- **answer:** `gemini` (GEMINI_API_KEY, model ids `gemini-3.5-flash-lite` / `gemini-3.1-flash-lite` both return 200) · `pollinations`
+- **on demand:** `openhands`, `openhands-claude`, `openhands-gpt` (OPENHANDS_API_KEY)
+- **dead in this pod:** `kilocode`, `g4fspace`, `yqcloud` — no route env here; a run with the default
+  five camps can fail quorum (first attempt: 1/2 answered). A retry passed, so treat a failed
+  quorum as **transient**, retry once, then run `--vendors gemini,pollinations`.
