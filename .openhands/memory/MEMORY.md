@@ -37,8 +37,8 @@
 - **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations` →
   quorum ล้มให้ retry 1 ครั้ง (`--vendors gemini,pollinations`).
 
-- **MV series:** ภาพใหม่ทุกคลิป, stamp ใน `content/art_ledger_mv.json` (`make_mv.py`, driver `mv_run.py`);
-  sha ซ้ำ = FAIL (`test_mv_fresh_art.py`). AI gen ล่ม (gemini 429 / pollinations 503) → procedural art.
+- **MV:** ภาพใหม่ทุกคลิป, stamp `content/art_ledger_mv.json` (`make_mv.py`+`mv_run.py`); sha ซ้ำ = FAIL
+  (`test_mv_fresh_art.py`); AI gen ล่ม (429/503) → procedural art.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
