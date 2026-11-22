@@ -264,6 +264,138 @@
         "at": "2026-11-22T08:26:36+0000",
         "channel": "dharma"
       }
+    },
+    "mv_2026-11-22_03": {
+      "title": "เพลงกล่อมนอน 1 ชั่วโมง หลับลึก ตื่นมาใจเบา",
+      "style": "dharma",
+      "created": "2026-11-22T08:35:35+0000",
+      "images": [
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img01.jpg",
+          "sha256": "8ac47eae4ba8f2c22e5445e58dc87592d9cc4b776f5f070cffbad5f6ae268e48",
+          "prompt": "a Thai temple at first light, golden roof, mist over the courtyard, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 1 of 12",
+          "seed": 841076165,
+          "source": "procedural",
+          "gen": "moire",
+          "palette": "ember"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img02.jpg",
+          "sha256": "ef023a7dbfde21de1da4a2191421b25e26f277ce57d0797f186192a891edfa70",
+          "prompt": "a lone monk walking a forest path at dawn, saffron robe, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 2 of 12",
+          "seed": 640896999,
+          "source": "procedural",
+          "gen": "flow",
+          "palette": "ember"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img03.jpg",
+          "sha256": "afa32097a34e2d579352165a0f7c61e739a71dcad7c50fb1178f03b0cb4f12cf",
+          "prompt": "a lotus pond in front of an old ordination hall, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 3 of 12",
+          "seed": 2787497300,
+          "source": "procedural",
+          "gen": "moire",
+          "palette": "sand"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img04.jpg",
+          "sha256": "352e32a3b56f968bdf696b21d9dfe2edc3dfd2e2db2de8765accf5c4866d41a7",
+          "prompt": "a single candle burning beside a Buddha statue, dark room, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 4 of 12",
+          "seed": 3680059687,
+          "source": "procedural",
+          "gen": "contour",
+          "palette": "ember"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img05.jpg",
+          "sha256": "0f3dd7c830dfa1b725f330f9b5c57b59648e9976611df6ecbe99ebc4d75e06aa",
+          "prompt": "rain falling on the terracotta roof of a temple pavilion, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 5 of 12",
+          "seed": 4248345182,
+          "source": "procedural",
+          "gen": "moire",
+          "palette": "sand"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img06.jpg",
+          "sha256": "bbb6b3de83d0e55ca7b8aaf213f0cef78ada5c9f50cba9535d7373857db95b53",
+          "prompt": "incense smoke curling in a beam of morning light, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 6 of 12",
+          "seed": 29606764,
+          "source": "procedural",
+          "gen": "contour",
+          "palette": "sand"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img07.jpg",
+          "sha256": "bf3741598ba4c29d0ee13546c9530cd8cf9c15eda76f29fecff62559c398b71f",
+          "prompt": "a moonlit stupa reflected in still water, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 7 of 12",
+          "seed": 2469009540,
+          "source": "procedural",
+          "gen": "flow",
+          "palette": "sand"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img08.jpg",
+          "sha256": "d2da55d09fdc05efa7aaef93dfb40a8e3410eb7de583f440c69815517db39035",
+          "prompt": "a misty forest temple in the mountains at sunrise, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 8 of 12",
+          "seed": 3104610973,
+          "source": "procedural",
+          "gen": "contour",
+          "palette": "ember"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img09.jpg",
+          "sha256": "805303e051db7d3c2767c677ef6362994ab494ea8b8f0d3f7aacee11205174ca",
+          "prompt": "a wooden bridge over a canal at dusk, warm lanterns, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 9 of 12",
+          "seed": 2038359461,
+          "source": "procedural",
+          "gen": "moire",
+          "palette": "ember"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img10.jpg",
+          "sha256": "a2b9794bb320d5266440f61f4c5264f793bac2ea669b5b29a73d601daac96f02",
+          "prompt": "a stone Buddha covered in fallen leaves, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 10 of 12",
+          "seed": 3600569708,
+          "source": "procedural",
+          "gen": "moire",
+          "palette": "sand"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img11.jpg",
+          "sha256": "f32678e03cbdc4e6d638e8320c645242e696e381c494494331e8c257f0c1fc89",
+          "prompt": "prayer flags moving in a light breeze under a clear sky, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 11 of 12",
+          "seed": 1100570557,
+          "source": "procedural",
+          "gen": "contour",
+          "palette": "ember"
+        },
+        {
+          "path": "assets/art/mv/mv_2026-11-22_03/img12.jpg",
+          "sha256": "38fd92a05c1c52f8153c6b77ddc4dd0dbdbb948a645dcca4205758a59cd9142f",
+          "prompt": "a quiet meditation hall, open windows, soft daylight, serene Thai Buddhist night scene, soft moonlight, mist, candle, calm minimal illustration, muted indigo and gold, no text, no words, no watermark, painterly, centered subject, music video still 12 of 12",
+          "seed": 571113149,
+          "source": "procedural",
+          "gen": "moire",
+          "palette": "ember"
+        }
+      ],
+      "music": {
+        "path": "assets/music/bed-calm-ambient-game.mp3",
+        "sha256": "350605d53f3e60e5af0ae23eb677d9a924c7d503a348741b9148086a4f219a98"
+      },
+      "video": {
+        "path": "work/mv/mv_2026-11-22_03.mp4",
+        "sha256": "7104781c4f547a5802568c5e15b24bcf390565fbf26528fd02d6ecde183f25d7",
+        "duration": 3600.08,
+        "lufs": -14.1,
+        "true_peak": -3.2
+      },
+      "published": {
+        "video_id": "HkFULkG2sRk",
+        "url": "https://youtu.be/HkFULkG2sRk",
+        "at": "2026-11-22T08:40:02+0000",
+        "channel": "dharma"
+      }
     }
   }
 }
