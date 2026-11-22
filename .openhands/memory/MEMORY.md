@@ -42,7 +42,7 @@
   `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`**. `topics/05`.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address
   (`test_no_committed_{secrets,pii}.py`).
-- **Quota:** `videos.insert` own pool; reset 08:00 UTC; token push ≠ run.
+- **Quota:** `videos.insert` own pool; reset 08:00 UTC.
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
@@ -68,7 +68,7 @@
   slug ในโค้ดยังเป็น `kongkeat-story`. **TITLE NOT API-settable → K ตั้งใน Studio**.
 - **Angle de-dup floor = 8** (a 3-char floor rejected all Thai runs; `test_angle_pool.py`).
   **One live title = one video**.
-- **Thumb ผิดแนว = สร้างจากเฟรม (การ์ดดำ)** → `--gen-art`.
+- **Thumb ผิดแนว (การ์ดดำ) → `--gen-art`.**
 - **Thumb URL ≠ ของเรา** (AUTO frame ก็ได้ `maxresdefault`) → เช็ค 8×8 diff (`matches_live()`).
 - **Animated still ต้องตรงเรื่อง**: `make_motion_short.py` แยกตาม `genre`; ส่ง `publish_motion.py` (`motion-<id>`).
 
@@ -78,6 +78,6 @@
   **No STOP; 29 rails disabled → ak produces manually and uploads on its own.** NEW sys →
   `recovered/VIDEO-SYSTEM-NEW/`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
-- **Accounts:** 1 channel = 1 Google account (`test_channel_accounts.py`).
+- **Accounts:** 1 channel = 1 Google account.
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps.
 - **Comment writes need `force-ssl`** (pinned Short CTA 403s).
