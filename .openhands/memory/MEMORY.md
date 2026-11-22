@@ -23,20 +23,20 @@
   output file (ffprobe/ebur128) > a test that can FAIL > a doc**. Best = a **counter with an invariant**
   (`counter_ledger.py`).
 - **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
-- **"แยกไม่ได้" ≠ "ผิด":** quota-dead check → **per-channel secret = identity** (`YT_CH{1,2,4}_REFRESH_TOKEN`).
+- **"แยกไม่ได้" ≠ "ผิด":** quota-dead check → **per-channel secret = identity**.
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
-  hands** via `winremote` (`topics/03`).
+  hands** (`winremote`, `topics/03`).
+- **K ใช้มือถือ — ห้ามขอให้ K ล็อกอินผ่าน noVNC/PC1** (จอเลื่อน/ซูมไม่ได้, K ไม่พอใจ
+  2026-11-22); ล็อกอินที่ต้องมี K = `yt_auth_device.py` (code + `google.com/device`).
 - **ak อัพเองได้เมื่อ gate ผ่าน** (2026-11-21) — ไม่มี ledger/รออนุมัติ; gate/cap/cadence ยังผูก.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
-  (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
-- **Pod env:** reset → `pip -r requirements.txt` + `pip install static-ffmpeg` (copy ffmpeg/ffprobe →
-  `~/.local/bin`, prepend `PATH`); **a secret is injected only if its NAME is in the command** (else
-  "Missing credentials"); git identity resets. **push:** `scripts/gh_auth.py push` (token ใน KV vault
+  (`topics/05`). A 403 gate +`|| echo 0` = **false pass**.
+- **Pod env:** reset → `pip -r requirements.txt` + static-ffmpeg (ffmpeg→`~/.local/bin` on `PATH`);
+  **secret injects only if its NAME is in the command**; git identity resets. **push:** `scripts/gh_auth.py push` (token ใน KV vault
   `ak.github.token`; `git push` ตรง ๆ = 403 เพราะ gh หยิบ env token อ่านอย่างเดียวก่อน);
   suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` + `restore_env.sh`;
   `--unshallow` before ahead/behind (`topics/05`).
-- **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations`
-  → retry 1 ครั้ง.
+- **Advisors:** `council3.py`/`advise.py`/`team.py`; วัด 2026-11-22: ตอบแค่ gemini+pollinations → retry 1.
 
 - **MV:** ภาพใหม่ทุกคลิป, stamp `content/art_ledger_mv.json` (`make_mv.py`+`mv_run.py`); sha ซ้ำ = FAIL;
   arc 6 แบบ + เพลงห้ามซ้ำในช่อง. **เนื้อเรื่อง:** `content/content_ledger.json` (parts sha/เพลง/arc/ชื่อ) —
@@ -63,7 +63,7 @@
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; a stale tree fakes "missing"
   (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`.
 - **Dead source read as "clean" = false pass**: RSS 404 → `UU<id>`; exits **2=BLIND**.
-- **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** (`test_rail_channels.py`).
+- **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** .
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); family genre ปลดระวาง;
   slug ยัง `kongkeat-story`; **title ตั้งใน Studio** (API ไม่ได้).
 - **Angle de-dup floor = 8** (a 3-char floor rejected all Thai runs; `test_angle_pool.py`).

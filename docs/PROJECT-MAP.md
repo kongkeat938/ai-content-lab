@@ -67,6 +67,11 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   secret. `scripts/fetch_secret.py NAME` pulls any repo secret onto the pod (encrypted transit,
   `.github/workflows/cred-transport.yml`). `scripts/revoke_token.py SLUG` proves a leaked token is
   dead (tri-state: "not measured" never reads as "dead").
+- **K's phone — the ONLY path that asks K (new 2026-11-22):** `scripts/yt_auth_device.py` — Google
+  device flow. ak prints `https://www.google.com/device` + an 8-character code; K types it on the
+  phone and taps Allow (the phone's autofill and biometrics do the rest). **Never** ask K to log in
+  through noVNC/PC1: on a phone the remote screen cannot be scrolled or zoomed and reaching the
+  password field is a fight (K, 2026-11-22). Guard `scripts/test_yt_auth_device.py`.
 - **Pod browser login (only when Studio needs it):** `scripts/pod_account_login.py`
   (`--from-secret` reads `OWNER_LOGIN_PASSWORDS`). Password is **never** typed by hand or by K.
 - **Do not** add another login script. `scripts/legacy/pod_mail_login.py` was a duplicate → archived.

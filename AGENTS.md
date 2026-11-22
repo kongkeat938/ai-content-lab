@@ -102,6 +102,13 @@ daily cap, the cadence rule (step up, don't jump), and "meet the standard or do 
 Guard `scripts/test_upload_autonomy.py` fails if an approval rule creeps back into the docs
 or into a publish path.
 
+## K works from a phone (K, 2026-11-22)
+**Never** ask K to log in through noVNC or PC1 — on a phone the remote screen cannot be scrolled or
+zoomed, and reaching the password field is a fight that makes K unhappy. When a login needs K, use
+`scripts/yt_auth_device.py` (Google device flow: ak prints a code, K opens
+`https://www.google.com/device` on the phone and taps Allow). Guard
+`scripts/test_yt_auth_device.py` fails if a doc sends K back to noVNC.
+
 ## Decide without waiting (K, 2026-11-11)
 Make the technical decision yourself: presence of mind → order the events → find the causes →
 weigh pros/cons against the goal → act → verify live. Escalate only a genuine
