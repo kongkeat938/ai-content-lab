@@ -31,9 +31,9 @@
   (a literal 8 d hid a rail dead 66 h, `topics/05`). A 403 gate +`|| echo 0` = **false pass**.
 - **Pod env:** reset → `pip -r requirements.txt` + `pip install static-ffmpeg` (copy ffmpeg/ffprobe →
   `~/.local/bin`, prepend `PATH`); **a secret is injected only if its NAME is in the command** (else
-  "Missing credentials"); git identity resets. `GH_TOKEN=$KONGKEAT_GH_TOKEN`; push 403 →
-  `x-access-token:` URL; suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` +
-  `restore_env.sh`; `--unshallow` before ahead/behind (`topics/05`).
+  "Missing credentials"); git identity resets. **push 403 with every token → K must grant access**;
+  suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` + `restore_env.sh`;
+  `--unshallow` before ahead/behind (`topics/05`).
 - **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations` →
   quorum ล้มให้ retry 1 ครั้ง (`--vendors gemini,pollinations`).
 
@@ -45,8 +45,7 @@
 - **"Rogue" = OURS**: `ax-workspace` (disabled); **rogue-guard hid 6 of our fresh clips** (manifests
   unpushed) → hide only on RSS-confirm or 24 h; `keep_clips_live.py` restores. **`videos.update` REPLACES
   the whole `snippet`/`status`**. `topics/05`.
-- **Repo is PUBLIC** (private halts the rails): never commit a credential/address
-  (`test_no_committed_{secrets,pii}.py`).
+- **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
 - **Quota:** `videos.insert` pool; reset 08:00 UTC.
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
