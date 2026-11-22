@@ -57,7 +57,7 @@
   yuv420p tv/bt709, -14 LUFS, ≤60 s, + 9:16 thumb (≥640, <2 MB); `publish_shorts.py` gates every
   upload. **`alimiter` limits SAMPLE peak → true peak plateaus above it**: `TP_WAV` = gate − AAC
   overshoot, never `TP+0.3` (`test_short_loudness.py`).
-- **Vision grader NON-DETERMINISTIC** (9 then 5/10): judge by metrics, never CI.
+- **Vision grader NON-DETERMINISTIC**: judge by metrics, never CI.
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`. **A stale tree fakes "missing"**
   (`git fetch` first). **ffmpeg/git inherit stdin → SIGTTIN freezes** → `stdin=DEVNULL`
   (`test_subprocess_stdin.py`).
