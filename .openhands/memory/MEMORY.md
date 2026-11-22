@@ -58,12 +58,11 @@
 - **Reference look = MINIMUM bar, ALL channels**: 1080p crf18, tv/bt709, -14 LUFS, clean grade,
   floating Thai text, 1.06x lanczos; **ONE grade source `video_grade.py`** (`setparams=range=tv`).
 - **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920 tv/bt709,
-  -14 LUFS, ≤60 s, 9:16 thumb; `publish_shorts.py` gates every upload. **`alimiter` limits SAMPLE peak → true peak plateaus above it**: `TP_WAV` = gate − AAC
-  overshoot, never `TP+0.3` (`test_short_loudness.py`).
-- **Vision grader NON-DETERMINISTIC**: judge by metrics, never CI.
+  -14 LUFS, ≤60 s, 9:16 thumb; `publish_shorts.py` gates every upload. **`alimiter` limits SAMPLE peak**: `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.
+- **Vision grader NON-DETERMINISTIC** → judge by metrics, never CI.
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; a stale tree fakes "missing"
   (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`.
-- **Dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` on 404; exits **2=BLIND**.
+- **Dead source read as "clean" = false pass**: RSS 404 → `UU<id>`; exits **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** (`test_rail_channels.py`).
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); family genre ปลดระวาง;
   slug ยัง `kongkeat-story`; **title ตั้งใน Studio** (API ไม่ได้).
@@ -79,5 +78,5 @@
   29 rails off → ak produces/uploads by hand**; NEW sys = `recovered/VIDEO-SYSTEM-NEW`. NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account.
-- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps.
+- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll.
 - **Comment writes need `force-ssl`** (pinned Short CTA 403s).
