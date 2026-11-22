@@ -519,6 +519,18 @@ def build(script: dict, out_dir: str, art: str | None, music: str | None,
     run(["ffmpeg", "-y", "-i", silent, "-i", norm, "-map", "0:v", "-map", "1:a",
          "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", out])
     print(f"  {sid}: {duration(out):.1f}s -> {out}")
+
+    # A Short is not publishable without a 9:16 thumbnail, so the build makes one
+    # and then holds itself to `short_standard`. A build that cannot meet the
+    # standard FAILS here instead of handing a substandard file to the uploader.
+    thumb = os.path.join(d, f"short_{sid}.jpg")
+    run([sys.executable, os.path.join(HERE, "make_short_thumbnail.py"),
+         "--video", out, "--hook", script.get("hook", ""), "--out", thumb])
+    ok, reasons, metrics = std.verify_short(out, thumb)
+    if not ok:
+        raise RuntimeError(f"{sid} does not meet short_standard: {reasons}")
+    print(f"  {sid}: standard PASS ({metrics.get('size')}, {metrics.get('lufs')} LUFS, "
+          f"TP {metrics.get('true_peak')} dBFS, {metrics.get('duration_sec')}s) -> {thumb}")
     return out
 
 
@@ -771,6 +783,7 @@ def main() -> int:
     if args.index:
         scripts = [s for s in scripts if s["id"] in args.index]
     os.makedirs(args.out_dir, exist_ok=True)
+    failures: list[str] = []
     for s in scripts:
         if args.art:
             art = args.art
@@ -780,7 +793,13 @@ def main() -> int:
                              args.art_library)
         else:
             art = pick_art(args.art_dir, s["id"])
-        build(s, args.out_dir, art, args.music, cta_mid=args.cta_mid, voice=args.voice)
+        try:
+            build(s, args.out_dir, art, args.music, cta_mid=args.cta_mid, voice=args.voice)
+        except RuntimeError as exc:
+            failures.append(f"{s['id']}: {exc}")
+    if failures:
+        print("FAILED (not a partial pass):\n  " + "\n  ".join(failures))
+        return 1
     print(f"built {len(scripts)} short(s) in {args.out_dir}")
     return 0
 

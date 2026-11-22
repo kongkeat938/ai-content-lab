@@ -30,7 +30,7 @@ import short_standard  # noqa: E402
 
 
 def sh(cmd: list[str]) -> None:
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     if r.returncode != 0:
         raise SystemExit("cmd failed: " + " ".join(cmd) + "\n" + r.stderr[-1500:])
 

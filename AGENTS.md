@@ -81,6 +81,11 @@ every draft, exits **2** (deferral) instead of pretending the council decided.
 `advise.py` stays the quick one-camp ask (Gemini, 2026-11-18). The council is help, never an
 approval step — `test_upload_autonomy.py` still binds.
 
+**Use it for the work (K, 2026-11-22): "ต่อไปใช้ระบบนี้เข้ามาช่วยทำงานนะ"** — a technical
+decision (what to build/fix next) goes through `council3.py` with the measured facts in
+`--extra`, and the record is kept. ak still decides and executes; the council's numbers are
+checked against FACTS, not trusted.
+
 ## ak publishes on its own (K, 2026-11-21)
 **"ตอนนี้ระบบสร้างคลิปได้มาตรฐานแล้ว ยกเลิกกฏรอ K อนุมัติอัพออกเลย อัพได้ตลอดเวลาเลย แล้วแต่
 ak บริหาร"** — the old "K alone approves a publish" rule is **gone**. ak uploads whenever the

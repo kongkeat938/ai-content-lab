@@ -37,7 +37,7 @@ def check(name: str, ok: bool, detail: str = "") -> None:
 
 
 def run(cmd: list[str]) -> None:
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     if r.returncode != 0:
         raise SystemExit("cmd failed: " + " ".join(cmd) + "\n" + r.stderr[-1200:])
 
@@ -45,7 +45,7 @@ def run(cmd: list[str]) -> None:
 def loudness(path: str) -> tuple[float | None, float | None]:
     r = subprocess.run(["ffmpeg", "-hide_banner", "-i", path,
                         "-af", "ebur128=peak=true", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, stdin=subprocess.DEVNULL)
     i = tp = None
     for line in r.stderr.splitlines():
         if "I:" in line and "LUFS" in line:

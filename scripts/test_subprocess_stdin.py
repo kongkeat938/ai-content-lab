@@ -75,14 +75,13 @@ def bare_calls(path: str) -> list[int]:
 
 
 def sweep() -> dict[str, int]:
-    """Every Python file that can run -- not just scripts/, so a rail moved to
-    ops/ or a helper under scripts/legacy/ cannot escape the ratchet."""
+    """Every Python file that can run -- tests included. Measured 2026-11-22: the
+    freeze that burned 300 s per run lived in a *test* helper, and test files were
+    excluded from this sweep, so the guard could not see the one place it bit."""
     found: dict[str, int] = {}
     for path in sorted(glob.glob(os.path.join(ROOT, "**", "*.py"), recursive=True)):
         rel = os.path.relpath(path, ROOT)
         if rel.startswith((".git", ".openhands")) or "/." in rel:
-            continue
-        if os.path.basename(rel).startswith("test_"):
             continue
         n = len(bare_calls(path))
         if n:
