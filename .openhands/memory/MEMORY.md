@@ -34,8 +34,8 @@
   "Missing credentials"); git identity resets. **push 403 with every token → K must grant access**;
   suite = every `test_*.py`; **งานต้องออกจาก pod** = `durability_guard.py` + `restore_env.sh`;
   `--unshallow` before ahead/behind (`topics/05`).
-- **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations` →
-  quorum ล้มให้ retry 1 ครั้ง (`--vendors gemini,pollinations`).
+- **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations`
+  → retry 1 ครั้ง.
 
 - **MV:** ภาพใหม่ทุกคลิป, stamp `content/art_ledger_mv.json` (`make_mv.py`+`mv_run.py`); sha ซ้ำ = FAIL;
   arc 6 แบบ + เพลงห้ามซ้ำในช่อง. **เนื้อเรื่อง:** `content/content_ledger.json` (parts sha/เพลง/arc/ชื่อ) —
@@ -75,7 +75,7 @@
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
 - **Automation:** GH Actions (watchdog → foreman → rails), kill switch `content/STOP`; **no STOP,
-  29 rails disabled → ak produces/uploads by hand.** NEW sys → `recovered/VIDEO-SYSTEM-NEW/`.
+  29 rails off → ak produces/uploads by hand**; NEW sys = `recovered/VIDEO-SYSTEM-NEW`. NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account.
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps.
