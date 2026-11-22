@@ -520,6 +520,64 @@
       "video_id": "Is-VYMhhPvc",
       "url": "https://youtu.be/Is-VYMhhPvc",
       "thumbnail_set": true
+    },
+    {
+      "key": "mv_2026-11-22_01",
+      "state": "published",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/longform-mv_2026-11-22_01/video.mp4",
+      "thumbnail": "assets/branding/farmmer/thumbs/mv_2026-11-22_01.jpg",
+      "duration_sec": 3600.0,
+      "title": "เพลงธรรมะบรรเลง 1 ชั่วโมง ฟังก่อนนอน ใจสงบ ผ่อนคลาย",
+      "description": "เพลงบรรเลงธรรมะ 1 ชั่วโมง ฟังก่อนนอน ช่วยให้ใจสงบ ผ่อนคลาย และหลับลึกขึ้น\n\nไม่มีคำพูด ไม่มีโฆษณา — มีเพียงดนตรีเบา ๆ กับภาพเคลื่อนไหวช้า ๆ 12 ภาพ ที่เปลี่ยนไปเรื่อย ๆ\n\nเปิดฟังได้ทุกเวลา ทั้งก่อนนอน ตอนอ่านหนังสือ ตอนทำงาน หรือตอนต้องการความสงบ\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปใหม่ทุกคืน\n\n— ช่องพี่น้อง —\nตาต้า GenX — ปรัชญาชีวิต\nhttps://www.youtube.com/channel/UCI6EfsgM1HNjrYarvigxyrQ\nPCSEV — เกร็ดความรู้รอบตัว\nhttps://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ",
+      "tags": [
+        "เพลงธรรมะ",
+        "เพลงบรรเลง",
+        "ฟังก่อนนอน",
+        "สมาธิ",
+        "ผ่อนคลาย",
+        "ใจสงบ",
+        "ดนตรีบำบัด",
+        "เพลงกล่อมนอน",
+        "ambient",
+        "sleep music",
+        "ธรรมะ",
+        "นั่งสมาธิ"
+      ],
+      "category_id": "10",
+      "privacy": "public",
+      "built": "2026-11-22T15:15+07:00",
+      "note": "MV: 12 fresh procedural images (sha-stamped in content/art_ledger_mv.json); gate pass -14.0 LUFS TP -3.4.",
+      "video_id": "7zALsTXwueU",
+      "url": "https://youtu.be/7zALsTXwueU",
+      "thumbnail_set": true
+    },
+    {
+      "key": "mv_2026-11-22_02",
+      "state": "published",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/longform-mv_2026-11-22_02/video.mp4",
+      "thumbnail": "assets/branding/farmmer/thumbs/mv_2026-11-22_02.jpg",
+      "duration_sec": 3600.0,
+      "title": "เพลงสมาธิบรรเลง 1 ชั่วโมง นั่งสมาธิ ผ่อนคลาย",
+      "description": "เพลงสมาธิบรรเลง 1 ชั่วโมง นั่งสมาธิ ผ่อนคลาย นั่งสมาธิ ผ่อนคลาย\n\nไม่มีคำพูด ไม่มีโฆษณา — มีเพียงดนตรีเบา ๆ กับภาพเคลื่อนไหวช้า ๆ 12 ภาพ ที่เปลี่ยนไปเรื่อย ๆ\n\nเปิดฟังได้ทุกเวลา ทั้งก่อนนอน ตอนอ่านหนังสือ ตอนทำงาน หรือตอนต้องการความสงบ\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปใหม่ทุกวัน",
+      "tags": [
+        "เพลงบรรเลง",
+        "ฟังก่อนนอน",
+        "สมาธิ",
+        "ผ่อนคลาย",
+        "ใจสงบ",
+        "ดนตรีบำบัด",
+        "เพลงกล่อมนอน",
+        "ambient",
+        "sleep music",
+        "ธรรมะ"
+      ],
+      "category_id": "10",
+      "privacy": "public",
+      "built": "2026-11-22T08:26+0000",
+      "note": "MV series: fresh sha-stamped art (content/art_ledger_mv.json)",
+      "video_id": "rkvLICChhaE",
+      "url": "https://youtu.be/rkvLICChhaE",
+      "thumbnail_set": true
     }
   ]
 }

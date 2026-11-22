@@ -39,3 +39,7 @@ content/*.json.lock
 
 # scratch/advisor work (may hold API keys + session cookies)
 .stockwork/
+
+# MV art: 10 MB per MV; the sha/prompt/seed stamps live in content/art_ledger_mv.json
+# and procedural art is reproducible from them.
+assets/art/mv/

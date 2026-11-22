@@ -49,6 +49,8 @@ is retired (its 4 long-forms are published and the queue is closed).
 | `longform-standard.yml` (new 2026-11-21) | **manual dispatch only** (`spec`, `out`) | runs the approved `longform_clip.py` on a GitHub runner (not the pod: two pod runs died ~19 min in), gates it with `clip_standard.py`, and puts the MP4 on a Release + artifact for K. **Never uploads.** | the long-form watch-hours lever |
 | `make_ambient_video.py` (a tool, not a rail) | by hand | stitches real b-roll (`fetch_broll.py`, Coverr) into one long 1080x1920 ambient video, looped to `--minutes`, bed at -14 LUFS | the "join clips + 3-min music" edit K wanted, done headless |
 
+| `make_mv.py` + `mv_run.py` (MV series, new 2026-11-22) | by hand, repeatable | builds a music video: **fresh art per MV**, gated (-14 LUFS, TP<=-3.0, 1080p tv), published, and stamped image->MV->URL in `content/art_ledger_mv.json`. Art source chain: gemini image -> pollinations -> procedural `generative_art.py` (both AI routes were down 2026-11-22: 429 quota / 503). Guard `test_mv_fresh_art.py` FAILS on a reused image, a missing stamp, a missing file, or an unverified video | long-form watch-hours without narration |
+
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.
 
 ## 2) The one login path (do NOT add a second)

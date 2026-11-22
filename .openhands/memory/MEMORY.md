@@ -37,6 +37,9 @@
 - **Advisors:** `council3.py`+`advise.py`+`team.py`; วัด 2026-11-22: ตอบแค่ `gemini`+`pollinations` →
   quorum ล้มให้ retry 1 ครั้ง (`--vendors gemini,pollinations`).
 
+- **MV series:** ภาพใหม่ทุกคลิป, stamp ใน `content/art_ledger_mv.json` (`make_mv.py`, driver `mv_run.py`);
+  sha ซ้ำ = FAIL (`test_mv_fresh_art.py`). AI gen ล่ม (gemini 429 / pollinations 503) → procedural art.
+
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS**: `ax-workspace` auto-shorts (K's old repo) — disabled, secrets deleted;
   `aeris` = READ-ONLY. **`videos.update` REPLACES the whole `snippet`**. `topics/05`.
@@ -48,8 +51,8 @@
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
   entry; theme rotates per RUN count; backfill needs evenly spaced crons. **A pod render dies ~19 min
   in → approved clip = `longform-standard.yml`** (CI, never uploads).
-- **GitHub cron** fires 23/100 but late; foreman backfill = truth. **All rails can be `disabled_manually`
-  at once (no `content/STOP`)** → measure `actions/workflows` first, re-enable + dispatch `watchdog`.
+- **GitHub cron** fires 23/100 but late; foreman backfill = truth; rails can be `disabled_manually`
+  → measure `actions/workflows` before trusting "it runs".
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Reference look = MINIMUM bar, ALL channels**: 1080p crf18, tv/bt709, -14 LUFS, clean grade,
   floating Thai text, 1.06x lanczos; **ONE grade source `video_grade.py`** (`setparams=range=tv`).
@@ -63,9 +66,8 @@
   (`test_subprocess_stdin.py`).
 - **Dead source read as "clean" = false pass**: `rogue_watch_rss.py` fell back to `UU<id>` on 404; exits **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** (`test_rail_channels.py`).
-- **ch4 = PCSEV = เกร็ดความรู้/วิทยาศาสตร์ "ทำไม"** (Shorts-first, 5 ขั้น P/C/S/E/V; hook =
-  คำถาม `_CURIOSITY`, `content/hooks/knowledge.md`); family/story genre **ปลดระวาง** (คิวปิด).
-  slug ในโค้ดยังเป็น `kongkeat-story`. **TITLE NOT API-settable → K ตั้งใน Studio**.
+- **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); family genre ปลดระวาง;
+  slug ยัง `kongkeat-story`; **title ตั้งใน Studio** (API ไม่ได้).
 - **Angle de-dup floor = 8** (a 3-char floor rejected all Thai runs; `test_angle_pool.py`).
   **One live title = one video**.
 - **Thumb ผิดแนว (การ์ดดำ) → `--gen-art`.**
@@ -74,9 +76,8 @@
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
-- **Automation:** GH Actions only (watchdog → foreman → rails); kill switch `content/STOP`.
-  **No STOP; 29 rails disabled → ak produces manually and uploads on its own.** NEW sys →
-  `recovered/VIDEO-SYSTEM-NEW/`.
+- **Automation:** GH Actions (watchdog → foreman → rails), kill switch `content/STOP`; **no STOP,
+  29 rails disabled → ak produces/uploads by hand.** NEW sys → `recovered/VIDEO-SYSTEM-NEW/`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3`.
 - **Accounts:** 1 channel = 1 Google account.
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll gaps.
