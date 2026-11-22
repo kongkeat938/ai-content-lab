@@ -7,7 +7,7 @@ name: ch4-longform
 # the weakest channel on the fleet -- measured 2026-11-11: 0.7 long-form
 # watch-hours in 28 days (0.2% of the YPP bar) and 5.2% AVD, because the picture
 # was one still poster card looping under the voice. The owner asked for a new
-# format with new tools. A five-advisor panel (scripts/advise.py, three runs) and
+# format with new tools. An advisor panel (scripts/advise.py; five voices at the time, Gemini alone since 2026-11-18) and
 # a live YouTube Data API pull (region TH) chose the genre: general knowledge
 # (top-10 long-form median 3.2M views; recent-60d median 7.5k across 5 channels,
 # i.e. demand plus room). Food was rejected on feasibility -- its visuals need
