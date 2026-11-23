@@ -28,7 +28,11 @@ import clip_standard  # the gate
 import kill_switch
 import make_short  # Thai voice (edge-tts)
 
-W, H, FPS = 1280, 720, 25
+# 720p is the gate's floor, not the target: K's reference look is 1080p for every
+# channel, so the long-form rail asks for it via CLIP_W/CLIP_H and the default stays
+# at the demo size other builders were tuned on.
+W, H = int(os.environ.get("CLIP_W", "1280")), int(os.environ.get("CLIP_H", "720"))
+FPS = 25
 SHOT, FADE = 4.6, 1.0
 WEIGHTS = "/tmp/RealESRGAN_x4plus.pth"
 WEIGHTS_URL = ("https://github.com/xinntao/Real-ESRGAN/releases/download/"

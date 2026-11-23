@@ -63,6 +63,9 @@ jobs:
           CONTENT_STOP_PATH: /tmp/nostop
           HF_HOME: /tmp/hf
           TMPDIR: /tmp
+          # K's reference look is 1080p; 720p is only the gate's floor
+          CLIP_W: 1920
+          CLIP_H: 1080
         run: |
           mkdir -p out
           python3 scripts/longform_clip.py \
