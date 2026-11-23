@@ -50,7 +50,8 @@ VOICE_ALT = "th-TH-PremwadeeNeural"
 # A slower read: the niche's winners run about a minute, and a slow read holds a
 # sleepy listener better than a clipped one.
 RATE = "-15%"
-W, H = 1080, 1920
+# K (2026-11-23): "ต้อง 4k เท่านั้นถึงอัพขึ้นได้" -- a Short is 4K vertical, 2160x3840.
+W, H = 2160, 3840
 GOLD = (245, 199, 90)
 WHITE = (250, 250, 252)
 # House targets (see docs/RECIPE.md): -14 LUFS integrated, true peak <= -3 dBFS.

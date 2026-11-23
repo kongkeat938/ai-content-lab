@@ -847,6 +847,16 @@
       "thumbnail": "work/ch2_shorts/126/thumb_126.jpg",
       "thumbnail_set": true,
       "shape": "cue"
+    },
+    "127": {
+      "video_id": "zuO5s4BxTzI",
+      "url": "https://youtu.be/zuO5s4BxTzI",
+      "title": "คืนนี้ลองนึกถึงเรื่องดีๆ สักเรื่องก่อนนอน #Shorts",
+      "posted_at": "2026-11-23T15:51:27+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/127/thumb_127.jpg",
+      "thumbnail_set": true,
+      "shape": "cue"
     }
   }
 }

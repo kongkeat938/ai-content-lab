@@ -5,7 +5,7 @@ Owner K (2026-11-17): a Short's aspect ratio and thumbnail must meet the same
 standard as the long-form, and a Short that does not meet it must NOT upload
 (including the old backlog). This locks the two things that can silently break:
 
-  1. **The standard itself** (`short_standard.verify_short`): a good 1080x1920
+  1. **The standard itself** (`short_standard.verify_short`): a good 2160x3840
      yuv420p/tv/bt709 clip with a 9:16 thumbnail passes; each defect fails
      (wrong size, full-range yuvj420p, a 16:9 thumbnail, an undersized thumbnail,
      a missing thumbnail). Every case is a REAL ffmpeg/PIL artifact, not a mock.
@@ -37,7 +37,7 @@ def sh(cmd: list[str]) -> None:
 
 def make_video(path: str, *, pix_fmt: str, color_range: str, dur: int = 4) -> None:
     sh(["ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", f"testsrc2=size=1080x1920:rate=30:duration={dur}",
+        "-f", "lavfi", "-i", f"testsrc2=size=2160x3840:rate=30:duration={dur}",
         "-f", "lavfi", "-i", f"sine=frequency=300:duration={dur}",
         "-af", "loudnorm=I=-14:TP=-3", "-ar", "48000",
         "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", pix_fmt,

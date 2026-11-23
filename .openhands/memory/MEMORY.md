@@ -29,6 +29,8 @@
 - **K ใช้มือถือ — ห้ามขอให้ K ล็อกอินผ่าน noVNC/PC1** (จอเลื่อน/ซูมไม่ได้, K ไม่พอใจ
   2026-11-22); ล็อกอินที่ต้องมี K = `yt_auth_device.py` (code + `google.com/device`).
 - **ak อัพเองได้เมื่อ gate ผ่าน** (2026-11-21) — ไม่มี ledger/รออนุมัติ; gate/cap/cadence ยังผูก.
+- **A gate whose floor came from the same demo it approved cannot detect drift** (720p passed
+  a 4K bar for a day) — the rail must state the floor, and a test must feed it a file that fails.
 - **A guard must be able to FAIL;** never hardcode the set it sweeps nor a threshold from it
   (`topics/05`). A 403 gate +`|| echo 0` = **false pass**.
 - **Pod env:** reset → `pip -r requirements.txt` + static-ffmpeg (ffmpeg→`~/.local/bin` on `PATH`);
@@ -55,7 +57,8 @@
 - **GitHub cron** fires 23/100 but late; foreman backfill = truth; rails can be `disabled_manually`
   → measure `actions/workflows` before trusting "it runs".
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
-- **Reference look = MINIMUM bar, ALL channels**: 1080p crf18, tv/bt709, -14 LUFS, clean grade,
+- **Reference look = MINIMUM bar, ALL channels**: **long-form 4K 3840x2160** (K 2026-11-23: gate
+  `--min-height 2160`; scenes 960px x4), Shorts 1080x1920, tv/bt709, -14 LUFS, clean grade,
   floating Thai text, 1.06x lanczos; **ONE grade `video_grade.py`** (`setparams=range=tv`).
 - **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920 tv/bt709,
   -14 LUFS, ≤60 s, 9:16 thumb; `publish_shorts.py` gates every upload. **`alimiter` limits SAMPLE peak**: `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.

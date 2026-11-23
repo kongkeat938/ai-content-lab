@@ -222,6 +222,17 @@ def main() -> int:
     video_path = args.file or download(
         ep["media"]["video"]["url"], os.path.join(args.cache, f"{ep['id']}.mp4"))
 
+    # K (2026-11-23): "ต้อง 4k เท่านั้นถึงอัพขึ้นได้ ห้ามซ้ำ ทั้งภาพ ดนตรี บท"
+    # Nothing below 3840x2160 leaves this rail.
+    import upload_gate
+    gok, greasons = upload_gate.check("long", video_path)
+    if not gok:
+        print("REFUSED -- K's upload rules:", file=sys.stderr)
+        for why in greasons:
+            print(f"  - {why}", file=sys.stderr)
+        return 1
+    print("  upload gate: 4K confirmed")
+
     print("\nuploading video ...")
     try:
         request = yt.videos().insert(

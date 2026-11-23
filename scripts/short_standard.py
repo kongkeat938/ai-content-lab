@@ -10,7 +10,7 @@ guard call it. A build that fails is held, not uploaded.
 
 Every threshold is measured, not assumed:
 
-  * **9:16, 1080x1920** -- the vertical Shorts shape (make_short.py renders W=1080,H=1920).
+  * **9:16, 2160x3840 (4K)** -- K's rule, 2026-11-23: 4K only to upload.
   * **yuv420p + range=tv + bt709** -- the long-form standard. Measured 2026-11-17: a
     built Short came out `yuvj420p` / full-range `pc` / `bt470bg` because the JPEG
     backdrop decodes full-range; docs/RECIPE.md warns that plays washed-out. Fixed in
@@ -32,7 +32,8 @@ import subprocess
 
 # Video shape
 ASPECT_W, ASPECT_H = 9, 16
-EXPECT_W, EXPECT_H = 1080, 1920
+# K (2026-11-23): 4K only to upload -- a 1080x1920 Short is now below the bar.
+EXPECT_W, EXPECT_H = 2160, 3840
 PIX_FMT = "yuv420p"
 COLOR_RANGE = "tv"
 COLORSPACE = "bt709"

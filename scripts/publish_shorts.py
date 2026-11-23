@@ -35,6 +35,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 import short_standard  # noqa: E402  -- the one place that decides pass/fail
+import upload_gate  # noqa: E402  -- K's 4K / no-repeat rules
 
 SCRIPTS = os.path.join(ROOT, "content", "ch2_shorts", "scripts.json")
 MANIFEST = os.path.join(ROOT, "content", "ch2_shorts.json")
@@ -45,6 +46,22 @@ LONG_URL = "https://youtu.be/F4qFHoVpEyI"
 # The AERIS pack that stood here first was replaced on 2026-11-07: it measured as
 # test tones, not music (see scripts/test_music_beds.py).
 MUSIC_CREDIT = "\n\n🎵 ดนตรีประกอบ: CC0 (Openverse / Freesound)"
+
+
+def _read_json(path: str) -> dict:
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return {}
+
+
+def _bed_for(ledger_path: str, sid: str) -> str | None:
+    """The bed this id owns in the ledger (a cached build has no local `bed`)."""
+    for name, owner in (_read_json(ledger_path).get("beds") or {}).items():
+        if str(owner) == str(sid):
+            return name
+    return None
 
 
 def art_ledger_path(channel: str) -> str:
@@ -571,7 +588,13 @@ def pick_bed(music_dir: str | None, sid: str, mood: str | None = None,
                 used = json.load(fh).get("beds", {})
         except (OSError, ValueError):
             used = {}
-    free = [f for f in pool if used.get(f, sid) == sid] or pool
+    # K (2026-11-23): "ห้ามซ้ำ ... ดนตรี". The old `or pool` fallback handed a used
+    # bed back out whenever a channel's library ran dry, which is the repeat the rule
+    # forbids -- so a dry library now returns None and the caller HOLDS the clip.
+    free = [f for f in pool if used.get(f, sid) == sid]
+    if not free:
+        print(f"  no unused bed left in {music_dir} -- holding {sid}", file=sys.stderr)
+        return None
     pick = free[0]
     if ledger_path:
         used[pick] = sid
@@ -716,7 +739,10 @@ def main() -> int:
         # Build if needed (CI has no prebuilt file). A stalled channel's clip is the
         # changed probe, so it is always rebuilt (new voice), never a cached file.
         out = os.path.join(work, sid, f"short_{sid}.mp4")
-        if stalled or not os.path.exists(out):
+        stale = os.path.exists(out) and bool(upload_gate.resolution_problems(out, "short"))
+        if stale:
+            print(f"  {sid}: existing file is not 4K -- rebuilding")
+        if stalled or stale or not os.path.exists(out):
             print(f"building {sid} ...")
             cmd = [sys.executable, os.path.join(HERE, "make_short.py"),
                    "--scripts", spec["scripts"], "--index", sid,
@@ -771,6 +797,27 @@ def main() -> int:
             rc = 1
             continue
         print(f"  {sid}: meets the standard {metrics}")
+
+        # K (2026-11-23): 4K only, and nothing repeated -- picture, music, script.
+        try:
+            art_md5s = [upload_gate.md5_of(art_path)] if os.path.exists(art_path) else []
+            bed_name = _bed_for(bed_ledger_path(args.channel), sid)
+            published = [(p["id"], upload_gate.script_text(p))
+                         for p in scripts if p["id"] != sid and man["shorts"].get(p["id"], {}).get("video_id")]
+            gok, greasons = upload_gate.check(
+                "short", out, md5s=art_md5s,
+                art_ledger=_read_json(art_ledger_path(args.channel)),
+                bed=bed_name, bed_ledger=_read_json(bed_ledger_path(args.channel)),
+                sid=sid, narration=upload_gate.script_text(s), published=published)
+        except Exception as exc:                       # noqa: BLE001
+            gok, greasons = False, [f"upload gate error: {exc}"]
+        if not gok:
+            print(f"  {sid}: HELD -- K's upload rules refuse it:")
+            for why in greasons:
+                print(f"      - {why}")
+            rc = 1
+            continue
+        print("  upload gate: 4K + picture/music/script are all fresh")
 
         description = build_description(s, spec)
         body = {
