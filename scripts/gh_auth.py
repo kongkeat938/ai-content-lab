@@ -18,6 +18,7 @@ Source order: `$GH_PUSH_TOKEN`, the vault key `ak.github.token`, then
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
 import subprocess
@@ -163,23 +164,30 @@ def setup() -> int:
 
 
 def push() -> int:
+    """Push with the first token GitHub accepts, as a basic-auth header.
+
+    Measured 2026-11-22: on a fresh pod the credential helper answered 403
+    ("Permission ... denied") while the very same token pushed fine in a header;
+    and git over HTTPS wants basic, not bearer. The header rides in the
+    environment, so the token never reaches argv or a file.
+    """
     env = {k: v for k, v in os.environ.items() if k not in SHADOWING}
+    tok, source, _ = verified()
+    if tok:
+        env.update({"GIT_CONFIG_COUNT": "1",
+                    "GIT_CONFIG_KEY_0": "http.extraheader",
+                    "GIT_CONFIG_VALUE_0": "Authorization: basic " + base64.b64encode(
+                        f"x-access-token:{tok}".encode()).decode()})
     r = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, env=env,
                        stdin=subprocess.DEVNULL)
     if r.returncode == 0:
         return 0
-    # Measured 2026-11-22: a fresh pod answered 403 through the credential helper
-    # even with a valid token, and the same token in a header pushed fine. The
-    # header goes through the environment, so the token never reaches argv.
-    tok, source, _ = verified()
     if not tok:
+        print("no token GitHub accepts: set GH_PUSH_TOKEN or run "
+              "`python3 scripts/gh_auth.py save <token>`")
         return r.returncode
-    print(f"helper path failed; retrying with {source} in an auth header")
-    env.update({"GIT_CONFIG_COUNT": "1",
-                "GIT_CONFIG_KEY_0": "http.extraheader",
-                "GIT_CONFIG_VALUE_0": f"Authorization: Bearer {tok}"})
-    return subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, env=env,
-                          stdin=subprocess.DEVNULL).returncode
+    print(f"push with {source} in an auth header failed ({r.returncode})")
+    return r.returncode
 
 
 def main() -> int:

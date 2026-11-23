@@ -91,7 +91,7 @@ class R:
 
 def fake_run(argv, **kw):
     calls.append((argv, kw.get("env") or {}))
-    return R(1 if len(calls) == 1 else 0)
+    return R(0)
 
 
 real_run = gh_auth.subprocess.run
@@ -104,9 +104,11 @@ finally:
     gh_auth.subprocess.run = real_run
     os.environ.pop("GH_PUSH_TOKEN", None)
 env2 = calls[-1][1]
-check("push retried and succeeded", rc == 0 and len(calls) == 2)
-check("token travels in a header, not argv",
-      "Authorization: Bearer " + TOKEN in env2.get("GIT_CONFIG_VALUE_0", "")
+import base64 as _b64
+check("push used the token", rc == 0 and len(calls) == 1)
+check("token travels as basic auth in the env, not argv",
+      env2.get("GIT_CONFIG_VALUE_0") == "Authorization: basic " + _b64.b64encode(
+          f"x-access-token:{TOKEN}".encode()).decode()
       and all(TOKEN not in " ".join(a) for a, _ in calls)
       and TOKEN not in buf.getvalue())
 
