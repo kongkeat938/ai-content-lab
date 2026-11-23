@@ -33,6 +33,10 @@ import make_short  # Thai voice (edge-tts)
 # at the demo size other builders were tuned on.
 W, H = int(os.environ.get("CLIP_W", "1280")), int(os.environ.get("CLIP_H", "720"))
 FPS = 25
+# Source resolution for the AI scenes. The library rule is "4K source": 960 x4 by
+# RealESRGAN = 3840, so a 3840-wide pan window needs no upscale. Other builders keep
+# the 640 default they were tuned on.
+SCENE_PX = int(os.environ.get("CLIP_SCENE_PX", "640"))
 SHOT, FADE = 4.6, 1.0
 WEIGHTS = "/tmp/RealESRGAN_x4plus.pth"
 WEIGHTS_URL = ("https://github.com/xinntao/Real-ESRGAN/releases/download/"
@@ -69,7 +73,7 @@ def gen_scenes(prompts: list[str], outdir: str) -> list[str]:
     paths = []
     for i, prompt in enumerate(prompts):
         img = pipe(prompt=prompt, num_inference_steps=4, guidance_scale=0.0,
-                   width=640, height=640).images[0]
+                   width=SCENE_PX, height=SCENE_PX).images[0]
         x = torch.from_numpy(
             np.asarray(img.convert("RGB")).astype("float32") / 255.0
         ).permute(2, 0, 1)[None]
@@ -170,11 +174,15 @@ def _esc(t: str) -> str:
 
 def finish(picture: str, norm: str, title: str, subtitle: str, out: str, tmp: str) -> None:
     font = os.path.join(ROOT, "assets", "fonts", "Kanit-SemiBold.ttf")
+    # Text scales with the frame: a 4K master with 720p-sized type reads as a caption
+    # for ants.
+    k = H / 720
+    fs1, fs2 = round(68 * k), round(40 * k)
     vf = (f"drawtext=fontfile={font}:text='{_esc(title)}':fontcolor=white@0.94:"
-          "fontsize=68:x=(w-text_w)/2:y=h-200:"
+          f"fontsize={fs1}:x=(w-text_w)/2:y=h-{round(200 * k)}:"
           "alpha='if(lt(t,0.8),0,min(1,(t-0.8)/1.2))',"
           f"drawtext=fontfile={font}:text='{_esc(subtitle)}':fontcolor=white@0.80:"
-          "fontsize=40:x=(w-text_w)/2:y=h-112:"
+          f"fontsize={fs2}:x=(w-text_w)/2:y=h-{round(112 * k)}:"
           "alpha='if(lt(t,1.8),0,min(1,(t-1.8)/1.2))',"
           "setparams=range=tv,format=yuv420p")
     pt = os.path.join(tmp, "picture_text.mp4")

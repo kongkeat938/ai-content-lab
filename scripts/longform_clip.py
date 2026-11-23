@@ -23,6 +23,10 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 import clip_standard  # noqa: E402
+
+# K (2026-11-23): "ทำไมคุณภาพคลิปไม่ใช่ 4k" -- the long-form master is 4K, and the
+# gate is told so, so a 720p or 1080p build fails instead of shipping quietly.
+MIN_OUT_H = 2160
 import kill_switch  # noqa: E402
 import standard_clip as sc  # noqa: E402  (gen_scenes, narrate, music, mix, finish, ff, duration)
 
@@ -94,7 +98,8 @@ def main() -> int:
         sc.music(mus, 30)
         build(paths, narr, mus, spec.get("title", ""), spec.get("subtitle", ""), a.out, tmp)
 
-    rc = subprocess.run([sys.executable, os.path.join(HERE, "clip_standard.py"), a.out],
+    rc = subprocess.run([sys.executable, os.path.join(HERE, "clip_standard.py"), a.out,
+                         "--min-height", str(MIN_OUT_H)],
                         stdin=subprocess.DEVNULL).returncode
     print("clip_standard:", "PASS" if rc == 0 else "FAIL", flush=True)
     return rc

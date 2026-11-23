@@ -139,7 +139,7 @@ def measure_shots(path: str, window: float = 1.0) -> dict:
             "shot_baseline": round(baseline, 2)}
 
 
-def verify_clip(video: str) -> tuple:
+def verify_clip(video: str, min_h: int = MIN_H) -> tuple:
     """Return (ok, reasons, metrics). ok is False if ANY standard is missed."""
     reasons: list = []
     metrics: dict = {}
@@ -156,8 +156,9 @@ def verify_clip(video: str) -> tuple:
     else:
         w, h = v.get("width") or 0, v.get("height") or 0
         metrics["size"] = f"{w}x{h}"
-        if w < MIN_W or h < MIN_H:
-            reasons.append(f"{w}x{h} is below the {MIN_W}x{MIN_H} floor")
+        min_w = round(min_h * 16 / 9)
+        if w < min_w or h < min_h:
+            reasons.append(f"{w}x{h} is below the {min_w}x{min_h} floor")
         if h and abs(w / h - ASPECT) > 0.02:
             reasons.append(f"aspect {w}x{h} is not 16:9")
         metrics["pix_fmt"] = v.get("pix_fmt")
@@ -208,8 +209,10 @@ def main() -> int:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("video")
+    ap.add_argument("--min-height", type=int, default=MIN_H,
+                    help="floor for this rail; the long-form rail asks for 2160")
     args = ap.parse_args()
-    ok, reasons, metrics = verify_clip(args.video)
+    ok, reasons, metrics = verify_clip(args.video, args.min_height)
     print(json.dumps({"verdict": "pass" if ok else "fail",
                       "failures": reasons, "metrics": metrics},
                      indent=1, ensure_ascii=False))

@@ -63,9 +63,11 @@ jobs:
           CONTENT_STOP_PATH: /tmp/nostop
           HF_HOME: /tmp/hf
           TMPDIR: /tmp
-          # K's reference look is 1080p; 720p is only the gate's floor
-          CLIP_W: 1920
-          CLIP_H: 1080
+          # K (2026-11-23): the master is 4K. 960 x4 (RealESRGAN) = 3840 source,
+          # so the 3840-wide pan window is not an upscale.
+          CLIP_W: 3840
+          CLIP_H: 2160
+          CLIP_SCENE_PX: 960
         run: |
           mkdir -p out
           python3 scripts/longform_clip.py \

@@ -19,7 +19,11 @@ possible, and now also **the parts that are built and measured** (bottom of the 
 3. **A separate library for finished videos waiting to upload.**
 4. **Build shape:** `image → video` + **AI-generated music** + **AI-generated narration**.
 5. **Research the method from many vendors' AI-gen apps** (Dreamina, Gemini, Perplexity,
-   others), then **adapt the approach to ours**. Work at **4K only; output 720p**.
+   others), then **adapt the approach to ours**. Work at **4K only; output 4K**.
+   > **Updated 2026-11-23 (K):** rule 5 used to end "output 720p". K asked
+   > "ทำไมคุณภาพคลิปไม่ใช่ 4k" — the master is now **3840×2160**, and the gate
+   > (`clip_standard.py --min-height 2160`) refuses anything lower. 720p stays
+   > only as the generic floor for rails that do not ask for more.
 
 ---
 
@@ -121,7 +125,8 @@ music (AI) ─────────────────────┤
 narration (AI TTS) ─────────────┘
 ```
 
-Output is **720p** by rule 5, from a 4K source (so the pan has headroom and stays sharp).
+Output is **4K** (3840×2160) from a 4K source, so the pan window is not an upscale.
+720p is the gate's floor for other rails, not the target (updated 2026-11-23).
 
 ---
 
@@ -178,7 +183,7 @@ build that fails is HELD, not shipped.
 
 | Rule | Floor | Why that number |
 |---|---|---|
-| Size / shape | ≥ 1280×720, 16:9 | the demo was 1280×720; rule 5 = "4K source, 720p output" |
+| Size / shape | **≥ 3840×2160, 16:9** for long-form | K, 2026-11-23: the master is 4K; 720p is only the generic gate floor |
 | Colour tags | `yuv420p` + `range=tv` + `bt709` | measured 2026-11-17: skipping the tags gave `yuvj420p`/`pc`/`bt470bg`, which plays washed-out |
 | Loudness | −14 LUFS ±1.5, true peak ≤ **−1.5 dBFS** | demo measured −14.9 LUFS / −1.5 dBTP |
 | Motion | last-quarter frame-diff ≥ 0.05 | demo 0.98; a frozen tail reads as a slide-show |
@@ -223,8 +228,8 @@ So a 20-shot 4K-source library is ~1.5 h of pod time, once, and then it is on di
 
 - **No rail/workflow** wires these into the schedule. `content/STOP` is in place and K is
   rebuilding the system himself; adding a rail now would be the second copy this map forbids.
-- **True 3840×2160 output file** — the demo masters at 720p per rule 5; the *source* frames
-  are AI-upscaled 2560 px. A 4K master is one flag away but was not shipped.
+- ~~**True 3840×2160 output file**~~ — **built 2026-11-23**: the rail renders 3840×2160 from
+  960 px scenes (RealESRGAN ×4 = 3840, so no upscale) and the gate demands 2160.
 - **PC1 `D:` mirror** — still unreachable from the pod (needs a human at the machine).
 
 
@@ -237,7 +242,7 @@ a build that fails is HELD, not shipped.
 
 | Rule | Floor | Why that number |
 |---|---|---|
-| Size / shape | ≥ 1280×720, 16:9 | the demo was 1280×720; rule 5 = "4K source, 720p output" |
+| Size / shape | **≥ 3840×2160, 16:9** for long-form | K, 2026-11-23: the master is 4K; 720p is only the generic gate floor |
 | Colour tags | `yuv420p` + `range=tv` + `bt709` | measured 2026-11-17: skipping the tags gave `yuvj420p`/`pc`/`bt470bg`, which plays washed-out |
 | Loudness | −14 LUFS ±1.5, true peak ≤ **−1.5 dBFS** | demo measured −14.9 LUFS / −1.5 dBTP |
 | Motion | last-quarter frame-diff ≥ 0.05 | demo 0.98; a frozen tail reads as a slide-show |
