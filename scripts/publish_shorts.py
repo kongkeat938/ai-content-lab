@@ -320,6 +320,21 @@ def note_upload(channel_id: str) -> None:
 
 
 
+def build_description(s: dict, spec: dict) -> str:
+    """The long-form link goes on the FIRST line, not after the transcript.
+
+    A Shorts viewer who taps "more" sees one line before scrolling, so the link
+    has to be that line. The tail carries the link block followed by hashtags;
+    the hashtags stay at the bottom where they read as tags, not as the ask.
+    """
+    links, sep, tags = spec.get("tail", "").partition("\n\n#")
+    body = f"{s['hook']}\n\n" + "\n".join(s["lines"]) + f"\n\n{s['cta']}"
+    parts = [links.strip(), body,
+             MUSIC_CREDIT if spec.get("music_dir") else "",
+             ("#" + tags).strip() if sep else ""]
+    return "\n\n".join(p for p in parts if p)
+
+
 def pin_cta_comment(yt, video_id: str, spec: dict, s: dict, privacy: str) -> str | None:
     """Post the channel's call-to-action as a pinned comment under the Short.
 
@@ -757,9 +772,7 @@ def main() -> int:
             continue
         print(f"  {sid}: meets the standard {metrics}")
 
-        description = (f"{s['hook']}\n\n" + "\n".join(s["lines"]) +
-                       f"\n\n{s['cta']}" + spec["tail"] +
-                       (MUSIC_CREDIT if spec.get("music_dir") else ""))
+        description = build_description(s, spec)
         body = {
             "snippet": {
                 "title": (s["hook"][:95] + " #Shorts")[:100],
