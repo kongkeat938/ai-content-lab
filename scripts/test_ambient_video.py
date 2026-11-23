@@ -7,7 +7,7 @@ does that, and that it can FAIL:
 
   1. four short clips come out as one file at the requested length (not the sum of
      the inputs, not a single clip);
-  2. the picture meets the house frame (1080x1920, yuv420p, tv/bt709);
+  2. the picture meets the house frame (2160x3840 4K, yuv420p, tv/bt709);
   3. the bed is at the house loudness (-14 LUFS), measured live with ebur128;
   4. a build with no usable clip FAILS instead of writing a partial file.
 
@@ -71,7 +71,7 @@ def main() -> int:
             ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
              "stream=width,height,pix_fmt,color_primaries,color_transfer,color_space,color_range",
              "-of", "default=nk=1:nw=1", out], capture_output=True, text=True).stdout.split()
-        check("frame is 1080x1920", st[0] == "1080" and st[1] == "1920", str(st[:2]))
+        check("frame is 2160x3840 (4K)", st[0] == "2160" and st[1] == "3840", str(st[:2]))
         check("colour is yuv420p tv/bt709",
               "yuv420p" in st and "tv" in st and st.count("bt709") == 3, str(st))
 

@@ -62,7 +62,8 @@
   floating Thai text, 1.06x lanczos; **ONE grade `video_grade.py`** (`setparams=range=tv`).
 - **K 2026-11-23: "4K เท่านั้นถึงอัพ · ห้ามซ้ำ ทั้งภาพ ดนตรี บท"** → ONE gate
   `upload_gate.py` (short ≥2160x3840, long ≥3840x2160; md5 picture, bed id, script
-  n-gram ≥45% = refused). `pick_bed` HELDs a dry library instead of reusing a bed.
+  n-gram ≥45% = refused). `pick_bed` HELDs a dry library instead of reusing a bed. ทุก builder 4K
+  (`test_all_builders_4k.py`); `purge_sub4k.py` ลบไฟล์ <4K ทั้งเครื่อง.
 - **Shorts: meet the standard or NOT upload** (backlog too). `short_standard.py`: 1080x1920 tv/bt709,
   -14 LUFS, ≤60 s, 9:16 thumb; `publish_shorts.py` gates every upload. **`alimiter` limits SAMPLE peak**: `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.
 - **Vision grader NON-DETERMINISTIC** → judge metrics, not CI.

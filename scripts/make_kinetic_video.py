@@ -52,7 +52,7 @@ HOLD_SEC = 9.0  # a caption animates in, holds at most this long, then leaves
 # The per-chapter illustration sits inside a frame so the moving base stays
 # visible around it (the base is what keeps every frame different; a full-frame
 # image would reintroduce the static-card problem the chapter moves away from).
-ILLUSTRATION_W, ILLUSTRATION_H = 1280, 720
+ILLUSTRATION_W, ILLUSTRATION_H = 3840, 2160   # 4K source (K, 2026-11-23)
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 # The motion is the point: a background filter chain with none of these

@@ -21,7 +21,8 @@ The look itself (from the approved make_qa_video.py):
 """
 from __future__ import annotations
 
-W, H, FPS = 1920, 1080, 30      # 1080p, 30 fps -- the approved format
+# K (2026-11-23): 4K only to upload. Every rail that builds a clip inherits this.
+W, H, FPS = 3840, 2160, 30
 BROLL_ZOOM = 1.06
 BROLL_FLAGS = "lanczos"
 # colorbalance warmth + contrast/saturation + unsharp + cas (local contrast).

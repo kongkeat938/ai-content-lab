@@ -34,7 +34,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import make_short as MS  # noqa: E402  (house loudness: normalise / measure)
 
-W, H, FPS = 1080, 1920, 30
+W, H, FPS = 2160, 3840, 30   # 4K vertical (K, 2026-11-23)
 TARGET_LUFS = -14.0
 
 

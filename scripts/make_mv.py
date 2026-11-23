@@ -24,7 +24,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import gen_cover_image  # noqa: E402
 
-W, H = 1920, 1080
+W, H = 3840, 2160      # 4K (K, 2026-11-23)
 FPS = 25
 SEG_SEC = 25.0
 TP_CEILING = -3.0

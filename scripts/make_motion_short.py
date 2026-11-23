@@ -48,7 +48,7 @@ if HERE not in sys.path:
 import make_short as MS  # noqa: E402  (voice, loudness, fonts -- the one source)
 import video_grade as VG  # noqa: E402  (the ONE bright grade -- K: "ขอสดใส")
 
-W, H = 1080, 1920
+W, H = 2160, 3840      # 4K vertical (K, 2026-11-23)
 FPS = 15                       # enough for smooth drift/bounce, cheap to render
 BEAT_HZ = 1.7                  # the dance tempo (light genres only)
 CAP_FONT = "Prompt-SemiBold.ttf"

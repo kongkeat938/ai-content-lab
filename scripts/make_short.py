@@ -259,7 +259,10 @@ SAFE_LEFT = 0.06          # fraction of W
 SAFE_RIGHT = 0.84         # text must end before the right-side rail
 SAFE_TOP = 0.10           # fraction of H
 SAFE_BOTTOM = 0.88        # text must end before the bottom channel bar
-STROKE = 6                # caption stroke width; reserved inside the safe box
+STROKE = 6                # at 1080 wide; scaled by SCALE below so 4K reads the same
+# The frame is 4K now (K, 2026-11-23) but the type must keep the proportions it had
+# at 1080x1920, so every absolute size is multiplied by this.
+SCALE = W / 1080
 
 
 def caption_layout(text: str, big: bool) -> dict:
@@ -272,8 +275,9 @@ def caption_layout(text: str, big: bool) -> dict:
     probe = Image.new("L", (W, H))
     d = ImageDraw.Draw(probe)
     left = int(SAFE_LEFT * W)
-    max_w = int(SAFE_RIGHT * W) - left - 2 * STROKE
-    hi, lo = (120, 78) if big else (92, 62)
+    max_w = int(SAFE_RIGHT * W) - left - 2 * int(STROKE * SCALE)
+    hi, lo = ((120, 78) if big else (92, 62))
+    hi, lo = int(hi * SCALE), int(lo * SCALE)
     size = hi
     f = font("Kanit-Bold.ttf", size)
     lines = wrap(d, text, f, max_w)
@@ -313,7 +317,7 @@ def caption_image(text: str, out: str, big: bool = False, panel: bool = True) ->
                 fill=GOLD)
     for i, ln in enumerate(lines):
         d.text((left, y + i * lh), ln, font=f, fill=GOLD if big else WHITE,
-               stroke_width=STROKE, stroke_fill=(0, 0, 0, 235))
+               stroke_width=int(STROKE * SCALE), stroke_fill=(0, 0, 0, 235))
     im.save(out)
 
 
