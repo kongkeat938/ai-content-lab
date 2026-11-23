@@ -69,4 +69,45 @@ with redirect_stdout(buf):
     rc = gh_auth.save(TOKEN)
 check("bad token rejected", rc == 1 and "rejected" in buf.getvalue())
 
+# 7) A token GitHub rejects must not block a later source that still works.
+#    Measured 2026-11-22: the env token answered 401 while the vault copy pushed.
+os.environ["GH_PUSH_TOKEN"] = "dead-token"
+gh_auth.LOCAL = os.path.join(tmp, "absent")
+gh_auth._vault = lambda method, value=None: {"token": TOKEN}
+gh_auth._api = lambda tok, path: (401, {}) if tok == "dead-token" else (200, {"login": "kongkeat938"})
+tok, src, who = gh_auth.verified()
+check("a rejected token falls through", (tok, src, who.get("login")) ==
+      (TOKEN, "vault:ak.github.token", "kongkeat938"))
+
+# 8) push() retries through an auth HEADER (not argv) when the helper path fails,
+#    so the secret never shows up in the process list.
+calls = []
+
+
+class R:
+    def __init__(self, rc):
+        self.returncode = rc
+
+
+def fake_run(argv, **kw):
+    calls.append((argv, kw.get("env") or {}))
+    return R(1 if len(calls) == 1 else 0)
+
+
+real_run = gh_auth.subprocess.run
+gh_auth.subprocess.run = fake_run
+try:
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        rc = gh_auth.push()
+finally:
+    gh_auth.subprocess.run = real_run
+    os.environ.pop("GH_PUSH_TOKEN", None)
+env2 = calls[-1][1]
+check("push retried and succeeded", rc == 0 and len(calls) == 2)
+check("token travels in a header, not argv",
+      "Authorization: Bearer " + TOKEN in env2.get("GIT_CONFIG_VALUE_0", "")
+      and all(TOKEN not in " ".join(a) for a, _ in calls)
+      and TOKEN not in buf.getvalue())
+
 print(f"{ok} checks passed")

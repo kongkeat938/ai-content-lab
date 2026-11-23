@@ -69,6 +69,35 @@ def token() -> tuple[str, str]:
     return "", "none"
 
 
+def _candidates():
+    """Every token we hold, in source order, without repeats."""
+    env = os.environ.get("GH_PUSH_TOKEN", "").strip()
+    vault = (_vault("GET") or {}).get("token", "") or ""
+    local = ""
+    if os.path.exists(LOCAL):
+        with open(LOCAL, encoding="utf-8") as fh:
+            local = fh.read().strip()
+    seen = set()
+    for tok, src in ((env, "env:GH_PUSH_TOKEN"), (vault, "vault:ak.github.token"),
+                     (local, "file:" + LOCAL)):
+        if tok and tok not in seen:
+            seen.add(tok)
+            yield tok, src
+
+
+def verified() -> tuple[str, str, dict]:
+    """The first candidate GitHub ACCEPTS, with its source and the /user payload.
+
+    Measured 2026-11-22: `KONGKEAT_GH_TOKEN` answered 401 while the vault copy was
+    still valid, and pure source order failed a push that could have worked.
+    """
+    for tok, src in _candidates():
+        status, who = _api(tok, "/user")
+        if status == 200:
+            return tok, src, who
+    return "", "none", {}
+
+
 def _api(tok: str, path: str) -> tuple[int, dict]:
     req = urllib.request.Request("https://api.github.com" + path,
                                  headers={"Authorization": "Bearer " + tok,
@@ -101,14 +130,14 @@ def save(tok: str) -> int:
 
 
 def setup() -> int:
-    tok, source = token()
+    tok, source, who = verified()
     if not tok:
-        print("no GitHub token found: set GH_PUSH_TOKEN, or run "
-              "`python3 scripts/gh_auth.py save <token>`")
-        return 1
-    status, who = _api(tok, "/user")
-    if status != 200:
-        print(f"{source} token rejected by GitHub ({status}) -- cannot push")
+        if token()[0]:
+            print(f"every token we hold was rejected by GitHub ({token()[1]}) -- "
+                  f"cannot push")
+        else:
+            print("no GitHub token found: set GH_PUSH_TOKEN, or run "
+                  "`python3 scripts/gh_auth.py save <token>`")
         return 1
     repo = subprocess.run(["git", "remote", "get-url", "origin"], cwd=ROOT,
                           capture_output=True, text=True, stdin=subprocess.DEVNULL).stdout.strip()
@@ -137,7 +166,20 @@ def push() -> int:
     env = {k: v for k, v in os.environ.items() if k not in SHADOWING}
     r = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, env=env,
                        stdin=subprocess.DEVNULL)
-    return r.returncode
+    if r.returncode == 0:
+        return 0
+    # Measured 2026-11-22: a fresh pod answered 403 through the credential helper
+    # even with a valid token, and the same token in a header pushed fine. The
+    # header goes through the environment, so the token never reaches argv.
+    tok, source, _ = verified()
+    if not tok:
+        return r.returncode
+    print(f"helper path failed; retrying with {source} in an auth header")
+    env.update({"GIT_CONFIG_COUNT": "1",
+                "GIT_CONFIG_KEY_0": "http.extraheader",
+                "GIT_CONFIG_VALUE_0": f"Authorization: Bearer {tok}"})
+    return subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, env=env,
+                          stdin=subprocess.DEVNULL).returncode
 
 
 def main() -> int:
