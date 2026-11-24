@@ -58,6 +58,27 @@ def main() -> int:
           "the 1080p files are gone")
     check(os.path.exists(big_short) and os.path.exists(big_long), "the 4K files are kept")
 
+    dead = os.path.join(tmp, "dead_build")
+    alive = os.path.join(tmp, "live_build")
+    os.makedirs(dead, exist_ok=True)
+    os.makedirs(alive, exist_ok=True)
+    make(os.path.join(dead, "clip.mp4"), 1920, 1080)
+    open(os.path.join(dead, "bed.wav"), "wb").write(b"RIFF" * 1000)
+    make(os.path.join(alive, "clip.mp4"), 3840, 2160)
+    open(os.path.join(alive, "bed.wav"), "wb").write(b"RIFF" * 1000)
+    gone = purge_sub4k.sweep_dirs(tmp, dry_run=True)
+    check(len(gone) == 1 and gone[0][0].endswith("dead_build"),
+          f"a build dir with no 4K clip is dead weight ({[g[0] for g in gone]})")
+    purge_sub4k.sweep_dirs(tmp)
+    check(not os.path.isdir(dead), "the dead build dir is removed (audio and all)")
+    check(os.path.isdir(alive), "a build dir that holds a 4K clip is kept")
+
+    blind = subprocess.run([sys.executable, os.path.join(HERE, "purge_sub4k.py"), "--dry-run",
+                            "--root", alive], capture_output=True, text=True,
+                           env={"PATH": "/nonexistent", "HOME": os.environ.get("HOME", "/tmp")})
+    check(blind.returncode == 2 and "BLIND" in (blind.stdout + blind.stderr),
+          f"without ffprobe it refuses to run (exit {blind.returncode})")
+
     print(f"\n{'FAILED' if failures else 'PASS'} ({len(failures)} failures)")
     return 1 if failures else 0
 
