@@ -92,7 +92,8 @@
       "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
       "title": "คุณมีสิทธิ์ปล่อยให้เวลาว่างเป็นความว่างเปล่าอย่างแ",
       "hidden_at": "2026-11-24T01:49:09Z",
-      "reason": "live rogue upload outside the rails"
+      "reason": "FALSE POSITIVE: our own upload, hidden 7 min after publish because the pod could not push, so the RSS watcher and the audit both read the same stale manifest. Restored to public; the age floor now applies even when 'confirmed'.",
+      "restored_at": "2026-11-24T04:07:42Z"
     },
     {
       "video_id": "VdjMXyQAic4",
@@ -100,7 +101,8 @@
       "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
       "title": "นอนไม่หลับ ฟังเรื่องเล่านี้แล้วใจเบา หลับลึกทั้งคื",
       "hidden_at": "2026-11-24T01:49:11Z",
-      "reason": "live rogue upload outside the rails"
+      "reason": "FALSE POSITIVE: our own upload, hidden 7 min after publish because the pod could not push, so the RSS watcher and the audit both read the same stale manifest. Restored to public; the age floor now applies even when 'confirmed'.",
+      "restored_at": "2026-11-24T04:07:42Z"
     }
   ]
 }
