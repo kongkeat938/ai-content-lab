@@ -20,6 +20,8 @@ import subprocess
 import sys
 import tempfile
 
+import upload_gate
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
@@ -211,10 +213,24 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as tmp:
         paths = gen_scenes(prompts, tmp)
+        # K (2026-11-23): never carry an old picture into a new story. Every scene
+        # is claimed in the channel's art ledger; a scene another id already owns
+        # stops the build before a single frame is encoded.
+        owner = os.path.splitext(os.path.basename(a.spec))[0]
+        art_ledger = os.path.join(ROOT, "content", f"art_ledger_{spec.get('channel', 'dharma')}.json")
+        clashes = upload_gate.record_art(art_ledger, [upload_gate.md5_of(p) for p in paths], owner)
+        if clashes:
+            sys.exit("repeated picture -- " + "; ".join(clashes))
         narr = os.path.join(tmp, "narr.mp3")
         narrate(lines, narr)
         mus = os.path.join(tmp, "music.wav")
         music(mus, 20)
+        bed_ledger = os.path.join(ROOT, "content", f"bed_ledger_{spec.get('channel', 'dharma')}.json")
+        # Claimed by name AND by content: a copied bed under a new name still clashes.
+        clashes = upload_gate.record_bed(bed_ledger, f"{owner}.wav", owner)
+        clashes += upload_gate.record_art(bed_ledger, [upload_gate.md5_of(mus)], owner)
+        if clashes:
+            sys.exit("repeated music -- " + "; ".join(clashes))
         pic = os.path.join(tmp, "picture.mp4")
         xfade(shots(paths, tmp), pic)
         total = duration(pic)

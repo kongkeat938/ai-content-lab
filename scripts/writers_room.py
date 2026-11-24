@@ -63,7 +63,8 @@ def parse(text: str) -> dict | None:
     return got if isinstance(got, dict) else None
 
 
-def problems(script: dict | None, existing_hooks: list[str] | None = None) -> list[str]:
+def problems(script: dict | None, existing_hooks: list[str] | None = None,
+             existing_scripts: list[str] | None = None) -> list[str]:
     """Every reason this draft cannot be used. An empty list means it ships."""
     if not script:
         return ["not JSON"]
@@ -95,6 +96,14 @@ def problems(script: dict | None, existing_hooks: list[str] | None = None) -> li
         if len(hook_seen) >= NOVEL_FLOOR and hook[:NOVEL_FLOOR] == hook_seen[:NOVEL_FLOOR]:
             out.append("hook repeats a published one")
             break
+    # A different hook is not enough -- K (2026-11-23) wants the story itself new.
+    if existing_scripts and speech:
+        import upload_gate
+        for share, other in ((upload_gate.similarity(speech, o), o) for o in existing_scripts):
+            if share >= upload_gate.DUP_THRESHOLD:
+                out.append(f"script is {share:.0%} the same as a published one "
+                           f"({other[:24]}...)")
+                break
     return out
 
 
@@ -104,6 +113,16 @@ def existing_hooks(path: str) -> list[str]:
     data = json.load(open(path, encoding="utf-8"))
     items = data if isinstance(data, list) else data.get("scripts", [])
     return [str(s.get("hook", "")) for s in items if isinstance(s, dict)]
+
+
+def existing_texts(path: str) -> list[str]:
+    """The words of every script already out, for the whole-story check."""
+    if not os.path.exists(path):
+        return []
+    data = json.load(open(path, encoding="utf-8"))
+    items = data if isinstance(data, list) else data.get("scripts", [])
+    return [str(s.get("hook", "")) + "".join(map(str, s.get("lines", []))) + str(s.get("cta", ""))
+            for s in items if isinstance(s, dict)]
 
 
 def ask(name: str, brief: str) -> tuple[str, float, str]:
@@ -146,7 +165,9 @@ def main() -> int:
     if unknown:
         sys.exit(f"unknown writer(s): {unknown}; known: {sorted(advise.ADVISORS)}")
     brief = build_brief(a.topic, a.channel)
-    seen = existing_hooks(os.path.abspath(a.seen))
+    seen_path = os.path.abspath(a.seen)
+    seen = existing_hooks(seen_path)
+    heard = existing_texts(seen_path)
 
     rows = []
     with cf.ThreadPoolExecutor(max_workers=len(names)) as ex:
@@ -155,7 +176,7 @@ def main() -> int:
             for fut in cf.as_completed(futs, timeout=a.timeout + 10):
                 name, secs, text = fut.result()
                 script = parse(text)
-                bad = problems(script, seen)
+                bad = problems(script, seen, heard)
                 rows.append({"writer": name, "secs": secs, "script": script,
                              "problems": bad, "raw": text})
         except cf.TimeoutError:
@@ -164,7 +185,7 @@ def main() -> int:
                 if fut.done() and not any(r["writer"] == name for r in rows):
                     got_name, secs, text = fut.result()
                     rows.append({"writer": got_name, "secs": secs, "script": parse(text),
-                                 "problems": problems(parse(text), seen), "raw": text})
+                                 "problems": problems(parse(text), seen, heard), "raw": text})
                 elif not fut.done():
                     rows.append({"writer": name, "secs": a.timeout, "script": None,
                                  "problems": [f"no answer in {a.timeout:.0f}s"], "raw": ""})

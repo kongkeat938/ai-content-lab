@@ -119,6 +119,65 @@ def script_text(script: dict) -> str:
                      str(script.get("cta", ""))])
 
 
+def load_ledger(path: str) -> dict:
+    if not path or not os.path.exists(path):
+        return {}
+    try:
+        return json.load(open(path, encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_ledger(path: str, data: dict) -> None:
+    os.makedirs(os.path.dirname(os.path.abspath(path)) or ".", exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(data, fh, ensure_ascii=False, indent=1, sort_keys=True)
+        fh.write("\n")
+    os.replace(tmp, path)
+
+
+def record_art(path: str, md5s, owner: str) -> list[str]:
+    """Claim these pictures for `owner`. Returns the clashes (another video's art)."""
+    data = load_ledger(path)
+    used = data.setdefault("md5", {})
+    clashes = [f"picture {m[:8]} already used by {used[m]}"
+               for m in md5s if m in used and str(used[m]) != str(owner)]
+    for m in md5s:
+        used.setdefault(m, str(owner))
+    save_ledger(path, data)
+    return clashes
+
+
+def record_bed(path: str, bed: str, owner: str) -> list[str]:
+    data = load_ledger(path)
+    used = data.setdefault("beds", {})
+    name = os.path.basename(bed)
+    clash = used.get(name)
+    if clash and str(clash) != str(owner):
+        return [f"music {name} already plays under {clash}"]
+    used.setdefault(name, str(owner))
+    save_ledger(path, data)
+    return []
+
+
+def published_texts(path: str) -> list[tuple[str, str]]:
+    return [(k, v) for k, v in (load_ledger(path).get("scripts") or {}).items()]
+
+
+def record_script(path: str, owner: str, text: str) -> list[str]:
+    """Claim this narration for `owner`. Refuses a script that is half another's."""
+    if not text:
+        return []
+    clashes = script_problems(text, [(k, v) for k, v in published_texts(path) if k != str(owner)])
+    if clashes:
+        return clashes
+    data = load_ledger(path)
+    data.setdefault("scripts", {})[str(owner)] = text
+    save_ledger(path, data)
+    return clashes
+
+
 def check(kind: str, video: str | None = None, *, md5s=(), art_ledger=None, bed=None,
           bed_ledger=None, sid=None, narration=None, published=()) -> tuple[bool, list[str]]:
     """Every rule at once. Empty reason list means the upload may go."""

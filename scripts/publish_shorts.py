@@ -802,8 +802,11 @@ def main() -> int:
         try:
             art_md5s = [upload_gate.md5_of(art_path)] if os.path.exists(art_path) else []
             bed_name = _bed_for(bed_ledger_path(args.channel), sid)
+            script_ledger = os.path.join(ROOT, "content", f"script_ledger_{args.channel}.json")
             published = [(p["id"], upload_gate.script_text(p))
                          for p in scripts if p["id"] != sid and man["shorts"].get(p["id"], {}).get("video_id")]
+            published += [(k, v) for k, v in upload_gate.published_texts(script_ledger)
+                          if k != str(sid)]
             gok, greasons = upload_gate.check(
                 "short", out, md5s=art_md5s,
                 art_ledger=_read_json(art_ledger_path(args.channel)),
@@ -881,6 +884,10 @@ def main() -> int:
                               "shape": hook_shape(s, spec.get("cues")),
                               **({"probe": True, "probe_voice": "alt"} if stalled else {})}
         save(man, spec["manifest"])   # record before anything else can fail
+        # K (2026-11-23): the words are claimed for good, so this story cannot come back.
+        upload_gate.record_script(os.path.join(ROOT, "content",
+                                               f"script_ledger_{args.channel}.json"),
+                                  sid, upload_gate.script_text(s))
         note_upload(args.channel)     # the cap counts this on the next run
         commit(spec["manifest"], f"publish({args.channel}): record Short {sid}")
         commit(UPLOAD_LOG, f"publish({args.channel}): count Short {sid} toward the daily cap")

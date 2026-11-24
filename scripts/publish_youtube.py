@@ -28,6 +28,7 @@ import urllib.request
 # every sandbox recycle and then answers 502, which used to surface here as a raw
 # traceback instead of a usable message. CHANNEL_BASE still wins when set.
 _HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(_HERE)
 _SITE = os.path.join(os.path.dirname(_HERE), "site")
 DEFAULT_BASE = os.environ.get("CHANNEL_BASE", "").rstrip("/") or f"file://{_SITE}"
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
@@ -157,6 +158,26 @@ def download(url: str, dest: str) -> str:
     return dest
 
 
+def freshness(channel: str, video: str, narration: str | None, sid: str,
+              ledger_path: str | None = None) -> tuple[bool, list[str]]:
+    """K's upload rules for a long-form: 4K, and a script no one has heard before.
+
+    The pictures are claimed by the build itself (standard_clip records every
+    scene in the art ledger and stops on a clash), so the upload checks what it
+    can still measure here: the frame, and the words.
+    """
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import upload_gate
+    ledger = ledger_path or os.path.join(ROOT, "content", f"script_ledger_{channel}.json")
+    reasons = upload_gate.resolution_problems(video, "long")
+    if narration:
+        reasons += upload_gate.script_problems(narration, upload_gate.published_texts(ledger))
+    elif upload_gate.published_texts(ledger):
+        reasons.append("no narration given (--spec or --narration-file); the script "
+                       "ledger exists and K's no-repeat rule needs the words")
+    return (not reasons), reasons
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -174,6 +195,9 @@ def main() -> int:
                     help="where to keep the downloaded video")
     ap.add_argument("--channel", help="channel slug from channels.json "
                                       "(picks the token and the expected channel)")
+    ap.add_argument("--spec", help="the story spec this file was built from; its "
+                                   "narration is checked against the script ledger")
+    ap.add_argument("--narration-file", help="plain text of the narration instead of --spec")
     args = ap.parse_args()
 
     ep = resolve(args.base, args.episode)
@@ -223,15 +247,22 @@ def main() -> int:
         ep["media"]["video"]["url"], os.path.join(args.cache, f"{ep['id']}.mp4"))
 
     # K (2026-11-23): "ต้อง 4k เท่านั้นถึงอัพขึ้นได้ ห้ามซ้ำ ทั้งภาพ ดนตรี บท"
-    # Nothing below 3840x2160 leaves this rail.
     import upload_gate
-    gok, greasons = upload_gate.check("long", video_path)
+    narration, sid = None, ep["id"]
+    if args.spec:
+        spec = json.load(open(args.spec, encoding="utf-8"))
+        narration = " ".join([spec.get("hook", ""), *map(str, spec.get("narration", [])),
+                              spec.get("promise", "")])
+        sid = os.path.splitext(os.path.basename(args.spec))[0]
+    elif args.narration_file:
+        narration = open(args.narration_file, encoding="utf-8").read()
+    gok, greasons = freshness(slug, video_path, narration, sid)
     if not gok:
         print("REFUSED -- K's upload rules:", file=sys.stderr)
         for why in greasons:
             print(f"  - {why}", file=sys.stderr)
         return 1
-    print("  upload gate: 4K confirmed")
+    print("  upload gate: 4K + a script nobody has heard")
 
     print("\nuploading video ...")
     try:
@@ -250,6 +281,10 @@ def main() -> int:
 
     vid = response["id"]
     url = f"https://youtu.be/{vid}"
+    if narration:
+        ledger = os.path.join(ROOT, "content", f"script_ledger_{slug}.json")
+        upload_gate.record_script(ledger, sid, narration)
+        print(f"  script ledger: {sid} claimed (this story can never be re-uploaded)")
     print(f"  uploaded: {url}  status={response['status']['privacyStatus']}")
 
     thumb_path = args.poster
