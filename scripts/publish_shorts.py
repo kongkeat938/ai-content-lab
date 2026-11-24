@@ -255,6 +255,29 @@ MIN_GAP_HOURS = 2.0
 UPLOAD_LOG = os.path.join(ROOT, "content", "upload_log.json")
 
 
+def _ledger_keys(channel_id: str) -> list[str]:
+    """Every ledger key that belongs to one channel: the id, and its slug.
+
+    Measured 2026-11-24: `publish_motion.py` and `remake_shorts.py` call
+    `note_upload(slug)`, so their uploads landed under "dharma" while the cap read
+    "UCM3QO5L_...". The cap counted 0 with three dharma uploads inside 24 h, which
+    is the 2026-11-07 flood shape: another rail can push a channel past DAILY_CAP.
+    """
+    keys = [channel_id]
+    for slug, cfg in CHANNELS.items():
+        if cfg["channel_id"] == channel_id and slug not in keys:
+            keys.append(slug)
+    return keys
+
+
+def _canonical_key(channel_id: str) -> str:
+    """The channel id, whichever key a caller passes (slug or id)."""
+    for slug, cfg in CHANNELS.items():
+        if channel_id in (slug, cfg["channel_id"]):
+            return cfg["channel_id"]
+    return channel_id
+
+
 def _load_upload_log() -> dict:
     d = load(UPLOAD_LOG, {})
     if not isinstance(d, dict) or "channels" not in d:
@@ -312,15 +335,20 @@ def uploads_in_last_24h(channel_id: str, manifest_path: str) -> int:
     cap silently never tripped -- measured 2026-11-07, when the first capped run
     still published four Shorts. The script writes and commits the ledger itself,
     so it survives that shallow checkout.
+
+    Every key that belongs to the channel is summed (`_ledger_keys`), because the
+    motion and remake rails record under the slug.
     """
     _seed_ledger(channel_id, manifest_path)
-    return len(_prune(_load_upload_log()["channels"].get(channel_id, [])))
+    log = _load_upload_log()["channels"]
+    return sum(len(_prune(log.get(k, []))) for k in _ledger_keys(channel_id))
 
 
 def hours_since_last_upload(channel_id: str, manifest_path: str) -> float | None:
     """Hours since the most recent upload, or None if there is no record yet."""
     _seed_ledger(channel_id, manifest_path)
-    stamps = _prune(_load_upload_log()["channels"].get(channel_id, []))
+    log = _load_upload_log()["channels"]
+    stamps = [s for k in _ledger_keys(channel_id) for s in _prune(log.get(k, []))]
     if not stamps:
         return None
     newest = max(datetime.fromisoformat(str(s).replace("Z", "+00:00")) for s in stamps)
@@ -329,6 +357,7 @@ def hours_since_last_upload(channel_id: str, manifest_path: str) -> float | None
 
 def note_upload(channel_id: str) -> None:
     """Record one upload in the ledger so the cap counts it on the next run."""
+    channel_id = _canonical_key(channel_id)
     log = _load_upload_log()
     keep = _prune(log["channels"].get(channel_id, []))
     keep.append(datetime.now(timezone.utc).isoformat(timespec="seconds"))

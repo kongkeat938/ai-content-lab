@@ -14,9 +14,12 @@ floods. Two things allowed it, and this guard locks both:
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
+import tempfile
+from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -28,6 +31,39 @@ MAX_DEFAULT = 5  # a drip; anything larger is a flood in waiting
 def fail(msg: str) -> None:
     print(f"FAIL: {msg}")
     sys.exit(1)
+
+
+def check_cap_counts_every_ledger_key() -> None:
+    """A stamp written under the channel's slug must count against the cap.
+
+    Measured 2026-11-24: publish_motion.py and remake_shorts.py call
+    note_upload(slug), so their uploads landed under "dharma" while the cap read
+    "UCM3QO5L_...". uploads_in_last_24h() returned 0 with three dharma uploads
+    inside the window -- the other rails could push a channel past DAILY_CAP.
+    """
+    sys.path.insert(0, HERE)
+    import publish_shorts as ps
+
+    cfg = ps.CHANNELS["dharma"]
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "upload_log.json")
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump({"channels": {"dharma": [now]}}, fh)
+        o_log, o_seed = ps.UPLOAD_LOG, ps._seed_ledger
+        ps.UPLOAD_LOG = path
+        ps._seed_ledger = lambda *a, **k: None
+        try:
+            n = ps.uploads_in_last_24h(cfg["channel_id"], cfg["manifest"])
+            gap = ps.hours_since_last_upload(cfg["channel_id"], cfg["manifest"])
+        finally:
+            ps.UPLOAD_LOG, ps._seed_ledger = o_log, o_seed
+    if n != 1:
+        fail(f"an upload recorded under the slug 'dharma' is invisible to the cap "
+             f"(counted {n}, expected 1) -- the motion/remake rails bypass DAILY_CAP")
+    if gap is None:
+        fail("hours_since_last_upload() ignores a stamp recorded under the slug")
+    print("ok   an upload recorded under the channel slug counts against the cap")
 
 
 def main() -> int:
@@ -84,6 +120,7 @@ def main() -> int:
 
     print(f"OK: per-run default {default}, min gap {gap}h, no self-triggering manifest, "
           f"foreman posts {m.group(1)}/dispatch, hook_shape defined locally")
+    check_cap_counts_every_ledger_key()
     return 0
 
 
