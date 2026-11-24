@@ -438,26 +438,66 @@
       "baseline_per_hour": 1.77,
       "baseline_clips": 49,
       "at": "2026-11-21T06:26:57+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "Ft2tdrQPoG8",
+      "reason": "last post 50 views in 58.1h (0.9/h vs channel top-quarter 1.3/h), likes 1 comments 0 (20.0/1k) -> bad",
+      "hours_since_last": 58.15,
+      "stall": {
+        "stalled": false,
+        "flat": 0
+      },
+      "views": 50,
+      "likes": 1,
+      "comments": 0,
+      "engagement_per_1k": 20.0,
+      "per_hour": 0.86,
+      "baseline_per_hour": 1.3,
+      "baseline_clips": 49,
+      "at": "2026-11-24T01:39:31+00:00"
+    },
+    {
+      "allowed": true,
+      "verdict": "bad",
+      "last_shape": null,
+      "last_video_id": "Ft2tdrQPoG8",
+      "reason": "last post 50 views in 58.1h (0.9/h vs channel top-quarter 1.3/h), likes 1 comments 0 (20.0/1k) -> bad",
+      "hours_since_last": 58.15,
+      "stall": {
+        "stalled": false,
+        "flat": 0
+      },
+      "views": 50,
+      "likes": 1,
+      "comments": 0,
+      "engagement_per_1k": 20.0,
+      "per_hour": 0.86,
+      "baseline_per_hour": 1.3,
+      "baseline_clips": 49,
+      "at": "2026-11-24T01:39:36+00:00"
     }
   ],
   "latest": {
     "allowed": true,
     "verdict": "bad",
     "last_shape": null,
-    "last_video_id": "mbXsLVQstxI",
-    "reason": "last post 45 views in 28.7h (1.6/h vs channel top-quarter 1.8/h), likes 0 comments 0 (0.0/1k) -> bad",
-    "hours_since_last": 28.74,
+    "last_video_id": "Ft2tdrQPoG8",
+    "reason": "last post 50 views in 58.1h (0.9/h vs channel top-quarter 1.3/h), likes 1 comments 0 (20.0/1k) -> bad",
+    "hours_since_last": 58.15,
     "stall": {
       "stalled": false,
-      "flat": 1
+      "flat": 0
     },
-    "views": 45,
-    "likes": 0,
+    "views": 50,
+    "likes": 1,
     "comments": 0,
-    "engagement_per_1k": 0.0,
-    "per_hour": 1.57,
-    "baseline_per_hour": 1.77,
+    "engagement_per_1k": 20.0,
+    "per_hour": 0.86,
+    "baseline_per_hour": 1.3,
     "baseline_clips": 49,
-    "at": "2026-11-21T06:26:57+00:00"
+    "at": "2026-11-24T01:39:36+00:00"
   }
 }
