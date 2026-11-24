@@ -180,7 +180,8 @@ async def speak(text: str, out: str, voice: str = VOICE, rate: str = RATE) -> No
 
 def duration(path: str) -> float:
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                        "-of", "csv=p=0", path], capture_output=True, text=True, check=True)
+                        "-of", "csv=p=0", path], capture_output=True, text=True,
+                       check=True, stdin=subprocess.DEVNULL)
     return float(r.stdout.strip())
 
 
@@ -341,7 +342,7 @@ def normalise(src: str, out: str) -> None:
              f"loudnorm=I={LUFS}:TP={TP_WAV}:LRA=11")
     r = subprocess.run(["ffmpeg", "-hide_banner", "-i", src,
                         "-af", chain + ":print_format=json", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, stdin=subprocess.DEVNULL)
     tail = r.stderr[r.stderr.rfind("{"):]
     tail = tail[:tail.rfind("}") + 1]
     m = json.loads(tail)

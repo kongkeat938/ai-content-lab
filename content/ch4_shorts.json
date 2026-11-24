@@ -556,6 +556,19 @@
       "shape": "cue",
       "probe": true,
       "probe_voice": "alt"
+    },
+    "125": {
+      "video_id": "Ynweun1RwYc",
+      "url": "https://youtu.be/Ynweun1RwYc",
+      "title": "ทำไมเราถึงได้ยินเสียงสะท้อนเวลาตะโกนในถ้ำกว้าง #Shorts",
+      "posted_at": "2026-11-24T13:05:11+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch4_shorts/125/thumb_125.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public",
+      "probe": true,
+      "probe_voice": "alt"
     }
   }
 }

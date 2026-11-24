@@ -857,6 +857,17 @@
       "thumbnail": "work/ch2_shorts/127/thumb_127.jpg",
       "thumbnail_set": true,
       "shape": "cue"
+    },
+    "128": {
+      "video_id": "GXNk7WqV8tk",
+      "url": "https://youtu.be/GXNk7WqV8tk",
+      "title": "คืนนี้ลองนอนหงายแล้ววางมือบนท้องตัวเอง #Shorts",
+      "posted_at": "2026-11-24T13:02:04+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/128/thumb_128.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }

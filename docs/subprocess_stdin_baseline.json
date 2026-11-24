@@ -24,7 +24,6 @@
   "scripts/make_kinetic_video.py": 2,
   "scripts/make_night_video.py": 3,
   "scripts/make_qa_video.py": 5,
-  "scripts/make_short.py": 2,
   "scripts/make_short_thumbnail.py": 1,
   "scripts/make_video.py": 2,
   "scripts/mcp_server.py": 2,

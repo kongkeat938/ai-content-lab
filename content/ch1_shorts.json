@@ -721,6 +721,17 @@
       "privacy": "public",
       "privacy_fixed_at": "2026-11-24T04:02:43+00:00",
       "note": "uploaded private (receipt did not state privacy); set public via videos.update on 2026-11-24, verified live: privacy=public and viewCount 0->4"
+    },
+    "103": {
+      "video_id": "GnTD94mPvB4",
+      "url": "https://youtu.be/GnTD94mPvB4",
+      "title": "คุณมีสิทธิ์เดินช้าลงในวันที่โลกหมุนเร็วจนเหนื่อย #Shorts",
+      "posted_at": "2026-11-24T12:57:55+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/103/thumb_103.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }

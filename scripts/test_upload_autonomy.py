@@ -100,6 +100,36 @@ def cap_problems() -> list[str]:
     return out
 
 
+def channel_problems() -> list[str]:
+    """K (2026-11-24): "ถ้าได้คุณภาพ มาตรฐาน ตามที่ k กำหนด อัพอัตโนมัติได้เลย ทั้ง 3 ช่อง".
+
+    Autonomy is only real if every channel K runs has a publish path. Measured
+    2026-11-24: the pool was empty on all three channels (104/104, 129/129,
+    75/75 live), so "ak may upload" was true on paper and impossible in practice
+    until a spec was written. This checks the table that decides it: three
+    channels, each with its own token, manifest and spec file.
+    """
+    sys.path.insert(0, HERE)
+    import publish_shorts as P
+
+    want = {"genx", "dharma", "kongkeat"}
+    out = []
+    missing = want - set(P.CHANNELS)
+    if missing:
+        out.append(f"no publish path for {sorted(missing)}; K runs three channels")
+    tokens = {}
+    for slug in want & set(P.CHANNELS):
+        spec = P.CHANNELS[slug]
+        for key in ("channel_id", "token", "manifest", "scripts", "work"):
+            if not spec.get(key):
+                out.append(f"{slug}: publish path has no {key}")
+        tokens.setdefault(spec.get("token"), []).append(slug)
+    for tok, slugs in tokens.items():
+        if len(slugs) > 1:
+            out.append(f"{slugs} share the token {tok}; one channel is one account")
+    return out
+
+
 def main() -> int:
     docs = {}
     for rel in DOCS:
@@ -111,7 +141,7 @@ def main() -> int:
             scripts[name] = fh.read()
 
     bad = (doc_problems(docs) + publisher_problems(scripts)
-           + public_problems(scripts) + cap_problems())
+           + public_problems(scripts) + cap_problems() + channel_problems())
     for b in bad:
         print(f"FAIL: {b}")
     if bad:
