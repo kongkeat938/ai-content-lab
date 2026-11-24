@@ -36,13 +36,13 @@
   fresh clips rogue → **only a clip unrecorded ≥24 h may be paused**, never on "confirmation"
   (2026-11-24: it hid a 7-min-old Short + a dharma long-form); `keep_clips_live.py`.
   **`videos.update` REPLACES the whole `snippet`/`status`** (`topics/05`).
-- **Repo is PUBLIC** (private halts the rails): never commit a credential/address
+- **Repo PUBLIC** (private halts the rails): never commit a credential/address
 - **Git/CI:** racing rails → one concurrency group/channel + union driver; a GENERATED `docs/` report
   needs ONE writer; one duration parser `yt_duration.py`; **an unpushed pod = stale manifest in CI**.
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
-  entry; theme rotates per RUN count; **a pod render dies ~19 min in → `longform-standard.yml`**
-- **GitHub cron** fires 23/100 but late; foreman backfill = truth; rails can all be
-  `disabled_manually` → measure `actions/workflows` first.
+  entry; theme per RUN count; **a pod render dies ~19 min in → `longform-standard.yml`**
+- **GitHub cron** fires 23/100 late; rails can be `disabled_manually` → measure
+  `actions/workflows` first. 2026-11-24: 27 off; `publish-shorts` 3×/day + `grow-shorts-pool` on.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
 - **Look = MINIMUM bar, ALL channels**: long-form **4K 3840x2160**, Shorts **2160x3840**, tv/bt709,
   -14 LUFS, clean grade, floating Thai text, 1.06x lanczos; **ONE grade `video_grade.py`** — a
@@ -55,7 +55,7 @@
   `script_ledger_<ch>.json`; `writers_room` ปฏิเสธ ≥45% (`test_no_repeat_paths.py`).
 - **MV:** ภาพใหม่ทุกคลิป (`art_ledger_mv.json`, `make_mv.py`); sha ซ้ำ = FAIL; arc 6 + เพลงห้ามซ้ำ;
   `build_night.py` เจอบทเคยออกอากาศ = **exit 3** (`test_content_no_repeat.py`).
-- **Shorts: meet the standard or NOT upload** (backlog too); `alimiter` limits SAMPLE peak →
+- **Shorts: meet the standard or NOT upload**; `alimiter` limits SAMPLE peak →
   `TP_WAV` = gate − AAC overshoot; **a publish records its `privacy`** and is verified by
   `privacyStatus`/views moving, not by a manifest row.
 - **A rail can die at IMPORT** → `test_workflow_deps.py`; a stale tree fakes "missing" (`git fetch`);
