@@ -57,6 +57,29 @@ def publisher_problems(scripts: dict[str, str]) -> list[str]:
     return out
 
 
+def public_problems(scripts: dict[str, str]) -> list[str]:
+    """A publish that defaults to private is a green receipt nobody can watch.
+
+    Measured 2026-11-24: `publish_motion.py` defaulted to `--privacy private`, so
+    Short 102 went up invisible (API privacyStatus=private, oEmbed 403, absent
+    from the channel feed) while its manifest entry read as published. This can
+    FAIL: put `default="private"` back on any publisher and the run exits 1.
+    """
+    out = []
+    manifest_writers = {"publish_shorts.py", "publish_motion.py"}
+    for name, text in scripts.items():
+        m = re.search(r'"--privacy",\s*default="([a-z]+)"', text)
+        if not m:
+            continue
+        if m.group(1) != "public":
+            out.append(f"{name}: --privacy defaults to {m.group(1)!r}; a publish "
+                       f"must be public unless the operator asks otherwise")
+        if name in manifest_writers and not re.search(r'"privacy":\s*args\.privacy', text):
+            out.append(f"{name}: records an upload without stating its privacy, so a "
+                       f"private clip would read as published")
+    return out
+
+
 def cap_problems() -> list[str]:
     """Autonomy is not a flood: the Short uploader must hold on cap and gap."""
     from datetime import datetime, timedelta, timezone
@@ -87,7 +110,8 @@ def main() -> int:
         with open(os.path.join(ROOT, "scripts", name), encoding="utf-8") as fh:
             scripts[name] = fh.read()
 
-    bad = doc_problems(docs) + publisher_problems(scripts) + cap_problems()
+    bad = (doc_problems(docs) + publisher_problems(scripts)
+           + public_problems(scripts) + cap_problems())
     for b in bad:
         print(f"FAIL: {b}")
     if bad:

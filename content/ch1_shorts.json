@@ -717,7 +717,10 @@
       "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
       "thumbnail": "work/ch1_shorts/102/thumb_102.jpg",
       "thumbnail_set": true,
-      "shape": "cue"
+      "shape": "cue",
+      "privacy": "public",
+      "privacy_fixed_at": "2026-11-24T04:02:43+00:00",
+      "note": "uploaded private (receipt did not state privacy); set public via videos.update on 2026-11-24, verified live: privacy=public and viewCount 0->4"
     }
   }
 }

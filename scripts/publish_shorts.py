@@ -911,6 +911,10 @@ def main() -> int:
                               "thumbnail": os.path.relpath(thumb, ROOT),
                               "thumbnail_set": thumb_set,
                               "shape": hook_shape(s, spec.get("cues")),
+                              # The receipt states the privacy: a private upload
+                              # looked identical to a public one and Short 102 sat
+                              # invisible for 2 h (measured 2026-11-24).
+                              "privacy": args.privacy,
                               **({"probe": True, "probe_voice": "alt"} if stalled else {})}
         save(man, spec["manifest"])   # record before anything else can fail
         # K (2026-11-23): the words are claimed for good, so this story cannot come back.

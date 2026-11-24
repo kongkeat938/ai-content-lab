@@ -124,7 +124,10 @@ def main() -> int:
     ap.add_argument("--channel", choices=list(PS.CHANNELS), default=None,
                     help="override the channel; must match the story's genre")
     ap.add_argument("--out-dir", default=os.path.join(ROOT, "work", "motion_publish"))
-    ap.add_argument("--privacy", default="private",
+    # Public by default: ak publishes on its own (K, 2026-11-21), and a private
+    # upload is a receipt that looks green while nobody can watch it. Measured
+    # 2026-11-24: Short 102 went up private and sat at 0 views; oEmbed 403.
+    ap.add_argument("--privacy", default="public",
                     choices=["private", "unlisted", "public"])
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -258,7 +261,7 @@ def main() -> int:
                           "thumbnail": os.path.relpath(thumb, ROOT),
                           "thumbnail_set": thumb_set,
                           "shape": PS.hook_shape(story, spec.get("cues")),
-                          "kind": "motion"}
+                          "privacy": args.privacy, "kind": "motion"}
     PS.save(man, spec["manifest"])
     PS.note_upload(slug)
     # The record and the cap counter travel together, or the next run counts a
