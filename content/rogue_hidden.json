@@ -85,6 +85,22 @@
       "hidden_at": "2026-11-22T09:38:26Z",
       "reason": "FALSE POSITIVE: our own upload; the runner's manifest lagged it because the pod could not push. Restored to public.",
       "restored_at": "2026-11-22T13:02:20Z"
+    },
+    {
+      "video_id": "fgfn8ggJ2Hw",
+      "channel": "genx",
+      "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+      "title": "คุณมีสิทธิ์ปล่อยให้เวลาว่างเป็นความว่างเปล่าอย่างแ",
+      "hidden_at": "2026-11-24T01:49:09Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "VdjMXyQAic4",
+      "channel": "dharma",
+      "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
+      "title": "นอนไม่หลับ ฟังเรื่องเล่านี้แล้วใจเบา หลับลึกทั้งคื",
+      "hidden_at": "2026-11-24T01:49:11Z",
+      "reason": "live rogue upload outside the rails"
     }
   ]
 }
