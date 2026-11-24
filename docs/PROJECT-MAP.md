@@ -58,6 +58,7 @@ is retired (its 4 long-forms are published and the queue is closed).
 | `make_mv.py` + `mv_run.py` (MV series, new 2026-11-22) | by hand, repeatable | builds a music video: **fresh art per MV**, gated (-14 LUFS, TP<=-3.0, 1080p tv), published, and stamped image->MV->URL in `content/art_ledger_mv.json`. Art source chain: gemini image -> pollinations -> procedural `generative_art.py` (both AI routes were down 2026-11-22: 429 quota / 503). Guard `test_mv_fresh_art.py` FAILS on a reused image, a missing stamp, a missing file, or an unverified video | long-form watch-hours without narration |
 
 | `content_ledger.py` (story no-repeat, new 2026-11-22) | checked by `build_night.py` before every render, stamped after a passing gate | `content/content_ledger.json` records each video's parts (text sha256), music bed, visual arc and title. A part that already aired makes the build exit 3. `check` fails on a shared part, a repeated title or a repeated bed on one channel; 18 older videos sit in `unverified` with the reason (no source field existed). Guard `test_content_no_repeat.py` | **the "new story every clip" rule** |
+| `upload_gate.py` + `purge_sub4k.py` (K's 4K rule, new 2026-11-23) | called by `publish_shorts.py`, `publish_youtube.py`, `standard_clip.py` and `writers_room.py` before every upload; `purge_sub4k.py --dry-run --dirs` sweeps the disk | **4K only** (a Short ≥2160x3840, a long ≥3840x2160; a 1080p file is refused, not "almost 4K") **and nothing repeated**: md5 picture, music-bed id, script n-gram ≥45%. A cached sub-4K build is rebuilt, never re-uploaded. `purge_sub4k.py` exits **2 BLIND** without ffprobe. Guards `test_upload_gate.py`, `test_all_builders_4k.py` (every builder renders 4K), `test_no_repeat_paths.py` | **the upload bar** |
 
 All rails are GitHub Actions only (the pod is recycled when idle). Kill switch = `content/STOP`.
 
@@ -163,6 +164,10 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - **Shorts quality is gated before upload** (`scripts/publish_shorts.py`): aspect/colour/thumbnail
   (`short_standard.py`, `test_short_standard.py`) and loudness (measured, not a fixed gain —
   `test_short_loudness.py`). A build that misses the standard is HELD, not uploaded.
+- **The daily cap counts every ledger key that belongs to a channel** (`_ledger_keys`: channel id
+  *and* slug). Measured 2026-11-24: `publish_motion.py`/`remake_shorts.py` recorded under the slug,
+  so `uploads_in_last_24h()` read 0 with three dharma uploads inside 24 h — another rail could
+  push a channel past `DAILY_CAP`. Guard `test_publish_shorts_cap.py` fails if the slug is ignored.
 - One project, one goal. A task that does not serve YPP is out of scope — say so, don't build it.
 
 ## 5) Archived (kept for history, no live references)
