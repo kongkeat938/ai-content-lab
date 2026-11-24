@@ -434,8 +434,16 @@ def _live_rogue_ids(defects: list, confirmed=None, min_age_hours: float = MIN_AG
     video in `content/*_publish.json` locally; when those commits are not pushed
     (push 403) the runner's copy still says "unrecorded", so a fresh clip looks
     exactly like the rogue stream. "Not in our manifest" is therefore not
-    evidence. A clip is only hidden when an INDEPENDENT source names it (the RSS
-    watcher, `ROGUE <ch> <id>`) or when it has stayed unrecorded for a full day.
+    evidence.
+
+    Measured 2026-11-24: the `confirmed` shortcut re-opened the same hole. The RSS
+    watcher names EVERY fresh unrecorded upload `ROGUE <ch> <id>`, and that line
+    was treated as an independent signal -- so when the pod could not push, our
+    own Short (7 min old) and a dharma long-form (2.5 h old) were paused, each
+    read as "confirmed rogue". Both sources are the same stale manifest, so the
+    age floor now applies to every clip: only one that has stayed unrecorded for
+    `min_age_hours` may be paused, and the watcher's naming is reported, never
+    trusted on its own.
     """
     confirmed = set(confirmed or ())
     out = []
@@ -445,11 +453,12 @@ def _live_rogue_ids(defects: list, confirmed=None, min_age_hours: float = MIN_AG
         if not m:
             continue
         vid, age, title = m.group(1), float(m.group(2)), m.group(3)
-        if vid in confirmed or age * 24 >= min_age_hours:
+        if age * 24 >= min_age_hours:
             out.append((vid, title))
         else:
-            print(f"  kept live: {vid} ({age:.1f}d old, no independent rogue signal; "
-                  f"a lagging manifest is not evidence)")
+            named = "named by the RSS watcher, " if vid in confirmed else ""
+            print(f"  kept live: {vid} ({age:.1f}d old, {named}under the "
+                  f"{min_age_hours:g} h floor; an unpushed manifest is not evidence)")
     return out
 
 

@@ -3,8 +3,14 @@
 Measured 2026-11-22: rogue-guard paused six clips we had just published, because
 a pod build records its upload locally and those commits were not pushed (push
 403), so the runner still read "unrecorded" -- the same shape as the rogue
-stream. This test pins the rule: only an independent signal (the RSS watcher) or
-a full day unrecorded may hide a clip, and a fresh clip must stay live.
+stream.
+
+Measured 2026-11-24: the escape hatch failed again. The RSS watcher also derives
+its verdict from that same stale manifest (it names every fresh unrecorded upload
+`ROGUE <ch> <id>`), so "confirmed by the RSS watcher" was not independent
+evidence, and a 7-minute-old Short plus a 2.5 h-old dharma long-form were paused.
+This test pins the rule that survives both: a clip under the age floor is never
+paused, whoever names it; only a clip unrecorded for the whole floor is.
 """
 import os
 import sys
@@ -36,13 +42,16 @@ OLD = defect("9JbwOneU_7A", 3.0)
 # 1) A fresh unrecorded clip with no independent signal stays live.
 check("fresh clip kept", ac._live_rogue_ids([FRESH], confirmed=set()) == [])
 
-# 2) The RSS watcher naming the clip is enough evidence.
-check("confirmed rogue hidden",
-      [v for v, _ in ac._live_rogue_ids([FRESH], confirmed={"HkFULkG2sRk"})]
-      == ["HkFULkG2sRk"])
+# 2) The RSS watcher naming a fresh clip does NOT make it hideable: both sources
+#    read the same unpushed manifest.
+check("confirmed fresh clip still kept",
+      ac._live_rogue_ids([FRESH], confirmed={"HkFULkG2sRk"}) == [])
 
-# 3) A clip that stayed unrecorded for a day is still hidden.
+# 3) A clip that stayed unrecorded for a day is still hidden, named or not.
 check("stale clip hidden", [v for v, _ in ac._live_rogue_ids([OLD])] == ["9JbwOneU_7A"])
+check("confirmed stale clip hidden",
+      [v for v, _ in ac._live_rogue_ids([OLD], confirmed={"9JbwOneU_7A"})]
+      == ["9JbwOneU_7A"])
 
 # 4) The RSS log parses to ids.
 tmp = tempfile.mkdtemp(prefix="rogue_")
@@ -83,7 +92,13 @@ ac.hide_live_rogue(report, confirmed=set(), ledger_path=ledger)
 check("nothing paused for a fresh clip", calls == [] and not os.path.exists(ledger))
 
 ac.hide_live_rogue(report, confirmed={"HkFULkG2sRk"}, ledger_path=ledger)
-check("paused when confirmed", len(calls) == 1
+check("still nothing paused when the RSS watcher names a fresh clip",
+      calls == [] and not os.path.exists(ledger))
+
+old_report = {"dharma": {"channel": {"id": "UC1"}, "defects": [OLD]}}
+ac.hide_live_rogue(old_report, confirmed={"9JbwOneU_7A"}, ledger_path=ledger)
+check("a clip unrecorded for a full day is paused (reversibly)",
+      len(calls) == 1
       and calls[0]["status"]["privacyStatus"] == "private"
       and os.path.exists(ledger))
 

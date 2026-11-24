@@ -49,7 +49,9 @@ class FakeYT:
         return self._v
 
 
-LIVE = ("video ROGUE1 is UNRECORDED and published 0.3d ago "
+FRESH = ("video FRESH1 is UNRECORDED and published 0.05d ago "
+         "-- LIVE rogue upload outside the rails: คลิปของเราเอง")
+LIVE = ("video ROGUE1 is UNRECORDED and published 2.0d ago "
         "-- LIVE rogue upload outside the rails: คลิปเถื่อน")
 OLD = ("video OLD1 is on the channel but in NO manifest "
        "(historical, pre-manifest): คลิปเก่า")
@@ -65,14 +67,22 @@ def main() -> int:
     ac.client_for = lambda slug, cid: FakeYT(log)
     ac._comment_hidden = lambda newly: comments.append(newly)
 
-    report = {"kongkeat-story": {"channel": {"id": "UC4"}, "defects": [LIVE, OLD]}}
+    report = {"kongkeat-story": {"channel": {"id": "UC4"}, "defects": [LIVE, OLD, FRESH]}}
     ledger = tmp / "content" / "rogue_hidden.json"
     try:
-        # 2026-11-22: a clip must be CONFIRMED rogue before it is hidden -- the
-        # guard hid six of our own fresh uploads because a manifest lagged.
-        ac.hide_live_rogue(report, ledger_path=str(ledger))
+        # 2026-11-22 / 2026-11-24: an unpushed manifest is not evidence. A clip
+        # under the age floor stays live even when the RSS watcher names it.
+        fresh_only = {"kongkeat-story": {"channel": {"id": "UC4"},
+                                         "defects": [FRESH, OLD]}}
+        ac.hide_live_rogue(fresh_only, ledger_path=str(ledger))
         if [x for x in log if x[0] == "update"]:
-            fail("an unconfirmed fresh clip was hidden; a lagging manifest is not evidence")
+            fail("a fresh clip was hidden; a lagging manifest is not evidence")
+
+        # 2026-11-24: naming a clip is not evidence either -- the RSS watcher
+        # derives its verdict from the same unpushed manifest.
+        ac.hide_live_rogue(fresh_only, confirmed={"FRESH1"}, ledger_path=str(ledger))
+        if [x for x in log if x[0] == "update"]:
+            fail("a fresh clip was hidden because the RSS watcher named it")
 
         ac.hide_live_rogue(report, confirmed={"ROGUE1"}, ledger_path=str(ledger))
         updates = [x for x in log if x[0] == "update"]
@@ -84,6 +94,8 @@ def main() -> int:
             fail("a delete was issued; hiding must never delete (not reversible)")
         if any("OLD1" in str(x) for x in log):
             fail("the historical pre-manifest clip was touched; it may be legitimate")
+        if any("FRESH1" in str(x) for x in log):
+            fail("a clip under the age floor was touched; it may be our own upload")
 
         led = json.load(open(tmp / "content" / "rogue_hidden.json", encoding="utf-8"))
         if [h["video_id"] for h in led["hidden"]] != ["ROGUE1"]:
