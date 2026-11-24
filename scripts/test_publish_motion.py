@@ -73,11 +73,11 @@ def bad_clip(d: str) -> tuple[str, str]:
 
 
 def good_clip(d: str) -> tuple[str, str]:
-    """A REAL clip that meets the standard: 1080x1920 tv/bt709, 9:16 thumbnail."""
+    """A REAL clip that meets the standard: 4K 2160x3840 tv/bt709, 9:16 thumbnail."""
     video = os.path.join(d, "good.mp4")
     thumb = os.path.join(d, "good.jpg")
     sh(["ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", "testsrc2=size=1080x1920:rate=30:duration=3",
+        "-f", "lavfi", "-i", "testsrc2=size=2160x3840:rate=30:duration=3",
         "-f", "lavfi", "-i", "sine=frequency=300:duration=3",
         "-af", "loudnorm=I=-14:TP=-3", "-ar", "48000",
         "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
@@ -85,7 +85,7 @@ def good_clip(d: str) -> tuple[str, str]:
         "-color_primaries", "bt709", "-color_trc", "bt709",
         "-c:a", "aac", "-shortest", video])
     from PIL import Image
-    Image.new("RGB", (720, 1280), (20, 20, 30)).save(thumb)
+    Image.new("RGB", (1080, 1920), (20, 20, 30)).save(thumb)
     return video, thumb
 
 

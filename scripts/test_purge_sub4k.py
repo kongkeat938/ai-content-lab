@@ -75,7 +75,8 @@ def main() -> int:
 
     blind = subprocess.run([sys.executable, os.path.join(HERE, "purge_sub4k.py"), "--dry-run",
                             "--root", alive], capture_output=True, text=True,
-                           env={"PATH": "/nonexistent", "HOME": os.environ.get("HOME", "/tmp")})
+                           env={"PATH": "/nonexistent", "HOME": os.environ.get("HOME", "/tmp")},
+                           stdin=subprocess.DEVNULL)
     check(blind.returncode == 2 and "BLIND" in (blind.stdout + blind.stderr),
           f"without ffprobe it refuses to run (exit {blind.returncode})")
 

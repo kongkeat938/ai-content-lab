@@ -214,8 +214,13 @@ def main() -> int:
     #    require the chain keeps >= 65% of the native centre detail. This FAILS
     #    if someone raises BROLL_ZOOM toward 1.3 or drops the lanczos flag.
     clip = os.path.join(tmp, "detail.mp4")
+    # The band limit follows the canvas: real footage carries detail up to its own
+    # line count, not the output's, so a 4K frame must be blurred twice as wide as a
+    # 1080p one to behave the same (measured 2026-11-24: sigma=2 on a 4K frame is a
+    # near-Nyquist pattern, and the 6% zoom then read as a 39% detail loss).
+    sigma = 2 * mq.H / 1080
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
-                    f"testsrc2=s={mq.W}x{mq.H}:d=2:r={mq.FPS}", "-vf", "gblur=sigma=2",
+                    f"testsrc2=s={mq.W}x{mq.H}:d=2:r={mq.FPS}", "-vf", f"gblur=sigma={sigma:g}",
                     "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", clip],
                    check=True)
 

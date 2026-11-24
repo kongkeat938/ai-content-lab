@@ -53,6 +53,17 @@ HOLD_SEC = 9.0  # a caption animates in, holds at most this long, then leaves
 # visible around it (the base is what keeps every frame different; a full-frame
 # image would reintroduce the static-card problem the chapter moves away from).
 ILLUSTRATION_W, ILLUSTRATION_H = 3840, 2160   # 4K source (K, 2026-11-23)
+# The drift offsets below were tuned on a 1920-wide frame; the canvas is 4K
+# now, so they are scaled to keep the same relative movement (2026-11-24).
+DRIFT_SCALE = W / 1920
+
+# The base pans: the gradient is generated this much larger than the frame and a
+# slowly moving window is cropped out of it. Measured 2026-11-24: the palette drift
+# plus the grain did not survive the 4K encode (two frames one second apart differed
+# by 0.2 levels, floor 0.3), so the base read as a static card -- the exact failure
+# the panel flagged. A crop window is structural: every pixel changes every frame.
+BASE_PAD = 1.14                 # must leave more slack than PAN_AMP
+PAN_AMP = 120 * DRIFT_SCALE     # px of travel at the widest point
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 # The motion is the point: a background filter chain with none of these
@@ -95,7 +106,8 @@ def gradient_source(seed: int, dur: float) -> str:
     ]
     c0, c1, c2 = palettes[seed % len(palettes)]
     return (
-        f"gradients=s={W}x{H}:c0={c0}:c1={c1}:c2={c2}:n=3:"
+        f"gradients=s={int(W * BASE_PAD) // 2 * 2}x{int(H * BASE_PAD) // 2 * 2}"
+        f":c0={c0}:c1={c1}:c2={c2}:n=3:"
         f"speed=0.006:d={dur:.3f}:r={FPS}"
     )
 
@@ -107,9 +119,16 @@ def background_chain(seed: int = 0) -> str:
     from settling, so even a frame pair from the same gradient position differs.
     `format=yuv420p` is required so libx264 accepts the frames.
     """
+    # The grain is what carries the base's per-frame motion, and x264 at 4K smooths a
+    # 7-level grain away entirely (measured 2026-11-24: two frames one second apart
+    # differed by 0.2 levels with the base static; the guard's floor is 0.3), so the
+    # amplitude follows the canvas.
     return (
         "format=yuv420p,"
-        "noise=alls=7:allf=t+u,"
+        f"crop={W}:{H}:"
+        f"x='(iw-ow)/2+{PAN_AMP:g}*sin(2*PI*t/31)':"
+        f"y='(ih-oh)/2+{PAN_AMP * 0.8:g}*cos(2*PI*t/37)',"
+        f"noise=alls={7 * DRIFT_SCALE:g}:allf=t+u,"
         "hue=h=t*1.5:s=1.05,"
         "vignette=PI/4.5"
     )
@@ -132,8 +151,8 @@ def broll_seg_chain(index: int, start: float, end: float, mean_luma: float = 255
 def broll_base(clips: list[dict], work: str) -> str:
     """Concat real b-roll (one clip per narration beat) into a full-length base.
 
-    Each clip is looped to cover its beat, normalised to 1280x720 16:9, graded and
-    drifted, then the segments are concatenated. Returns the base video path; the
+    Each clip is looped to cover its beat, normalised to the frame size (4K), graded
+    and drifted, then the segments are concatenated. Returns the base video path; the
     captions and voice are burned on top afterwards by build().
     """
     import fetch_broll  # shared with the approved renderer; no heavy import cost
@@ -288,7 +307,8 @@ def chapter_overlay_chain(chapters: list[dict], seed: int = 0) -> tuple[list[str
         # coprime so it never visibly loops.
         frags.append(
             f"{prev}[il{i}]overlay="
-            f"x='(W-w)/2+10*sin(2*PI*t/23)':y='(H-h)/2-70+8*cos(2*PI*t/29)':"
+            f"x='(W-w)/2+{10 * DRIFT_SCALE:g}*sin(2*PI*t/23)':"
+            f"y='(H-h)/2-{70 * DRIFT_SCALE:g}+{8 * DRIFT_SCALE:g}*cos(2*PI*t/29)':"
             f"enable='between(t,{start:.3f},{end:.3f})'{tag}")
         prev = tag
     return frags, prev

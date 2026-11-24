@@ -49,6 +49,7 @@ import make_short as MS  # noqa: E402  (voice, loudness, fonts -- the one source
 import video_grade as VG  # noqa: E402  (the ONE bright grade -- K: "ขอสดใส")
 
 W, H = 2160, 3840      # 4K vertical (K, 2026-11-23)
+SCALE = W / 1080       # every pixel constant below was authored at 1080 wide
 FPS = 15                       # enough for smooth drift/bounce, cheap to render
 BEAT_HZ = 1.7                  # the dance tempo (light genres only)
 CAP_FONT = "Prompt-SemiBold.ttf"
@@ -114,13 +115,13 @@ def draw_sunmoon(im: Image.Image, mood: str, seed: int) -> Image.Image:
     Night moods get a pale moon with soft craters; dawn/sunset/forest get a warm
     sun with a halo. It is painted onto the backdrop so ken-burns carries it too."""
     d = ImageDraw.Draw(im, "RGBA")
-    cx, cy, r = int(W * 0.72), int(H * 0.15), 150
+    cx, cy, r = int(W * 0.72), int(H * 0.15), int(150 * SCALE)
     night = mood in ("night",)
     body = (245, 246, 240, 245) if night else (255, 236, 178, 250)
     halo = (220, 228, 255) if night else (255, 214, 140)
 
     for g in range(7, 0, -1):                       # the glow halo
-        rad = r + g * 34
+        rad = r + g * 34 * SCALE
         d.ellipse([cx - rad, cy - rad, cx + rad, cy + rad], fill=halo + (10,))
     d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=body)
 
@@ -161,7 +162,7 @@ def backdrop(mood: str, seed: int, art: str | None) -> Image.Image:
     for band, (hy, col) in enumerate([(0.60, (0, 0, 0, 60)), (0.66, (0, 0, 0, 90))]):
         pts = [(0, H)]
         for x in range(0, W + 1, 60):
-            y = int(H * hy + math.sin((x / W) * math.pi * (2 + band) + seed) * 40)
+            y = int(H * hy + math.sin((x / W) * math.pi * (2 + band) + seed) * 40 * SCALE)
             pts.append((x, y))
         pts.append((W, H))
         d.polygon(pts, fill=col)
@@ -172,15 +173,15 @@ def ken_burns(base: Image.Image, t: float, dur: float, speed: float = 1.0) -> Im
     """A slow push-in so the still breathes (1.00 -> 1.06 over the clip)."""
     z = 1.0 + 0.06 * (t / max(dur, 0.001))
     cw, ch = int(W / z), int(H / z)
-    left = int((W - cw) / 2 + math.sin(t * 0.15 * speed) * 8)
-    top = int((H - ch) / 2 + math.cos(t * 0.12 * speed) * 6)
+    left = int((W - cw) / 2 + math.sin(t * 0.15 * speed) * 8 * SCALE)
+    top = int((H - ch) / 2 + math.cos(t * 0.12 * speed) * 6 * SCALE)
     crop = base.crop((left, top, left + cw, top + ch))
     return crop.resize((W, H), Image.LANCZOS)
 
 
 def make_stars(seed: int, n: int = 46, size: tuple = (6, 18)) -> list[dict]:
     rnd = random.Random(seed + 1)
-    lo, hi = size
+    lo, hi = (v * SCALE for v in size)
     return [{"x": rnd.uniform(0, W), "y": rnd.uniform(0, H * 0.66),
              "s": rnd.uniform(lo, hi), "ph": rnd.uniform(0, math.tau),
              "sp": rnd.uniform(0.4, 1.5), "col": rnd.choice(
@@ -201,7 +202,7 @@ def draw_stars(img: Image.Image, stars: list[dict], t: float, speed: float = 1.0
     for st in stars:
         tw = 0.5 + 0.5 * math.sin(math.tau * st["sp"] * speed * t + st["ph"])
         _star(d, st["x"], st["y"], st["s"] * (0.7 + 0.6 * tw), int(40 + 200 * tw), st["col"])
-    glow = layer.filter(ImageFilter.GaussianBlur(7))
+    glow = layer.filter(ImageFilter.GaussianBlur(7 * SCALE))
     out = ImageChops.screen(img.convert("RGB"), glow.convert("RGB"))
     return Image.alpha_composite(out.convert("RGBA"), layer).convert("RGB")
 
@@ -254,6 +255,12 @@ KINDS = {
 
 # A sensible count per kind when a story names its own fx (dense kinds are cheap
 # to draw but clutter a calm scene, so each gets its own default).
+# The table above is authored in 1080-wide pixels; scale the pixel fields once.
+for _spec in KINDS.values():
+    for _f in ("vy", "vx", "sz", "sway"):
+        _v = _spec[_f]
+        _spec[_f] = tuple(x * SCALE for x in _v) if isinstance(_v, tuple) else _v * SCALE
+
 FX_COUNT = {"rain": 90, "waterfall": 110, "snow": 70, "confetti": 44, "lava": 46,
             "ember": 30, "ash": 34, "bubble": 46, "firefly": 9, "heart": 10,
             "leaf": 9, "petal": 10, "mote": 14, "spark": 7}
@@ -266,9 +273,9 @@ def make_particles(seed: int, n: int, kind: str, salt: int = 0) -> list[dict]:
     if spec["mode"] == BURST:
         ox, oy = spec["origin"]
         return [{"kind": kind, "mode": BURST,
-                 "x": W * ox + rnd.uniform(-40, 40), "y": H * oy,
+                 "x": W * ox + rnd.uniform(-40, 40) * SCALE, "y": H * oy,
                  "vx": rnd.uniform(*spec["vx"]), "vy": rnd.uniform(*spec["vy"]),
-                 "g": rnd.uniform(620, 900), "sz": rnd.uniform(*spec["sz"]),
+                 "g": rnd.uniform(620, 900) * SCALE, "sz": rnd.uniform(*spec["sz"]),
                  "ph": rnd.uniform(0, 1) * rnd.uniform(*spec["period"]),
                  "period": rnd.uniform(*spec["period"]), "a": spec["a"],
                  "sway": spec["sway"], "spin": rnd.uniform(-2.0, 2.0),
@@ -281,7 +288,7 @@ def make_particles(seed: int, n: int, kind: str, salt: int = 0) -> list[dict]:
             cx, half = spec["band"]
             x = rnd.uniform(W * (cx - half), W * (cx + half))
         else:
-            x = rnd.uniform(-40, W + 40)
+            x = rnd.uniform(-40 * SCALE, W + 40 * SCALE)
         parts.append({
             "kind": kind, "mode": spec["mode"], "x": x,
             "y": rnd.uniform(-H, H), "vy": rnd.uniform(*spec["vy"]),
@@ -305,7 +312,7 @@ def _leaf(d: ImageDraw.ImageDraw, x: float, y: float, sz: float, ang: float, col
     ca, sa = math.cos(ang), math.sin(ang)
     rot = [(x + px * ca - py * sa, y + px * sa + py * ca) for px, py in pts]
     d.polygon(rot, fill=col + (215,))
-    d.line(rot[:steps + 1], fill=(60, 90, 50, 220), width=2)
+    d.line(rot[:steps + 1], fill=(60, 90, 50, 220), width=max(1, int(2 * SCALE)))
 
 
 def _petal(d: ImageDraw.ImageDraw, x: float, y: float, sz: float, ang: float, col) -> None:
@@ -340,10 +347,11 @@ def _draw_one(d: ImageDraw.ImageDraw, p: dict, x: float, y: float, t: float,
         d.ellipse([x - sz * 0.55, y - sz * 0.55, x + sz * 0.55, y + sz * 0.55],
                   fill=(255, 255, 255, a))
     elif k == "rain":
-        d.line([(x, y), (x - sz * 0.30, y + sz)], fill=col + (a,), width=3)
+        d.line([(x, y), (x - sz * 0.30, y + sz)], fill=col + (a,), width=int(3 * SCALE))
     elif k == "waterfall":
-        d.line([(x, y), (x, y + sz)], fill=col + (a,), width=4)
-        d.line([(x + 3, y + sz * 0.3), (x + 3, y + sz)], fill=col + (a // 2,), width=2)
+        d.line([(x, y), (x, y + sz)], fill=col + (a,), width=int(4 * SCALE))
+        d.line([(x + 3 * SCALE, y + sz * 0.3), (x + 3 * SCALE, y + sz)],
+               fill=col + (a // 2,), width=max(1, int(2 * SCALE)))
     elif k == "ash":
         d.ellipse([x - sz, y - sz * 0.7, x + sz, y + sz * 0.7], fill=col + (a,))
     elif k == "confetti":
@@ -355,7 +363,7 @@ def _draw_one(d: ImageDraw.ImageDraw, p: dict, x: float, y: float, t: float,
     elif k == "mote":
         d.ellipse([x - sz, y - sz, x + sz, y + sz], fill=col + (a,))
     elif k == "bubble":
-        d.ellipse([x - sz, y - sz, x + sz, y + sz], outline=col + (a,), width=3)
+        d.ellipse([x - sz, y - sz, x + sz, y + sz], outline=col + (a,), width=int(3 * SCALE))
         d.ellipse([x - sz * 0.55, y - sz * 0.55, x - sz * 0.15, y - sz * 0.15],
                   fill=(255, 255, 255, min(255, a + 30)))
     elif k == "ember":
@@ -388,10 +396,10 @@ def _draw_one(d: ImageDraw.ImageDraw, p: dict, x: float, y: float, t: float,
 def _particle_pos(p: dict, t: float, speed: float) -> tuple[float, float, float | None]:
     """Where a particle is at time `t`, plus its burst life (None when steady)."""
     if p["mode"] == FALL:
-        y = (p["y"] + p["vy"] * speed * t) % (H + 240) - 120
+        y = (p["y"] + p["vy"] * speed * t) % (H + 240 * SCALE) - 120 * SCALE
         x = p["x"] + p["vx"] * speed * t + math.sin(t * 1.1 * speed + p["ph"]) * p["sway"]
     elif p["mode"] == RISE:
-        y = (p["y"] - p["vy"] * speed * t) % (H + 240) - 120
+        y = (p["y"] - p["vy"] * speed * t) % (H + 240 * SCALE) - 120 * SCALE
         x = p["x"] + p["vx"] * speed * t + math.sin(t * 1.3 * speed + p["ph"]) * p["sway"]
     elif p["mode"] == DRIFT:
         x = (p["x"] + p["vx"] * speed * t
@@ -418,7 +426,8 @@ def draw_fx(img: Image.Image, parts: list[dict], t: float,
     used_glow = False
     for p in parts:
         x, y, fade = _particle_pos(p, t, speed)
-        if x < -160 or x > W + 160 or y < -240 or y > H + 240:
+        if (x < -160 * SCALE or x > W + 160 * SCALE
+                or y < -240 * SCALE or y > H + 240 * SCALE):
             continue
         if p.get("glow"):
             used_glow = True
@@ -427,7 +436,7 @@ def draw_fx(img: Image.Image, parts: list[dict], t: float,
             _draw_one(d, p, x, y, t, fade)
     out = Image.alpha_composite(img.convert("RGBA"), layer)
     if used_glow:
-        out = Image.alpha_composite(out, glow.filter(ImageFilter.GaussianBlur(6)))
+        out = Image.alpha_composite(out, glow.filter(ImageFilter.GaussianBlur(6 * SCALE)))
         out = Image.alpha_composite(out, glow)
     return out.convert("RGB")
 
@@ -448,10 +457,10 @@ def draw_character(img: Image.Image, t: float, mood: str, beat_accent: float) ->
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     cx, cy = W // 2, int(H * 0.60)
-    body_r = 150
+    body_r = int(150 * SCALE)
     phase = math.tau * BEAT_HZ * t
     hop = abs(math.sin(phase / 2))                       # two hops per beat
-    amp = 90 + 60 * beat_accent
+    amp = (90 + 60 * beat_accent) * SCALE
     by = cy - hop * amp
     squash = 0.10 * math.cos(phase)                      # stretch at the bottom, squash at the top
     rx = body_r * (1 + squash)
@@ -467,19 +476,23 @@ def draw_character(img: Image.Image, t: float, mood: str, beat_accent: float) ->
     swing = math.sin(phase) * 0.9
     for side in (-1, 1):
         sx, sy = cx + side * rx * 0.85, by + ry * 0.1
-        ex = sx + side * 90
-        ey = sy + 70 * (0.4 + swing * side)
-        d.line([(sx, sy), (ex, ey)], fill=body_col + (255,), width=34)
-        d.ellipse([ex - 20, ey - 20, ex + 20, ey + 20], fill=body_col + (255,))
+        ex = sx + side * 90 * SCALE
+        ey = sy + 70 * SCALE * (0.4 + swing * side)
+        d.line([(sx, sy), (ex, ey)], fill=body_col + (255,), width=int(34 * SCALE))
+        e = int(20 * SCALE)
+        d.ellipse([ex - e, ey - e, ex + e, ey + e], fill=body_col + (255,))
     # body
     d.ellipse([cx - rx, by - ry, cx + rx, by + ry], fill=body_col + (255,))
     d.ellipse([cx - rx * 0.7, by - ry * 0.9, cx + rx * 0.2, by], fill=(255, 240, 200, 70))
     # eyes + smile
     for side in (-1, 1):
         ex = cx + side * rx * 0.34
-        d.ellipse([ex - 22, by - 40, ex + 22, by + 6], fill=(40, 34, 30, 255))
-        d.ellipse([ex - 6, by - 34, ex + 8, by - 16], fill=(255, 255, 255, 255))
-    d.arc([cx - 46, by + 8, cx + 46, by + 74], 20, 160, fill=(70, 50, 40, 255), width=8)
+        d.ellipse([ex - 22 * SCALE, by - 40 * SCALE, ex + 22 * SCALE, by + 6 * SCALE],
+                  fill=(40, 34, 30, 255))
+        d.ellipse([ex - 6 * SCALE, by - 34 * SCALE, ex + 8 * SCALE, by - 16 * SCALE],
+                  fill=(255, 255, 255, 255))
+    d.arc([cx - 46 * SCALE, by + 8 * SCALE, cx + 46 * SCALE, by + 74 * SCALE], 20, 160,
+          fill=(70, 50, 40, 255), width=int(8 * SCALE))
     return Image.alpha_composite(img.convert("RGBA"), layer).convert("RGB")
 
 
@@ -492,16 +505,17 @@ def caption(img: Image.Image, text: str) -> Image.Image:
     """
     if not text:
         return img
-    f = MS.font(CAP_FONT, 62)
+    f = MS.font(CAP_FONT, int(62 * SCALE))
     tmp = ImageDraw.Draw(img)
     lines = MS.wrap(tmp, text, f, int(W * 0.86))
-    lh = 78
-    block_h = lh * len(lines) + 56
+    lh = int(78 * SCALE)
+    block_h = lh * len(lines) + int(56 * SCALE)
     panel = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     pd = ImageDraw.Draw(panel)
-    top = max(70, int(H * CAPTION_CY) - block_h // 2)
-    pd.rounded_rectangle([40, top, W - 40, top + block_h], radius=36, fill=(8, 10, 22, 150))
-    y = top + 28
+    top = max(int(70 * SCALE), int(H * CAPTION_CY) - block_h // 2)
+    pd.rounded_rectangle([int(40 * SCALE), top, W - int(40 * SCALE), top + block_h],
+                         radius=int(36 * SCALE), fill=(8, 10, 22, 150))
+    y = top + int(28 * SCALE)
     for ln in lines:
         w = tmp.textlength(ln, font=f)
         pd.text(((W - w) / 2, y), ln, font=f, fill=(252, 250, 245, 255))

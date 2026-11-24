@@ -90,16 +90,16 @@ def gate_passes(path: str) -> tuple[bool, str]:
     """Run the REAL upload gate, so the fix is judged by the rule that HELD it."""
     from PIL import Image
     thumb = path + ".thumb.jpg"
-    Image.new("RGB", (1080, 1920), (30, 40, 80)).save(thumb, quality=90)
+    Image.new("RGB", (1080, 1920), (30, 40, 80)).save(thumb, quality=90)  # 9:16 thumb
     ok, reasons, metrics = std.verify_short(path, thumb)
     os.remove(thumb)
     return ok, f"{reasons} {metrics}"
 
 
 def mux_short(wav: str, out: str) -> None:
-    """Wrap a normalised wav under a real 1080x1920 clip, the shape the gate reads."""
+    """Wrap a normalised wav under a real 4K clip, the shape the gate reads."""
     run(["ffmpeg", "-y", "-loglevel", "error",
-         "-f", "lavfi", "-i", "testsrc2=size=1080x1920:rate=30:duration=6",
+         "-f", "lavfi", "-i", "testsrc2=size=2160x3840:rate=30:duration=6",
          "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "libx264",
          "-preset", "ultrafast", "-pix_fmt", "yuv420p", "-color_range", "tv",
          "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",

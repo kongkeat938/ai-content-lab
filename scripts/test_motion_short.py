@@ -59,6 +59,20 @@ def main() -> int:
     prof = M.profile_for("dharma")
     stars, fx = M.layers_for(42, prof)
 
+    # The canvas became 4K on 2026-11-23 while every size/velocity in the builder was
+    # tuned on a 1080-wide frame. Unscaled, the design came out at half the intended
+    # size and the motion fell under its thresholds (measured 2026-11-24: stars
+    # 0.041 vs >0.05, whole frame 0.41 vs >0.5). This can FAIL: drop SCALE from a
+    # constant and the number no longer matches the authored value.
+    s = M.SCALE
+    check("the design scales with the canvas", abs(s - M.W / 1080) < 1e-9,
+          f"SCALE={s}")
+    check("star size scales", M.make_stars(1, n=1)[0]["s"] >= 6 * s * 0.99,
+          f"star {M.make_stars(1, n=1)[0]['s']:.1f} vs >= {6 * s * 0.99:.1f}")
+    leaf_vy = M.KINDS["leaf"]["vy"][0]
+    check("particle velocity scales", abs(leaf_vy - 90 * s) < 0.51,
+          f"leaf vy {leaf_vy:.1f} vs {90 * s:.1f}")
+
     f0 = M.frame_at(base, stars, fx, "night", 0.0, dur, prof=prof)
     f1 = M.frame_at(base, stars, fx, "night", 0.5, dur, prof=prof)
 

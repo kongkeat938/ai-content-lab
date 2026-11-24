@@ -15,6 +15,9 @@ import sys
 
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import video_grade  # noqa: E402  -- the one grade source (W, H)
+
 LUFS_MIN, LUFS_MAX = -16.0, -12.0
 TP_MAX = -3.0
 DUR_TOL = 1.0
@@ -99,13 +102,14 @@ def main() -> int:
         fails.append(f"true peak {tp} above {TP_MAX} dBFS")
     if streams["video"].get("color_range") not in ("tv", "limited"):
         fails.append(f"color_range is {streams['video'].get('color_range')}, expected tv")
-    # The owner's minimum bar for EVERY channel (2026-11-17): sharp 1080p, the
-    # long-form colour standard. A 720p file or a full-range JPEG encode is not
-    # publishable, so this hard-fails it (the ch4 rail's --engine kinetic was
-    # shipping a softer look than the approved one until the grade was shared).
-    if (streams["video"].get("width"), streams["video"].get("height")) != (1920, 1080):
-        fails.append(f"picture is {streams['video'].get('width')}x"
-                     f"{streams['video'].get('height')}, expected 1920x1080")
+    # The owner's minimum bar for EVERY channel: sharp 4K (K, 2026-11-23: "4K
+    # เท่านั้นถึงอัพ"), the long-form colour standard. The size is read from the ONE
+    # grade source, `video_grade.py`, not hardcoded here -- a literal 1920x1080 hid
+    # the 4K switch and failed every compliant render (measured 2026-11-24).
+    want = (video_grade.W, video_grade.H)
+    got = (streams["video"].get("width"), streams["video"].get("height"))
+    if got != want:
+        fails.append(f"picture is {got[0]}x{got[1]}, expected {want[0]}x{want[1]}")
     if streams["video"].get("pix_fmt") != "yuv420p":
         fails.append(f"pix_fmt is {streams['video'].get('pix_fmt')}, expected yuv420p")
     if streams["video"].get("color_space") not in ("bt709", None, "unknown"):

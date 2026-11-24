@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
@@ -246,8 +247,15 @@ def test_probe_voice() -> None:
     ps = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
     if 'cmd += ["--probe"]' not in ps:
         fail("publish_shorts does not pass --probe on a stalled run")
-    if "if stalled or not os.path.exists(out):" not in ps:
-        fail("a stalled run would reuse the cached build instead of rebuilding the probe")
+    # The rebuild decision must cover the stall AND a cached build that is not 4K
+    # (the 2026-11-23 rule: a cached 1080p file must not be re-uploaded as if it
+    # were new). Check the condition that mentions `stalled`, not its formatting.
+    rebuild = [ln for ln in ps.splitlines()
+               if re.match(r"\s*if\b", ln) and "stalled" in ln]
+    if not rebuild:
+        fail("publish_shorts has no rebuild decision that mentions a stalled run")
+    if not any("stale" in ln or "resolution_problems" in ln for ln in rebuild):
+        fail("a stalled run or a cached sub-4K build would be reused instead of rebuilt")
     print("  probe: a stalled channel comes back with the alternate voice, rebuilt")
 
 

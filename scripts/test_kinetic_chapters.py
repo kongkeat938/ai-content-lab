@@ -67,9 +67,17 @@ def main() -> int:
     tmp = tempfile.mkdtemp(prefix="kchaptest_")
     try:
         from PIL import Image
+        import numpy as np
         for i, c in enumerate(chs):
+            # A TEXTURED picture, the way a real chapter illustration is. Measured
+            # 2026-11-24: a flat colour card only shows its own edges moving, so it
+            # reported "frozen" (0.2-0.3) on a render whose textured version moves
+            # 18.5 -- the fixture was hiding the motion, not measuring its absence.
+            rng = np.random.default_rng(11 + i)
+            small = rng.integers(30, 210, size=(90, 160, 3), dtype=np.uint8)
+            img = Image.fromarray(small).resize((1280, 720), Image.BICUBIC)
             p = os.path.join(tmp, f"il{i}.jpg")
-            Image.new("RGB", (1280, 720), (20 + i * 90, 60, 120 - i * 40)).save(p)
+            img.save(p)
             c["image"] = p
         frags, last = mk.chapter_overlay_chain(chs, 0)
         joined = ";".join(frags)
