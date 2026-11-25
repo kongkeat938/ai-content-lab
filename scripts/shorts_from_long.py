@@ -147,7 +147,8 @@ def main() -> int:
         if r.returncode != 0:
             print(r.stderr[-600:], file=sys.stderr)
     import short_standard
-    ok, reasons, metrics = short_standard.verify_short(args.out, args.thumb)
+    ok, reasons, metrics = short_standard.verify_short(args.out, args.thumb,
+                                                       profile="client")
     print(json.dumps({"verdict": "pass" if ok else "fail", "reasons": reasons,
                       "metrics": metrics}, ensure_ascii=False, indent=1))
     if not ok:

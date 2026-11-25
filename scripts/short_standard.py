@@ -34,6 +34,10 @@ import subprocess
 ASPECT_W, ASPECT_H = 9, 16
 # K (2026-11-23): 4K only to upload -- a 1080x1920 Short is now below the bar.
 EXPECT_W, EXPECT_H = 2160, 3840
+# A delivered-for-a-client Short is not an upload to our channels: 1080x1920 is
+# YouTube's delivery size, and the 4K bar is K's rule for OUR channels only. The
+# profile is explicit so the default path cannot silently accept 1080p.
+PROFILES = {"ours": (2160, 3840), "client": (1080, 1920)}
 PIX_FMT = "yuv420p"
 COLOR_RANGE = "tv"
 COLORSPACE = "bt709"
@@ -70,10 +74,19 @@ def _loudness(path: str) -> tuple[float | None, float | None]:
     return i, tp
 
 
-def verify_short(video: str, thumb: str | None = None) -> tuple[bool, list[str], dict]:
-    """Return (ok, reasons, metrics). ok is False if ANY standard is missed."""
+def verify_short(video: str, thumb: str | None = None,
+                 profile: str = "ours") -> tuple[bool, list[str], dict]:
+    """Return (ok, reasons, metrics). ok is False if ANY standard is missed.
+
+    profile="ours" (default) enforces 2160x3840; profile="client" enforces the
+    1080x1920 delivery size. Every other check (colour, loudness, length,
+    thumbnail) is identical in both profiles.
+    """
+    if profile not in PROFILES:
+        return False, [f"unknown profile {profile!r} (use one of {sorted(PROFILES)})"], {}
+    expect_w, expect_h = PROFILES[profile]
     reasons: list[str] = []
-    metrics: dict = {}
+    metrics: dict = {"profile": profile}
     if not (video and os.path.exists(video)):
         return False, [f"no video at {video!r}"], metrics
 
@@ -87,8 +100,9 @@ def verify_short(video: str, thumb: str | None = None) -> tuple[bool, list[str],
     else:
         w, h = v.get("width"), v.get("height")
         metrics["size"] = f"{w}x{h}"
-        if (w, h) != (EXPECT_W, EXPECT_H):
-            reasons.append(f"aspect/size {w}x{h} is not {EXPECT_W}x{EXPECT_H} (9:16)")
+        if (w, h) != (expect_w, expect_h):
+            reasons.append(f"aspect/size {w}x{h} is not {expect_w}x{expect_h} "
+                           f"(9:16, profile {profile})")
         else:
             g = __import__("math").gcd(w, h)
             if (w // g, h // g) != (ASPECT_W, ASPECT_H):

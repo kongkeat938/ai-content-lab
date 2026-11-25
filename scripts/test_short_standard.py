@@ -35,9 +35,10 @@ def sh(cmd: list[str]) -> None:
         raise SystemExit("cmd failed: " + " ".join(cmd) + "\n" + r.stderr[-1500:])
 
 
-def make_video(path: str, *, pix_fmt: str, color_range: str, dur: int = 4) -> None:
+def make_video(path: str, *, pix_fmt: str, color_range: str, dur: int = 4,
+               size: str = "2160x3840") -> None:
     sh(["ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", f"testsrc2=size=2160x3840:rate=30:duration={dur}",
+        "-f", "lavfi", "-i", f"testsrc2=size={size}:rate=30:duration={dur}",
         "-f", "lavfi", "-i", f"sine=frequency=300:duration={dur}",
         "-af", "loudnorm=I=-14:TP=-3", "-ar", "48000",
         "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", pix_fmt,
@@ -66,12 +67,15 @@ def main() -> int:
     good = os.path.join(d, "good.mp4")
     full = os.path.join(d, "full.mp4")
     wide = os.path.join(d, "wide.mp4")
+    hd = os.path.join(d, "hd.mp4")
     thumb = os.path.join(d, "thumb.jpg")
     wide_thumb = os.path.join(d, "wide_thumb.jpg")
     small_thumb = os.path.join(d, "small_thumb.jpg")
 
     make_video(good, pix_fmt="yuv420p", color_range="tv")
     make_video(full, pix_fmt="yuvj420p", color_range="pc")
+    # Same encode at YouTube's delivery size: below OUR bar, valid for a client.
+    make_video(hd, pix_fmt="yuv420p", color_range="tv", size="1080x1920")
     # 1280x720 is a valid encode but the wrong shape for a Short.
     sh(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi",
         "-i", "testsrc2=size=1280x720:rate=30:duration=3",
@@ -100,6 +104,10 @@ def main() -> int:
     check("16:9 thumbnail", short_standard.verify_short(good, wide_thumb)[:2], False, "thumbnail aspect")
     check("undersized thumbnail", short_standard.verify_short(good, small_thumb)[:2], False, "height")
     check("no thumbnail", short_standard.verify_short(good, None)[:2], False, "no thumbnail")
+    # The 4K rule must still bite by default; only the client profile may take 1080p.
+    check("1080p clip, default profile", short_standard.verify_short(hd, thumb)[:2], False, "2160x3840")
+    check("1080p clip, client profile",
+          short_standard.verify_short(hd, thumb, profile="client")[:2], True, "")
 
     # Wiring: the rail must gate before upload and hold on failure.
     src = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()

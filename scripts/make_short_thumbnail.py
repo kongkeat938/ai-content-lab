@@ -26,6 +26,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import unicodedata
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
@@ -85,6 +86,15 @@ def wrap(draw: ImageDraw.ImageDraw, text: str, f, max_w: int) -> list[str]:
             cur = ch
     if cur:
         lines.append(cur)
+    # A one- or two-character tail (a Thai syllable left alone) reads as a typo,
+    # so pull it back onto the line above -- but never split a base char from its
+    # combining mark, which would render as a broken glyph.
+    while len(lines) > 1 and len(lines[-1]) < 3 and len(lines[-2]) > 1:
+        prev = lines[-2]
+        if unicodedata.combining(prev[-1]) or unicodedata.combining(prev[-2]):
+            break
+        lines[-1] = prev[-1] + lines[-1]
+        lines[-2] = prev[:-1]
     return lines
 
 
@@ -114,14 +124,18 @@ def build(art: str | None, video: str | None, hook: str, out: str) -> str:
     d = ImageDraw.Draw(im)
     size = 132
     margin = 90
+    max_w = W - 2 * margin
     while size > 66:
         f = _font(size)
-        lines = wrap(d, hook.strip(), f, W - 2 * margin)
-        if len(lines) <= 4:
+        lines = wrap(d, hook.strip(), f, max_w)
+        # A last line under 40% of the width is a widow: it reads as a typo and
+        # pushes the hook into the frame, so shrink until it is gone.
+        widow = len(lines) > 1 and d.textlength(lines[-1], font=f) < max_w * 0.4
+        if len(lines) <= 4 and not widow:
             break
         size -= 6
     f = _font(size)
-    lines = wrap(d, hook.strip(), f, W - 2 * margin)
+    lines = wrap(d, hook.strip(), f, max_w)
     lh = size + int(size * 0.28)
     # 0.16 not 0.12: a vision check (2026-11-19) put the gold bar too close to the
     # top edge, where YouTube's Shorts UI overlays its own chrome.
