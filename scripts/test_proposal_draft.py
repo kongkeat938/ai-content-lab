@@ -80,6 +80,25 @@ def main() -> int:
     check("the draft says the samples are ours, not client work",
           "not client work" in body or "ไม่ใช่งานลูกค้า" in body)
 
+    print("no promise we cannot keep")
+    banned = ("ยอดวิว", "ยอดรับชม", "ไวรัล", "viral", "guarantee", "guaranteed", "more views",
+              "increase your views", "followers will")
+    hits = [b for b in banned if b.lower() in body.lower()]
+    check("the draft promises no views or growth", not hits, str(hits))
+    check("the first clip comes before payment",
+          "ไม่ต้องจ่ายก่อน" in body or "before you pay" in body)
+
+    print("right-sizing")
+    sys.path.insert(0, HERE)
+    import proposal_draft as pmod
+    packs_list = packs["packages"]
+    mini = pmod.pick_package(350, packs_list)
+    check("a 350 THB budget gets fewer clips, not a discount", mini["id"] == "mini"
+          and mini["clips"] == 3 and mini["price"] <= 350, str(mini))
+    packed = pmod.pick_package(665, packs_list)
+    check("a 665 THB budget buys pack A at list price", packed["id"] == "A"
+          and packed["price"] == 490, str(packed))
+
     print("\nPASS test_proposal_draft" if not FAILED else f"\nFAIL test_proposal_draft: {FAILED}")
     return 1 if FAILED else 0
 

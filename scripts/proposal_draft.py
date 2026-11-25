@@ -97,14 +97,24 @@ def score(item: dict) -> tuple[int, list[str]]:
 
 
 def pick_package(b: float | None, packages: list[dict]) -> dict:
-    """The pack that fits the stated budget without discounting below pack A."""
+    """The pack that fits the stated budget.
+
+    A budget below pack A is not a reason to quote 490 and hope: the council
+    (council3, 2026-11-25) called refusing small jobs a lost first sale, so the
+    scope shrinks instead — at pack A's per-clip rate, never at a discount.
+    """
     primary = next(p for p in packages if p.get("primary"))
     if b is None:
         return primary
-    for p in sorted(packages, key=lambda p: p["price"]):
-        if p["price"] <= b:
-            best = p
-    return locals().get("best", packages[0])
+    affordable = [p for p in sorted(packages, key=lambda p: p["price"]) if p["price"] <= b]
+    if affordable:
+        return affordable[-1]
+    smallest = min(packages, key=lambda p: p["price"])
+    rate = smallest["price"] / smallest["clips"]
+    clips = max(1, int(b // rate))
+    return {"id": "mini", "clips": clips, "price": round(clips * rate),
+            "name_th": f"ย่อขนาด {clips} คลิป", "name_en": f"right-sized {clips} clips",
+            "primary": False}
 
 
 def sample_for(item: dict) -> str:
@@ -122,27 +132,23 @@ def draft_text(item: dict, pkg: dict, packs: dict, samples: list[str]) -> str:
     budget = item.get("budget_text") or "not stated"
     if thai:
         return (
-            f"สวัสดีครับ เห็นประกาศ “{headline}” (งบที่แจ้ง: {budget})\n\n"
-            f"ผมรับตัดคลิปแนวตั้ง 9:16 ความยาว 30–60 วินาที จากไฟล์ต้นฉบับของคุณ — "
-            f"{packs['scope_th']}\n\n"
-            f"ราคา: แพ็ก {pkg['id']} — {pkg['clips']} คลิป {pkg['price']} บาท "
-            f"(แก้ไขได้ {packs['revisions']} ครั้ง/คลิป) · งานด่วนกว่า 5 คลิปใช้แพ็ก B\n"
-            f"ระยะเวลา: {packs['turnaround']}\n"
-            f"ตัวอย่างงาน (ผลิตเองทั้งหมด ไม่ใช่งานลูกค้ารายใด): {PORTFOLIO}\n"
-            f"  - {samples[0]}\n\n"
-            f"ถ้าสนใจ ส่งลิงก์ไฟล์ต้นฉบับ + ตัวอย่างคลิปที่ชอบมาได้เลยครับ "
-            f"ผมจะส่งคลิปแรกให้ดูก่อนตัดสินใจ\n"
+            f"“{headline}” — ตัดให้พร้อมโพสต์ได้ครับ\n\n"
+            f"ได้คลิปแนวตั้ง 9:16 ยาว 30–60 วินาที {packs['scope_th']} "
+            f"แก้ไขได้ {packs['revisions']} ครั้ง/คลิป\n"
+            f"{('แพ็ก ' + pkg['id']) if pkg['id'] != 'mini' else 'ย่อขนาดให้พอดีงบ'}: "
+            f"{pkg['clips']} คลิป {pkg['price']} บาท · ส่งใน {packs['turnaround']}\n"
+            f"ตัวอย่างฝีมือ (ผมทำเอง ไม่ใช่งานลูกค้า): {PORTFOLIO}\n\n"
+            f"ตัดคลิปแรกให้ดูก่อน ไม่ต้องจ่ายก่อน — ส่งไฟล์ต้นฉบับมาได้เลยครับ\n"
         )
     return (
-        f"Hi — I saw your post “{headline}” (budget listed: {budget}).\n\n"
-        f"What I deliver: vertical 9:16 clips, 30-60s, {packs['scope_en_short']}, "
-        f"{packs['revisions']} revision rounds per clip.\n\n"
-        f"Pack {pkg['id']}: {pkg['clips']} clips — {pkg['price']} THB.\n"
-        f"Turnaround: {packs.get('turnaround_en', '')}\n"
-        f"Samples (all produced by me to show the craft — not client work): {PORTFOLIO}\n"
-        f"  - {samples[0]}\n\n"
-        f"If it fits, send the source footage and one clip you like; I will cut the first "
-        f"clip for you to judge before you commit.\n"
+        f"“{headline}” — that is the cut I do, ready to post.\n\n"
+        f"You get vertical 9:16 clips, 30-60s: {packs['scope_en_short']}, "
+        f"{packs['revisions']} revision rounds per clip.\n"
+        f"{('Pack ' + pkg['id']) if pkg['id'] != 'mini' else 'Right-sized to your budget'}: "
+        f"{pkg['clips']} clips, {pkg['price']} THB, delivered in "
+        f"{packs.get('turnaround_en', '')}.\n"
+        f"Samples (mine, produced to show the craft — not client work): {PORTFOLIO}\n\n"
+        f"I cut the first clip before you pay anything. Send the footage.\n"
     )
 
 
@@ -190,7 +196,8 @@ def main() -> int:
         path = os.path.join(OUTDIR, f"{item['id']}.md")
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(f"<!-- prospect: {item['url']} | source: {item['source']} | "
-                     f"score {sc}/100 | status: draft -->\n\n{body}")
+                     f"score {sc}/100 | their budget: {item.get('budget_text') or 'not stated'} | "
+                     f"status: draft -->\n\n{body}")
         index["drafts"].append({
             "prospect_id": item["id"], "prospect_url": item["url"], "source": item["source"],
             "title": item["title"][:160], "score": sc, "why": why, "package": pkg["id"],
