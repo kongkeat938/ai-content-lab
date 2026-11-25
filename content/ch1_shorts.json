@@ -743,6 +743,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "105": {
+      "video_id": "j9M9OKPYHYM",
+      "url": "https://youtu.be/j9M9OKPYHYM",
+      "title": "คุณมีสิทธิ์ปฏิเสธคำขอร้องที่เกินกำลังตัวเองได้ทันที #Shorts",
+      "posted_at": "2026-11-25T10:14:50+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/105/thumb_105.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
