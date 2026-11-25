@@ -84,6 +84,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   and `docs/PANEL-*.md`. `docs/GROWTH-PLAN-*.md` is the plan that follows a consult. The latest
   goal consult is `docs/CONSULT-2026-11-18-goal.md` (Gemini alone) — it also records where
   Gemini's advice **conflicts with the measured data** (genx subs).
+- Client offer + outreach pack: `docs/OFFER-2026-11-25.md` (packages, prices, paste-ready Thai
+  message, 12 measured prospect channels, the send-it-yourself constraint, 30-day stop rule).
+  Demo assets: releases `demo-shorts-2026-11-25`, `demo-story-2026-11-25`.
 - Channel facts: `channels.json`, `.openhands/memory/topics/00-*.md`.
 - Channel NAMES: a channel's main title is **not API-settable** — K sets it in Studio, so the
   repo *follows* the live name (verified quota-free from RSS / channel page / oEmbed). Single
