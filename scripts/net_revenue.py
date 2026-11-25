@@ -14,9 +14,16 @@ assumptions, never as fact.
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import sys
 
-PACKAGES = (("A", 5, 490), ("B", 10, 890), ("C", 20, 1590))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def packages() -> list[tuple[str, int, int]]:
+    with open(os.path.join(ROOT, "content", "packages.json"), encoding="utf-8") as fh:
+        return [(p["id"], p["clips"], p["price"]) for p in json.load(fh)["packages"]]
 
 
 def main() -> int:
@@ -30,7 +37,7 @@ def main() -> int:
     print(f"assumption: commission {a.commission:.0%} + VAT {a.vat:.0%} on the commission "
           f"+ {a.withdrawal:.0%} withdrawal = {cut:.2%} of the price")
     print(f"{'pack':4} {'clips':>5} {'price':>7} {'net':>8} {'orders to net ' + f'{a.target:.0f}':>22}")
-    for name, clips, price in PACKAGES:
+    for name, clips, price in packages():
         net = price * (1 - cut)
         import math
         need = math.ceil(a.target / net)

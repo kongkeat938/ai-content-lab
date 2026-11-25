@@ -87,6 +87,23 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - Client offer + outreach pack: `docs/OFFER-2026-11-25.md` (packages, prices, paste-ready Thai
   message, 12 measured prospect channels, the send-it-yourself constraint, 30-day stop rule).
   Demo assets: releases `demo-shorts-2026-11-25`, `demo-story-2026-11-25`.
+- Customer demand: `prospect_discover.py` reads public request pages (freelancer.com,
+  craigslist, freelancermap, HN Algolia), honours robots.txt, keeps the URL + found/checked
+  dates, dedupes, and expires 404s → `content/prospects_external.json`. Guard
+  `test_prospect_discover.py`. Daily rail `.github/workflows/prospect-daily.yml` (02:00 UTC =
+  09:00 Thai).
+- Offers: `proposal_draft.py` scores each request (budget, format fit, volume, verified
+  payment, deadline), refuses work we cannot do (animation/avatar/3D), quotes the canonical
+  price and writes `content/proposals/<id>.md` with status **draft** — no send path. Guard
+  `test_proposal_draft.py`.
+- Price: `content/packages.json` is the only source (A 490/5, B 750/10, C 1590/20).
+  `net_revenue.py`, `build_portfolio.py` and every draft read it; `test_portfolio_prices.py`
+  fails when the doc or the page drifts.
+- Portfolio: `docs/portfolio/index.html` (generated, GitHub Pages → /portfolio/) with three
+  self-made samples in `docs/portfolio/media/`. `make_samples.py` renders and then gates them
+  (1080x1920, 15-60s, audio present, -14 LUFS); guard `test_make_samples_gate.py` feeds it a
+  bad file. Thai font `assets/fonts/NotoSansThai.ttf` (OFL) is committed so rendering does
+  not depend on apt.
 - Sales rail: `prospect_score.py` (0-100, writes `content/prospects.json` — these are
   **prospects, not verified buyers**), `outreach_log.py` (status + 14-day cooldown that also
   covers `declined`; orders go created→paid→delivered→approved/refunded, and `report` counts

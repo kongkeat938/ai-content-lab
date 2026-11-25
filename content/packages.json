@@ -1,0 +1,46 @@
+{
+  "_comment": "ONE source of truth for price. The offer doc, the portfolio page and every draft read this file; test_packages_doc.py fails if the doc drifts from it.",
+  "currency": "THB",
+  "updated": "2026-11-25",
+  "changed_by": "K 2026-11-25: pack B is 750 THB (was 890)",
+  "packages": [
+    {
+      "id": "A",
+      "clips": 5,
+      "price": 490,
+      "name_th": "ทดลอง 5 คลิป",
+      "name_en": "Trial 5 clips",
+      "primary": false
+    },
+    {
+      "id": "B",
+      "clips": 10,
+      "price": 750,
+      "name_th": "แพ็กหลัก 10 คลิป",
+      "name_en": "Main pack 10 clips",
+      "primary": true
+    },
+    {
+      "id": "C",
+      "clips": 20,
+      "price": 1590,
+      "name_th": "20 คลิป",
+      "name_en": "20 clips",
+      "primary": false
+    }
+  ],
+  "revisions": 2,
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "codec": "h264",
+    "audio": "aac",
+    "loudness_lufs": -14
+  },
+  "scope_th": "คลิปแนวตั้ง 9:16 ความยาว 30-60 วินาที จากไฟล์ต้นฉบับของลูกค้า, พาดหัวไทย/อังกฤษ, คำบรรยายใต้ภาพ, thumbnail 1 ใบ/คลิป, แก้ไข 2 ครั้ง/คลิป",
+  "scope_en": "vertical 9:16 clips, 30-60s, cut from the client's own footage, Thai/English headline, burned-in captions, one thumbnail per clip, 2 revision rounds per clip",
+  "turnaround": "5-10 คลิป: 1-2 วันทำการหลังได้รับไฟล์ต้นฉบับ",
+  "samples_note": "ตัวอย่างทั้งหมดผลิตเองเพื่อสาธิตฝีมือ ไม่ใช่งานของลูกค้ารายใด",
+  "turnaround_en": "1-2 business days after the source files arrive (5-10 clips)",
+  "scope_en_short": "cut from your own footage, burned-in captions, one thumbnail per clip"
+}

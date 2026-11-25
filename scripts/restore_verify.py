@@ -38,6 +38,16 @@ REQUIRED = [
     "scripts/test_outreach_log.py",
     "scripts/test_deliver.py",
     ".github/workflows/tests.yml",
+    ".github/workflows/prospect-daily.yml",
+    "content/packages.json",
+    "content/prospects_external.json",
+    "scripts/prospect_discover.py",
+    "scripts/proposal_draft.py",
+    "scripts/build_portfolio.py",
+    "scripts/make_samples.py",
+    "scripts/net_revenue.py",
+    "docs/portfolio/index.html",
+    "assets/fonts/NotoSansThai.ttf",
 ]
 
 
