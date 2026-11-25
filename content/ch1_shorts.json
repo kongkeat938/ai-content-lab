@@ -732,6 +732,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "104": {
+      "video_id": "D3DCpn_eD30",
+      "url": "https://youtu.be/D3DCpn_eD30",
+      "title": "คุณมีสิทธิ์ทิ้งความเหนื่อยล้าที่แบกไว้นานเกินไปเสียที #Shorts",
+      "posted_at": "2026-11-25T01:31:57+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/104/thumb_104.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
