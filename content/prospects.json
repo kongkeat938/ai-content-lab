@@ -177,6 +177,31 @@
       "band": "first"
     },
     {
+      "name": "UCaI5mrwp1DewWMQhI3CIzPQ",
+      "id": "UCaI5mrwp1DewWMQhI3CIzPQ",
+      "url": "https://www.youtube.com/channel/UCaI5mrwp1DewWMQhI3CIzPQ",
+      "subs": 4930,
+      "videos_total": 50,
+      "sampled": 50,
+      "long": 50,
+      "short": 0,
+      "short_share": 0.0,
+      "long_90d": 47,
+      "uploads_30d": 10,
+      "median_long_s": 3429.0,
+      "median_views_long": 5224.5,
+      "email": null,
+      "score": 85,
+      "breakdown": [
+        "long_cadence=25",
+        "few_shorts=25",
+        "clip_friendly=20",
+        "contact=0",
+        "active=15"
+      ],
+      "band": "first"
+    },
+    {
       "name": "Alpha Speech",
       "id": "UC80YtEc-d11Rd3SDGUynHKg",
       "url": "https://www.youtube.com/channel/UC80YtEc-d11Rd3SDGUynHKg",
@@ -225,6 +250,31 @@
         "active=15"
       ],
       "band": "second"
+    },
+    {
+      "name": "UCieiOiX2A-TkV52redjYe9w",
+      "id": "UCieiOiX2A-TkV52redjYe9w",
+      "url": "https://www.youtube.com/channel/UCieiOiX2A-TkV52redjYe9w",
+      "subs": 18700,
+      "videos_total": 30,
+      "sampled": 30,
+      "long": 30,
+      "short": 0,
+      "short_share": 0.0,
+      "long_90d": 1,
+      "uploads_30d": 0,
+      "median_long_s": 2174.5,
+      "median_views_long": 21707.0,
+      "email": null,
+      "score": 48,
+      "breakdown": [
+        "long_cadence=3",
+        "few_shorts=25",
+        "clip_friendly=20",
+        "contact=0",
+        "active=0"
+      ],
+      "band": "skip"
     },
     {
       "name": "Limitless Mind",
@@ -277,6 +327,131 @@
       "band": "skip"
     },
     {
+      "name": "UC5VhfLpFnGdJO83F1NZm_aw",
+      "id": "UC5VhfLpFnGdJO83F1NZm_aw",
+      "url": "https://www.youtube.com/channel/UC5VhfLpFnGdJO83F1NZm_aw",
+      "subs": 12300,
+      "videos_total": 346,
+      "sampled": 50,
+      "long": 5,
+      "short": 45,
+      "short_share": 0.9,
+      "long_90d": 2,
+      "uploads_30d": 9,
+      "median_long_s": 933,
+      "median_views_long": 200,
+      "email": null,
+      "score": 44,
+      "breakdown": [
+        "long_cadence=6",
+        "few_shorts=2",
+        "clip_friendly=20",
+        "contact=0",
+        "active=15"
+      ],
+      "band": "skip"
+    },
+    {
+      "name": "UCx5HPB8F1QqiCU8Jt44JQLQ",
+      "id": "UCx5HPB8F1QqiCU8Jt44JQLQ",
+      "url": "https://www.youtube.com/channel/UCx5HPB8F1QqiCU8Jt44JQLQ",
+      "subs": 3210,
+      "videos_total": 498,
+      "sampled": 50,
+      "long": 5,
+      "short": 45,
+      "short_share": 0.9,
+      "long_90d": 2,
+      "uploads_30d": 13,
+      "median_long_s": 901,
+      "median_views_long": 49,
+      "email": null,
+      "score": 44,
+      "breakdown": [
+        "long_cadence=6",
+        "few_shorts=2",
+        "clip_friendly=20",
+        "contact=0",
+        "active=15"
+      ],
+      "band": "skip"
+    },
+    {
+      "name": "UC2cT17CSL8Ed8Ma6l8Ymr-g",
+      "id": "UC2cT17CSL8Ed8Ma6l8Ymr-g",
+      "url": "https://www.youtube.com/channel/UC2cT17CSL8Ed8Ma6l8Ymr-g",
+      "subs": 3270,
+      "videos_total": 372,
+      "sampled": 50,
+      "long": 13,
+      "short": 37,
+      "short_share": 0.74,
+      "long_90d": 3,
+      "uploads_30d": 9,
+      "median_long_s": 362,
+      "median_views_long": 16,
+      "email": null,
+      "score": 43,
+      "breakdown": [
+        "long_cadence=9",
+        "few_shorts=6",
+        "clip_friendly=12",
+        "contact=0",
+        "active=15"
+      ],
+      "band": "skip"
+    },
+    {
+      "name": "UCLlD5huwf95FKQ1pqXtD3xA",
+      "id": "UCLlD5huwf95FKQ1pqXtD3xA",
+      "url": "https://www.youtube.com/channel/UCLlD5huwf95FKQ1pqXtD3xA",
+      "subs": 42400,
+      "videos_total": 43,
+      "sampled": 43,
+      "long": 36,
+      "short": 7,
+      "short_share": 0.16279069767441862,
+      "long_90d": 0,
+      "uploads_30d": 0,
+      "median_long_s": 1254.0,
+      "median_views_long": 14850.0,
+      "email": null,
+      "score": 41,
+      "breakdown": [
+        "long_cadence=0",
+        "few_shorts=21",
+        "clip_friendly=20",
+        "contact=0",
+        "active=0"
+      ],
+      "band": "skip"
+    },
+    {
+      "name": "UC_VwuoDEIRr9_kJHaB2IsHw",
+      "id": "UC_VwuoDEIRr9_kJHaB2IsHw",
+      "url": "https://www.youtube.com/channel/UC_VwuoDEIRr9_kJHaB2IsHw",
+      "subs": 14000,
+      "videos_total": 694,
+      "sampled": 50,
+      "long": 2,
+      "short": 48,
+      "short_share": 0.96,
+      "long_90d": 2,
+      "uploads_30d": 35,
+      "median_long_s": 466.0,
+      "median_views_long": 143.0,
+      "email": null,
+      "score": 38,
+      "breakdown": [
+        "long_cadence=6",
+        "few_shorts=1",
+        "clip_friendly=16",
+        "contact=0",
+        "active=15"
+      ],
+      "band": "skip"
+    },
+    {
       "name": "The Indie Beat",
       "id": "UCJtYl21_wgAjt1zz9FqpKnA",
       "url": "https://www.youtube.com/channel/UCJtYl21_wgAjt1zz9FqpKnA",
@@ -298,6 +473,31 @@
         "clip_friendly=20",
         "contact=0",
         "active=0"
+      ],
+      "band": "skip"
+    },
+    {
+      "name": "UC5fivjz5xJgyOdb7jlJNRSg",
+      "id": "UC5fivjz5xJgyOdb7jlJNRSg",
+      "url": "https://www.youtube.com/channel/UC5fivjz5xJgyOdb7jlJNRSg",
+      "subs": 34200,
+      "videos_total": 370,
+      "sampled": 50,
+      "long": 17,
+      "short": 33,
+      "short_share": 0.66,
+      "long_90d": 2,
+      "uploads_30d": 2,
+      "median_long_s": 222,
+      "median_views_long": 296,
+      "email": null,
+      "score": 30,
+      "breakdown": [
+        "long_cadence=6",
+        "few_shorts=8",
+        "clip_friendly=7",
+        "contact=0",
+        "active=8"
       ],
       "band": "skip"
     }
