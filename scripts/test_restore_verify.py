@@ -29,11 +29,11 @@ def main() -> int:
 
     # a repo that is missing the state must be caught, not silently accepted
     with tempfile.TemporaryDirectory() as tmp:
-        subprocess.run(["git", "init", "-q", tmp], check=True)
+        subprocess.run(["git", "init", "-q", tmp], check=True, stdin=subprocess.DEVNULL)
         open(os.path.join(tmp, "README.md"), "w").write("only this\n")
-        subprocess.run(["git", "-C", tmp, "add", "."], check=True)
+        subprocess.run(["git", "-C", tmp, "add", "."], check=True, stdin=subprocess.DEVNULL)
         subprocess.run(["git", "-C", tmp, "-c", "user.name=t", "-c", "user.email=t@t",
-                        "commit", "-qm", "one file"], check=True)
+                        "commit", "-qm", "one file"], check=True, stdin=subprocess.DEVNULL)
         r = run(tmp)
         check(r.returncode == 1 and "not in the commit" in r.stdout,
               "REGRESSION: an incomplete commit FAILS the restore check")

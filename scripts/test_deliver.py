@@ -23,7 +23,8 @@ def check(ok: bool, label: str) -> None:
 
 
 def main() -> int:
-    if subprocess.run(["which", "ffmpeg"], capture_output=True).returncode != 0:
+    if subprocess.run(["which", "ffmpeg"], capture_output=True,
+                        stdin=subprocess.DEVNULL).returncode != 0:
         print("SKIP: no ffmpeg")
         return 0
     with tempfile.TemporaryDirectory() as tmp:
@@ -32,7 +33,8 @@ def main() -> int:
         for i in (1, 2):
             subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i",
                             f"testsrc=size=540x960:rate=10:duration=1", "-pix_fmt", "yuv420p",
-                            os.path.join(src, f"clip_0{i}.mp4")], check=True)
+                            os.path.join(src, f"clip_0{i}.mp4")], check=True,
+                           stdin=subprocess.DEVNULL)
         out = os.path.join(tmp, "out")
         r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "deliver.py"),
                             "--order", "o1", "--src", src, "--out", out],

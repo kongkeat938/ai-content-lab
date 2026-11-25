@@ -34,7 +34,8 @@ def sha256(path: str) -> str:
 def probe(path: str) -> dict:
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                         "stream=codec_type,codec_name,width,height,pix_fmt,color_range:format=duration",
-                        "-of", "json", path], capture_output=True, text=True)
+                        "-of", "json", path], capture_output=True, text=True,
+                       stdin=subprocess.DEVNULL)
     if r.returncode != 0:
         raise RuntimeError(f"ffprobe failed on {path}: {r.stderr.strip()[:200]}")
     d = json.loads(r.stdout)
@@ -51,7 +52,8 @@ def main() -> int:
     ap.add_argument("--out", default=os.path.join(ROOT, "deliveries"))
     ap.add_argument("--note", default="")
     a = ap.parse_args()
-    if subprocess.run(["which", "ffprobe"], capture_output=True).returncode != 0:
+    if subprocess.run(["which", "ffprobe"], capture_output=True,
+                      stdin=subprocess.DEVNULL).returncode != 0:
         print("BLIND: ffprobe not found -- cannot certify what is being delivered", file=sys.stderr)
         return 2
     if not os.path.isdir(a.src):

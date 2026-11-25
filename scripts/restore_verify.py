@@ -42,10 +42,18 @@ REQUIRED = [
 
 
 def export(repo: str, ref: str, dest: str) -> None:
-    archive = subprocess.run(["git", "-C", repo, "archive", ref], capture_output=True)
+    archive = subprocess.run(["git", "-C", repo, "archive", ref], capture_output=True,
+                             stdin=subprocess.DEVNULL)
     if archive.returncode != 0:
         raise SystemExit(f"2: git archive failed in {repo}: {archive.stderr.decode()[:200]}")
-    tar = subprocess.run(["tar", "-x", "-C", dest], input=archive.stdout, capture_output=True)
+    # A file, not a pipe: `input=` and `stdin=` cannot both be given, and the
+    # guard requires stdin= on every child.
+    tarball = os.path.join(dest, ".tree.tar")
+    with open(tarball, "wb") as fh:
+        fh.write(archive.stdout)
+    tar = subprocess.run(["tar", "-xf", tarball, "-C", dest], capture_output=True,
+                         stdin=subprocess.DEVNULL)
+    os.remove(tarball)
     if tar.returncode != 0:
         raise SystemExit(f"2: tar failed: {tar.stderr.decode()[:200]}")
 

@@ -33,7 +33,8 @@ def check(ok: bool, label: str) -> None:
 
 def run(store: str, *args: str) -> tuple[int, str]:
     env = dict(os.environ, OUTREACH_STORE=store)
-    r = subprocess.run([sys.executable, SCRIPT, *args], capture_output=True, text=True, env=env)
+    r = subprocess.run([sys.executable, SCRIPT, *args], capture_output=True, text=True, env=env,
+                           stdin=subprocess.DEVNULL)
     return r.returncode, r.stdout + r.stderr
 
 
