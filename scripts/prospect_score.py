@@ -33,6 +33,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from yt_duration import seconds
+
 API = "https://www.googleapis.com/youtube/v3/"
 DEFAULT = [
     ("ธรรมะ สอนใจ", "UC9lb6C6ExQQMtcjONdHuZYQ"),
@@ -67,14 +69,6 @@ def get(path: str, at: str, **params) -> dict:
     url = API + path + "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(url, headers={"Authorization": "Bearer " + at})
     return json.load(urllib.request.urlopen(req))
-
-
-def seconds(iso: str) -> int:
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso or "")
-    if not m:
-        return 0
-    h, mi, s = (int(x or 0) for x in m.groups())
-    return h * 3600 + mi * 60 + s
 
 
 def business_email(cid: str) -> str | None:

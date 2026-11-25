@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""The ledger must refuse a second contact inside the cooldown.
+"""Guards for the outreach ledger.
 
-A guard that only checks the happy path proves nothing, so this test drives the
-refusal path too: log a contact, then try again and expect exit 1.
+The two bugs this test exists for (found in review, 2026-11-25):
+  1. a declined customer was treated as CLOSED, so the cooldown let us contact
+     them again the next day -- the exact behaviour that reads as spam;
+  2. `order` counted the money at creation, so an unpaid order showed up as
+     revenue.
+
+Both are driven here as failing paths, and the cooldown is also aged past 14
+days to prove it expires instead of blocking forever.
 """
 from __future__ import annotations
 
@@ -11,6 +17,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPT = os.path.join(ROOT, "scripts", "outreach_log.py")
@@ -34,21 +41,38 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         store = os.path.join(tmp, "outreach.json")
         check(run(store, "check", "UC1")[0] == 0, "a fresh channel is contactable")
-        check(run(store, "add", "UC1", "--name", "ช่องทดสอบ")[0] == 0, "add writes the entry")
-        check(run(store, "log", "UC1", "--status", "contacted")[0] == 0, "first contact is recorded")
-        code, out = run(store, "check", "UC1")
-        check(code == 1 and "BLOCKED" in out, "a second contact inside the cooldown is BLOCKED")
+        check(run(store, "log", "UC1", "--status", "contacted")[0] == 0, "first contact recorded")
         code, out = run(store, "log", "UC1", "--status", "contacted")
-        check(code == 1 and "REFUSED" in out, "logging a second contact is REFUSED")
-        check(run(store, "due")[1].strip().endswith("0 channel(s) contactable now"), "the blocked channel is not in 'due'")
-        check(run(store, "log", "UC1", "--status", "declined")[0] == 0, "a reply can move the status")
-        check(run(store, "due")[1].strip().endswith("0 channel(s) contactable now"), "a declined channel is not in 'due'")
-        check(run(store, "order", "UC1", "--package", "B", "--amount", "890")[0] == 0, "an order is recorded")
-        code, out = run(store, "report")
-        check(code == 0 and "890" in out, "the report counts the money")
+        check(code == 1 and "REFUSED" in out, "second contact inside the cooldown is REFUSED")
+
+        check(run(store, "log", "UC1", "--status", "declined")[0] == 0, "a decline can be recorded")
+        code, out = run(store, "log", "UC1", "--status", "contacted")
+        check(code == 1 and "REFUSED" in out, "REGRESSION: a declined channel is still refused inside 14 days")
+        code, out = run(store, "check", "UC1")
+        check(code == 1 and "BLOCKED" in out, "check() blocks a declined channel too")
+
         d = json.load(open(store, encoding="utf-8"))
-        check(d["channels"]["UC1"]["status"] == "won", "an order flips the channel to won")
-        check(len(d["orders"]) == 1, "exactly one order")
+        d["channels"]["UC1"]["last_contacted_at"] = time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 15 * 86400))
+        json.dump(d, open(store, "w", encoding="utf-8"))
+        check(run(store, "check", "UC1")[0] == 0, "the cooldown expires after 14 days")
+
+        check(run(store, "order", "UC1", "--package", "B", "--amount", "890")[0] == 0, "an order can be created")
+        code, out = run(store, "report")
+        check("money received     : 0 THB" in out, "REGRESSION: a created order is NOT revenue")
+        check("890 THB not yet paid" in out, "the unpaid amount is shown as pending")
+
+        code, out = run(store, "deliver", "o1")
+        check(code == 1 and "REFUSED" in out, "delivery before payment is REFUSED")
+        check(run(store, "pay", "o1")[0] == 0, "payment can be recorded")
+        check("money received     : 890 THB" in run(store, "report")[1], "paid money counts as received")
+        code, out = run(store, "pay", "o1")
+        check(code == 1 and "REFUSED" in out, "paying twice is REFUSED")
+        check(run(store, "deliver", "o1")[0] == 0, "delivery after payment is allowed")
+        check(run(store, "refund", "o1")[0] == 0, "a refund can be recorded")
+        code, out = run(store, "report")
+        check("money received     : 0 THB" in out, "a refund takes the money back out")
+        check("refunded           : 890 THB" in out, "the refund is reported separately")
     print("FAIL" if fails else "PASS", "test_outreach_log")
     return 1 if fails else 0
 

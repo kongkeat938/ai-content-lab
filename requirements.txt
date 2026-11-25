@@ -21,3 +21,4 @@ websocket-client>=1.7
 # Yqcloud) are reached through g4f's provider list. Without it, advise.py falls
 # back to a per-camp OpenAI-compatible route from <PREFIX>_BASE_URL/_API_KEY/_MODEL.
 g4f>=0.5
+pyyaml>=6              # YAML parsing for the workflow tag guard
