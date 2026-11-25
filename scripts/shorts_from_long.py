@@ -30,7 +30,9 @@ FONT = os.path.join(ROOT, "assets", "fonts", "Kanit-Bold.ttf")
 W, H = 1080, 1920
 FG_W, FG_H = 1080, 608
 FG_Y = 700
-TARGET_I, TARGET_TP = -14.0, -3.4
+# -4.4, not -3.4: the AAC encode overshoots the float-domain true peak, and one
+# clip in five landed at -2.4 dBFS against the -3.0 gate (measured 2026-11-25).
+TARGET_I, TARGET_TP = -14.0, -4.4
 
 
 def run(cmd: list) -> subprocess.CompletedProcess:
@@ -46,8 +48,8 @@ def loudness(path: str) -> tuple[float | None, float | None]:
         m = re.match(r"I:\s+(-?\d+\.?\d*) LUFS", line)
         if m and i is None:
             i = float(m.group(1))
-        m = re.match(r"True peak:\s+(-?\d+\.?\d*)", line)
-        if m and tp is None:
+        m = re.match(r"Peak:\s+(-?\d+\.?\d*) dBFS", line)
+        if m:
             tp = float(m.group(1))
     return i, tp
 
@@ -90,17 +92,24 @@ def build(video: str, start: float, dur: float, title: str, cta: str, out: str) 
     loud = (f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=11"
             f":measured_I={m['input_i']}:measured_TP={m['input_tp']}"
             f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
-            f":offset={m['target_offset']}:linear=true,aresample=48000")
+            f":offset={m['target_offset']}:linear=true,aresample=48000,"
+            # loudnorm cannot hold TP in linear mode, and this segment already
+            # peaks at -3.3 dBFS before any gain (measured 2026-11-25). level=0
+            # is required: the default auto-level raises the peak to 0 dBFS.
+            f"alimiter=limit=0.50:level=0")
     fc = (
-        f"[0:v]trim=start={start}:duration={dur},setpts=PTS-STARTPTS,fps=25,"
+        f"[0:v]trim=start=0:duration={dur},setpts=PTS-STARTPTS,fps=25,"
         f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
         f"gblur=sigma=26,eq=brightness=-0.10[bgsrc];"
-        f"[0:v]trim=start={start}:duration={dur},setpts=PTS-STARTPTS,fps=25,"
+        f"[0:v]trim=start=0:duration={dur},setpts=PTS-STARTPTS,fps=25,"
         f"scale={FG_W}:{FG_H}[fg];"
         f"[bgsrc][fg]overlay=0:{FG_Y}[base];"
         f"[base]ass={ass_path}:fontsdir={os.path.join(ROOT, 'assets', 'fonts')}[v]"
     )
-    cmd = ["ffmpeg", "-y", "-v", "error", "-i", video,
+    # Seek on the input, not in the filter graph: trimming at t=start made ffmpeg
+    # decode every frame from 0, so a cut at minute 22 of a 26-min talk cost 62 s
+    # against 30 s at minute 2 (measured 2026-11-25).
+    cmd = ["ffmpeg", "-y", "-v", "error", "-ss", str(start), "-i", video,
            "-filter_complex", fc, "-map", "[v]", "-map", "0:a:0",
            "-af", loud,
            "-t", str(dur), "-c:v", "libx264", "-preset", "medium", "-crf", "18",
