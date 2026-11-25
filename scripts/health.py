@@ -75,6 +75,7 @@ EXPECTED = {
     "publish-batch": 400,        # */3h, but only counts when a long video is due
     "link-shorts": 540,          # foreman gate 360 + one 120-min chain tick
     "grow-shorts-pool": 1700,    # daily 22:00 + the chain
+    "prospect-daily": 1700,      # daily 09:00 Thai + the foreman gate (reads public pages only)
     "ch4-realign": 1700,         # daily 08:05 + the chain
     "polish-all": 1700,          # daily 08-11 + the chain
     "restore-metadata": 1700,    # daily 08-11 + the chain (restores erased desc/tags)

@@ -45,5 +45,5 @@ jobs:
             echo "no change today"
           else
             git commit -m "data(prospects): daily refresh [skip ci]"
-            git push
+            bash scripts/git_push_retry.sh --best-effort
           fi

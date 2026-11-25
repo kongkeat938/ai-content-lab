@@ -387,6 +387,14 @@ def main() -> int:
     if cl_age is None or cl_age > 20 * 60:
         plan.append(("counter-ledger", {}))
 
+    # 5d-vi. Refresh the customer-request ledger. It reads public pages only and
+    #        sends nothing, but a scheduled-only rail here can be missed for days
+    #        (the same cron unreliability as 5e), and a stale ledger reports
+    #        closed requests as if they were still open. Daily.
+    pd_age = last_success_min("prospect-daily", ids)
+    if pd_age is None or pd_age > 20 * 60:
+        plan.append(("prospect-daily", {}))
+
     # 5e. The three rails that were only reachable through GitHub's cron. That cron
     #     is unreliable here (measured 2026-11-07: the */30 foreman cron fired once
     #     in 30 runs), so a rail that only has a `schedule` can be missed for days.
