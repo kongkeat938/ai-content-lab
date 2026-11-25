@@ -75,7 +75,7 @@
   slug ยัง `kongkeat-story`; **title ตั้งใน Studio** (API ไม่ได้).
 - **Angle de-dup floor = 8** (`test_angle_pool.py`).
   **One live title = one video**.
-- **Thumb ผิดแนว (การ์ดดำ) → `--gen-art`.**
+- **Thumb ผิดแนว → `--gen-art`.**
 - **Thumb URL ≠ ของเรา** (AUTO frame ก็ได้ `maxresdefault`) → เช็ค 8×8 diff (`matches_live()`).
 - **Animated still ต้องตรงเรื่อง**: `make_motion_short.py` แยกตาม `genre` → `publish_motion.py`.
 
@@ -92,6 +92,6 @@
   29 rails off → ak produces/uploads by hand**; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` counted over **all ledger
   keys** (id + slug; `test_publish_shorts_cap.py`).
-- **Accounts:** 1 channel = 1 Google account.
+- **Accounts:** 1 ช่อง = 1 Google account.
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll.
 - **Comment writes need `force-ssl`** (pinned Short CTA 403s).
