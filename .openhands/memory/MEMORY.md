@@ -40,7 +40,8 @@
   AI gen ล่ม → procedural.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS**: hide only on RSS-confirm or 24 h; `keep_clips_live.py` restores.
+- **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
+  `keep_clips_live.py` restores.
   **`videos.update` REPLACES the whole `snippet`/`status`** (`topics/05`).
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
 - **Quota:** `videos.insert`; reset 08:00 UTC
