@@ -868,6 +868,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "129": {
+      "video_id": "ZgKI13H8nFY",
+      "url": "https://youtu.be/ZgKI13H8nFY",
+      "title": "คืนนี้ลองวางมือถือแล้วคว่ำฝ่ามือลงกับเตียง #Shorts",
+      "posted_at": "2026-11-25T01:31:31+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/129/thumb_129.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
