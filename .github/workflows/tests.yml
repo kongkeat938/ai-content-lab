@@ -13,9 +13,12 @@ on:
 permissions:
   contents: read
 
+# Do NOT cancel an in-flight run on a new push: every commit needs its own
+# verdict, otherwise a cancelled run hides whether that tree was ever green
+# (measured 2026-11-25: c1a4795's run was cancelled by the next push).
 concurrency:
-  group: tests-${{ github.ref }}
-  cancel-in-progress: true
+  group: tests-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   suite:
