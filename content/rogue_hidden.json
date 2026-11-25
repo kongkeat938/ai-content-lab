@@ -103,6 +103,62 @@
       "hidden_at": "2026-11-24T01:49:11Z",
       "reason": "FALSE POSITIVE: our own upload, hidden 7 min after publish because the pod could not push, so the RSS watcher and the audit both read the same stale manifest. Restored to public; the age floor now applies even when 'confirmed'.",
       "restored_at": "2026-11-24T04:07:42Z"
+    },
+    {
+      "video_id": "WjBBy9BA7go",
+      "channel": "genx",
+      "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+      "title": "คุณมีสิทธิ์เดินช้าลงในวันที่โลกหมุนเร็วจนเหนื่อย #",
+      "hidden_at": "2026-11-25T15:56:36Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "nbDlt4GSZDI",
+      "channel": "genx",
+      "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+      "title": "คุณมีสิทธิ์เดินช้าลงในวันที่โลกหมุนเร็วจนเหนื่อย #",
+      "hidden_at": "2026-11-25T15:56:37Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "Z0amq1cFnzs",
+      "channel": "genx",
+      "channel_id": "UCI6EfsgM1HNjrYarvigxyrQ",
+      "title": "คุณมีสิทธิ์เดินช้าลงในวันที่โลกหมุนเร็วจนเหนื่อย #",
+      "hidden_at": "2026-11-25T15:56:38Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "ruqCFjpoN6g",
+      "channel": "dharma",
+      "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
+      "title": "คืนนี้ลองนอนหงายแล้ววางมือบนท้องตัวเอง #Shorts",
+      "hidden_at": "2026-11-25T15:56:39Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "jQ2ELjB9TJg",
+      "channel": "dharma",
+      "channel_id": "UCM3QO5L_pmj34n1JVlbhh-w",
+      "title": "คืนนี้ลองนอนหงายแล้ววางมือบนท้องตัวเอง #Shorts",
+      "hidden_at": "2026-11-25T15:56:40Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "TgkF-uoH5p8",
+      "channel": "kongkeat-story",
+      "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+      "title": "ทำไมเราถึงได้ยินเสียงสะท้อนเวลาตะโกนในถ้ำกว้าง #Sh",
+      "hidden_at": "2026-11-25T15:56:42Z",
+      "reason": "live rogue upload outside the rails"
+    },
+    {
+      "video_id": "oFidiy4kMX4",
+      "channel": "kongkeat-story",
+      "channel_id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+      "title": "ทำไมเราถึงได้ยินเสียงสะท้อนเวลาตะโกนในถ้ำกว้าง #Sh",
+      "hidden_at": "2026-11-25T15:56:43Z",
+      "reason": "live rogue upload outside the rails"
     }
   ]
 }
