@@ -17,6 +17,7 @@ on:
         description: "Space-separated: genx dharma kongkeat"
         default: "genx dharma kongkeat"
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     # GitHub's own scheduler has never fired in this repo, so a push is the
     # dependable trigger: editing the scripts below runs the pass. The ledger
     # commits this job makes do not touch these paths, so it cannot loop.

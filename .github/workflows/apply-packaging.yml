@@ -22,6 +22,7 @@ on:
     - cron: "25 8 * * *"   # 08:25 UTC, after the 08:00 reset
     - cron: "25 9 * * *"   # retry in case the first tick lands mid-reset
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "content/ch2_packaging.json"
       - "assets/branding/farmmer/thumbs/**"

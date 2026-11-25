@@ -81,9 +81,9 @@
 - **Thumb URL ≠ ของเรา** (AUTO frame ก็ได้ `maxresdefault`) → เช็ค 8×8 diff (`matches_live()`).
 - **Animated still ต้องตรงเรื่อง**: `make_motion_short.py` แยกตาม `genre`; ส่ง `publish_motion.py` (`motion-<id>`).
 
-- **Client rail:** `verify_short(profile="client")` = 1080x1920 (ours = 4K). `shorts_from_long` = `-ss` ก่อน `-i`
-  (trim ใน filter graph = decode จาก 0, 62 s → 27 s/คลิป); `alimiter=...:level=0` (default auto-level ดัน peak ถึง 0 dBFS);
-  ebur128 พิมพ์ `Peak:` ไม่ใช่ `True peak:` (parser เก่า = tp None ตลอด → guard ที่ fail ไม่ได้).
+- **Client rail:** `verify_short(profile="client")` = 1080x1920; `-ss` ก่อน `-i`; `alimiter=...:level=0`.
+- **release = tag push** → `push` rail ทุกตัวรัน (`paths:` ไม่ถูกประเมินกับ tag) → ทุก `push:` ต้องมี
+  `branches: [main]`; guard `test_workflow_tag_safe.py`. **ffmpeg หายทุก pod** → static_ffmpeg add_paths.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.

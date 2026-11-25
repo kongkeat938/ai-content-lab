@@ -27,6 +27,7 @@ on:
   schedule:
     - cron: "5 8 * * *"
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "scripts/set_channel_name.py"
       - "scripts/channel_overhaul.py"

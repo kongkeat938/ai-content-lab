@@ -87,6 +87,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - Client offer + outreach pack: `docs/OFFER-2026-11-25.md` (packages, prices, paste-ready Thai
   message, 12 measured prospect channels, the send-it-yourself constraint, 30-day stop rule).
   Demo assets: releases `demo-shorts-2026-11-25`, `demo-story-2026-11-25`.
+- Prospect scoring + outreach ledger: `scripts/prospect_score.py` (0-100 score, writes
+  `content/prospects.json`) and `scripts/outreach_log.py` (status + 14-day contact cooldown +
+  `report` for revenue). Guards `test_outreach_log.py`, `test_workflow_tag_safe.py`.
 - Channel facts: `channels.json`, `.openhands/memory/topics/00-*.md`.
 - Channel NAMES: a channel's main title is **not API-settable** — K sets it in Studio, so the
   repo *follows* the live name (verified quota-free from RSS / channel page / oEmbed). Single

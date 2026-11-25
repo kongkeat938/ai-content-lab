@@ -19,6 +19,7 @@ on:
         description: "true to only list what would be posted"
         default: "false"
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "content/ch1_publish.json"
   schedule:

@@ -146,6 +146,11 @@ def main() -> int:
     else:
         if not args.video:
             sys.exit("--video is needed unless --reuse")
+        if not os.path.exists(args.video):
+            # BLIND, not a crash: a missing input must say so, not raise a JSON
+            # error from the empty loudnorm output (measured 2026-11-25).
+            print(f"BLIND: no such input file: {args.video}", file=sys.stderr)
+            sys.exit(2)
         os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
         build(args.video, args.start, args.dur, args.title, args.cta, args.out)
         i, tp = loudness(args.out)

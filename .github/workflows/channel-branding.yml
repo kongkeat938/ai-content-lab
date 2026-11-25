@@ -28,6 +28,7 @@ on:
   schedule:
     - cron: "2 8 * * *"   # 08:02 UTC, just after the reset, before the trailer rails
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "scripts/set_channel_name.py"
 

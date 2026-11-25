@@ -18,6 +18,7 @@ on:
   schedule:
     - cron: "22 8 * * *"   # 08:22 UTC, just after the quota reset
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "content/known_uploads.json"
 

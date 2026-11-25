@@ -28,6 +28,7 @@ on:
     # "deferred", and the first tick after the reset installs everything.
     - cron: "*/20 * * * *"
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "content/ch2_thumbnails.json"
       - "assets/branding/farmmer/thumbs/**"

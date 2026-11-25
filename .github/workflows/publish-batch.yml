@@ -27,6 +27,7 @@ on:
   schedule:
     - cron: "17 */3 * * *"   # every 3 hours; a no-op tick is cheap
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "content/ch2_publish.json"
       - "scripts/publish_batch.py"

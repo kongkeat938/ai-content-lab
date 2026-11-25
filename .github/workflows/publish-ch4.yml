@@ -19,6 +19,7 @@ on:
         description: "true to only list what would be posted"
         default: "false"
   push:
+    branches: [main]   # a tag push (release) must not run this rail
     paths:
       - "content/ch4_publish.json"
   # UNPAUSED 2026-11-13 on K's order ("ลุย ch4"): the team rewrote the hook shape
