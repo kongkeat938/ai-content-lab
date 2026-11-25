@@ -58,7 +58,8 @@ def main() -> int:
     with open(store, "w", encoding="utf-8") as fh:
         json.dump({"items": items}, fh)
     out = os.path.join(tmp, "proposals")
-    env = {**os.environ, "PROSPECT_STORE": store, "PROPOSAL_DIR": out}
+    env = {**os.environ, "PROSPECT_STORE": store, "PROPOSAL_DIR": out,
+           "OPPORTUNITY_STORE": os.path.join(tmp, "no-opportunities.json")}
     r = subprocess.run([sys.executable, SCRIPT, "--top", "5"], capture_output=True, text=True,
                        env=env, stdin=subprocess.DEVNULL)
     check("the run succeeds", r.returncode == 0, r.stderr[-200:])

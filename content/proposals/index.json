@@ -7,350 +7,183 @@
       "prospect_id": "b0a88aaee1b16d37",
       "prospect_url": "https://www.freelancer.com/projects/adobe-premiere-pro/edit-healthcare-awareness-video-series",
       "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
-      "score": 90,
+      "score": 80,
       "sent_at": null,
       "source": "freelancer.com",
       "status": "draft",
       "title": "Edit Healthcare Awareness Video Series",
       "why": [
-        "budget ≈1015 THB (+30)",
-        "brief names a short-form format (+25)",
-        "repeat/batch work mentioned (+15)",
-        "payment method verified by the platform (+10)",
-        "6 days left (+10)"
-      ]
-    },
-    {
-      "file": "content/proposals/5ec3e7794d87322d.md",
-      "package": "C",
-      "price": 1590,
-      "prospect_id": "5ec3e7794d87322d",
-      "prospect_url": "https://www.freelancer.com/projects/content-creation/daily-tiktok-content-ideation",
-      "sample": "sample_promo_20s.mp4 — a 20s vertical promo (self-produced)",
-      "score": 80,
-      "sent_at": null,
-      "source": "freelancer.com",
-      "status": "draft",
-      "title": "Daily TikTok Content Ideation",
-      "why": [
-        "budget ≈4795 THB (+30)",
-        "brief names a short-form format (+25)",
-        "repeat/batch work mentioned (+15)",
-        "6 days left (+10)"
-      ]
-    },
-    {
-      "file": "content/proposals/e22673ea32c24825.md",
-      "package": "C",
-      "price": 1590,
-      "prospect_id": "e22673ea32c24825",
-      "prospect_url": "https://www.freelancer.com/projects/audio-editing/fun-birthday-tribute-video",
-      "sample": "sample_still_30s.mp4 — stills + Thai narration + captions (self-produced)",
-      "score": 80,
-      "sent_at": null,
-      "source": "freelancer.com",
-      "status": "draft",
-      "title": "Fun 40th Birthday Tribute Video",
-      "why": [
-        "budget ≈2135 THB (+30)",
-        "brief names a short-form format (+25)",
-        "repeat/batch work mentioned (+15)",
-        "6 days left (+10)"
-      ]
-    },
-    {
-      "file": "content/proposals/78f4118bfd88b8ba.md",
-      "package": "C",
-      "price": 1590,
-      "prospect_id": "78f4118bfd88b8ba",
-      "prospect_url": "https://www.freelancer.com/projects/videography/film-short-amazon-electronics-clips",
-      "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
-      "score": 80,
-      "sent_at": null,
-      "source": "freelancer.com",
-      "status": "draft",
-      "title": "Film Short Amazon Electronics Clips",
-      "why": [
-        "budget ≈3815 THB (+30)",
-        "brief names a short-form format (+25)",
-        "repeat/batch work mentioned (+15)",
-        "6 days left (+10)"
-      ]
-    },
-    {
-      "file": "content/proposals/6eb7c37f31a739d8.md",
-      "package": "C",
-      "price": 1590,
-      "prospect_id": "6eb7c37f31a739d8",
-      "prospect_url": "https://www.freelancer.com/projects/ai-video/create-promotional-video-create",
-      "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
-      "score": 75,
-      "sent_at": null,
-      "source": "freelancer.com",
-      "status": "draft",
-      "title": "Create 5 AI Promotional Video# Create 5 AI Promotional Videos & Set Up Meta and TikTok Ads",
-      "why": [
-        "budget ≈3290 THB (+30)",
-        "brief names a short-form format (+25)",
-        "payment method verified by the platform (+10)",
-        "6 days left (+10)"
-      ]
-    },
-    {
-      "file": "content/proposals/167633cea3d9cbfa.md",
-      "package": "C",
-      "price": 1590,
-      "prospect_id": "167633cea3d9cbfa",
-      "prospect_url": "https://www.freelancer.com/projects/av-design/san-francisco-filming-setup",
-      "sample": "sample_still_30s.mp4 — stills + Thai narration + captions (self-produced)",
-      "score": 75,
-      "sent_at": null,
-      "source": "freelancer.com",
-      "status": "draft",
-      "title": "San Francisco Filming Setup",
-      "why": [
-        "budget ≈1820 THB (+30)",
-        "brief names a short-form format (+25)",
-        "payment method verified by the platform (+10)",
-        "5 days left (+10)"
-      ]
-    },
-    {
-      "file": "content/proposals/00e4cd47d4faab83.md",
-      "package": "A",
-      "price": 490,
-      "prospect_id": "00e4cd47d4faab83",
-      "prospect_url": "https://www.freelancer.com/projects/adobe-premiere-pro/dynamic-instagram-reel-creation",
-      "sample": "sample_promo_20s.mp4 — a 20s vertical promo (self-produced)",
-      "score": 72,
-      "sent_at": null,
-      "source": "freelancer.com",
-      "status": "draft",
-      "title": "Dynamic Instagram Reel Creation",
-      "why": [
-        "budget ≈665 THB (+22)",
-        "brief names a short-form format (+25)",
-        "repeat/batch work mentioned (+15)",
-        "6 days left (+10)"
+        "budget floor 840 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
       ]
     },
     {
       "file": "content/proposals/ef919cf911cc6a63.md",
-      "package": "C",
-      "price": 1590,
+      "package": "B",
+      "price": 750,
       "prospect_id": "ef919cf911cc6a63",
       "prospect_url": "https://www.freelancer.com/projects/av-editing/clean-promo-instagram-reels-editing",
       "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
-      "score": 70,
+      "score": 65,
       "sent_at": null,
       "source": "freelancer.com",
       "status": "draft",
       "title": "Clean Promo Instagram Reels Editing",
       "why": [
-        "budget ≈6510 THB (+30)",
-        "brief names a short-form format (+25)",
-        "repeat/batch work mentioned (+15)"
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)"
       ]
     },
     {
-      "file": "content/proposals/88929ec4c8d332ca.md",
+      "file": "content/proposals/e22673ea32c24825.md",
       "package": "B",
       "price": 750,
-      "prospect_id": "88929ec4c8d332ca",
-      "prospect_url": "https://www.freelancer.com/projects/photo-editing/video-editing-photo-enhancement-for",
-      "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
-      "score": 67,
+      "prospect_id": "e22673ea32c24825",
+      "prospect_url": "https://www.freelancer.com/projects/audio-editing/fun-birthday-tribute-video",
+      "sample": "sample_still_30s.mp4 — stills + Thai narration + captions (self-produced)",
+      "score": 63,
       "sent_at": null,
       "source": "freelancer.com",
       "status": "draft",
-      "title": "Video Editing and Photo Enhancement for an Informational Presentation",
+      "title": "Fun 40th Birthday Tribute Video",
       "why": [
-        "budget ≈945 THB (+22)",
-        "brief names a short-form format (+25)",
-        "payment method verified by the platform (+10)",
+        "budget floor 690 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "file": "content/proposals/5648939b4c643c82.md",
+      "package": "C",
+      "price": 1590,
+      "prospect_id": "5648939b4c643c82",
+      "prospect_url": "https://www.freelancer.com/projects/content-creation/youtube-automation-editor-for-viral",
+      "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
+      "score": 60,
+      "sent_at": null,
+      "source": "freelancer.com",
+      "status": "draft",
+      "title": "YouTube Automation Editor for Viral Growth",
+      "why": [
+        "budget floor 9500 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "file": "content/proposals/92c564627c66e116.md",
+      "package": "C",
+      "price": 1590,
+      "prospect_id": "92c564627c66e116",
+      "prospect_url": "https://www.freelancer.com/projects/after-effects/minimal-tiktok-capcut-template",
+      "sample": "sample_still_30s.mp4 — stills + Thai narration + captions (self-produced)",
+      "score": 60,
+      "sent_at": null,
+      "source": "freelancer.com",
+      "status": "draft",
+      "title": "Minimal TikTok CapCut Template",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "file": "content/proposals/1464494d0174ebf9.md",
+      "package": "B",
+      "price": 750,
+      "prospect_id": "1464494d0174ebf9",
+      "prospect_url": "https://www.freelancer.com/projects/instagram-marketing/educational-instagram-reels-creation",
+      "sample": "sample_promo_20s.mp4 — a 20s vertical promo (self-produced)",
+      "score": 60,
+      "sent_at": null,
+      "source": "freelancer.com",
+      "status": "draft",
+      "title": "Educational Instagram Reels Creation",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "file": "content/proposals/926c626dc0f15e33.md",
+      "package": "B",
+      "price": 750,
+      "prospect_id": "926c626dc0f15e33",
+      "prospect_url": "https://www.freelancer.com/projects/adobe-premiere-pro/omyaa-cinematic-video-edit",
+      "sample": "sample_promo_20s.mp4 — a 20s vertical promo (self-produced)",
+      "score": 60,
+      "sent_at": null,
+      "source": "freelancer.com",
+      "status": "draft",
+      "title": "Omyaa Cinematic Video Edit",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "file": "content/proposals/78f4118bfd88b8ba.md",
+      "package": "B",
+      "price": 750,
+      "prospect_id": "78f4118bfd88b8ba",
+      "prospect_url": "https://www.freelancer.com/projects/videography/film-short-amazon-electronics-clips",
+      "sample": "sample_product_45s.mp4 — a 45s product-sales cut (self-produced)",
+      "score": 55,
+      "sent_at": null,
+      "source": "freelancer.com",
+      "status": "draft",
+      "title": "Film Short Amazon Electronics Clips",
+      "why": [
+        "budget floor 1140 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "file": "content/proposals/93f77bfa5c9a05e1.md",
+      "package": "B",
+      "price": 750,
+      "prospect_id": "93f77bfa5c9a05e1",
+      "prospect_url": "https://www.freelancer.com/projects/adobe-premiere-pro/fast-paced-reel-editing",
+      "sample": "sample_promo_20s.mp4 — a 20s vertical promo (self-produced)",
+      "score": 53,
+      "sent_at": null,
+      "source": "freelancer.com",
+      "status": "draft",
+      "title": "Fast-Paced Reel Editing",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
         "6 days left (+10)"
       ]
     },
     {
       "file": "content/proposals/28059d0391535af4.md",
-      "package": "C",
-      "price": 1590,
+      "package": "B",
+      "price": 750,
       "prospect_id": "28059d0391535af4",
       "prospect_url": "https://www.freelancer.com/projects/youtube/youtube-editing-social-auto-posting",
       "sample": "sample_promo_20s.mp4 — a 20s vertical promo (self-produced)",
-      "score": 65,
+      "score": 48,
       "sent_at": null,
       "source": "freelancer.com",
       "status": "draft",
       "title": "YouTube Editing & Social Auto-Posting",
       "why": [
-        "budget ≈1925 THB (+30)",
-        "brief names a short-form format (+25)",
+        "budget floor 630 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
         "6 days left (+10)"
       ]
     }
   ],
-  "skipped": [
-    {
-      "prospect_id": "86e4d9a69daa1e25",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/sound-design/youtube-documentary-style-video-editor-40835196"
-    },
-    {
-      "prospect_id": "1a618f628e560d97",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/2d-animation/animated-science-intro-video"
-    },
-    {
-      "prospect_id": "fcdd897c5a798e00",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/after-effects/cinematic-realistic-short-film-minutes"
-    },
-    {
-      "prospect_id": "614e42b313ec76e7",
-      "reason": "not our service: website",
-      "url": "https://www.freelancer.com/projects/ai-video/promo-videos-setup"
-    },
-    {
-      "prospect_id": "f393cf30653d7f3c",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/voice-over/jee-main-beginner-strategy-videos"
-    },
-    {
-      "prospect_id": "da4bbcd826ca10e0",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/dynamic-youtube-tutorial-editing-est"
-    },
-    {
-      "prospect_id": "6bb838fda3982aec",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/youtube-outboard-repair-video-editor"
-    },
-    {
-      "prospect_id": "84fcda3f20de5f4a",
-      "reason": "not our service: website",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/high-impact-dropship-video-ads"
-    },
-    {
-      "prospect_id": "5e615623e4c89034",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/lean-budget-social-video-edit"
-    },
-    {
-      "prospect_id": "87f1a745acc3066a",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/ai-animation/low-budget-animation-video-creator"
-    },
-    {
-      "prospect_id": "e535a42bdf0bb653",
-      "reason": "not our service: seo",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/action-packed-hunting-videos"
-    },
-    {
-      "prospect_id": "4af62c07d127c9a1",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/color-grading/cinematic-youtube-video-editing-40834480"
-    },
-    {
-      "prospect_id": "55ce42ce2dd51aa8",
-      "reason": "not our service: ai film",
-      "url": "https://www.freelancer.com/projects/ai-animation/thai-ragnarok-cinematic-film"
-    },
-    {
-      "prospect_id": "978b4456ee02ab51",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/motion-graphics/energetic-product-promo-reels"
-    },
-    {
-      "prospect_id": "7116b49746ca88de",
-      "reason": "not our service: vfx",
-      "url": "https://www.freelancer.com/projects/motion-graphics/swimming-technique-video-edit"
-    },
-    {
-      "prospect_id": "10f8367f757e3a90",
-      "reason": "not our service: game",
-      "url": "https://www.freelancer.com/projects/content-creation/minecraft-meme-video-editor"
-    },
-    {
-      "prospect_id": "b93a8ea8e6ccd210",
-      "reason": "no editing vocabulary",
-      "url": "https://www.freelancer.com/projects/av-editing/aep-promo-video-production"
-    },
-    {
-      "prospect_id": "f39bdc175ed42093",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/av-editing/edit-six-real-estate-development"
-    },
-    {
-      "prospect_id": "ec454b169351f210",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/av-design/arabic-show-break-bumper-video"
-    },
-    {
-      "prospect_id": "6de209b10a255f62",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/ai-automation/video-creating-posting-bot"
-    },
-    {
-      "prospect_id": "d926af25afd81be0",
-      "reason": "not our service: website",
-      "url": "https://www.freelancer.com/projects/ai-video-editing/automated-video-social-posting"
-    },
-    {
-      "prospect_id": "f93e4030b3884a6b",
-      "reason": "not our service: game",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/championship-season-highlight-video"
-    },
-    {
-      "prospect_id": "881f868f9831e76f",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/character-animation/animated-videos-for-nonprofit-outreach"
-    },
-    {
-      "prospect_id": "ead12dbe1777189f",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/video-production/edit-tech-instagram-reels"
-    },
-    {
-      "prospect_id": "13a20a54a1352eeb",
-      "reason": "not our service: game",
-      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/social-media-player-highlight-reel"
-    },
-    {
-      "prospect_id": "e1c9cfc4df990824",
-      "reason": "not our service: website",
-      "url": "https://www.freelancer.com/projects/color-grading/cinematic-vertical-horizontal-video-edit"
-    },
-    {
-      "prospect_id": "6d6587fb9b0a6999",
-      "reason": "not our service: avatar",
-      "url": "https://www.freelancer.com/projects/voice-over/avatar-led-merchant-navy-coaching"
-    },
-    {
-      "prospect_id": "910935f5c3257f17",
-      "reason": "not our service: motion graphic",
-      "url": "https://www.freelancer.com/projects/video-production/fast-paced-reels-editing-needed"
-    },
-    {
-      "prospect_id": "78fa4bb3e7841dd8",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/video-editing/premium-social-media-video-editing"
-    },
-    {
-      "prospect_id": "8f611c6a34ee86a6",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/ai-animation/animated-explainer-video-40833781"
-    },
-    {
-      "prospect_id": "ac5dc7df41df08ac",
-      "reason": "not our service: animat",
-      "url": "https://www.freelancer.com/projects/youtube/real-estate-youtube-video-editor"
-    },
-    {
-      "prospect_id": "284177c0015e0342",
-      "reason": "not our service: game",
-      "url": "https://news.ycombinator.com/item?id=31584281"
-    }
-  ],
-  "updated_at": "2026-11-25T14:46:56Z"
+  "updated_at": "2026-11-25T16:10:39Z"
 }
