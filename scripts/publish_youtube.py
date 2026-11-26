@@ -23,6 +23,7 @@ import json
 import os
 import sys
 import urllib.request
+from datetime import datetime, timezone
 
 # Read the generated site from disk by default. A baked-in hostname goes stale on
 # every sandbox recycle and then answers 502, which used to surface here as a raw
@@ -178,6 +179,30 @@ def freshness(channel: str, video: str, narration: str | None, sid: str,
     return (not reasons), reasons
 
 
+AUDIT_PATH = os.environ.get(
+    "UPLOAD_AUDIT_PATH", os.path.join(ROOT, "content", "upload_audit.jsonl"))
+
+
+def audit_upload(slug: str, vid: str, title: str, privacy: str, kind: str = "long") -> None:
+    """Write one line per upload. This records; it never refuses.
+
+    The daily cap is counted from `content/upload_log.json`, which only the Shorts
+    rail writes. An upload from here leaves no trace, so a channel can pass
+    DAILY_CAP with nobody able to see it afterwards (measured 2026-11-26). The
+    ledger itself is left alone on purpose: making this rail count would change
+    what the cap refuses, and that is K's call, not a side effect.
+    """
+    rec = {"ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+           "channel": slug, "video_id": vid, "title": title, "privacy": privacy,
+           "kind": kind, "source": "publish_youtube.py"}
+    try:
+        os.makedirs(os.path.dirname(AUDIT_PATH), exist_ok=True)
+        with open(AUDIT_PATH, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except OSError as exc:  # an audit trail must never cost an upload
+        print(f"  upload audit not written ({exc})", file=sys.stderr)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -285,6 +310,7 @@ def main() -> int:
         ledger = os.path.join(ROOT, "content", f"script_ledger_{slug}.json")
         upload_gate.record_script(ledger, sid, narration)
         print(f"  script ledger: {sid} claimed (this story can never be re-uploaded)")
+    audit_upload(slug, vid, ep["title"], response["status"]["privacyStatus"])
     print(f"  uploaded: {url}  status={response['status']['privacyStatus']}")
 
     thumb_path = args.poster
