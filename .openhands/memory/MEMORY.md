@@ -65,8 +65,10 @@
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** .
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); family genre ปลดระวาง;
   slug ยัง `kongkeat-story`; **title ตั้งใน Studio** (API ไม่ได้).
-- **Angle de-dup floor = 8** (`test_angle_pool.py`).
-  **One live title = one video**.
+- **Angle de-dup floor = 8** (`test_angle_pool.py`). **One live title = one video**.
+- **ท่อจริง = playlist** (วัด 2026-11-26): PLAYLIST 9.7–42 นาที/วิว, RELATED 6.0, SUBSCRIBER 1.1;
+  **SHORTS→long = 0** ใน 28 วัน. `playlist_fill.py` เติม long-form ให้ครบ playlist ที่ Short ลิงก์
+  (`link_shorts` ครอบ Short ใหม่เท่านั้น). `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
 - **Thumb ผิดแนว → `--gen-art`.**
 - **Thumb URL ≠ ของเรา** (AUTO frame ก็ได้ `maxresdefault`) → เช็ค 8×8 diff (`matches_live()`).
 - **Animated still ต้องตรงเรื่อง**: `make_motion_short.py` แยกตาม `genre` → `publish_motion.py`.
