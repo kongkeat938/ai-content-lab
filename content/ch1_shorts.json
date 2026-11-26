@@ -765,6 +765,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "107": {
+      "video_id": "jlf_DfgAX3c",
+      "url": "https://youtu.be/jlf_DfgAX3c",
+      "title": "คุณมีสิทธิ์ยอมรับความธรรมดาของชีวิตโดยไม่ต้องดิ้นรน #Shorts",
+      "posted_at": "2026-11-26T09:45:51+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/107/thumb_107.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
