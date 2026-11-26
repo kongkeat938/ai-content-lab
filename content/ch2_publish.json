@@ -606,6 +606,34 @@
       "video_id": "HkFULkG2sRk",
       "url": "https://youtu.be/HkFULkG2sRk",
       "thumbnail_set": true
+    },
+    {
+      "key": "ming_01_15",
+      "state": "published",
+      "video_url": "https://github.com/kongkeat938/ai-content-lab/releases/download/longform-dharma_ming_01.mp4-8/dharma_ming_01.mp4",
+      "thumbnail": "assets/branding/farmmer/thumbs/ming_01_15.jpg",
+      "duration_sec": 889.0,
+      "title": "ธรรมะก่อนนอน 15 นาที ใจคิดไม่หยุด ฟังแล้วหลับลึก ปล่อยวางทั้งคืน",
+      "description": "ฟังเสียงบรรยายธรรมะก่อนนอน 15 นาที สำหรับคืนที่ใจคิดไม่หยุด ช่วยพาจิตกลับมาอยู่กับลมหายใจทีละนิด ปล่อยวางเรื่องที่ค้างคาในหัว แล้วค่อย ๆ ผ่อนลงสู่ความสงบก่อนหลับ\n\nไม่ต้องเพ่ง ไม่ต้องตั้งใจ แค่หลับตาฟังเสียงเบา ๆ ไปพร้อมลมหายใจ ถ้าความคิดยังวนอยู่ ก็แค่รับรู้แล้วกลับมาที่เสียงอีกครั้ง\n\nฟังต่อเป็นชุด หลับยาวทั้งคืน: https://www.youtube.com/playlist?list=PLBpZCGnd7Q5Y\n\nฝากกดติดตามช่อง Farmmer — ธรรมะก่อนนอน เพื่อรับคลิปกล่อมใจทุกคืน ขอให้คืนนี้เป็นคืนที่ใจได้พัก\n\n— ช่องพี่น้อง —\nPCSEV — เกร็ดน่ารู้และวิทยาศาสตร์ในชีวิตประจำวัน\nhttps://www.youtube.com/channel/UC7gCIu4G_7QCEJ8hJ-34zoQ",
+      "tags": [
+        "ธรรมะก่อนนอน",
+        "ฟังธรรมะก่อนนอน",
+        "เสียงธรรมะนอนหลับ",
+        "ธรรมะผ่อนคลาย",
+        "แก้โรคนอนไม่หลับ",
+        "ลดความเครียด",
+        "นั่งสมาธิก่อนนอน",
+        "ปล่อยวาง",
+        "ทำใจให้สงบ",
+        "นอนหลับสบาย"
+      ],
+      "category_id": 22,
+      "privacy": "public",
+      "playlist": "PLBpZCGnd7Q5Y",
+      "video_id": "7Ev8NLgcIBM",
+      "url": "https://youtu.be/7Ev8NLgcIBM",
+      "thumbnail_set": true,
+      "playlist_added": true
     }
   ]
 }
