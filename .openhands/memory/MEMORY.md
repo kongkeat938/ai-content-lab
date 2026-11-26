@@ -32,13 +32,13 @@
   **secret injects only if its NAME is in the command**; git identity resets. **push:** `GH_PUSH_TOKEN=$GITHUB_TOKEN scripts/gh_auth.py push` (HEAD→main; vault token 401);
   **งานต้องออกจาก pod** = `durability_guard.py` + `restore_verify.py` (`topics/05`).
 
-- **MV/เรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (ซ้ำ = FAIL); AI gen ล่ม → procedural.
+- **MV/เรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (ซ้ำ = FAIL); AI gen ล่ม → procedural
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
   `keep_clips_live.py` restores. **`videos.update` REPLACES the whole `snippet`/`status`**.
-- **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
-- **Quota:** `videos.insert`, reset 08:00 UTC; **1 ช่อง = 1 acc**
+- **Repo is PUBLIC** (private halts the rails): never commit a credential; `yt_token*.json` ignored.
+- **Quota:** `videos.insert`, reset 08:00 UTC; 1ช่อง=1acc
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; **One duration
   parser** `yt_duration.py`. GitHub cron fires late;
   a rail can be `disabled_manually` → measure `actions/workflows` first.
@@ -64,7 +64,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว → `--gen-art`; 8×8 diff
+- **Thumb:** ผิดแนว→`--gen-art`; 8×8
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
@@ -74,10 +74,10 @@
 - **Automation:** GH Actions (watchdog→foreman→rails), kill switch `content/STOP`; rails off →
   ak ทำมือ; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
-  (`test_publish_shorts_cap.py`); `publish_youtube.py` ไม่นับ
-- **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr.
-- **Comment writes need `force-ssl`**: วัดสด 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68
-  Shorts ตั้งแต่ 11-12 `cta_note`=skipped ไม่เคยสำเร็จ → **SHORTS→long = 0**. token อยู่ที่ **GitHub repo
+  (`test_publish_shorts_cap.py`; `publish_youtube.py` ไม่นับ)
+- **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr
+- **Comment writes need `force-ssl`**: วัดสด 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68 Shorts
+  ตั้งแต่ 11-12 `cta_note`=skipped ไม่เคยสำเร็จ → **SHORTS→long = 0**. token อยู่ที่ **GitHub repo
   secrets**; `GITHUB_TOKEN` แตะไม่ได้ (403) → **secret = K เท่านั้น** (gh expiry=?; push=HEAD→main)
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).

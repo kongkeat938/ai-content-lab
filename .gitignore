@@ -19,6 +19,7 @@ episodes/*/video.mp4
 receipts/
 
 yt_token.json
+yt_token_*.json
 *_token.json
 receipts/
 
