@@ -23,6 +23,7 @@ import json
 import os
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 
 AID = "94068e1c-c98c-4f3b-96f5-0df4a1e9a78a"
@@ -31,6 +32,20 @@ LOCAL = os.path.expanduser("~/.config/gh/token")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # gh hands git the env token first; these must be gone for our credential to win.
 SHADOWING = ("GH_TOKEN", "GITHUB_TOKEN")
+
+
+VAULT_REASON = ""
+
+
+def vault_reason() -> str:
+    """Why the last vault call came back empty. '' means it read fine (or was never called).
+
+    Measured 2026-11-26: `status` printed "no token: none" while the vault actually
+    held a token -- the read had failed and the exception was swallowed, so "cannot
+    read" and "nothing stored" looked identical. A check that cannot tell those apart
+    sends the wrong fix to K.
+    """
+    return VAULT_REASON
 
 
 def _vault(method: str, value: dict | None = None) -> dict | None:
@@ -42,16 +57,29 @@ def _vault(method: str, value: dict | None = None) -> dict | None:
     req = urllib.request.Request(url, data=body, method=method,
                                  headers={"Authorization": "Bearer " + key,
                                           "Content-Type": "application/json"})
+    global VAULT_REASON
     try:
         r = urllib.request.urlopen(req, timeout=25)
-    except Exception:                                   # noqa: BLE001 - any miss is "no token"
+    except urllib.error.HTTPError as exc:
+        VAULT_REASON = f"unreadable (HTTP {exc.code})"
         return None
-    raw = json.loads(r.read().decode()).get("value")
-    if isinstance(raw, str):
-        raw = json.loads(raw)
-    if isinstance(raw, dict) and isinstance(raw.get("value"), str):
-        raw = json.loads(raw["value"])
-    return raw if isinstance(raw, dict) else None
+    except Exception as exc:                            # noqa: BLE001 - keep going, but say why
+        VAULT_REASON = f"unreadable ({type(exc).__name__})"
+        return None
+    VAULT_REASON = ""
+    try:
+        raw = json.loads(r.read().decode()).get("value")
+        if isinstance(raw, str):
+            raw = json.loads(raw)
+        if isinstance(raw, dict) and isinstance(raw.get("value"), str):
+            raw = json.loads(raw["value"])
+    except Exception as exc:                            # noqa: BLE001
+        VAULT_REASON = f"unreadable (bad body: {type(exc).__name__})"
+        return None
+    if not isinstance(raw, dict) or not raw.get("token"):
+        VAULT_REASON = "no value stored"
+        return None
+    return raw
 
 
 def token() -> tuple[str, str]:
@@ -195,7 +223,7 @@ def main() -> int:
     if cmd == "status":
         tok, source = token()
         if not tok:
-            print("no token: " + source)
+            print(f"no token: {source} -- vault: {vault_reason() or 'not consulted'}")
             return 1
         status, who = _api(tok, "/user")
         print(f"source={source} login={who.get('login') if status == 200 else f'HTTP {status}'}")

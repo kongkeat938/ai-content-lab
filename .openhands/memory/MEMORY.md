@@ -38,9 +38,9 @@
 - **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
   `keep_clips_live.py` restores. **`videos.update` REPLACES the whole `snippet`/`status`**.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
-- **Quota:** `videos.insert`; reset 08:00 UTC. **1 ช่อง = 1 Google acc.**
-- **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a GENERATED
-  `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`. GitHub cron fires late;
+- **Quota:** `videos.insert`, reset 08:00 UTC; **1 ช่อง = 1 Google acc**
+- **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; **One duration
+  parser** `yt_duration.py`. GitHub cron fires late;
   a rail can be `disabled_manually` → measure `actions/workflows` first.
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; stale tree fakes "missing"
   (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`.
@@ -64,7 +64,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว → `--gen-art`; ของเราหรือไม่ → 8×8 diff.
+- **Thumb:** ผิดแนว → `--gen-art`; ของเราไหม → 8×8 diff.
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
@@ -74,9 +74,10 @@
 - **Automation:** GH Actions (watchdog→foreman→rails), kill switch `content/STOP`; rails off →
   ak ทำมือ; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
-  (`test_publish_shorts_cap.py`) — Shorts-rail rule; `publish_youtube.py` ไม่นับ (มี `upload_audit.jsonl`).
-- **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll.
-- **Comment writes need `force-ssl`**: วัด 2026-11-26 dharma token มีแค่ `.../auth/youtube` → pinned CTA
-  comment ถูก skip 100% → **SHORTS→long = 0**.
+  (`test_publish_shorts_cap.py`) — Shorts-rail rule; `publish_youtube.py` ไม่นับ
+- **Delegation:** genx+dharma → `ch3@example.invalid`; ch4 = Coverr.
+- **Comment writes need `force-ssl`**: วัดสด 2026-11-26 `commentThreads.insert` = **403
+  insufficientPermissions ทั้ง 3 ช่อง**; 68 Shorts ตั้งแต่ 11-12 มี `cta_note` = skipped, ไม่เคยสำเร็จ →
+  **SHORTS→long = 0**. (`gh token` expiry = ?; push = HEAD→main)
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
