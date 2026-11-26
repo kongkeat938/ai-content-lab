@@ -24,6 +24,7 @@ audit = os.path.join(tmp, "upload_audit.jsonl")
 os.environ["UPLOAD_AUDIT_PATH"] = audit
 
 import publish_youtube as py  # noqa: E402
+import publish_batch as pb  # noqa: E402
 
 failures: list[str] = []
 
@@ -49,6 +50,9 @@ def main() -> int:
     check(lines[0]["video_id"] == "7Ev8NLgcIBM", "the video id is recorded")
     check(lines[0]["kind"] == "long" and lines[1]["kind"] == "short", "the kind is recorded")
     check(all(x.get("ts", "").endswith("+00:00") for x in lines), "every line is timestamped UTC")
+    pb.audit_upload("dharma", "ccccccccccc", "คลิปยาวจาก manifest", "public")
+    lines = [json.loads(x) for x in open(audit, encoding="utf-8").read().splitlines() if x]
+    check(lines[-1]["source"] == "publish_batch.py", "the manifest rail writes the same file")
     check(open(ledger, encoding="utf-8").read() == before,
           "the cap ledger is untouched (the audit must not change what the cap refuses)")
 
@@ -62,7 +66,7 @@ def main() -> int:
     except OSError as exc:
         raised = str(exc)
     check(not raised, "an unwritable audit path does not raise")
-    check(len(open(audit, encoding="utf-8").read().splitlines()) == 2,
+    check(len(open(audit, encoding="utf-8").read().splitlines()) == 3,
           "and it appends nothing behind your back")
 
     print()

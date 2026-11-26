@@ -199,6 +199,8 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   *and* slug). Measured 2026-11-24: `publish_motion.py`/`remake_shorts.py` recorded under the slug,
   so `uploads_in_last_24h()` read 0 with three dharma uploads inside 24 h — another rail could
   push a channel past `DAILY_CAP`. Guard `test_publish_shorts_cap.py` fails if the slug is ignored.
+  `publish_youtube.py`/`publish_batch.py` do not count toward the cap, so they append one line
+  per upload to `content/upload_audit.jsonl` (record, never refuse; `test_upload_audit.py`).
 - One project, one goal. A task that does not serve YPP is out of scope — say so, don't build it.
 
 ## 5) Archived (kept for history, no live references)

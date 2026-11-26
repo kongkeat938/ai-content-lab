@@ -30,6 +30,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -111,6 +112,26 @@ def commit(path: str, message: str) -> None:
     except subprocess.CalledProcessError as exc:
         print(f"  manifest commit failed (the workflow step will retry): {exc}",
               file=sys.stderr)
+
+
+def audit_upload(slug: str, vid: str, title: str, privacy: str, kind: str = "long") -> None:
+    """Append one line to the shared upload audit. Records; never refuses.
+
+    The cap ledger (`content/upload_log.json`) is written only by the Shorts rail,
+    so without this line a long-form upload leaves no trace and a channel can pass
+    DAILY_CAP unseen (measured 2026-11-26). The cap itself is untouched.
+    """
+    path = os.environ.get("UPLOAD_AUDIT_PATH",
+                          os.path.join(ROOT, "content", "upload_audit.jsonl"))
+    rec = {"ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+           "channel": slug, "video_id": vid, "title": title, "privacy": privacy,
+           "kind": kind, "source": "publish_batch.py"}
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except OSError as exc:  # an audit trail must never cost an upload
+        print(f"  upload audit not written ({exc})", file=sys.stderr)
 
 
 def _upload_capped(channel_id: str) -> str | None:
@@ -386,6 +407,8 @@ def main() -> int:
         v["state"] = "published"
         save(man, args.manifest)   # record BEFORE anything else can fail
         commit(args.manifest, f"publish({slug}): record {key}")
+        audit_upload(slug, vid, v.get("title", ""), response["status"]["privacyStatus"],
+                     kind="long")
         print(f"  live: {url} ({response['status']['privacyStatus']}) — recorded")
 
         thumb = v.get("thumbnail")
