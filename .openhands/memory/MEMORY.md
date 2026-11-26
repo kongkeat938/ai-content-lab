@@ -21,14 +21,14 @@
 - **PCSEV.** Verify **live**: live API > output file (ffprobe/ebur128) > a test that FAILs > a doc;
   best = **counter with an invariant** (`counter_ledger.py`).
 - **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
-- **"แยกไม่ได้" ≠ "ผิด":** quota-dead → **per-channel secret = identity**.
+- **"แยกไม่ได้" ≠ "ผิด":** quota-dead → **per-channel secret = identity**
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** (`winremote`, `topics/03`).
 - **K ใช้มือถือ — ห้ามขอให้ล็อกอินผ่าน noVNC/PC1**; ล็อกอินที่ต้องมี K = `yt_auth_device.py`.
 - **ak อัพเองได้เมื่อ gate ผ่าน** (2026-11-21) — ไม่มี ledger/รออนุมัติ; gate/cap/cadence ยังผูก.
 - **A gate whose floor came from the same demo it approved cannot detect drift**; a guard must be
   able to FAIL, never hardcode what it sweeps, `403 gate + || echo 0` = **false pass** (`topics/05`).
-- **Pod env:** reset (ทุก 2–4 เซสชัน, ตาม idle ~2 h) → `pip -r requirements.txt` + static-ffmpeg;
+- **Pod env:** reset (idle ~2 h เป็นหลัก, mid-session ก็มี) → `pip -r requirements.txt` + static-ffmpeg;
   **secret injects only if its NAME is in the command**; git identity resets. **push:** `GH_PUSH_TOKEN=$GITHUB_TOKEN scripts/gh_auth.py push` (HEAD→main; vault token 401);
   **งานต้องออกจาก pod** = `durability_guard.py` + `restore_verify.py` (`topics/05`).
 
@@ -38,7 +38,7 @@
 - **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
   `keep_clips_live.py` restores. **`videos.update` REPLACES the whole `snippet`/`status`**.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
-- **Quota:** `videos.insert`, reset 08:00 UTC; **1 ช่อง = 1 Google acc**
+- **Quota:** `videos.insert`, reset 08:00 UTC; **1 ช่อง = 1 acc**
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; **One duration
   parser** `yt_duration.py`. GitHub cron fires late;
   a rail can be `disabled_manually` → measure `actions/workflows` first.
@@ -64,7 +64,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว → `--gen-art`; ของเราไหม → 8×8 diff.
+- **Thumb:** ผิดแนว → `--gen-art`; ของเราไหม → 8×8 diff
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
@@ -75,9 +75,9 @@
   ak ทำมือ; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
   (`test_publish_shorts_cap.py`) — Shorts-rail rule; `publish_youtube.py` ไม่นับ
-- **Delegation:** genx+dharma → `ch3@example.invalid`; ch4 = Coverr.
+- **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr.
 - **Comment writes need `force-ssl`**: วัดสด 2026-11-26 `commentThreads.insert` = **403
   insufficientPermissions ทั้ง 3 ช่อง**; 68 Shorts ตั้งแต่ 11-12 มี `cta_note` = skipped, ไม่เคยสำเร็จ →
-  **SHORTS→long = 0**. (`gh token` expiry = ?; push = HEAD→main)
+  **SHORTS→long = 0**. (gh expiry=?; re-consent→อัปเดต secret; push=HEAD→main)
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
