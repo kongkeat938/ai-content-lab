@@ -99,6 +99,12 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   records whether a reply is possible without a new account, then ranks the in-scope rows
   into `content/opportunities.json`. Guard `test_opportunity_verify.py` (live server + soft
   404). Report: `docs/PHASE10-REVENUE-CONVERSION.md` (funnel 76 → 33 → 10 → 0 ready).
+- Channels (Phase 11, one round, 2026-11-25): `channel_probe.py` asks three things per
+  source — robots allows this path, is there an address a reader can see, is the contact
+  behind a login wall — over ≤30 declared sources in `content/channels_sources.json` →
+  `content/channels.json`. Trackers and the site's own inbox are not channels; guard
+  `test_channel_probe.py`. Result: **0 permitted channels**, so collection from
+  login-gated boards stops (report `docs/PHASE11-ZERO-ACCOUNT-CHANNELS.md`).
 - Offers: `proposal_draft.py` scores each request (budget, format fit, volume, verified
   payment, deadline), refuses work we cannot do (animation/avatar/3D), quotes the canonical
   price and writes `content/proposals/<id>.md` with status **draft** — no send path. Guard

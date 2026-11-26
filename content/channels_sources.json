@@ -1,0 +1,152 @@
+{
+  "round": 1,
+  "created_at": "2026-11-25",
+  "rule": "one round, <=30 sources, no account, no message, no payment",
+  "sources": [
+    {
+      "name": "freelancer.com jobs (control)",
+      "url": "https://www.freelancer.com/jobs/video-editing",
+      "kind": "html"
+    },
+    {
+      "name": "freelancermap projects",
+      "url": "https://www.freelancermap.com/projects",
+      "kind": "html"
+    },
+    {
+      "name": "Upwork video jobs",
+      "url": "https://www.upwork.com/freelance-jobs/video-editing/",
+      "kind": "html"
+    },
+    {
+      "name": "Guru video editing",
+      "url": "https://www.guru.com/d/jobs/c/creative-design/video-editing/",
+      "kind": "html"
+    },
+    {
+      "name": "PeoplePerHour",
+      "url": "https://www.peopleperhour.com/freelance-video-editing-jobs",
+      "kind": "html"
+    },
+    {
+      "name": "Twine jobs",
+      "url": "https://www.twine.net/jobs",
+      "kind": "html"
+    },
+    {
+      "name": "Contra discover",
+      "url": "https://contra.com/discover",
+      "kind": "html"
+    },
+    {
+      "name": "Malt missions",
+      "url": "https://www.malt.com/missions",
+      "kind": "html"
+    },
+    {
+      "name": "Workana video",
+      "url": "https://www.workana.com/jobs?category=video",
+      "kind": "html"
+    },
+    {
+      "name": "Fastwork search",
+      "url": "https://fastwork.co/search?q=video",
+      "kind": "html"
+    },
+    {
+      "name": "Kaidee search",
+      "url": "https://www.kaidee.com/search?q=%E0%B8%95%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B9%88%E0%B8%AD%E0%B8%A7%E0%B8%B4%E0%B8%94%E0%B8%B5%E0%B9%82%E0%B8%AD",
+      "kind": "html"
+    },
+    {
+      "name": "JobThai search",
+      "url": "https://www.jobthai.com/th/jobs?keyword=%E0%B8%95%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B9%88%E0%B8%AD%E0%B8%A7%E0%B8%B4%E0%B8%94%E0%B8%B5%E0%B9%82%E0%B8%AD",
+      "kind": "html"
+    },
+    {
+      "name": "JobsDB TH video editor",
+      "url": "https://th.jobsdb.com/th/search-jobs/video-editor",
+      "kind": "html"
+    },
+    {
+      "name": "Pantip tag",
+      "url": "https://pantip.com/tag/%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B8%95%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B9%88%E0%B8%AD%E0%B8%A7%E0%B8%B4%E0%B8%94%E0%B8%B5%E0%B9%82%E0%B8%AD",
+      "kind": "html"
+    },
+    {
+      "name": "ThaiSEOBoard",
+      "url": "https://www.thaiseoboard.com/",
+      "kind": "html"
+    },
+    {
+      "name": "Craigslist BKK computer gigs",
+      "url": "https://bangkok.craigslist.org/d/computer-gigs/search/cpg",
+      "kind": "html"
+    },
+    {
+      "name": "Craigslist BKK all jobs",
+      "url": "https://bangkok.craigslist.org/search/jjj",
+      "kind": "html"
+    },
+    {
+      "name": "HN Algolia comments",
+      "url": "https://hn.algolia.com/api/v1/search?query=video%20editor%20freelance&tags=comment",
+      "kind": "json"
+    },
+    {
+      "name": "Jobicy video API",
+      "url": "https://jobicy.com/api/v2/remote-jobs?count=20&tag=video",
+      "kind": "json"
+    },
+    {
+      "name": "Remotive video API",
+      "url": "https://remotive.com/api/remote-jobs?search=video",
+      "kind": "json"
+    },
+    {
+      "name": "Arbeitnow API",
+      "url": "https://www.arbeitnow.com/api/job-board-api",
+      "kind": "json"
+    },
+    {
+      "name": "Himalayas API",
+      "url": "https://himalayas.app/jobs/api?limit=20",
+      "kind": "json"
+    },
+    {
+      "name": "We Work Remotely design",
+      "url": "https://weworkremotely.com/categories/remote-design-jobs",
+      "kind": "html"
+    },
+    {
+      "name": "RemoteOK video",
+      "url": "https://remoteok.com/remote-video-editing-jobs",
+      "kind": "html"
+    },
+    {
+      "name": "Dribbble jobs",
+      "url": "https://dribbble.com/jobs",
+      "kind": "html"
+    },
+    {
+      "name": "Behance joblist",
+      "url": "https://www.behance.net/joblist",
+      "kind": "html"
+    },
+    {
+      "name": "Reddit r/forhire",
+      "url": "https://www.reddit.com/r/forhire/new.json",
+      "kind": "json"
+    },
+    {
+      "name": "Thai e-GP procurement",
+      "url": "https://www.gprocurement.go.th/",
+      "kind": "html"
+    },
+    {
+      "name": "UNGM notices",
+      "url": "https://www.ungm.org/Public/Notice",
+      "kind": "html"
+    }
+  ]
+}
