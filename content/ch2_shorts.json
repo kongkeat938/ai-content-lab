@@ -890,6 +890,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "131": {
+      "video_id": "3p1fdvIpZe8",
+      "url": "https://youtu.be/3p1fdvIpZe8",
+      "title": "คืนนี้ลองวางมือถือลงแล้วหายใจเข้าลึกๆ สามครั้ง #Shorts",
+      "posted_at": "2026-11-26T01:05:39+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/131/thumb_131.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
