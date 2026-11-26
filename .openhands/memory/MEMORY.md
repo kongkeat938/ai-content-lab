@@ -20,7 +20,7 @@
 ## 🔑 Durable principles (K)
 - **PCSEV.** Verify **live**: live API > output file (ffprobe/ebur128) > a test that FAILs > a doc;
   best = **counter with an invariant** (`counter_ledger.py`).
-- **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
+- **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`
 - **"แยกไม่ได้" ≠ "ผิด":** quota-dead → **per-channel secret = identity**
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** (`winremote`, `topics/03`).
@@ -64,7 +64,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว → `--gen-art`; ของเราไหม → 8×8 diff
+- **Thumb:** ผิดแนว → `--gen-art`; 8×8 diff
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
@@ -74,10 +74,10 @@
 - **Automation:** GH Actions (watchdog→foreman→rails), kill switch `content/STOP`; rails off →
   ak ทำมือ; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
-  (`test_publish_shorts_cap.py`) — Shorts-rail rule; `publish_youtube.py` ไม่นับ
+  (`test_publish_shorts_cap.py`); `publish_youtube.py` ไม่นับ
 - **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr.
-- **Comment writes need `force-ssl`**: วัดสด 2026-11-26 `commentThreads.insert` = **403
-  insufficientPermissions ทั้ง 3 ช่อง**; 68 Shorts ตั้งแต่ 11-12 มี `cta_note` = skipped, ไม่เคยสำเร็จ →
-  **SHORTS→long = 0**. (gh expiry=?; re-consent→อัปเดต secret; push=HEAD→main)
+- **Comment writes need `force-ssl`**: วัดสด 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68
+  Shorts ตั้งแต่ 11-12 `cta_note`=skipped ไม่เคยสำเร็จ → **SHORTS→long = 0**. token อยู่ที่ **GitHub repo
+  secrets**; `GITHUB_TOKEN` แตะไม่ได้ (403) → **secret = K เท่านั้น** (gh expiry=?; push=HEAD→main)
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
