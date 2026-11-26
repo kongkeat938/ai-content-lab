@@ -90,6 +90,12 @@ def robots_allows(url: str) -> tuple[bool, str]:
     return best[1], f"{'allow' if best[1] else 'disallow'} rule for {path}"
 
 
+def redact(addr: str) -> str:
+    """Keep the evidence, drop the person: `someone@studio.test` -> `s***@studio.test`."""
+    local, _, domain = addr.partition("@")
+    return f"{local[:1]}***@{domain}"
+
+
 def clean_emails(blob: str, site_host: str = "") -> list[str]:
     """Only addresses a reader can see, and never the site's own.
 
@@ -106,8 +112,9 @@ def clean_emails(blob: str, site_host: str = "") -> list[str]:
             continue
         if site_host and e.endswith("@" + site_host):
             continue
-        if e not in out:
-            out.append(e)
+        r = redact(e)
+        if r not in out:
+            out.append(r)
     return out
 
 

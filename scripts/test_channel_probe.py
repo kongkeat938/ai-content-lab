@@ -73,8 +73,10 @@ def main() -> int:
         check("the round runs", os.path.exists(out), r.stderr[-300:])
         db = json.load(open(out))
         by = {x["name"]: x for x in db["sources"]}
-        check("a visible address is kept",
-              by["visible"]["emails"] == ["buyer@studio.test"], str(by["visible"]["emails"]))
+        check("a visible address is kept, redacted",
+              by["visible"]["emails"] == ["b***@studio.test"], str(by["visible"]["emails"]))
+        check("no full address is ever stored",
+              not any("@" in e and "***" not in e for x in db["sources"] for e in x["emails"]))
         check("an address inside a script is not a channel",
               "pixel@adroll.test" not in by["visible"]["emails"])
         check("the site's own inbox is not a channel",
