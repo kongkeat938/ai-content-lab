@@ -15,7 +15,7 @@
   **Cadence: step up, don't jump**.
 - **The first 2 min binds** (dharma 28.9%@2%, target ≥40%); fade-in 4s→1s = **+12 dB** hook.
 - **ฟอร์แมตที่ชนะ (วัดสด 2026-11-21):** คลิป niche มัธยฐาน **85.7 นาที**, ชื่อ = ปัญหา+เวลา+ผล;
-  story spec `content/standard/*_story_*.json` (`kind: story`) + `test_story_specs.py`;
+  story spec `*_story_*.json` + `test_story_specs.py`;
   90 นาที = `make_compilation.py --minutes 90`.
 
 ## 🔑 Durable principles (K)
@@ -29,10 +29,9 @@
 - **ak อัพเองได้เมื่อ gate ผ่าน** (2026-11-21) — ไม่มี ledger/รออนุมัติ; gate/cap/cadence ยังผูก.
 - **A gate whose floor came from the same demo it approved cannot detect drift**; a guard must be
   able to FAIL, never hardcode what it sweeps, `403 gate + || echo 0` = **false pass** (`topics/05`).
-- **Pod env:** reset → `pip -r requirements.txt` + static-ffmpeg; **secret injects only if its NAME is
-  in the command**; git identity resets. **push:** `scripts/gh_auth.py push` (plain `git push` = 403);
+- **Pod env:** reset (ทุก 2–4 เซสชัน, ตาม idle ~2 h) → `pip -r requirements.txt` + static-ffmpeg;
+  **secret injects only if its NAME is in the command**; git identity resets. **push:** `scripts/gh_auth.py push` (plain `git push` = 403);
   **งานต้องออกจาก pod** = `durability_guard.py` + `restore_verify.py` (`topics/05`).
-- **Advisors:** `council3.py`/`advise.py`/`team.py`.
 
 - **MV/เนื้อเรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (sha ซ้ำ = FAIL; บทซ้ำ = exit 3);
   AI gen ล่ม → procedural.
@@ -47,10 +46,10 @@
   a rail can be `disabled_manually` → measure `actions/workflows` first.
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; stale tree fakes "missing"
   (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`.
-- **Long-form render:** a pod render dies ~19 min in → `longform-standard.yml` (CI). **Runner limit =
-  150 min**, and the old pipeline encoded the clip **3×** (shots, xfade, titles) → killed twice
-  (2026-11-26). Now **one pass** (`picture_graph`, 2.7× realtime at 4K, ~41 min per 15-min clip; guard
-  `test_longform_single_pass.py`). `skip` ≠ `skip_pub`; gate before queue; never downgrade LIVE.
+- **Long-form render:** pod render dies ~19 min in → `longform-standard.yml` (CI). **Runner cap =
+  150 min**; encoding 3× killed two builds (2026-11-26) → **one pass** (`picture_graph`, 2.7× realtime
+  at 4K; guard `test_longform_single_pass.py`). `skip` ≠ `skip_pub`; gate before queue; never
+  downgrade LIVE.
 - **Dead source read as "clean" = false pass**: RSS 404 → `UU<id>`; **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK.**
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE; edge-tts: **one request per clip**.
@@ -67,7 +66,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว → `--gen-art`; URL ≠ ของเรา (AUTO frame ก็ได้ `maxresdefault`) → 8×8 diff.
+- **Thumb:** ผิดแนว → `--gen-art`; URL ≠ ของเรา (AUTO frame ก็ได้) → 8×8 diff.
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
@@ -81,3 +80,5 @@
   records it.
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll.
 - **Comment writes need `force-ssl`** (pinned Short CTA 403s).
+- **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
+  gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
