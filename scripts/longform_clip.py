@@ -33,46 +33,65 @@ import standard_clip as sc  # noqa: E402  (gen_scenes, narrate, music, mix, fini
 FADE = 1.0
 
 
+def picture_graph(scene_paths, shot: float, dframes: int, title: str, subtitle: str):
+    """One filter graph: every still -> Ken Burns shot -> crossfades -> titles.
+
+    Measured 2026-11-26: three 4K encodes per clip (one per shot, one for the
+    crossfade, one for the title) did not fit the runner -- two builds were
+    killed at 150 min with the picture unfinished. Rendering the same frames in
+    one pass costs a third of the time.
+    """
+    inputs = []
+    for p in scene_paths:
+        inputs += ["-loop", "1", "-t", f"{shot}", "-r", str(sc.FPS), "-i", p]
+    fc = []
+    for i in range(len(scene_paths)):
+        fc.append(
+            f"[{i}:v]scale=3840:3840:force_original_aspect_ratio=increase,"
+            "crop=3840:2160,"
+            f"zoompan=z='min(1+0.00030*on,1.15)':x='iw/2-(iw/zoom/2)':"
+            f"y='ih/2-(ih/zoom/2)':d={dframes}:s={sc.W}x{sc.H}:fps={sc.FPS},"
+            "eq=contrast=1.05:saturation=1.08:brightness=0.01,"
+            f"unsharp=5:5:0.5:5:5:0.0,setpts=PTS-STARTPTS[v{i}]")
+    prev = "v0"
+    for i in range(1, len(scene_paths)):
+        off = i * (shot - FADE)
+        fc.append(f"[{prev}][v{i}]xfade=transition=fade:duration={FADE}:"
+                  f"offset={off:.3f}[x{i}]")
+        prev = f"x{i}"
+    font = os.path.join(ROOT, "assets", "fonts", "Kanit-SemiBold.ttf")
+    k = sc.H / 720
+    fc.append(
+        f"[{prev}]drawtext=fontfile={font}:text='{sc._esc(title)}':fontcolor=white@0.94:"
+        f"fontsize={round(68 * k)}:x=(w-text_w)/2:y=h-{round(200 * k)}:"
+        "alpha='if(lt(t,0.8),0,min(1,(t-0.8)/1.2))',"
+        f"drawtext=fontfile={font}:text='{sc._esc(subtitle)}':fontcolor=white@0.80:"
+        f"fontsize={round(40 * k)}:x=(w-text_w)/2:y=h-{round(112 * k)}:"
+        "alpha='if(lt(t,1.8),0,min(1,(t-1.8)/1.2))',"
+        "setparams=range=tv,format=yuv420p[vout]")
+    return inputs, ";".join(fc)
+
+
 def build(scene_paths, narr, music_wav, title, subtitle, out, tmp):
     total = sc.duration(narr)
     n = len(scene_paths)
     shot = (total + (n - 1) * FADE) / n
     df = int(shot * sc.FPS)
-    shots = []
-    for i, p in enumerate(scene_paths):
-        sp = os.path.join(tmp, f"shot{i}.mp4")
-        vf = ("scale=3840:3840:force_original_aspect_ratio=increase,crop=3840:2160,"
-              f"zoompan=z='min(1+0.00030*on,1.15)':x='iw/2-(iw/zoom/2)':"
-              f"y='ih/2-(ih/zoom/2)':d={df}:s={sc.W}x{sc.H}:fps={sc.FPS},"
-              "eq=contrast=1.05:saturation=1.08:brightness=0.01,"
-              "unsharp=5:5:0.5:5:5:0.0,setparams=range=tv,format=yuv420p")
-        sc.ff(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1",
-               "-i", p, "-t", f"{shot}", "-r", str(sc.FPS), "-vf", vf,
-               "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-profile:v", "high",
-               "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
-               "-color_range", "tv", sp])
-        shots.append(sp)
-    inputs = []
-    for s in shots:
-        inputs += ["-i", s]
-    fc, prev = [], "0:v"
-    for i in range(1, n):
-        lab = f"x{i}"
-        off = i * (shot - FADE)
-        fc.append(f"[{prev}][{i}:v]xfade=transition=fade:duration={FADE}:offset={off:.3f}[{lab}]")
-        prev = lab
+    inputs, graph = picture_graph(scene_paths, shot, df, title, subtitle)
     pic = os.path.join(tmp, "picture.mp4")
     sc.ff(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", *inputs,
-           "-filter_complex", ";".join(fc), "-map", f"[{prev}]",
-           "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-profile:v", "high",
+           "-filter_complex", graph, "-map", "[vout]",
+           "-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-profile:v", "high",
            "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
-           "-color_range", "tv", "-pix_fmt", "yuv420p", pic])
+           "-color_range", "tv", "-pix_fmt", "yuv420p", "-t", f"{total}", pic])
     mfull = os.path.join(tmp, "music_full.wav")
     sc.ff(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-stream_loop", "-1",
            "-i", music_wav, "-t", f"{total}", "-ar", "48000", "-ac", "2",
            "-c:a", "pcm_f32le", mfull])
     norm = sc.mix(narr, mfull, total, tmp)
-    sc.finish(pic, norm, title, subtitle, out, tmp)
+    sc.ff(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", pic, "-i", norm,
+           "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+           "-ar", "48000", "-shortest", "-movflags", "+faststart", out])
 
 
 def main() -> int:
