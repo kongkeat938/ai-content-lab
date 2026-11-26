@@ -92,6 +92,13 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   dates, dedupes, and expires 404s → `content/prospects_external.json`. Guard
   `test_prospect_discover.py`. Daily rail `.github/workflows/prospect-daily.yml` (02:00 UTC =
   09:00 Thai).
+- Verification + ranking: `opportunity_verify.py` re-opens every stored request live and
+  decides `verified` / `unverified` / `expired` / `unreachable` (a 200 page that lost the ad
+  is NOT verified), reads the budget **from the buyer's own words** (meta description, e.g.
+  `₹2000-2500 INR`) with the raw text + basis kept, maps each job to the sample that fits,
+  records whether a reply is possible without a new account, then ranks the in-scope rows
+  into `content/opportunities.json`. Guard `test_opportunity_verify.py` (live server + soft
+  404). Report: `docs/PHASE10-REVENUE-CONVERSION.md` (funnel 76 → 33 → 10 → 0 ready).
 - Offers: `proposal_draft.py` scores each request (budget, format fit, volume, verified
   payment, deadline), refuses work we cannot do (animation/avatar/3D), quotes the canonical
   price and writes `content/proposals/<id>.md` with status **draft** — no send path. Guard

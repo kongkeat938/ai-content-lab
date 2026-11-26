@@ -1,0 +1,3657 @@
+{
+  "checked_at": "2026-11-25T16:09:40Z",
+  "contactable_count": 1,
+  "rows": [
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$11",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:16Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "984349090913cbb6",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 48,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I’m handing over the raw BTS clips and the fully retouched portraits from a recent fashion shoot and need them shaped into one polished Instagram Reel. The final piece must stay under 20 seconds, be delivered in a vertical 9:16 frame (1080 × 1920), and feel premium and editorial throughout. Here’s the creative direction I’m after: clean, minimal pacing with elegant, almost invisible transitions. The reel should carry a balanced mix of behind-the-scenes moments and the finished images, allowing viewers to appreciate both process and result. To tie everything together, I’d like a moody, cinematic track—either trending or royalty-free—so the beat can guide subtle cuts without risking copyright flags on Instagram. Colour is important: please grade ...",
+      "title": "Cinematic Fashion Reel Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/cinematic-fashion-reel-editing",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "GBP",
+        "high_thb": 11000,
+        "low_thb": 880,
+        "raw": "£20-250 GBP"
+      },
+      "budget_text": "$137",
+      "budget_thb": 880,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:16Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "5ec3e7794d87322d",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "reel",
+        "short",
+        "tiktok",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: ideation",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I post every day but I’m spinning my wheels when it comes to fresh ideas, so I’m looking for someone who can feed me a steady stream of short-form video concepts that will let me grow an engaged community on TikTok first, then repurpose the best hits for Instagram Reels. Here’s what I need from you: • A 30-day content calendar built around the multiple niches I play in, designed to position me as a go-to voice in each of them. • Each day’s entry should include a hook, a quick outline or script, a suggested visual approach, and any trending audio or hashtag notes so I can hit “record” and move on. • The mix has to cover my expert tips, behind-the-scenes lifestyle moments, and opinion-style takes that invite conversation—roughly ...",
+      "title": "Daily TikTok Content Ideation",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/content-creation/daily-tiktok-content-ideation",
+      "why": [
+        "budget floor 880 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$12",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:16Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "d4e1136b8d77670a",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I'm looking for a skilled video editor to create social media reels from my studio footage. These will be posted on Instagram and Facebook. Requirements: - Edit social media reels/short videos. - Style should be clean and professional, using simple cuts. - Deliver in formats suitable for Instagram and Facebook. Ideal skills: - Proficiency in video editing software (e.g., Adobe Premiere Pro, Final Cut Pro). - Experience with social media content and platform-specific requirements. - Strong attention to detail and ability to maintain a professional look. Experience with similar projects is a plus. Looking forward to your proposals!",
+      "title": "Social Media Reels Video Editing -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/social-media-reels-video-editing-40835259",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "AUD",
+        "high_thb": 5750,
+        "low_thb": 690,
+        "raw": "$30-250 AUD"
+      },
+      "budget_text": "$61",
+      "budget_thb": 690,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:16Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "e22673ea32c24825",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "rank": 3,
+      "sample_fit": "still",
+      "score": 63,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I have a folder full of short selfie messages from friends and family, several candid clips of the birthday guy through the years, and a batch of photos that need to come together as one upbeat surprise video. The tone is fun and energetic, so I’m picturing quick cuts, playful transitions, and a lively pace that mixes the spoken messages naturally with the video clips and photos instead of running each section separately. The soundtrack should be feel-good rock—nothing too heavy—sitting low enough in the mix so every birthday wish is crystal-clear. If a clip arrives with background noise, please clean it up so it still feels lively without drowning the voices. Timing is key: I need the finished piece in two days. You can work with any editor you prefer (Premiere Pro, Fi...",
+      "title": "Fun 40th Birthday Tribute Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/audio-editing/fun-birthday-tribute-video",
+      "why": [
+        "budget floor 690 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 5250,
+        "low_thb": 630,
+        "raw": "₹1500-12500 INR"
+      },
+      "budget_text": "$55",
+      "budget_thb": 630,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:17Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "28059d0391535af4",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "footage",
+        "short",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "rank": 10,
+      "sample_fit": "promo",
+      "score": 48,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I create “automation-style” content and need someone who can take my raw footage and turn it into polished YouTube videos, then push those videos (and their short-form cut-downs) out to my other channels without any extra clicks on my side. Here’s the flow I’m after 1. You receive the raw talking-head clips, screen recordings and voice-over. 2. You edit a full-length YouTube video that matches the fast-paced, faceless-automation niche—clean jump cuts, on-screen captions, stock b-roll, royalty-free music and sound effects. 3. You extract one or two vertical shorts from the same footage, optimised for YouTube Shorts. 4. When I approve the edits, your automation publishes the long video to YouTube and schedules the shorts across Instagram, Facebook, TikT...",
+      "title": "YouTube Editing & Social Auto-Posting",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/youtube/youtube-editing-social-auto-posting",
+      "why": [
+        "budget floor 630 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 5250,
+        "low_thb": 630,
+        "raw": "₹1500-12500 INR"
+      },
+      "budget_text": "$78",
+      "budget_thb": 630,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:17Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "86e4d9a69daa1e25",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Every month I publish a new true-crime mystery on my YouTube channel and want each episode cut into a punchy, attention-grabbing mini-documentary. The tone must stay fast-paced with frequent use of archival photos, courtroom footage, newspaper clippings, lower-third text, and subtle motion graphics that push the story forward without overwhelming the narration. You will edit the raw narration track and layer it with suspenseful yet non-intrusive background music, atmospheric sound effects, and quick transitions that keep viewers glued from hook to ending. Expect to source or create royalty-free b-roll when my material runs thin and colour-grade everything so the final piece feels cohesive and cinematic. Deliverables • 10–15 min finished 1080p (or higher) video ready for ...",
+      "title": "YouTube Documentary Style Video Editor",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/sound-design/youtube-documentary-style-video-editor-40835196",
+      "why": [
+        "budget floor 630 THB covers pack A (+18)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$14",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:17Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "75cfc6f23ae596e5",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "promo",
+        "reel",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I'm looking for a skilled reel editor to create engaging promotional videos. The aim is to boost our sales and bookings. Requirements: - Edit raw video clips of our product or service - Create dynamic and captivating promotional reels - Ensure videos are optimized for social media platforms Ideal Skills: - Proficiency in video editing software (e.g., Adobe Premiere Pro, Final Cut Pro) - Experience in creating promotional content - Ability to work with provided raw footage and deliver polished final products - Strong understanding of trends in social media video content Please provide samples of previous work. Looking forward to your bids!",
+      "title": "Product Promo Reel Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/product-promo-reel-editing",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "GBP",
+        "high_thb": 660,
+        "low_thb": 440,
+        "raw": "£10-15 GBP"
+      },
+      "budget_text": "$16 / hr",
+      "budget_thb": 440,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:17Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "1a618f628e560d97",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "reel",
+        "short",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 48,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm looking for a short YouTube video to introduce my personal website and scientific work. The target audience is the general public, so the content needs to be accessible and engaging. My website has 3D animations written in Javascript included with the discussions, with the animations having controls to play / pause and step through aspects of the animation content. The website discussions are on The format would perhaps be a talk over of the written discussions on the website, while visually walking through the website, and the existing animations used to help explain the discussions. The video should use animated illustrations to simplify complex concepts and make the science easy to understand. Ideally, the freelancer should have experience in: - Creating engaging animated ...",
+      "title": "Animated Science Intro Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/2d-animation/animated-science-intro-video",
+      "why": [
+        "budget floor 440 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 26250,
+        "low_thb": 8750,
+        "raw": "$250-750 USD"
+      },
+      "budget_text": "$376",
+      "budget_thb": 8750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:17Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "92c564627c66e116",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "footage",
+        "reel",
+        "short",
+        "tiktok",
+        "video"
+      ],
+      "posted_at": "",
+      "rank": 5,
+      "sample_fit": "still",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I need a CapCut template that instantly turns raw footage into a clean, fast-performing TikTok/Instagram Reel. The finished file must keep a minimalist aesthetic: crisp typography, white or neutral overlays, and smooth, almost invisible transitions that stay in sync with today’s popular short-form rhythms. The template has to accept a flexible mix of photos and video clips, auto-fit them to a 9:16 canvas, and maintain sharp visual quality after export. Please embed placeholders for clip slots, music, and on-screen text so users can swap assets in seconds without touching keyframes. Deliverables • CapCut template file (or shareable CapCut link) ready for import • A brief usage note listing ideal clip count, duration range, and any included fonts or sound effects ...",
+      "title": "Minimal TikTok CapCut Template",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/after-effects/minimal-tiktok-capcut-template",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 26250,
+        "low_thb": 8750,
+        "raw": "$250-750 USD"
+      },
+      "budget_text": "$250 - $750",
+      "budget_thb": 8750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:17Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "aa702d8cf04ea943",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "footage",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: filming",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Humanitarian Video Filming & Editing Project goal: Produce a small set of videos that introduce and showcase Jiser Alamal’s volunteering and humanitarian impact. The content should feel authentic, uplifting, and suitable for sharing online to build awareness for a new foundation. Scope of work: - Plan and film 4 videos total: 2 short clips and 2 longer videos focused on volunteering, humanitarian activities, social work, and community support - Provide creative direction support (basic concepts, shot list, and simple storyline per video) - Capture on-location footage (people, activities, community moments) with good lighting and clean audio - Edit and deliver final videos in social-media-ready formats (e.g., vertical and/or horizontal as agreed) - Add basic post-production: col...",
+      "title": "Humanitarian Impact Video Production",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/filmmaking/humanitarian-impact-video-production",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$22",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "a261c9e177664b13",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "promo",
+        "reel",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "We are looking for a creative and skilled photo and video editor who can help us produce high-quality, visually appealing content. The ideal freelancer should have a good eye for detail, a strong sense of creativity, and the ability to transform raw footage and images into polished final products. Responsibilities: Edit and enhance videos to create professional and engaging content. Edit, retouch, and improve photos while maintaining a natural and high-quality appearance. Add transitions, effects, text, subtitles, music, and other elements when needed. Perform color correction and color grading to improve the overall visual quality. Create content suitable for social media, advertisements, promotional materials, and other platforms. Follow project instructions and make revisions bas...",
+      "title": "Creative Photo & Video Editor Needed",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/color-grading/creative-photo-video-editor-needed",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$10",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "93f77bfa5c9a05e1",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "tiktok",
+        "video"
+      ],
+      "posted_at": "",
+      "rank": 9,
+      "sample_fit": "promo",
+      "score": 53,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I have a batch of talking-to-camera clips that need to be transformed into punchy vertical Reels. Each video should feel energetic from the first second: quick cuts, punch-in zooms, and tasteful sound effects that keep viewers locked in. Dynamic, on-screen captions are a must so the message is clear even on mute, and they should be perfectly synced and styled to match the upbeat pace. You’ll receive the raw footage along with a rough time-stamp guide of the key points. I’m expecting: • Final 1080×1920 MP4s ready for Instagram and TikTok • Seamless zooms, tight cuts, and well-placed whooshes or pop-sounds for emphasis • Captions burned in, accurate, and visually engaging (I prefer bold keywords but keep it slick, not cluttered) • Color and audio...",
+      "title": "Fast-Paced Reel Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/fast-paced-reel-editing",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 4200,
+        "low_thb": 2100,
+        "raw": "$60-120 USD"
+      },
+      "budget_text": "$104",
+      "budget_thb": 2100,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "fcdd897c5a798e00",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "reel",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "rank": 4,
+      "sample_fit": "still",
+      "score": 70,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm looking for a skilled freelancer to produce a cinematic, realistic AI-generated short film, around 9 to 10 minutes long. Requirements: - I already have the story script prepared. - Realistic character design and animation that matches high-quality cinematic standards. - A clear, neutral British voiceover for dialogue narration. - Complete production including scene generation, voiceovers, music, editing, and subtitles. - A one-minute sample video must be provided before proceeding with the final production. The ideal candidate has experience in creating photo-realistic animations and delivering immersive storytelling experiences.",
+      "title": "Cinematic Realistic AI Short Film - 9 to 10 Minutes",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/after-effects/cinematic-realistic-short-film-minutes",
+      "why": [
+        "budget floor 2100 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "EUR",
+        "high_thb": 9500,
+        "low_thb": 1140,
+        "raw": "€30-250 EUR"
+      },
+      "budget_text": "$136",
+      "budget_thb": 1140,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "614e42b313ec76e7",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "reel",
+        "short",
+        "tiktok",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: website",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I need five short, punchy promotional videos generated with AI, all centred on the same best-selling physical product from my store. Each clip should feel fresh—different hooks, angles, and aspect ratios—yet keep brand colours, logo and product benefits consistent so we can split-test effectively. Once the creatives are ready, please load them into Meta (Facebook/Instagram) and TikTok Ads Manager, build conversion-focused campaigns and ad sets, and get everything live. My primary metric is website sales, so tracking pixels, events and custom audiences must be configured correctly before launch. Deliverables • 5 AI-generated videos (feed & story/reel sizes) • Fully set-up campaigns on Meta and TikTok, ready to spend • Working pixels/events with a quic...",
+      "title": "AI Promo Videos & Ad Setup",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-video/promo-videos-setup",
+      "why": [
+        "budget floor 1140 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 26250,
+        "low_thb": 8750,
+        "raw": "$250-750 USD"
+      },
+      "budget_text": "$356",
+      "budget_thb": 8750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "f393cf30653d7f3c",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "rank": 2,
+      "sample_fit": "product",
+      "score": 75,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I want to launch a series of short, high-quality strategy videos aimed squarely at students who are just starting their JEE Main preparation. The very first video should walk absolute beginners through creating a realistic, month-by-month study plan from scratch—no assumed prior knowledge, simply a clear roadmap that demystifies the process and sets them up for consistent progress. Once that cornerstone video is complete, I will commission follow-ups that dive into advanced scheduling tweaks, resource selection, and eventually parallel series for JEE Advanced and NEET, but right now my priority is the “study-plan-from-day-one” JEE Main piece. What I’m looking for: • A crisp, engaging 8–12-minute video with clear voice-over, clean motion graphics or on-s...",
+      "title": "JEE Main Beginner Strategy Videos",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/voice-over/jee-main-beginner-strategy-videos",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$11",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "da4bbcd826ca10e0",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 18,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I create talking-style tutorial videos and need an editor who can turn raw screen-recordings and camera footage into a fast-paced, attention-holding final cut. Every episode should feel energetic, with animated captions that highlight key phrases, punchy zoom-ins, strategic sound effects, and the occasional visual pop-up to keep viewers engaged. You’ll also weave in relevant B-roll, still images, and on-screen recordings where they add clarity or a dash of humor, all while maintaining a clear flow from intro to call-to-action. Color correction, audio sweetening, and tight pacing are essential so the content looks professional yet approachable. Typical videos sit in the 8-12 minute range; I’ll supply the A-roll, reference assets, and a rough outline. You return: • The fi...",
+      "title": "Dynamic YouTube Tutorial Editing - 25/11/2026 03:14 EST",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/dynamic-youtube-tutorial-editing-est",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$183",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:18Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "926c626dc0f15e33",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "footage",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "rank": 7,
+      "sample_fit": "promo",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I have a complete set of high-resolution cinematic shots ready and need them transformed into a polished short film tentatively titled “omyaa_cinematic_77.” The raw footage covers everything from sweeping landscapes to intimate close-ups, and I want it woven into a cohesive, emotionally engaging narrative that feels at home on a big screen. Your task is to shape the story: select the strongest moments, craft deliberate pacing, apply tasteful transitions, perform professional colour grading, mix and sweeten audio, and add minimal yet impactful titles or lower thirds. Whether you work in DaVinci Resolve, Adobe Premiere Pro, After Effects, or a combination, the end result should look cinematic, flow naturally, and sound immersive. Deliverables • 1 master cut (2–3 mi...",
+      "title": "Omyaa Cinematic Video Edit",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/omyaa-cinematic-video-edit",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "CAD",
+        "high_thb": 6250,
+        "low_thb": 750,
+        "raw": "$30-250 CAD"
+      },
+      "budget_text": "$94",
+      "budget_thb": 750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "6eb7c37f31a739d8",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "promo",
+        "reel",
+        "tiktok",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: ai video",
+      "posted_at": "",
+      "rank": 10,
+      "sample_fit": "product",
+      "score": 65,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "PLEASE NO CALLING, MESSAGING OR EMAILING-- REPLY THROUGH FREELANCER IF YOU HAVE QUESTIONS I am looking for an experienced AI video creator and digital marketing specialist to create **5 professional promotional videos (15–30 seconds each)** and set up advertising campaigns for my business, **Tap Scan Reviews – **. The main objective is to create engaging advertisements that showcase our NFC review products, explain their benefits and generate actual sales through our Shopify store. ## 1. Video Creation – 5 Promotional Videos Create five engaging promotional videos covering: 1. **NFC Review Stands** – Help businesses collect more Google reviews. 2. **NFC Review Plates** – Convenient countertop and wall-mounted review solutions. 3. **NFC Review Cards** &nda...",
+      "title": "Create 5 AI Promotional Video# Create 5 AI Promotional Videos & Set Up Meta and TikTok Ads",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-video/create-promotional-video-create",
+      "why": [
+        "budget floor 750 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$214",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "d5a73f7e4346cb32",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "reel",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: videographer",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I’m booking several upcoming weddings and need a dependable cinematographer / videographer who can also handle the full post-production workflow—or bring a trusted editor of your own. The shoot itself has three clear goals: capture a sweeping cinematic highlight film, record the full ceremony with speeches in their entirety, and produce short, vertical cuts optimised for social media. On the day you’ll focus on the ceremony and its key traditions, follow through the reception, speeches, and dancing, and stay alert for those candid conversations that reveal each couple’s personality. In post-production, I’m after two distinct looks: an emotional, music-driven cinematic edit for the long-form pieces, and a fast-paced, modern style for the reels and TikTok ...",
+      "title": "Wedding Cinematographer/Videographers needed. You have to attend these events shoot it with a crew.",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/cinematography/wedding-cinematographer-videographers",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$23",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "6bb838fda3982aec",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "film",
+        "short",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I’m launching a new channel dedicated to outboard motor repair and I’d like an editor who can grow with me from day one. The content will be hands-on: basic maintenance, troubleshooting, and full step-by-step repair guides. I film in 4K on GoPro and Sony mirrorless, mostly in a workshop setting, and I want each episode to have a fast-paced feel—tight cuts, punch-in zooms on key parts, dynamic captions for torque specs or part numbers, and the occasional sound effect that keeps viewers focused. Deliverables for each video • A 15-20 minute YouTube upload (4K + 1080p) with captions, call-outs, animated arrows, and balanced audio • A 15-second teaser/Short that highlights the repair’s “wow” moment • Turnaround of 3–4 days, with re...",
+      "title": "YouTube Outboard Repair Video Editor",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/youtube-outboard-repair-video-editor",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 5250,
+        "low_thb": 630,
+        "raw": "₹1500-12500 INR"
+      },
+      "budget_text": "$82",
+      "budget_thb": 630,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "cff1f81222fcb025",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: ai video",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "AI Video Creator Needed – 10-Minute Realistic Human Story Video for YouTube Project Description We are looking for an experienced AI video creator to produce a high-quality 10-minute storytelling video for a YouTube channel. The video should feature realistic AI-generated human characters, engaging storytelling, and cinematic visuals. Requirements: - Create realistic AI-generated human characters. - Generate scenes based on the provided story/script. - Natural character movements and facial expressions. - AI voiceovers with natural dialogue. - Lip-sync for speaking characters. - Professional video editing and scene transitions. - Background music and sound effects. - Full HD 1080p final video. - Suitable for YouTube publishing. What We Expect: - Previous experience in AI storyte...",
+      "title": "Create Cinematic AI Storytelling Videos",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-video-editing/create-cinematic-storytelling-videos",
+      "why": [
+        "budget floor 630 THB covers pack A (+18)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$14",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "84fcda3f20de5f4a",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: website",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I run a growing dropshipping store and need an editor who can turn raw product footage into short, scroll-stopping social ads that drive website sales. Each piece should feel fast-paced, filled with bold on-screen text, tight product clips, upbeat music, and a clear final call-to-action. You’ll receive product videos, photos, logo assets, and any offer copy. From there, I’m looking for: • Finished ads sized for TikTok, Instagram Reels, and YouTube Shorts (vertical 9:16, ~15-30 sec) • Captions styled in our brand colors, timed for punchy emphasis • Royalty-free background track and basic SFX where it helps momentum • Exported MP4s plus the editable project files (Premiere Pro, Final Cut, or DaVinci—use what you prefer) If you have a knack for q...",
+      "title": "High-Impact Dropship Video Ads -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/high-impact-dropship-video-ads",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 875,
+        "low_thb": 525,
+        "raw": "$15-25 USD"
+      },
+      "budget_text": "$18 / hr",
+      "budget_thb": 525,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "b75c9103cca17e9f",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "short",
+        "tiktok",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 48,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "A single visual needs to capture attention instantly across Instagram, TikTok, and YouTube. I have the concept for a striking poster-style graphic and want it brought to life in two formats: • A high-resolution social media image (square and story sizes) suitable for quick posting or printing. • A short, eye-catching video version of the same design—up to 15 seconds—formatted for vertical feed playback. Clean typography, bold colour, and on-brand energy are essential. Editable source files in Illustrator/Photoshop for the image and After Effects/Premiere (or similar) for the video will make future tweaks simple on my end. Acceptance criteria • Consistent look between static and motion assets • Optimised export settings for Instagram, TikTok, YouTube...",
+      "title": "Social Media Poster & Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-illustrator/social-media-poster-video",
+      "why": [
+        "budget floor 525 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 336,
+        "low_thb": 252,
+        "raw": "₹600-800 INR"
+      },
+      "budget_text": "$10",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:19Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "5e615623e4c89034",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I have raw 1080p footage for a short-form social media post that needs turning into a scroll-stopping video. The sole objective is to attract more views and followers, so a strong hook, polished pacing, and eye-catching visuals are key. The exact look is flexible; it doesn’t have to follow the usual fast-caption frenzy or a purely minimal cut style—I’m open to any creative treatment that suits the footage and platform. I simply need the result to feel fresh, engaging, and share-worthy while keeping costs lean. Colour correction, clean audio, subtle motion graphics for calls-to-action, and platform-optimised encoding will help the clip perform. If you prefer Adobe Premiere Pro, Final Cut, or DaVinci Resolve, that works; please keep the timeline well organised so I ca...",
+      "title": "Lean-Budget Social Video Edit",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/lean-budget-social-video-edit",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$15",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "87f1a745acc3066a",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "reel",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 63,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "India-based freelancers are preferred. Quote total price for one 3-minute video in INR. Do not submit a low bid just to initiate a discussion. Any freelancer quoting a different or higher price during the discussion will be disregarded. --------------------------------------------------------------------------------------------------------------------------------------- We are looking for a creative and affordable AI video creator to produce animated videos for our YouTube channel. We will provide the Hindi audio/voiceover, and your responsibility will be to create relevant AI-generated animated visuals and synchronize them with the provided audio. Scope of Work: - Create AI-generated animated videos based on the provided Hindi audio. - Understand the narration and generate relevant s...",
+      "title": "Low-Budget AI Animation Video Creator for YouTube - Ongoing Work",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-animation/low-budget-animation-video-creator",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 8750,
+        "low_thb": 1050,
+        "raw": "$30-250 USD"
+      },
+      "budget_text": "$103",
+      "budget_thb": 1050,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "e535a42bdf0bb653",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: seo",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm looking for a talented video editor to create action-focused hunting highlights for my YouTube channel. The content should showcase thrilling wildlife encounters and dynamic hunting scenes. Key Requirements: - Edit wildlife and outdoor footage into engaging highlight reels. - Focus on action-packed storytelling. - Optimize videos for YouTube. Ideal Skills and Experience: - Proficiency in video editing software (e.g., Adobe Premiere Pro, Final Cut Pro). - Experience with wildlife or hunting content. - Strong storytelling and visual composition skills. - Knowledge of YouTube SEO and trends. Please provide samples of similar work.",
+      "title": "Action-Packed Hunting Videos",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/action-packed-hunting-videos",
+      "why": [
+        "budget floor 1050 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$195",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "1464494d0174ebf9",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "rank": 6,
+      "sample_fit": "promo",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I'm looking for a creative individual to help me produce Instagram Reels. The goal is to build brand awareness through short educational tips. The Reels should be engaging and informative, focusing on topics related to my industry. Ideal skills and experience: - Proficiency in video editing - Experience with Instagram content creation - Creative mindset for educational content - Knowledge of trends to increase engagement Please include samples of previous work.",
+      "title": "Educational Instagram Reels Creation",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/instagram-marketing/educational-instagram-reels-creation",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "AUD",
+        "high_thb": 17250,
+        "low_thb": 5750,
+        "raw": "$250-750 AUD"
+      },
+      "budget_text": "$165 - $495",
+      "budget_thb": 5750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "c64c465475250873",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "footage",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: filming",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 50,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Hi, We are a Sydney-based property leasing and accommodation company looking to produce a 10–15 minute documentary-style corporate video. We would like to showcase our company, brand story, accommodation services and customer experiences in a natural, authentic and engaging way. Our requirements include: Creative concept development and pre-production planning Documentary-style storytelling Interviews with staff, tenants, building managers and business partners Office, apartment and day-to-day business footage Professional filming, video editing, background music and colour grading A complete 10–15 minute final video Our main focus is on creative concept development, pre-production planning and high-quality filming. We are flexible with the filming arrangements and h...",
+      "title": "Sydney Corporate Brand Video Production -- 3",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/project-management/sydney-corporate-brand-video-production-40834560",
+      "why": [
+        "budget floor 5750 THB covers pack C (+30)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "AUD",
+        "high_thb": 34500,
+        "low_thb": 17250,
+        "raw": "$750-1500 AUD"
+      },
+      "budget_text": "$495 - $989",
+      "budget_thb": 17250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "9dc9d9c4dc74ec1d",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "footage",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: filming",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 50,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Hi, We are a Sydney-based property leasing and accommodation company looking to produce a 10–15 minute documentary-style corporate video. We would like to showcase our company, brand story, accommodation services and customer experiences in a natural, authentic and engaging way. Our requirements include: Creative concept development and pre-production planning Documentary-style storytelling Interviews with staff, tenants, building managers and business partners Office, apartment and day-to-day business footage Professional filming, video editing, background music and colour grading A complete 10–15 minute final video Our main focus is on creative concept development, pre-production planning and high-quality filming. We are flexible with the filming arrangements and h...",
+      "title": "Sydney Corporate Brand Video Production -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/project-management/sydney-corporate-brand-video-production",
+      "why": [
+        "budget floor 17250 THB covers pack C (+30)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 1050,
+        "low_thb": 840,
+        "raw": "₹2000-2500 INR"
+      },
+      "budget_text": "$29",
+      "budget_thb": 840,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "b0a88aaee1b16d37",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "rank": 1,
+      "sample_fit": "product",
+      "score": 80,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I have raw footage, a finished script, and voice-over tracks ready to go for three health-care awareness pieces—one main video of roughly 12–14 minutes and two short versions of about 60 seconds each. I need you to shape them into clean, professional-looking content that will resonate with patients, caregivers, and clinic staff alike. The visual approach must stay simple and authoritative: crisp lower-third captions, clearly legible call-outs, and restrained colour palettes enhanced by subtle health-related icons, charts, and infographics where they help explain a point. Smooth transitions, light background music, and well-chosen B-roll inserts should keep the pacing engaging without feeling rushed or overly “salesy.” Deliverables • 1 master video (12&ndash...",
+      "title": "Edit Healthcare Awareness Video Series",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/edit-healthcare-awareness-video-series",
+      "why": [
+        "budget floor 840 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "AUD",
+        "high_thb": 69000,
+        "low_thb": 34500,
+        "raw": "$1500-3000 AUD"
+      },
+      "budget_text": "$989 - $1978",
+      "budget_thb": 34500,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:20Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "904c58c393f54ecd",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "footage",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: filming",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 50,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Hi, We are a Sydney-based property leasing and accommodation company looking to produce a 10–15 minute documentary-style corporate video. We would like to showcase our company, brand story, accommodation services and customer experiences in a natural, authentic and engaging way. Our requirements include: Creative concept development and pre-production planning Documentary-style storytelling Interviews with staff, tenants, building managers and business partners Office, apartment and day-to-day business footage Professional filming, video editing, background music and colour grading A complete 10–15 minute final video Our main focus is on creative concept development, pre-production planning and high-quality filming. We are flexible with the filming arrangements and h...",
+      "title": "Sydney Corporate Brand Video Production",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/color-grading/sydney-corporate-brand-video-production",
+      "why": [
+        "budget floor 34500 THB covers pack C (+30)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$193",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:21Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "ab93ce06230906f4",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "footage",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 40,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I run a small but growing YouTube channel focused on home-style cooking and I’m looking for a reliable editor who can turn my raw kitchen footage into clean, recipe-centred videos. The finished pieces should feel straightforward and uncluttered—viewers need to follow each step easily without flashy transitions or fast cuts taking the spotlight away from the food. For every episode I will provide the raw video files, separate voice-over recordings when needed, and any still images of the finished dish. Your job is to trim the clips, arrange them logically, and add simple graphics so that each recipe is crystal clear. The essentials I need in every upload are: • Ingredient list and step-by-step cooking instructions • Voice-over or spoken instructions synced correctl...",
+      "title": "YouTube Cooking Video Editor",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/youtube-cooking-video-editor",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$10",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:21Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "4af62c07d127c9a1",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "film",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 18,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I record talking-head and on-location pieces that run between five and ten minutes. The raw files now need to be shaped into a polished, cinematic YouTube upload. That means tightening the narrative, colour-grading every shot for a cohesive look, weaving in background music and spot sound effects for energy, and punctuating key moments with tasteful text titles, captions and light motion graphics. Smooth, film-style transitions are essential so each cut feels intentional rather than abrupt. I will hand over the camera originals (4K .mp4) plus any reference notes on beats I’d like emphasised. In return I need a single ready-to-publish file—ideally 4K or high-bit-rate 1080p—delivered via Drive or Dropbox, along with a project file in Premiere Pro, Final Cut or DaVinci Reso...",
+      "title": "Cinematic YouTube Video Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/color-grading/cinematic-youtube-video-editing-40834480",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$28",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:21Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "55ce42ce2dd51aa8",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "film",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: ai film",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I have a fully written Thai script and the recorded voice-over ready; now I need an editor–creator who can transform it into a cinematic, AI-assisted fan film that feels just like the pieces on the SH-idFilms YouTube channel. The story follows the classic Ragnarok Online path from level 1 to 99, but instead of showing every grind I want you to highlight the most nostalgic moments and famous in-game locations—those sights and quests that instantly take players back to the golden era. Think Prontera’s fountain at dawn, Payon’s forests, or that first time you walk into Geffen Tower, all woven together as an emotional journey. Style & language • Tone: cinematic, energetic, a little dreamy—exactly the right mix of nostalgia and excitement for long-ti...",
+      "title": "Thai Ragnarok Cinematic AI Film",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-animation/thai-ragnarok-cinematic-film",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$12",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:21Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "978b4456ee02ab51",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "promo",
+        "reel",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 53,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I’m launching a new line of products and need a series of Instagram Reels that sell the offer with speed and style. You’ll receive a mix of short video clips, high-resolution photos, graphics, and my key text hooks; your task is to blend them into 15-30-second vertical videos that feel fast, energetic, and fully in step with current IG trends. Every Reel should: • Hook viewers inside three seconds with bold motion or text • Follow a punchy, on-beat rhythm using trending audio or sound effects • Combine jump cuts, creative transitions, motion graphics, and eye-catching captions that stay on-brand • Close with a clear product call-to-action Deliverables • Final 1080×1920 MP4 for each Reel • Separate SRT captions file • Two quic...",
+      "title": "Energetic Product Promo Reels",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/motion-graphics/energetic-product-promo-reels",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 420,
+        "low_thb": 252,
+        "raw": "₹600-1000 INR"
+      },
+      "budget_text": "$14",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:21Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "e4951a6926298134",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I need a quick-thinking editor who can turn my raw vertical clips into scroll-stopping Instagram Reels that drive views and followers. The vibe I’m chasing is funny and energetic—think punchy cuts, timely memes, playful sound effects, and on-screen captions that pop without feeling overproduced. Content themes change from week to week, so you’ll handle everything from casual behind-the-scenes snippets to spontaneous reaction videos. I’ll provide the footage, any branding assets, and examples of the tone I like; you bring the creative flair and a streamlined workflow that respects a lean budget. Core deliverables for every reel: • 1080 × 1920 MP4, max 60 s • Hook in the first 3 s to boost watch-through • Burned-in captions matched to brand...",
+      "title": "Budget-Friendly Reels Video Editing -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/budget-friendly-reels-video-editing-40834442",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$27",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:21Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "88929ec4c8d332ca",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "advert",
+        "edit",
+        "footage",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 48,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "Budget: $10–$30 USD Timeline: 2 days We are looking for a skilled video editor and photo editing specialist to create a short informational video and enhance existing photographs of a recreational facility. The materials will be used for an institutional presentation and must have a professional, informative, and non-commercial appearance. Scope of Work; Video Editing - Create a professional informational video of up to 30 seconds. - Use the provided photographs, existing video footage, and reference document. - Highlight the facilities, location, and recreational activities. - Include Spanish text, smooth transitions, and suitable background music. - Avoid commercial advertising and sales-related content. Photo Enhancement - Review approximately 30 existing photographs. ...",
+      "title": "Video Editing and Photo Enhancement for an Informational Presentation",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/photo-editing/video-editing-photo-enhancement-for",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$10",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "828159739207ba86",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I’ll send you a short reference reel that captures the exact pacing and mood I’m after. Using Adobe After Effects, please cut together a 25-second video that feels romantic and heartfelt, working only with the short clips of the two of us that I’ll provide—no photos are needed. Match the gentle flow, soft transitions, and warm colour treatment of the reference while giving it your own creative touch. Deliverables: • Final 25-second MP4 (1080p or higher) • Editable .aep file with organised assets • One round of minor revisions Everything needs to be wrapped up before 30 November so I have time to surprise her. Let me know when you can start and if you need any additional info.",
+      "title": "Romantic 25-Second Birthday Video -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-ads/romantic-second-birthday-video",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "CAD",
+        "high_thb": 750,
+        "low_thb": 450,
+        "raw": "$18-30 CAD"
+      },
+      "budget_text": "$18",
+      "budget_thb": 450,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "5429d7c19530a37e",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "**Only beginner level resource needed or some one looking as first project for a start up video channel **Please only apply if you are ok with project budget. No changes will be done after project is assigned. ** **This project is for an upcoming channel so project budget is as defined. Add text, graphics, charts, video elements to raw recorded video (text to video) or generate video using various editing tools Must provide attractive thumbnail with text and images for each video - no AI generated thumbnail Quick turn around for timely finished product to upload on frequent basis 5 videos for CAD $30",
+      "title": "Beginner Level YouTube Editor Needed -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-editing/beginner-level-youtube-editor-needed-40834262",
+      "why": [
+        "budget floor 450 THB = right-sized only (+8)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "EUR",
+        "high_thb": 684,
+        "low_thb": 456,
+        "raw": "€12-18 EUR"
+      },
+      "budget_text": "$16 / hr",
+      "budget_thb": 456,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "7116b49746ca88de",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: vfx",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 18,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I need a 26.5-second swimming video edited to match the technique of a reference video. It's for Instagram, so keep the original video shape. Requirements: - Preserve my face, body, pool, and camera angle. - Use realistic manual VFX and motion warping, no AI-generated footage. - Match all strokes, kicks, breathing, body rotation, posture, speed, and rhythm. - Maintain some natural differences in style. Ideal Skills: - Proficient in video editing software - Experience with manual VFX and motion warping - Attention to detail in matching swimming techniques - Familiarity with Instagram video formats",
+      "title": "Swimming Technique Video Edit",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/motion-graphics/swimming-technique-video-edit",
+      "why": [
+        "budget floor 456 THB = right-sized only (+8)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "EUR",
+        "high_thb": 28500,
+        "low_thb": 9500,
+        "raw": "€250-750 EUR"
+      },
+      "budget_text": "$366",
+      "budget_thb": 9500,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "5648939b4c643c82",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "short",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "rank": 4,
+      "sample_fit": "product",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "# YouTube Automation Specialist / Video Editor Wanted – Long-Term Opportunity I'm looking for a skilled, creative, and reliable person to help me grow my YouTube automation business. This is not just a one-time job. I'm looking for someone who can potentially become a permanent member of my team and manage content production for my YouTube channel on a long-term basis. ### Main Responsibilities - Create and edit engaging YouTube Shorts and long-form videos. - Find interesting, trending, and viral content ideas. - Create powerful hooks within the first few seconds to capture viewers' attention. - Understand audience retention and know how to keep viewers entertained until the end. - Use engaging editing techniques, transitions, captions, sound effects, and music. - ...",
+      "title": "YouTube Automation Editor for Viral Growth",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/content-creation/youtube-automation-editor-for-viral",
+      "why": [
+        "budget floor 9500 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 26250,
+        "low_thb": 8750,
+        "raw": "$250-750 USD"
+      },
+      "budget_text": "$356",
+      "budget_thb": 8750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "f0b1d6436a52211d",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: arabic",
+      "posted_at": "",
+      "rank": 10,
+      "sample_fit": "still",
+      "score": 50,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I run a long-form Arabic YouTube channel built around talking-head and podcast style content, and I’m ready to hand over the editing to someone who is both fluent in Arabic and fully comfortable inside Adobe Premiere Pro. Every episode needs to flow naturally, keep viewers engaged for 15–30 minutes, and feel polished without losing its conversational vibe. Here’s what each edit must include: • Speed ramping and consistently smooth cuts that match the speaker’s pacing • On-screen Arabic subtitles with highlighted keywords for quick comprehension • Well-timed B-roll, supporting images, and light sound effects that reinforce the narrative If you have a portfolio that shows similar Arabic-language work—especially projects where you handled...",
+      "title": "Arabic YouTube Video Editor Needed",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/arabic-youtube-video-editor-needed",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "CAD",
+        "high_thb": 6250,
+        "low_thb": 750,
+        "raw": "$30-250 CAD"
+      },
+      "budget_text": "$68",
+      "budget_thb": 750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "10f8367f757e3a90",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: game",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 35,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm looking for a skilled video editor to create entertaining Minecraft gameplay videos. The videos will be posted on YouTube. My daughter is 7 years old and she is extremely creative. I want to find someone to edit her videos and gameplays walking through her creations and emphasize on her funny one liners and commentary during her walk through and creative process Requirements: - Edit funny moments with captions and memes - Suitable for YouTube format - Use engaging captions Ideal Skills and Experience: - Proficiency in video editing software - Experience with Minecraft content - Creative with memes and captions - YouTube content optimization Please share your portfolio with your bids.",
+      "title": "Minecraft Meme Video Editor",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/content-creation/minecraft-meme-video-editor",
+      "why": [
+        "budget floor 750 THB covers pack B (+25)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$25",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:22Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "90e06a5d94a67b91",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I'm looking for a freelancer to create a fast-paced highlight reel of my fight. The video should be set to high-energy hip-hop or trap music. The highlight reel should include: - Hardest kicks and strikes - Best combinations and movement - Knockdowns, celebrations, and crowd reactions Ideal skills and experience include: - Proficiency in video editing software - Experience with sports highlight reels - Ability to sync music with video for a dynamic feel Please provide samples of similar work.",
+      "title": "Kicks Fight Highlight Reel",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/kicks-fight-highlight-reel",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "GBP",
+        "high_thb": 33000,
+        "low_thb": 11000,
+        "raw": "£250-750 GBP"
+      },
+      "budget_text": "$467",
+      "budget_thb": 11000,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 5,
+      "deadline_text": "5 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "b93a8ea8e6ccd210",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "promo",
+        "video"
+      ],
+      "out_of_scope_reason": "no editing vocabulary",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 40,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Would you please be able to give me a price for creating this 2:40 video for ABM2 based on a production comp and some AE project handoff files. Dropbox link: The comp is here: ‘’” There are 2 handoff files (zip files) with the source artwork and movies. Some of the actions between 5.2 and 5.4 have been done. Others have gone backwards, particularly scenes 1 and 2. I’m uploading the production notes in this excel. I’m leaving the final voicing to last; that could be included too if you have suggestions or I could do it. Please let me know any questions.",
+      "title": "AEP Promo Video Production",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/aep-promo-video-production",
+      "why": [
+        "budget floor 11000 THB covers pack C (+30)",
+        "5 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 2100,
+        "low_thb": 1750,
+        "raw": "$50-60 USD"
+      },
+      "budget_text": "$52 / hr",
+      "budget_thb": 1750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 5,
+      "deadline_text": "5 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "167633cea3d9cbfa",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "film",
+        "reel",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: filming",
+      "posted_at": "",
+      "rank": 5,
+      "sample_fit": "still",
+      "score": 70,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm seeking a skilled freelancer to help set up and fine-tune audio, lighting, and cameras for filming interviews, podcasts, or talking-head videos in San Francisco. The goal is to ensure all equipment is 100% record-ready. Key requirements: - Professional-grade camera setup - Comprehensive lighting setup - High-quality audio equipment and setup - Expertise in tweaking and optimizing equipment for recording Ideal skills and experience: - Background in film or photography - Experience in setting up for interviews/podcasts - Knowledge of sound, lighting, and camera equipment Please provide a portfolio with relevant work.",
+      "title": "San Francisco Filming Setup",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-design/san-francisco-filming-setup",
+      "why": [
+        "budget floor 1750 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "5 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 7000,
+        "low_thb": 3500,
+        "raw": "$100-200 USD"
+      },
+      "budget_text": "$143",
+      "budget_thb": 3500,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 5,
+      "deadline_text": "5 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "f39bdc175ed42093",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "footage",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 50,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I have six pieces of raw footage—each about 15-20 minutes—shot for our latest real-estate commercial development project based in League City, Texas. I need them tightened to 5-10 minute highlights that feel modern, energetic, and perfectly suited for social media. Here is exactly what I expect: • Remove every silence, stumble, retake, and long pause so the narrative flows without a hitch. • Add a tasteful, professional lower-third introducing the on-camera speaker at the first mention. • Use clean transitions, light motion graphics, and music accents only when they enhance energy; no heavy effects that distract from the message. • Deliver six polished HD files, ready for upload to Instagram, Facebook, LinkedIn, and YouTube. • Turnaround: ASAP...",
+      "title": "Edit Six Real Estate Development Videos",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/edit-six-real-estate-development",
+      "why": [
+        "budget floor 3500 THB covers pack C (+30)",
+        "5 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "GBP",
+        "high_thb": 660,
+        "low_thb": 440,
+        "raw": "£10-15 GBP"
+      },
+      "budget_text": "$16 / hr",
+      "budget_thb": 440,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 5,
+      "deadline_text": "5 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "76eb4b6c81e844d6",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "short",
+        "tiktok",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "We are looking for a skilled video editor to help with short-form and long form content. The videos are primarily talking-to-camera segments. Requirements: 1. Clean and simple editing style with minimal edits for long form youtube videos. Trim pauses and mistakes etc. 2. Fast and punchy clips in short form for insta, TikTok etc Ideal Skills and Experience: - Proficiency in video editing software. - Experience with talking-to-camera video formats. - ability to maintain a clean aesthetic and make the content as easy to follow as possible. - good communication skills when liaising with us Please provide samples of similar work.",
+      "title": "Short-Form and long form Video Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-post-editing/short-form-long-form-video",
+      "why": [
+        "budget floor 440 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "5 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 26250,
+        "low_thb": 8750,
+        "raw": "$250-750 USD"
+      },
+      "budget_text": "$483",
+      "budget_thb": 8750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 4,
+      "deadline_text": "4 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "5bd37a653da634b7",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 40,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I need a fun and energetic recruitment video for our sorority. The video should capture the essence of sisterhood, social events, and our commitment to community service and leadership. Key Highlights: - Sisterhood and Friendships: Showcase bonding moments, support, and lifelong friendships. - Social Events and Campus Activities: Feature fun events and vibrant campus life. - Community Service and Leadership: Highlight our impact and leadership opportunities. Ideal Skills and Experience: - Experience in videography and video editing. - Creative storytelling skills. - Ability to capture dynamic, energetic content. Please include past work in your application.",
+      "title": "Energetic Sorority Recruitment Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/creative-writing/energetic-sorority-recruitment-video",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "4 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$24",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 3,
+      "deadline_text": "3 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "ec454b169351f210",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "footage",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I’m launching a new Egyptian-Arabic TV show and the first thing I need is a 30-second in-program break bumper. The tone has to be energetic and fast-paced, driven by powerful music that keeps viewers hooked until we return from commercials. Here’s what you’ll receive from my side: the show’s logo and name, a selection of footage and stills from our shoots and guests, plus a written concept that includes the exact Egyptian-Arabic voice-over script. Your task is to weave these assets into a sleek, broadcast-ready piece that feels modern, punchy, and unmistakably Egyptian. Motion graphics that play off the logo, tight rhythmic editing, and a lively VO read are all essential. I’ll need the final bumper delivered in Full HD (1920×1080), along with the c...",
+      "title": "Arabic Show Break Bumper Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-design/arabic-show-break-bumper-video",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "3 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "AUD",
+        "high_thb": 690,
+        "low_thb": 230,
+        "raw": "$10-30 AUD"
+      },
+      "budget_text": "$19",
+      "budget_thb": 230,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:23Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 3,
+      "deadline_text": "3 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "56470e2cfff20d1a",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I have a finished video that I’d like transformed into a warm, Christmassy piece. Picture soft, glowing lights and gentle snowfall drifting across the frame—the kind of scene that feels like sitting by a fireplace while snow settles outside. I would also like the man sitting down to be dressed in a Santa outfit. Here is what I need: • Add a realistic falling-snow overlay that never obscures faces or key visuals. • Introduce subtle, warm light leaks or bokeh glows to give everything a cozy amber tint. • Replace (or layer beneath) the current audio with gentle acoustic Christmas music that features bells, mixing in light festive sound effects so nothing feels jarring. • Keep the edit tasteful—no over-the-top graphics or comedic elements; think...",
+      "title": "Cozy Christmas Video Edit",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/cozy-christmas-video-edit",
+      "why": [
+        "budget floor 230 THB = right-sized only (+8)",
+        "3 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$211",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 3,
+      "deadline_text": "3 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "2aae4128f6cfef26",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "promo",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 40,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I'm looking for an experienced video editor to create engaging social media and promotional videos for our hospital, primarily for YouTube. Key Requirements: - Edit social media videos and promotional videos for the hospital - Experience in creating content specifically for YouTube - Ability to enhance video quality, add graphics, and ensure a professional finish Ideal Skills and Experience: - Proven track record in video editing - Strong portfolio showcasing similar projects - Familiarity with hospital or healthcare-related content is a plus - Excellent communication skills and ability to meet deadlines Please provide past work in your application.",
+      "title": "Hospital Video Editing Specialist",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/youtube/hospital-video-editing-specialist",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "3 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "AUD",
+        "high_thb": 690,
+        "low_thb": 230,
+        "raw": "$10-30 AUD"
+      },
+      "budget_text": "$12",
+      "budget_thb": 230,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 3,
+      "deadline_text": "3 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "ea7a8f8742460d5f",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "montage",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 18,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I need a 2–2.5-minute surprise video for my friend’s Sangeet. I’ll be stuck in Australia on the big day, so this clip has to carry both the laughter and the love I would have brought in person. Here’s the vibe I’m after: open with a bold, Bollywood-style title sequence, then roll into a funny friendship montage filled with playful on-screen captions over our photos, all driven by upbeat Bollywood party music. End on a warm, emotional note where my recorded voice message plays over the last shots. I’ll supply the images and the voice note as soon as we start. Timing is tight—I need the finished Full-HD MP4 within 24 hours of handing you the assets, plus an easily shareable link for the DJ or family to cue on the night. Acceptance checklist ...",
+      "title": "Fun Sangeet Surprise Video Montage",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/fun-sangeet-surprise-video-montage",
+      "why": [
+        "budget floor 230 THB = right-sized only (+8)",
+        "3 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 26250,
+        "low_thb": 8750,
+        "raw": "$250-750 USD"
+      },
+      "budget_text": "$333",
+      "budget_thb": 8750,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 3,
+      "deadline_text": "3 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "4d2f87a895bd2cee",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: adult",
+      "posted_at": "",
+      "rank": 10,
+      "sample_fit": "product",
+      "score": 50,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I need an adult video edited. The final product should be fast-paced with social media-style effects. Requirements: - Cutting and joining clips - Adding music, text, and effects - Improving video and sound quality Ideal skills and experience: - Experience in editing adult content - Proficiency in video editing software - Strong understanding of social media trends and effects Please provide samples of similar work.",
+      "title": "Adult Video Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/adult-video-editing",
+      "why": [
+        "budget floor 8750 THB covers pack C (+30)",
+        "3 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$186",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 1,
+      "deadline_text": "1 day left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "ef919cf911cc6a63",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "promo",
+        "reel"
+      ],
+      "posted_at": "",
+      "rank": 2,
+      "sample_fit": "product",
+      "score": 65,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I have a series of raw, vertical clips that showcase my products and I need them turned into polished Instagram Reels ready for upload. The priority is crystal-clear, brand-consistent captions and on-screen text in a clean, professional style—no flashy effects, memes, or trending sounds, just a sharp edit that keeps viewers focused on the offer. Here’s what I expect from your edit: • Trim and sequence the footage so each Reel lands between 15-60 seconds. • Add concise headline, body, and call-to-action text that follows my brand font and color guidelines. • Sync the captions accurately to speech where needed and place them so they never clash with key visuals. • Deliver in 1080 × 1920 MP4, optimized for Instagram’s compression. If you wor...",
+      "title": "Clean Promo Instagram Reels Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/clean-promo-instagram-reels-editing",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 875,
+        "low_thb": 525,
+        "raw": "$15-25 USD"
+      },
+      "budget_text": "$20 / hr",
+      "budget_thb": 525,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 1,
+      "deadline_text": "1 day left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "2a0958cf759d8748",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I need 1 minute of kitchen-recorded audio cleaned for a comedic video post. Requirements: - Reduce echo for clearer natural voice - Fix low or uneven volume Ideal Skills: - Experience in audio editing - Proficient with noise reduction tools - Attention to detail for clear output",
+      "title": "Clean Kitchen Audio for Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/clean-kitchen-audio-for-video",
+      "why": [
+        "budget floor 525 THB covers pack A (+18)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$12",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in",
+      "days_left": null,
+      "deadline_text": "17 hours left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "96dc3e55f5a03f60",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I regularly shoot footage that showcases our crop-protection products in the field and I need those clips turned into punchy, platform-ready social media videos right away. Each edit will be short—think reels, stories, and quick posts that highlight benefits in 30–60 seconds. What matters most is speed without sacrificing clarity. I’m on an ASAP schedule, so you’ll often receive raw clips today and I’ll want the finished piece—color-corrected, sound sweetened, branded, and captioned—tomorrow. Please send a concise proposal describing: • your editing approach for fast-turn social content • the tools you use (Adobe Premiere Pro, After Effects, CapCut, etc.) • how you handle color grading for outdoor footage • any ideas you have ...",
+      "title": "Agriculture Brand Social Video Editor",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/agriculture-brand-social-video-editor",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 280,
+        "low_thb": 70,
+        "raw": "$2-8 USD"
+      },
+      "budget_text": "$5 / hr",
+      "budget_thb": 70,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:24Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 2,
+      "deadline_text": "2 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "0f9329db1fd30900",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "reel",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "Necesito que te encargues de la edición completa de este proyecto audiovisual. Te comparto todo el contexto para que tengas claro qué se necesita producir y cómo debe quedar el resultado final. 1. Material de trabajo El material original está organizado en esta carpeta de Google Drive: Encontrarás aproximadamente 15 vídeos grabados, con unos 10 minutos de material en total. Hay grabaciones horizontales y verticales. Antes de comenzar, revisa todo el material para identificar las mejores tomas y comprender el funcionamiento del producto. 2. Vídeos que debes entregar El proyecto consta de 4 vídeos finales: A. Un videotutorial principal (1 vídeo horizontal) Este es el contenido principal del proyecto. Debes: Revisar y org...",
+      "title": "Edición de Tutorial y Reels urgente",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-editing/edici-tutorial-reels-urgente",
+      "why": [
+        "budget floor 70 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 280,
+        "low_thb": 70,
+        "raw": "$2-8 USD"
+      },
+      "budget_text": "$6 / hr",
+      "budget_thb": 70,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 1,
+      "deadline_text": "1 day left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "75a6225f42604577",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "reel",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "PROYECTO DE EDICIÓN AUDIOVISUAL – BLOOMERALIVING Presupuesto total por el trabajo: USD 20 Cantidad de entregables: 2 videos Plazo máximo: 3 días naturales. 1. VIDEO TUTORIAL PRINCIPAL - Cantidad: 1 video. - Formato horizontal 16:9. - Destino: YouTube y página web. - Duración: la necesaria para explicar correctamente el proceso, sin alargar innecesariamente el contenido. Edición requerida: - Selección y organización de las mejores tomas. - Montaje cronológico y narrativo. - Eliminación de pausas, errores y repeticiones. - Incorporación de textos explicativos y señalizaciones visuales. - Transiciones profesionales y acercamientos cuando sean necesarios. - Corrección de color y mejora del aud...",
+      "title": "Editor para Tutorial y Reel Bloomeraliving",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/editor-para-tutorial-reel-bloomeraliving",
+      "why": [
+        "budget floor 70 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 1050,
+        "low_thb": 350,
+        "raw": "$10-30 USD"
+      },
+      "budget_text": "$26",
+      "budget_thb": 350,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 1,
+      "deadline_text": "1 day left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "6e6fb35c49e1a06b",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "ad ",
+        "edit",
+        "tiktok",
+        "video",
+        "youtube"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 28,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "Tengo unas 2 h 30 min de grabación cargada de humor negro, bromas con groserías, memes y momentos espontáneos. Quiero transformarla en: • Un video principal de 20-25 min con un ritmo natural: cortes ágiles, remate claro de cada chiste y cero solemnidad. • Varios clips para TikTok (15-60 s) que rescaten los momentos más graciosos, bromas, discusiones y reacciones entre amigos. Solo necesito subtítulos cuando una frase sea clave o especialmente divertida; el resto debe mantenerse limpio. Los efectos, zooms y memes visuales se usan con criterio: que sumen al chiste, nunca que lo opaquen. Busco a alguien que realmente entienda el humor de nuestra generación, sepa identificar el timing del meme y tenga la creatividad para hacerlo t...",
+      "title": "Editor dinámico YouTube/TikTok",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/av-editing/editor-din-mico-youtube-tiktok",
+      "why": [
+        "budget floor 350 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 525,
+        "low_thb": 315,
+        "raw": "₹750-1250 INR"
+      },
+      "budget_text": "$10 / hr",
+      "budget_thb": 315,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "241c3fd8bed3efe6",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I’m Santhosh, a freelance video editor from Theni, Tamil Nadu, and my workload of short-form content is growing faster than I can handle alone. I shoot plenty of vertical clips for Instagram Reels and YouTube Shorts and want them trimmed into tight, professional pieces that feel effortless—no flashy effects, just crisp cuts, on-brand colors, and the right music sync. Here’s what I need from you on a regular basis: • 15–60 second Reels/Shorts in 9:16, delivered as high-quality MP4s • Clean, consecutive cuts that keep the energy up without jumpiness • Basic sound balancing, royalty-free background tracks when needed, and color consistency across all clips • Quick turnarounds (24-48 hours per video once footage is provided) I’ll...",
+      "title": "Clean Instagram Reels Editing Needed -- 2",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/final-cut-pro/clean-instagram-reels-editing-needed",
+      "why": [
+        "budget floor 315 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 8750,
+        "low_thb": 1050,
+        "raw": "$30-250 USD"
+      },
+      "budget_text": "$119",
+      "budget_thb": 1050,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "6de209b10a255f62",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "promo",
+        "reel",
+        "tiktok",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "rank": 9,
+      "sample_fit": "still",
+      "score": 65,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I am looking for an experienced AI automation developer to build a fully automated social media management system for my e-commerce accessories business. The main objective is to automate content creation and publishing on Instagram and TikTok with minimal manual intervention. Required Features: 1. AI Content Creation * Automatically generate professional social media posts using my product images. * Create attractive promotional designs and marketing content. * Generate engaging captions, hashtags and calls to action. * Support both Arabic and English content. * Maintain consistent brand identity. 2. AI Video Generation * Automatically create professional product videos from existing product images. * Generate Instagram Reels and TikTok videos. * Add animations, transitions, text ov...",
+      "title": "AI Video creating and Posting Bot",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-automation/video-creating-posting-bot",
+      "why": [
+        "budget floor 1050 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 5250,
+        "low_thb": 630,
+        "raw": "₹1500-12500 INR"
+      },
+      "budget_text": "$64",
+      "budget_thb": 630,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "d926af25afd81be0",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "footage",
+        "short",
+        "tiktok",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: website",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 58,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I need a complete workflow that turns the text, images and basic offer information I provide into short, faceless videos with an AI voice-over, on-screen captions and royalty-free stock footage. Once rendered, each video must be published automatically to the major platforms I use: • Instagram, Facebook, TikTok • YouTube, LinkedIn, X (Twitter) • Pinterest, Snapchat, Telegram Every video and its accompanying post should clearly surface my product or service details, price, brand story, customer benefits, current offer, website link and a direct call-to-action. Format, length, aspect ratio, thumbnails, captions and hashtags have to be adjusted so they look native on each channel. Here is what I expect as deliverables: 1. A repeatable script, no-code scenario or ligh...",
+      "title": "Automated AI Video Social Posting",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-video-editing/automated-video-social-posting",
+      "why": [
+        "budget floor 630 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 8750,
+        "low_thb": 1050,
+        "raw": "$30-250 USD"
+      },
+      "budget_text": "$109",
+      "budget_thb": 1050,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "f93e4030b3884a6b",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: game",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm looking for a talented video editor to create a high-energy highlight video for a championship football team. The video will be 3 to 5 minutes long and will capture the essence of 8 to 10 games. Key Requirements: - Fast cuts and dynamic editing - Incorporation of a cinematic music track with a build-up and epic finish Must Include: - Game-winning and championship moments - Best offensive and defensive plays - Team celebrations, sideline moments, and fan reactions Ideal Skills and Experience: - Proficient in video editing software (e.g., Adobe Premiere Pro, Final Cut Pro) - Strong sense of pacing and rhythm - Experience with sports highlight reels - Ability to select and sync appropriate music tracks Please provide samples of similar work. Looking forward to your bids!",
+      "title": "Championship Season Highlight Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/championship-season-highlight-video",
+      "why": [
+        "budget floor 1050 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "EUR",
+        "high_thb": 9500,
+        "low_thb": 1140,
+        "raw": "€30-250 EUR"
+      },
+      "budget_text": "$109",
+      "budget_thb": 1140,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:25Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "78f4118bfd88b8ba",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "film",
+        "short"
+      ],
+      "posted_at": "",
+      "rank": 8,
+      "sample_fit": "product",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I’m putting together a library of quick, unedited product clips—think 30–60 seconds each—featuring real electronics you already own. If the item is sold on Amazon and you can point me to its listing, it counts. What I’m after • Phone accessories (power banks, chargers, headphones) • Cameras or camera gear (lenses, tripods, etc.) • Personal-care or home gadgets (trimmers, smart devices, and similar) How to shoot Use any modern smartphone or camera, natural lighting, and no voice-over. A steady handheld or simple tripod setup is fine. Show a clean close-up from multiple angles and, where it makes sense, a quick clip of the item in action—for instance, a charger plugged in or a lens snapping onto a camera body. No music, graphics, o...",
+      "title": "Film Short Amazon Electronics Clips",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/videography/film-short-amazon-electronics-clips",
+      "why": [
+        "budget floor 1140 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 14000,
+        "low_thb": 3500,
+        "raw": "$100-400 USD"
+      },
+      "budget_text": "$208",
+      "budget_thb": 3500,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:26Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "881f868f9831e76f",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "promo",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "rank": 3,
+      "sample_fit": "product",
+      "score": 70,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Video Creator / Character Animation Developer (Part-Time Contract) About Us We are a small nonprofit organization dedicated to helping people who are struggling or simply need an extra boost in life. Our mission is to support communities through encouragement, assistance, and meaningful outreach programs. Position Overview We are looking for a creative and dependable Video Creator/Developer who can produce engaging short-form videos featuring a custom character based on our organization's founder. These videos will be used across multiple social media platforms to raise awareness, encourage donations, and promote our mission. Project Requirements Video Production • Create short-form videos between 30 seconds and 1 minute • Videos must be optimized for use across all major so...",
+      "title": "Animated Videos for Nonprofit Outreach",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/character-animation/animated-videos-for-nonprofit-outreach",
+      "why": [
+        "budget floor 3500 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "EUR",
+        "high_thb": 9500,
+        "low_thb": 1140,
+        "raw": "€30-250 EUR"
+      },
+      "budget_text": "$126",
+      "budget_thb": 1140,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:26Z",
+      "contact_public": "site message after sign-in (payment verified)",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "ead12dbe1777189f",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "rank": 8,
+      "sample_fit": "product",
+      "score": 65,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I have five specific topics that showcase key features of our technology website, and I need each one turned into a short Instagram Reel aimed at business owners and professionals. The tone is clear and informative—think of a concise product or website feature explainer rather than fast-paced news or gimmicky trends. What you’ll start with: • Only the written topics and a link to the site for reference. • No raw footage; you will source or create the visuals, screen captures, simple motion graphics, and background music yourself (all royalty-free or properly licensed). What I expect back: • 5 vertical Reels (9:16), 30–45 seconds each. • Clean, professional pacing, on-screen text that highlights each benefit, captions for accessibility, and my log...",
+      "title": "Edit 5 Tech Instagram Reels",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-production/edit-tech-instagram-reels",
+      "why": [
+        "budget floor 1140 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)",
+        "buyer's payment method verified (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 2625,
+        "low_thb": 1050,
+        "raw": "$30-75 USD"
+      },
+      "budget_text": "$52",
+      "budget_thb": 1050,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:26Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "13a20a54a1352eeb",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: game",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I'm looking for a talented video editor to create high-energy lacrosse player highlight videos for Instagram Reels. I will provide game footage via Dropbox containing preselected highlights. I'm looking for someone who can creatively turn these clips into a professional, engaging sports highlight reel. Editing style: Fast-paced, energetic and cinematic Clean transitions and cuts synchronized to music Slow motion, speed ramps and zoom effects where appropriate Creative player tracking or highlighting, if needed Effects that enhance the action without being excessive Color correction and exposure adjustments where necessary Deliverables: Approximately 30–60 seconds in length Vertical 9:16 format optimized for Instagram Reels High-quality MP4 (1080p minimum) A ver...",
+      "title": "Social Media Player Highlight Reel",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/social-media-player-highlight-reel",
+      "why": [
+        "budget floor 1050 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "USD",
+        "high_thb": 8750,
+        "low_thb": 1050,
+        "raw": "$30-250 USD"
+      },
+      "budget_text": "$100",
+      "budget_thb": 1050,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:26Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "e1c9cfc4df990824",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: website",
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 55,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I’m looking for a skilled video editor who can turn my raw footage into an emotional, cinematic piece that runs between one minute and ninety seconds. The final story will be screened on a large event display, embedded on a website, and repurposed for smaller presentations, so I need two polished masters: one in 16:9 and one in 9:16. You will receive only the original clips; selecting the right music, ambient sound design, and tasteful visual effects is part of the brief. I’m aiming for rich color-grading, smooth but not distracting transitions, and a subtle use of text or graphics that support the narrative without feeling like social-media style jump-cuts. Deliverables • 1× final 16:9 MP4 (1080p or higher) • 1× final 9:16 MP4 (1080×1920) &b...",
+      "title": "Cinematic Vertical & Horizontal Video Edit",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/color-grading/cinematic-vertical-horizontal-video-edit",
+      "why": [
+        "budget floor 1050 THB covers pack B (+25)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 5250,
+        "low_thb": 630,
+        "raw": "₹1500-12500 INR"
+      },
+      "budget_text": "$56",
+      "budget_thb": 630,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:26Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "6d6587fb9b0a6999",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "footage",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: avatar",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 63,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I need ten short videos, each running between five and fifteen minutes, where my professional avatar presents clear, structured advice on joining the Merchant Navy. The entire mini-series should focus on career guidance, eligibility requirements, and how to choose the right pre-sea courses rather than drilling exam questions. Throughout every segment the avatar must speak in a measured, formal tone that reflects our academy’s reputation. While the avatar talks, please overlay or cut to clean charts, eligibility tables, and step-by-step visual guides so viewers can absorb the key numbers and processes at a glance. Avoid distracting footage; the visuals should directly support the narration. I will supply a high-resolution head-and-shoulders photo and a short voice sample of the comp...",
+      "title": "Avatar-Led Merchant Navy Coaching Videos",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/voice-over/avatar-led-merchant-navy-coaching",
+      "why": [
+        "budget floor 630 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "repeat work stated (+15)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 336,
+        "low_thb": 252,
+        "raw": "₹600-800 INR"
+      },
+      "budget_text": "$12",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:26Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "910935f5c3257f17",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: motion graphic",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I regularly shoot short, vertical clips and now need them turned into eye-catching Reels that help my account pull in more views and followers. You’ll start with nothing but the raw footage; from there, I count on you to inject energy, add on-screen captions, quick transitions, trending sound effects or music, and any punchy graphics that keep viewers watching to the end. I’m working on a tight budget, so smart, efficient workflows are appreciated—think template-driven motion graphics, stock effects, and color presets that still look fresh. Every finished Reel should be delivered in 1080×1920 (MP4), under 60 seconds, ready for immediate upload to Instagram. Deliverables for each Reel: • Edited vertical video with fast-paced cuts, captions, and dynamic effects...",
+      "title": "Fast-Paced Reels Editing Needed",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-production/fast-paced-reels-editing-needed",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 630,
+        "low_thb": 252,
+        "raw": "₹600-1500 INR"
+      },
+      "budget_text": "$19",
+      "budget_thb": 252,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:27Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "00e4cd47d4faab83",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "video"
+      ],
+      "posted_at": "",
+      "sample_fit": "promo",
+      "score": 38,
+      "source": "freelancer.com",
+      "state": "verified",
+      "status": "open",
+      "text": "I'm looking for an experienced video editor to create a fast-paced social media reel for Instagram Reels. The reel should be high-energy and engaging, featuring music and effects, focusing on the best and most exciting moments from several videos I will provide. Requirements: - Combine multiple videos into a cohesive, dynamic reel - Add music and effects to enhance engagement - Focus on the best and most exciting moments Ideal Skills and Experience: - Proficiency in video editing software (e.g., Adobe Premiere Pro, Final Cut Pro) - Experience creating content specifically for Instagram Reels - Strong sense of timing and aesthetics for engaging video content - Ability to work within budget and meet deadlines Please include samples of previous similar work in your bids.",
+      "title": "Dynamic Instagram Reel Creation",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/adobe-premiere-pro/dynamic-instagram-reel-creation",
+      "why": [
+        "budget floor 252 THB = right-sized only (+8)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 5250,
+        "low_thb": 630,
+        "raw": "₹1500-12500 INR"
+      },
+      "budget_text": "$61",
+      "budget_thb": 630,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:27Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "78fa4bb3e7841dd8",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "footage",
+        "reel",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 48,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I have a short-form social media clip that needs a professional, polished touch. The raw footage is ready; what I’m after is the same high-end finish you’d expect on a branded YouTube piece—clean color correction, eye-catching graphics, and an overall look that feels cohesive with my brand. Please make sure the final edit includes: • Animated text and captions • Logo, brand colors, and supporting graphics • Music, sound effects, and smooth transitions I’ll provide the logo files, brand palette, and any reference material as soon as we get started. The finished video should be delivered in the standard vertical format (1080 × 1920 MP4) optimized for Instagram Reels and TikTok, along with any project files so minor tweaks are still possibl...",
+      "title": "Premium Social Media Video Editing",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/video-editing/premium-social-media-video-editing",
+      "why": [
+        "budget floor 630 THB covers pack A (+18)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$206",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:27Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "8f611c6a34ee86a6",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "footage",
+        "short",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "still",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "I want to turn a single idea into a short, engaging explainer video built entirely with AI tools. The piece is aimed at customers and the general public, so the language, pacing, and visuals all need to feel friendly and approachable. Style & tone • Lively animated characters and motion-graphic elements—no live-action footage. • Clear, concise narration that walks viewers through the concept step-by-step. Workflow I’ll share the core talking points; you refine them into a tight script, draft a simple storyboard, and then generate the animated sequence using your preferred AI platform (Runway, Synthesia, D-ID, After Effects with AI plugins—whatever you’re comfortable with). Add a natural-sounding voice-over and light background music to keep...",
+      "title": "AI Animated Explainer Video",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/ai-animation/animated-explainer-video-40833781",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "buyer's description",
+        "currency": "INR",
+        "high_thb": 15750,
+        "low_thb": 5250,
+        "raw": "₹12500-37500 INR"
+      },
+      "budget_text": "$219",
+      "budget_thb": 5250,
+      "channel": {
+        "detail": "the bid button is behind a free account; K has not approved one",
+        "kind": "bidding_requires_login",
+        "permitted_now": false
+      },
+      "checked_at": "2026-11-25T16:09:27Z",
+      "contact_public": "site message after sign-in",
+      "days_left": 6,
+      "deadline_text": "6 days left",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "ac5dc7df41df08ac",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "short",
+        "video",
+        "youtube"
+      ],
+      "out_of_scope_reason": "not our service: animat",
+      "posted_at": "",
+      "sample_fit": "product",
+      "score": 60,
+      "source": "freelancer.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "Channel: Chennai Real Estate Content: Real estate property videos, land sales, house tours, beachside properties, project walkthroughs, and YouTube Shorts. Responsibilities: Edit engaging YouTube Shorts (30–60 seconds). Edit long-form property videos (3–8 minutes). Add subtitles, text animations, transitions, and background music. Create strong hooks in the first 3 seconds. Add maps, location details, property highlights, price details, and call-to-action. Improve video pacing, colour correction, sound quality, and overall presentation. Create attractive YouTube thumbnails. Edit videos to generate property enquiries and potential buyers. Requirements: Experience editing YouTube videos and Instagram Reels. Skilled in CapCut, Premiere Pro, or DaVinci Resolve. Creative storyt...",
+      "title": "Real Estate YouTube Video Editor",
+      "title_confirmed_on_page": true,
+      "url": "https://www.freelancer.com/projects/youtube/real-estate-youtube-video-editor",
+      "why": [
+        "budget floor 5250 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "6 days left (+10)"
+      ]
+    },
+    {
+      "budget": {
+        "basis": "listing card (platform-converted)",
+        "currency": "USD",
+        "high_thb": null,
+        "low_thb": 2450,
+        "raw": "$70"
+      },
+      "budget_text": "$70",
+      "budget_thb": 2450,
+      "channel": {
+        "detail": "a public comment or the address printed in the post",
+        "kind": "public_post_or_email",
+        "permitted_now": true
+      },
+      "checked_at": "2026-11-25T16:09:27Z",
+      "contact_public": "HN reply or the email in the post",
+      "days_left": null,
+      "deadline_text": "",
+      "found_at": "2026-11-25T13:49:23Z",
+      "http_status": 200,
+      "id": "284177c0015e0342",
+      "kind": "prospect",
+      "last_checked_at": "2026-11-25T13:49:56Z",
+      "match_reason": "match: video + editing/short-form",
+      "matched_terms": [
+        "edit",
+        "reel",
+        "video"
+      ],
+      "out_of_scope_reason": "not our service: game",
+      "posted_at": "2022-06-01T16:27:05Z",
+      "rank": 7,
+      "sample_fit": "promo",
+      "score": 65,
+      "source": "news.ycombinator.com",
+      "state": "out_of_scope",
+      "status": "open",
+      "text": "SEEKING FREELANCER | http://abbym.io/ | REMOTE | Portugal | C/C++, GPU Programming (OpenGL, CUDA, Metal etc.) We're into producing innovative audiovisual software : multimedia / video editing / visual effects. Looking for C/C++ Developers, Game Developer for GPU Programming, Senior Video Editors, with good English & writing skills Contact us for more information, introduce yourself and what you're looking for http://abbym.io/",
+      "title": "SEEKING FREELANCER | http://abbym.io/ | REMOTE | Portugal | C/C++, GPU Programming (OpenGL, CUDA, Metal etc.) We're into",
+      "title_confirmed_on_page": true,
+      "url": "https://news.ycombinator.com/item?id=31584281",
+      "why": [
+        "budget floor 2450 THB covers pack C (+30)",
+        "asks for vertical short-form (+20)",
+        "contactable without a new account (+15)"
+      ]
+    }
+  ],
+  "top": [
+    "b0a88aaee1b16d37",
+    "ef919cf911cc6a63",
+    "e22673ea32c24825",
+    "5648939b4c643c82",
+    "92c564627c66e116",
+    "1464494d0174ebf9",
+    "926c626dc0f15e33",
+    "78f4118bfd88b8ba",
+    "93f77bfa5c9a05e1",
+    "28059d0391535af4"
+  ],
+  "top_count": 10,
+  "verified_count": 33
+}

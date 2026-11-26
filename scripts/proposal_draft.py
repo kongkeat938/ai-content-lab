@@ -34,7 +34,17 @@ THAI = re.compile(r"[\u0e00-\u0e7f]")
 # avatars, 3D or a whole production pipeline is not ours to promise.
 NOT_OURS = ("animat", "avatar", "3d ", "motion graphic", "explainer", "whiteboard", "vfx",
             "website", "app development", "logo design", "voice over artist", "ai film",
-            "ai video generator", "ai animation", "game", "seo", "backlink")
+            "ai video generator", "ai animation", "game", "seo", "backlink",
+            # on-site production: we cut finished footage, we do not film
+            "videographer", "cinematograph", "filming", "on-site shoot", "photographer",
+            "shoot the", "film crew",
+            # ideation is a different job from cutting; AI-made video is not cutting either
+            "ideation", "ai video", "ai promo",
+            # content we will not take, whatever the budget says
+            "adult", "xxx", "porn", "nude", "nsfw", "escort", "18+",
+            # we cannot caption a language we do not read
+            "arabic", "hindi", "urdu", "turkish", "korean", "japanese", "mandarin",
+            "persian", "vietnamese", "indonesian", "malay")
 
 
 def load(path: str, default):
@@ -117,6 +127,22 @@ def pick_package(b: float | None, packages: list[dict]) -> dict:
             "primary": False}
 
 
+SAMPLE_KINDS = {
+    "product": "sample_product_45s.mp4",
+    "promo": "sample_promo_20s.mp4",
+    "still": "sample_still_30s.mp4",
+}
+
+
+def sample_kind(item: dict) -> str:
+    blob = f"{item.get('title','')} {item.get('text','')}".lower()
+    if any(t in blob for t in ("image", "photo", "still", "slideshow", "narration", "ไม่มีวิดีโอ")):
+        return "still"
+    if any(t in blob for t in ("product", "shop", "sale", "promo", "advert", "launch", "offer")):
+        return "product"
+    return "promo"
+
+
 def sample_for(item: dict) -> str:
     blob = f"{item.get('title','')} {item.get('text','')}".lower()
     if any(t in blob for t in ("product", "shop", "sale", "promo", "advert", "launch")):
@@ -147,9 +173,31 @@ def draft_text(item: dict, pkg: dict, packs: dict, samples: list[str]) -> str:
         f"{('Pack ' + pkg['id']) if pkg['id'] != 'mini' else 'Right-sized to your budget'}: "
         f"{pkg['clips']} clips, {pkg['price']} THB, delivered in "
         f"{packs.get('turnaround_en', '')}.\n"
-        f"Samples (mine, produced to show the craft — not client work): {PORTFOLIO}\n\n"
+        f"Samples (mine, produced to show the craft — not client work): {PORTFOLIO}\n"
+        f"  - the one closest to this job: {SAMPLE_KINDS.get(sample_kind(item), samples[0])}\n\n"
         f"I cut the first clip before you pay anything. Send the footage.\n"
     )
+
+
+OPPORTUNITIES = os.environ.get("OPPORTUNITY_STORE") or os.path.join(ROOT, "content", "opportunities.json")
+
+
+def from_opportunities(top: int) -> list[dict]:
+    """The verified, in-scope, ranked rows. This is the only list a draft may be
+    built from once verification has run: an unverified posting is not an
+    opportunity, and the ranking has to be arguable from the row itself."""
+    if not os.path.exists(OPPORTUNITIES):
+        return []
+    with open(OPPORTUNITIES, encoding="utf-8") as fh:
+        db = json.load(fh)
+    by_id = {r["id"]: r for r in db.get("rows", [])}
+    out = []
+    for rid in db.get("top", [])[:top]:
+        r = dict(by_id[rid])
+        r["verified"] = r.get("state") == "verified"
+        r["budget_text"] = (r.get("budget") or {}).get("raw", "")
+        out.append(r)
+    return out
 
 
 def main() -> int:
@@ -170,10 +218,11 @@ def main() -> int:
         print(f"sent by agent : 0  (this program has no send path)")
         return 0
 
-    db = load(PROSPECTS, {"items": []})
+    ranked = from_opportunities(a.top)
+    db = {"items": ranked} if ranked else load(PROSPECTS, {"items": []})
     open_items = []
     for i in db.get("items", []):
-        if i.get("status") != "open":
+        if i.get("status") not in (None, "open", "verified"):
             continue
         ok, why_not = fits_service(i)
         if ok:
@@ -181,11 +230,17 @@ def main() -> int:
         else:
             index.setdefault("skipped", []).append(
                 {"prospect_id": i["id"], "url": i["url"], "reason": why_not})
-    scored = sorted(((score(i), i) for i in open_items), key=lambda t: -t[0][0])
+    scored = []
+    for i in open_items:
+        s, w = (i.get("score", 0), i.get("why", [])) if ranked else score(i)
+        i["why"] = w
+        scored.append((s, i))
+    scored.sort(key=lambda t: -t[0])
     done = {d["prospect_id"] for d in index["drafts"]}
     made = 0
     os.makedirs(OUTDIR, exist_ok=True)
-    for (sc, why), item in scored:
+    for sc, item in scored:
+        why = item.get("why", [])
         if made >= a.top:
             break
         if item["id"] in done:
@@ -195,9 +250,15 @@ def main() -> int:
         body = draft_text(item, pkg, packs, samples)
         path = os.path.join(OUTDIR, f"{item['id']}.md")
         with open(path, "w", encoding="utf-8") as fh:
+            b = item.get("budget") or {}
             fh.write(f"<!-- prospect: {item['url']} | source: {item['source']} | "
-                     f"score {sc}/100 | their budget: {item.get('budget_text') or 'not stated'} | "
-                     f"status: draft -->\n\n{body}")
+                     f"rank {item.get('rank', '-')} score {sc}/100 | "
+                     f"budget: {b.get('raw') or item.get('budget_text') or 'not stated'}"
+                     f"{' (' + str(b.get('low_thb')) + '-' + str(b.get('high_thb')) + ' THB, '
+                        + str(b.get('basis')) + ')' if b.get('low_thb') else ''} | "
+                     f"days_left: {item.get('days_left', 'n/a')} | "
+                     f"contact: {item.get('channel', {}).get('kind', 'unknown')} | "
+                     f"sample: {SAMPLE_KINDS.get(sample_kind(item), '')} | status: draft -->\n\n{body}")
         index["drafts"].append({
             "prospect_id": item["id"], "prospect_url": item["url"], "source": item["source"],
             "title": item["title"][:160], "score": sc, "why": why, "package": pkg["id"],
