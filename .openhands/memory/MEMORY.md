@@ -14,15 +14,14 @@
 - **Longer is better/view** (120-min ≈ 6.0 vs 17-min ≈ 4.6). **`content/PAUSED`** pauses a channel.
   **Cadence: step up, don't jump**.
 - **The first 2 min binds** (dharma 28.9%@2%, target ≥40%); fade-in 4s→1s = **+12 dB** hook.
-- **ฟอร์แมตที่ชนะ (วัดสด 2026-11-21):** คลิป niche มัธยฐาน **85.7 นาที**, ชื่อ = ปัญหา+เวลา+ผล;
-  story spec `*_story_*.json` + `test_story_specs.py`;
+- **ฟอร์แมตชนะ (11-21):** niche มัธยฐาน **85.7 นาที**, ชื่อ = ปัญหา+เวลา+ผล; story spec `*_story_*.json`;
   90 นาที = `make_compilation.py --minutes 90`.
 
 ## 🔑 Durable principles (K)
 - **PCSEV.** Verify **live**: live API > output file (ffprobe/ebur128) > a test that FAILs > a doc;
   best = **counter with an invariant** (`counter_ledger.py`).
 - **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
-- **"แยกไม่ได้" ≠ "ผิด":** quota-dead check → **per-channel secret = identity**.
+- **"แยกไม่ได้" ≠ "ผิด":** quota-dead → **per-channel secret = identity**.
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** (`winremote`, `topics/03`).
 - **K ใช้มือถือ — ห้ามขอให้ล็อกอินผ่าน noVNC/PC1**; ล็อกอินที่ต้องมี K = `yt_auth_device.py`.
@@ -30,11 +29,10 @@
 - **A gate whose floor came from the same demo it approved cannot detect drift**; a guard must be
   able to FAIL, never hardcode what it sweeps, `403 gate + || echo 0` = **false pass** (`topics/05`).
 - **Pod env:** reset (ทุก 2–4 เซสชัน, ตาม idle ~2 h) → `pip -r requirements.txt` + static-ffmpeg;
-  **secret injects only if its NAME is in the command**; git identity resets. **push:** `scripts/gh_auth.py push` (plain `git push` = 403);
+  **secret injects only if its NAME is in the command**; git identity resets. **push:** `GH_PUSH_TOKEN=$GITHUB_TOKEN scripts/gh_auth.py push` (HEAD→main; vault token 401);
   **งานต้องออกจาก pod** = `durability_guard.py` + `restore_verify.py` (`topics/05`).
 
-- **MV/เนื้อเรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (sha ซ้ำ = FAIL; บทซ้ำ = exit 3);
-  AI gen ล่ม → procedural.
+- **MV/เรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (ซ้ำ = FAIL); AI gen ล่ม → procedural.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
@@ -66,19 +64,19 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว → `--gen-art`; URL ≠ ของเรา (AUTO frame ก็ได้) → 8×8 diff.
+- **Thumb:** ผิดแนว → `--gen-art`; ของเราหรือไม่ → 8×8 diff.
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
 
 ## 🗺️ Topic map (read on demand)
 - `topics/*.md` · `docs/DECISION-*`/`PANEL-*`/`HEALTH.md`.
-- **Automation:** GH Actions (watchdog → foreman → rails), kill switch `content/STOP`; **no STOP,
-  rails off → ak produces/uploads by hand**; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
+- **Automation:** GH Actions (watchdog→foreman→rails), kill switch `content/STOP`; rails off →
+  ak ทำมือ; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
-  (`test_publish_shorts_cap.py`) — a **Shorts-rail** rule: `publish_youtube.py` neither checks nor
-  records it.
+  (`test_publish_shorts_cap.py`) — Shorts-rail rule; `publish_youtube.py` ไม่นับ (มี `upload_audit.jsonl`).
 - **Delegation:** genx+dharma → Manager `ch3@example.invalid`; ch4 = Coverr b-roll.
-- **Comment writes need `force-ssl`** (pinned Short CTA 403s).
+- **Comment writes need `force-ssl`**: วัด 2026-11-26 dharma token มีแค่ `.../auth/youtube` → pinned CTA
+  comment ถูก skip 100% → **SHORTS→long = 0**.
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
