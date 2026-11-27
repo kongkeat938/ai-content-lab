@@ -787,6 +787,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "109": {
+      "video_id": "V6Ih1IV1MY4",
+      "url": "https://youtu.be/V6Ih1IV1MY4",
+      "title": "คุณมีสิทธิ์ที่จะเหนื่อยและวางภาระลงได้เลย #Shorts",
+      "posted_at": "2026-11-27T09:51:47+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/109/thumb_109.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
