@@ -210,9 +210,31 @@ def norm_title(t: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"\s*#\w+", "", t or "")).strip().lower()
 
 
+def _title_of(spec_entry: dict) -> str:
+    """The exact string the upload will carry (95-char hook + the #Shorts tag)."""
+    return (spec_entry["hook"][:95] + " #Shorts")[:100]
+
+
 def title_is_repeat(title: str, live: set[str]) -> bool:
     """True when this exact title is already on the channel."""
     return norm_title(title) in live
+
+
+def refill_without_repeats(todo: list, queue: list, live: set[str]) -> tuple[list, list]:
+    """Drop a repeat from this run and fill its slot from the rest of the queue.
+
+    Refusing the whole run would leave the channel empty for the day, which reads
+    as a stall; one fresh clip from further down the same order is the better
+    trade. Returns (what to publish now, what was refused).
+    """
+    repeats = [s for s in todo if title_is_repeat(_title_of(s), live)]
+    if not repeats:
+        return todo, []
+    refused = {s["id"] for s in repeats}
+    taken = refused | {s["id"] for s in todo}
+    fill = [s for s in queue if s["id"] not in taken
+            and not title_is_repeat(_title_of(s), live)][:len(repeats)]
+    return [s for s in todo if s["id"] not in refused] + fill, repeats
 
 
 def live_titles(yt, channel_id: str, limit: int = 50) -> set[str]:
@@ -802,6 +824,7 @@ def main() -> int:
         if held:
             print(f"  holding {len(held)} clip(s) whose hook lacks the measured "
                   f"tension marker (flat scenes: the shape that got the channel withheld)")
+    queue = list(todo)              # the whole ordered pool, before the per-run slice
     if args.per_run:
         todo = todo[:min(args.per_run, room)]
     done = [s["id"] for s in scripts if man["shorts"].get(s["id"], {}).get("video_id")]
@@ -845,11 +868,20 @@ def main() -> int:
               "refusing to publish without the duplicate check", file=sys.stderr)
         return 2
     print(f"  {len(live)} live titles loaded for the duplicate check")
+    # A repeat must not cost the channel its slot: fill the run from the next
+    # fresh clip in the same order. Refusing the whole run would leave the day
+    # empty and look like a stall, which is a worse signal than one extra read.
+    todo, repeats = refill_without_repeats(todo, queue, live)
+    for s in repeats:
+        print(f"  {s['id']}: skipped -- this title is already live on the channel")
+    if repeats and not todo:
+        print("nothing to do: every queued clip repeats a title already live")
+        return 0
 
     rc = 0
     for s in todo:
         sid = s["id"]
-        title = (s["hook"][:95] + " #Shorts")[:100]
+        title = _title_of(s)
         if title_is_repeat(title, live):
             print(f"  {sid}: HELD -- this title is already live on the channel")
             rc = 1

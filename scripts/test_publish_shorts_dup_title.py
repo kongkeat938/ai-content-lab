@@ -77,9 +77,25 @@ def main() -> int:
     check("the guard can fail: an empty channel matches nothing",
           not ps.title_is_repeat("A title #Shorts", ps.live_titles(FakeYt([[]]), "UC_TEST")))
 
-    # 3. the gate has to be wired into the publish path, not just available
+    # 3. a refused repeat must not cost the channel its slot for the day
+    def clip(cid, hook):
+        return {"id": cid, "hook": hook}
+
+    queue = [clip("a", "ซ้ำ #Shorts"), clip("b", "ใหม่หนึ่ง"), clip("c", "ใหม่สอง")]
+    live_set = {ps.norm_title("ซ้ำ #Shorts")}
+    todo, refused = ps.refill_without_repeats([queue[0]], queue, live_set)
+    check("the repeat is refused", [c["id"] for c in refused] == ["a"], str(refused))
+    check("its slot is filled from the queue", [c["id"] for c in todo] == ["b"], str(todo))
+    todo, refused = ps.refill_without_repeats(queue[:1], [queue[0]], live_set)
+    check("an all-repeat pool publishes nothing instead of a duplicate",
+          todo == [] and [c["id"] for c in refused] == ["a"], str((todo, refused)))
+    todo, refused = ps.refill_without_repeats([queue[1]], queue, live_set)
+    check("a fresh clip is untouched", [c["id"] for c in todo] == ["b"] and not refused)
+
+    # 4. the gate has to be wired into the publish path, not just available
     src = open(os.path.join(HERE, "publish_shorts.py"), encoding="utf-8").read()
     check("the loop consults the gate", "if title_is_repeat(title, live):" in src)
+    check("the run refills instead of stalling", "refill_without_repeats(todo, queue, live)" in src)
     check("a repeat is held, not uploaded", "HELD -- this title is already live" in src)
     check("an unreadable channel is BLIND (exit 2), never a silent pass",
           "refusing to publish without the duplicate check" in src and "        return 2" in src)
