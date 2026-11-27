@@ -37,8 +37,8 @@
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
 - **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
   `keep_clips_live.py` restores. **`videos.update` REPLACES the whole `snippet`/`status`**.
-- **Repo is PUBLIC** (private halts the rails): never commit a credential; `yt_token*` ignored; secret-guard ไม่ wire.
-- **Quota:** `videos.insert`, reset 08:00 UTC; 1ช่อง=1acc
+- **Repo is PUBLIC** (private halts the rails): never commit a credential; `yt_token*` ignored; secret-guard ไม่ wire (TODO)
+- **Quota:** `videos.insert`, reset 08:00; 1ช่อง=1acc
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; **One duration
   parser** `yt_duration.py`. GitHub cron fires late;
   a rail can be `disabled_manually` → measure `actions/workflows` first.
@@ -64,7 +64,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว→`--gen-art`; 8×8
+- **Thumb:** ผิดแนว→`--gen-art`
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
