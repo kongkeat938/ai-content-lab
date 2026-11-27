@@ -945,6 +945,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "136": {
+      "video_id": "tfrWkQ3jx8A",
+      "url": "https://youtu.be/tfrWkQ3jx8A",
+      "title": "คืนนี้ลองดึงใจกลับมาที่ลมหายใจอุ่น #Shorts",
+      "posted_at": "2026-11-27T17:41:59+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/136/thumb_136.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
