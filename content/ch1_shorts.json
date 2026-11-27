@@ -798,6 +798,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "110": {
+      "video_id": "sGTOxfOjqrE",
+      "url": "https://youtu.be/sGTOxfOjqrE",
+      "title": "คุณมีสิทธิ์เลือกความสงบมากกว่าการต้องเอาใจทุกคน #Shorts",
+      "posted_at": "2026-11-27T15:06:20+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/110/thumb_110.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
