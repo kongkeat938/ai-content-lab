@@ -934,6 +934,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "135": {
+      "video_id": "zlgdIGRvt6Y",
+      "url": "https://youtu.be/zlgdIGRvt6Y",
+      "title": "คืนนี้ลองขยับไหล่ให้ผ่อนคลายแล้วฟังเสียงหัวใจตัวเอง #Shorts",
+      "posted_at": "2026-11-27T15:07:01+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/135/thumb_135.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
