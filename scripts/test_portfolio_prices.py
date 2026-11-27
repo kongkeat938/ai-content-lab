@@ -52,6 +52,23 @@ def main() -> int:
     for m in re.findall(r'<source src="media/([^"]+)"', page):
         check(f"{m} exists", os.path.exists(os.path.join(ROOT, "docs", "portfolio", "media", m)))
 
+    listing_path = os.path.join(ROOT, "docs", "FASTWORK-LISTING-2026-11-27.md")
+    print("the listing sheet carries the same price and the same limits")
+    listing = open(listing_path, encoding="utf-8").read()
+    for p in packs["packages"]:
+        check(f"pack {p['id']} price is on the listing", f"{p['price']:,}" in listing, str(p["price"]))
+    stale = [n for n in ("890", "710") if n in listing]
+    check("no stale price on the listing", not stale, str(stale))
+    # Only the paste-ready block (lines quoted with "> ") goes on the site, so that
+    # is what must not promise reach; the sheet also *names* these phrases as
+    # forbidden, and a whole-file grep would flag its own rule.
+    paste = "\n".join(l for l in listing.splitlines() if l.startswith("> "))
+    check("the paste-ready block exists", len(paste) > 300, str(len(paste)))
+    hits = [b for b in banned + ("รับประกันยอดวิว", "มาตรฐานแพลตฟอร์ม") if b in paste]
+    check("the paste-ready copy promises no reach and no platform standard", not hits, str(hits))
+    check("the listing tells K the account is his step",
+          "ak never signs up as K" in listing)
+
     print("\nPASS test_portfolio_prices" if not FAILED else f"\nFAIL test_portfolio_prices: {FAILED}")
     return 1 if FAILED else 0
 
