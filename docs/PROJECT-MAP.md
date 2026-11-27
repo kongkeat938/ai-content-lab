@@ -205,6 +205,8 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
   set `"prefer_short": True` and publish the short end of the pool first — a sort, not a gate, so
   a long clip still goes out when the short ones run out. Guard `test_prefer_short.py` (fails when
   the order is reversed; 11 dharma / 18 genx unpublished clips are predicted over 48 s).
+  **Era-controlled (2026-11-28):** inside the last 21 days the gap is 1.9x pooled (14.69 vs 7.63 v/day),
+  3.4x on dharma, **thin on genx (1.25x)** — the direction holds, the lifetime 8-vs-142 figure overstates it.
 - **The daily cap counts every ledger key that belongs to a channel** (`_ledger_keys`: channel id
   *and* slug). Measured 2026-11-24: `publish_motion.py`/`remake_shorts.py` recorded under the slug,
   so `uploads_in_last_24h()` read 0 with three dharma uploads inside 24 h — another rail could

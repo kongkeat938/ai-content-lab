@@ -49,6 +49,28 @@ not weak — it is dead: median 8 lifetime views against 142–201 for everythin
 48.7 s clip still opened at 87 views/day, so the bar is not "48 s exactly". Until the A/B runs, the
 production rule stays 30–45 s (the gate already allows ≤60 s; this is a target, not a gate).
 
+### 3b. The same test inside one era (2026-11-28, so the claim is not an age artefact)
+
+Lifetime views flatter the newest clips, so the >48 s group was re-measured among clips **posted in the
+same recent window** (posted_at from the manifest, views/day from the live API):
+
+| window | ≤48 s | >48 s | ratio |
+|---|---|---|---|
+| last 21 days | n=110, median **14.69 v/day** | n=27, median **7.63 v/day** | 1.9x |
+| last 12 days | n=34, 27.43 v/day | n=7, 7.03 v/day | 3.9x |
+| last 7 days | n=20, 61.74 v/day | n=5, 7.03 v/day | 8.8x |
+| dharma, 21 days | n=57, 24.85 v/day | n=11, 7.35 v/day | 3.4x |
+| genx, 21 days | n=53, 10.35 v/day | n=16, 8.28 v/day | 1.25x |
+
+**Honest read:** the direction survives the era control — it is not only "old clips were long". But the
+lifetime figure (8 vs 142–201) overstates the gap; inside a single era it is **1.9x pooled, 3.4x on
+dharma, and thin on genx (1.25x, n=16)**. The claim to keep is "prefer 30–45 s"; the claim to drop is
+"a 49 s clip is worth 5% of a 40 s clip". The A/B above is still what would settle it.
+
+Because the rail can now predict a clip's length from its script (`content/duration_calibration.json`,
+R²=0.956, n=241), it publishes the short end of the pool first on dharma and genx — a sort, not a gate,
+so a long clip still goes out when the short ones run out.
+
 ## 4. What we cannot measure (say so, do not invent)
 
 - **Watch time / average view duration** — needs the YouTube Analytics API; our OAuth scope is Data API only.
