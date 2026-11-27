@@ -80,6 +80,8 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 ## 3) Where the truth lives (do not duplicate these)
 
 - Goal + rules: `docs/GOAL.md`, `AGENTS.md` (root only), `docs/DECISION-*.md`.
+- Money math + the four income paths ranked: `docs/DECISION-2026-11-27-money-math.md`
+  (live subs/views per channel, distance to YPP, why the bottleneck is sending the offer).
 - Goal consults / panels: `docs/CONSULT-*.md` (the brief + the answer, incl. the measured numbers)
   and `docs/PANEL-*.md`. `docs/GROWTH-PLAN-*.md` is the plan that follows a consult. The latest
   goal consult is `docs/CONSULT-2026-11-18-goal.md` (Gemini alone) — it also records where

@@ -44,27 +44,27 @@
   `keep_clips_live.py` restores.
   **`videos.update` REPLACES the whole `snippet`/`status`** (`topics/05`).
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
-- **Quota:** `videos.insert`; reset 08:00 UTC
+- **Quota:** `videos.insert`; reset 08:00 UTC; Shorts: **ชื่อซ้ำ = refuse** (live read).
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; a
   GENERATED `docs/` report needs ONE writer. **One duration parser** `yt_duration.py`.
+  `fetch-depth:1` → `pull --rebase` **128**=id lost after upload; deepen first (`git_push_retry.sh`).
 - **Long-form rails** (`topics/05`): `skip` ≠ `skip_pub`; gate before queue; never downgrade a LIVE
   entry. **A pod render dies ~19 min in → render in `longform-standard.yml`**.
 - **GitHub cron** fires late; rails can be `disabled_manually` → measure `actions/workflows` first.
 - **TTS:** `PremwadeeNeural` refuses some texts → `speak()` uses VOICE.
-- **Reference look = MINIMUM bar**: long-form **4K 3840x2160** (gate `--min-height 2160`), Shorts
-  1080x1920, tv/bt709, -14 LUFS; **ONE grade `video_grade.py`** (`setparams=range=tv`).
-- **"4K เท่านั้นถึงอัพ · ห้ามซ้ำ ทั้งภาพ ดนตรี บท"** → ONE gate `upload_gate.py` (md5 ภาพ, bed id,
-  script n-gram ≥45% = refused); ไม่มี ffprobe = exit 2 BLIND; claim ตาม spec id (`topics/05`).
-- **Shorts: meet the standard or NOT upload.** `short_standard.py` 2160x3840, -14 LUFS, ≤60 s;
+- **Reference look = MINIMUM bar**: long **3840x2160**, Shorts **2160x3840**, tv/bt709, -14 LUFS;
+  **ONE grade `video_grade.py`**.
+- **K 2026-11-23: "4K เท่านั้นถึงอัพ · ห้ามซ้ำ"** → ONE gate `upload_gate.py` (md5 ภาพ, bed id,
+  n-gram ≥45% = refused); ไม่มี ffprobe = exit 2 BLIND (`topics/05`).
+- **Shorts: meet the standard or NOT upload.** `short_standard.py` ≤60 s;
   **`alimiter` limits SAMPLE peak** → `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.
-- **Vision grader NON-DETERMINISTIC** → judge metrics.
 - **A rail can die at IMPORT** (deps) → `test_workflow_deps.py`; stale tree fakes "missing"
   (`git fetch` first); **ffmpeg/git inherit stdin → SIGTTIN** → `stdin=DEVNULL`; vision grader
   NON-DETERMINISTIC → judge metrics, not CI.
 - **Dead source read as "clean" = false pass**: RSS 404 → `UU<id>`; **2=BLIND**.
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** .
-- **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); family genre ปลดระวาง;
-  slug ยัง `kongkeat-story`; **title ตั้งใน Studio** (API ไม่ได้).
+- **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); slug ยัง `kongkeat-story`;
+  **title ตั้งใน Studio** (API ไม่ได้); **paused 2026-11-27** (0 วิว/6 จาก 8 → `content/PAUSED`).
 - **Angle de-dup floor = 8** (`test_angle_pool.py`).
   **One live title = one video**.
 - **Thumb ผิดแนว → `--gen-art`.**
