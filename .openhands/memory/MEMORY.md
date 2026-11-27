@@ -56,7 +56,7 @@
 - **"4K เท่านั้นถึงอัพ · ห้ามซ้ำ ทั้งภาพ ดนตรี บท"** → ONE gate `upload_gate.py` (md5 ภาพ, bed id,
   script n-gram ≥45% = refused); ไม่มี ffprobe = exit 2 BLIND; claim ตาม spec id.
 - **`alimiter` limits SAMPLE peak** → `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.
-- **Vision grader NON-DETERMINISTIC** → judge metrics, not CI.
+- **Vision grader NON-DETERMINISTIC** → judge metrics.
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); slug ยัง `kongkeat-story`;
   **title ตั้งใน Studio** (API ไม่ได้). **Angle de-dup floor = 8** (`test_angle_pool.py`).
   **One live title = one video.**
@@ -76,7 +76,7 @@
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
   (`test_publish_shorts_cap.py`)
 - **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr
-- **Comment writes need `force-ssl`**: 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68 Shorts ตั้งแต่ 11-12 `cta_note`=skipped → **SHORTS→long = 0**; commentCount หน่วง ~20s; `scopes` ในไฟล์ไม่ครบ → probe insert(videoId ปลอม)=404 token อยู่ **GitHub repo
+- **Comment writes need `force-ssl`**: 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68 Shorts ตั้งแต่ 11-12 `cta_note`=skipped → **SHORTS→long = 0**; commentCount หน่วง ~20s; `scopes` ในไฟล์ไม่ครบ → probe insert(ปลอม)=404 token อยู่ **GitHub repo
   secrets**; `GITHUB_TOKEN` แตะไม่ได้ → **secret = K เท่านั้น** (gh expiry=?; push=HEAD→main)
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
