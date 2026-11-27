@@ -74,7 +74,7 @@
 - **Automation:** GH Actions (watchdog→foreman→rails), kill switch `content/STOP`; rails off →
   ak ทำมือ; NEW sys = `recovered/VIDEO-SYSTEM-NEW`.
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
-  (`test_publish_shorts_cap.py`)
+  (`cap.py`)
 - **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr
 - **Comment writes need `force-ssl`**: 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68 Shorts ตั้งแต่ 11-12 `cta_note`=skipped → **SHORTS→long = 0**; commentCount หน่วง ~20s; `scopes` ในไฟล์ไม่ครบ → probe insert(ปลอม)=404 token อยู่ **GitHub repo
   secrets**; `GITHUB_TOKEN` แตะไม่ได้ → **secret = K เท่านั้น** (gh expiry=?; push=HEAD→main)
