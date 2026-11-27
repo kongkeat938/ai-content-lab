@@ -36,13 +36,18 @@ distribution is the wall.
 
 | finding | n | evidence | confidence |
 |---|---|---|---|
-| Shorts longer than ~50 s do worse | 10 (dharma), 24 (genx) | dharma 0.06 vs 7.17 v/day, genx 0.30 vs 10.41 | **hypothesis** (small n, older clips) |
+| Shorts longer than ~48 s die | 67 vs 266 | median **8 views** (n=67) vs 142–201 for 33–48 s; holds inside the วิธี theme (0.19 vs 7.17 v/day) and the rest theme (0.36 vs 10.79) | **strong** for "do not ship >48 s", **not** proof of the cause (older clips came from an older builder — era confound) |
 | Titles longer than 55 chars do better | 14 / 46 | dharma 17.4 vs 6.1, genx 14.1 vs 6.2 | weak–moderate |
 | "ก่อนนอน" in the title does *worse* | 135 | 5.2 vs 16.0 v/day | confounded by theme mix — do not act yet |
 | A title with a number does better | 8 | 26.5 vs 6.2 v/day | too small to act |
 
 The only test worth running is the duration one, and it must be run as an A/B, not a rebuild:
 20 Shorts at 28–32 s vs 20 at 45 s, same theme, same hook pool, compare first-week views.
+
+Pooled over both live channels and controlled for theme (2026-11-27, n=333 Shorts), the >48 s group is
+not weak — it is dead: median 8 lifetime views against 142–201 for everything at 33–48 s, and the newest
+48.7 s clip still opened at 87 views/day, so the bar is not "48 s exactly". Until the A/B runs, the
+production rule stays 30–45 s (the gate already allows ≤60 s; this is a target, not a gate).
 
 ## 4. What we cannot measure (say so, do not invent)
 
