@@ -38,7 +38,7 @@
 - **"Rogue" = OURS** (`ax-workspace` auto-shorts, disabled): hide only on RSS-confirm or 24 h;
   `keep_clips_live.py` restores. **`videos.update` REPLACES the whole `snippet`/`status`**.
 - **Repo is PUBLIC** (private halts the rails): never commit a credential; `yt_token*` ignored; secret-guard ไม่ wire (TODO)
-- **Quota:** `videos.insert`, reset 08:00; 1ช่อง=1acc
+- **Quota:** `videos.insert`, 08:00; 1ช่อง=1acc
 - **Git/CI hygiene:** racing rails → one concurrency group/channel + the union driver; **One duration
   parser** `yt_duration.py`. GitHub cron fires late;
   a rail can be `disabled_manually` → measure `actions/workflows` first.
