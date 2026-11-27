@@ -24,6 +24,13 @@ best_effort=0
 git config merge.unionjson.name "union json ledgers"
 git config merge.unionjson.driver "python3 scripts/git_union_merge.py %O %A %B"
 
+# A `fetch-depth: 1` checkout cannot rebase -- `git pull --rebase` exits 128 with
+# no merge base, and every retry repeats it. Measured 2026-11-27: publish-shorts
+# published three Shorts and lost all three ids this way. Deepen once, up front.
+if [ "$(git rev-parse --is-shallow-repository 2>/dev/null)" = "true" ]; then
+  git fetch --unshallow origin main || git fetch --deepen=100 origin main || true
+fi
+
 attempts=5
 for i in $(seq 1 "$attempts"); do
   if ! git pull --rebase --autostash origin main; then

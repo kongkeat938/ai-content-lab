@@ -25,6 +25,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -202,6 +203,38 @@ def paused_channels() -> set:
             return {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
     except OSError:
         return set()
+
+
+def norm_title(t: str) -> str:
+    """Compare titles the way a viewer sees them: no hashtags, no spacing noise."""
+    return re.sub(r"\s+", " ", re.sub(r"\s*#\w+", "", t or "")).strip().lower()
+
+
+def title_is_repeat(title: str, live: set[str]) -> bool:
+    """True when this exact title is already on the channel."""
+    return norm_title(title) in live
+
+
+def live_titles(yt, channel_id: str, limit: int = 50) -> set[str]:
+    """The titles the channel already carries, so a repeat is refused pre-upload.
+
+    Measured 2026-11-27: 13 Shorts repeated a title that was already live (one
+    title four times), against K's rule that nothing repeats. The manifest only
+    knows what the rails recorded; a live read also sees a clip another uploader
+    posted.
+    """
+    info = yt.channels().list(part="contentDetails", id=channel_id).execute()
+    playlist = info["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+    titles: set[str] = set()
+    token = None
+    while len(titles) < limit:
+        r = yt.playlistItems().list(part="snippet", playlistId=playlist,
+                                    maxResults=50, pageToken=token).execute()
+        titles |= {norm_title(i["snippet"]["title"]) for i in r.get("items", [])}
+        token = r.get("nextPageToken")
+        if not token:
+            break
+    return titles
 
 
 def access_token(spec: dict) -> str:
@@ -504,6 +537,47 @@ def _union_resolve_upload_log() -> bool:
     return True
 
 
+def _deepen_if_shallow() -> None:
+    """Make the checkout rebaseable before anything tries to rebase it.
+
+    The rails check out with `fetch-depth: 1`, and `git pull --rebase` on a
+    shallow clone exits 128 (no merge base). Measured 2026-11-27: three runs
+    published their Short, then lost the id here, and the next audit read those
+    live clips as "rogue uploads outside the rails".
+    """
+    try:
+        r = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
+                           cwd=ROOT, capture_output=True, text=True, timeout=60)
+        if r.stdout.strip() != "true":
+            return
+        subprocess.run(["git", "fetch", "--unshallow", "origin", "main"],
+                       cwd=ROOT, capture_output=True, timeout=600)
+    except Exception:                                  # noqa: BLE001 -- best effort
+        pass
+
+
+def _sync_and_push(gitc: list[str], message: str, tries: int = 3) -> bool:
+    """Rebase onto origin/main and push, retrying the race; True when it landed."""
+    for attempt in range(1, tries + 1):
+        _deepen_if_shallow()
+        r = subprocess.run(gitc + ["pull", "--rebase", "origin", "main"],
+                           cwd=ROOT, capture_output=True, timeout=180)
+        if r.returncode != 0:
+            subprocess.run(["git", "rebase", "--abort"], cwd=ROOT, capture_output=True)
+            time.sleep(2 * attempt)
+            continue
+        if _union_resolve_upload_log():
+            print("  resolved a conflict in the upload ledger (kept both sides)")
+            subprocess.run(["git", "add", os.path.relpath(UPLOAD_LOG, ROOT)], cwd=ROOT)
+            subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT,
+                           capture_output=True)
+        if subprocess.run(["git", "push"], cwd=ROOT, capture_output=True,
+                          timeout=120).returncode == 0:
+            return True
+        time.sleep(2 * attempt)
+    return False
+
+
 def commit(path: str, message: str) -> None:
     """Persist the manifest to git the moment an id is known.
 
@@ -532,17 +606,12 @@ def commit(path: str, message: str) -> None:
         # second push is rejected and its id is lost (seen 2026-11-03). A plain
         # rebase, not --autostash: a dirty tree must fail loudly rather than let a
         # stash pop leave conflict markers in the ledger (612f185, 2026-11-09).
-        subprocess.run(gitc + ["pull", "--rebase", "origin", "main"],
-                       cwd=ROOT, check=True, capture_output=True, timeout=120)
-        if _union_resolve_upload_log():
-            print("  resolved a conflict in the upload ledger (kept both sides)")
-            subprocess.run(["git", "add", os.path.relpath(UPLOAD_LOG, ROOT)], cwd=ROOT)
-            subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT)
-            subprocess.run(gitc + ["pull", "--rebase", "origin", "main"],
-                           cwd=ROOT, capture_output=True, timeout=120)
-        subprocess.run(["git", "push"], cwd=ROOT, check=True,
-                       capture_output=True, timeout=120)
-        print("  manifest committed")
+        if _sync_and_push(gitc, message):
+            print("  manifest committed")
+        else:
+            print("  manifest commit failed after 3 attempts -- the id exists only "
+                  "on this runner and the next run will re-upload it",
+                  file=sys.stderr)
     except subprocess.CalledProcessError as exc:
         print(f"  manifest commit failed (will retry at the workflow step): {exc}",
               file=sys.stderr)
@@ -762,9 +831,25 @@ def main() -> int:
     except HttpError as exc:
         print(f"  channel check skipped ({exc.status_code})", file=sys.stderr)
 
+    # A repeat is refused before a byte moves. If the channel cannot be read the
+    # run is BLIND (exit 2): a duplicate that ships because the check failed is
+    # exactly what this gate exists to stop.
+    try:
+        live = live_titles(yt, spec["channel_id"])
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  BLIND: cannot read the channel's titles ({type(exc).__name__}) -- "
+              "refusing to publish without the duplicate check", file=sys.stderr)
+        return 2
+    print(f"  {len(live)} live titles loaded for the duplicate check")
+
     rc = 0
     for s in todo:
         sid = s["id"]
+        title = (s["hook"][:95] + " #Shorts")[:100]
+        if title_is_repeat(title, live):
+            print(f"  {sid}: HELD -- this title is already live on the channel")
+            rc = 1
+            continue
         # Build if needed (CI has no prebuilt file). A stalled channel's clip is the
         # changed probe, so it is always rebuilt (new voice), never a cached file.
         out = os.path.join(work, sid, f"short_{sid}.mp4")
@@ -854,7 +939,7 @@ def main() -> int:
         description = build_description(s, spec)
         body = {
             "snippet": {
-                "title": (s["hook"][:95] + " #Shorts")[:100],
+                "title": title,
                 "description": description[:5000],
                 "tags": spec["tags"],
                 "categoryId": spec["category"],
