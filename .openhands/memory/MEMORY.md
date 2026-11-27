@@ -12,8 +12,7 @@
   **dharma = 96% of long-form watch time → concentrate there.**
 - **Longer is better/view** (120-min ≈ 6.0 vs 17-min ≈ 4.6). **`content/PAUSED`** pauses a channel.
   **Cadence: step up, don't jump** ("repetitious").
-- **2 นาทีแรกผูกผล** (dharma 28.9%@2%, เป้า ≥40%); fade-in 4s→1s = **+12 dB**. **Shorts >48 วิ ตาย**
-  (n=333: median 8 วิว vs 142–201 ที่ 33–48 วิ) → เป้า 30–45 วิ (`DECISION-2026-11-27-money-math.md`).
+- **2 นาทีแรกผูกผล** (dharma 28.9%@2%, เป้า ≥40%); fade-in 4s→1s = **+12 dB**. **Shorts >48 วิ อ่อน** (คุมยุค 1.9x; genx 1.25x) → เป้า 30–45 วิ; `prefer_short` สั้นก่อน.
 - **ฟอร์แมตชนะ (2026-11-21):** niche **85.7 นาที**, ชื่อ = ปัญหา+เวลา+ผล; spec
   `content/standard/*_story_*.json`; 90 นาที = `make_compilation.py --minutes 90`.
 
@@ -62,7 +61,7 @@
   Studio; **paused 2026-11-27** (0 วิว/6 จาก 8) — PAUSED ต้องมีทั้ง `kongkeat` + `kongkeat-story`.
 - **Angle de-dup floor = 8** (`test_angle_pool.py`).
   **One live title = one video**.
-- **Thumb ผิดแนว → `--gen-art`.**
+- **Thumb ผิดแนว → `--gen-art`**
 - **Thumb URL ≠ ของเรา** → เช็ค 8×8 diff (`matches_live()`).
 - **Animated still ต้องตรงเรื่อง**: `make_motion_short.py` แยกตาม `genre` → `publish_motion.py`.
 
