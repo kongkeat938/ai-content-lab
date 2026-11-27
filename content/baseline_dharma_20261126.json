@@ -1,0 +1,232 @@
+{
+ "channel": {
+  "slug": "dharma",
+  "id": "UCM3QO5L_pmj34n1JVlbhh-w",
+  "name": "Farmmer — ธรรมะก่อนนอน"
+ },
+ "captured_utc": "2026-11-27T04:25Z",
+ "note": "Baseline taken before any comment lands on dharma. The comment CTA points at the playlist, so the funnel target is the playlist; the long-form named here is the closest theme match to the candidate Short and is the one to read at 24-48h.",
+ "funnel": {
+  "playlist": "PLBpZCGnd7Q5Y",
+  "playlist_title": "หลับลึกทั้งคืน — ฟังยาว",
+  "items": 29,
+  "totals": {
+   "views": 1702,
+   "likes": 12,
+   "comments": 0
+  }
+ },
+ "candidate_short": {
+  "video_id": "STfed3Kb4Z8",
+  "views": 1029,
+  "published": "2026-11-23",
+  "title": "คืนนี้ลองวางมือบนท้องแล้วหายใจช้าๆ #Shorts"
+ },
+ "linked_longform": {
+  "video_id": "F4qFHoVpEyI",
+  "title": "ธรรมะก่อนนอน 2 ชั่วโมง เปิดทิ้งไว้ทั้งคืน หลับลึกถึงเช้า ใจส",
+  "pub": "2026-11-03",
+  "views": 384,
+  "likes": 3,
+  "comments": 0,
+  "shorts_feed_views": 0,
+  "traffic_sources_2026_11_01_to_26": {
+   "NO_LINK_OTHER": 3,
+   "SUBSCRIBER": 272,
+   "YT_CHANNEL": 2,
+   "RELATED_VIDEO": 92,
+   "YT_OTHER_PAGE": 4,
+   "EXT_URL": 2,
+   "PLAYLIST": 7
+  }
+ },
+ "probe": {
+  "method": "youtubeAnalytics reports.query metrics=views dimensions=insightTrafficSourceType filters=video==<id>",
+  "result": "OK on 3 long-forms (F4qFHoVpEyI, RJPCYx_DUqU, 7Ev8NLgcIBM); SHORTS=0 on all three",
+  "window": "2026-11-01..2026-11-26"
+ },
+ "all_longforms": {
+  "F4qFHoVpEyI": {
+   "title": "ธรรมะก่อนนอน 2 ชั่วโมง เปิดทิ้งไว้ทั้งคืน หลับลึกถึงเช้า ใจส",
+   "pub": "2026-11-03",
+   "views": 384,
+   "likes": 3,
+   "comments": 0,
+   "shorts_feed": {
+    "NO_LINK_OTHER": 3,
+    "SUBSCRIBER": 272,
+    "YT_CHANNEL": 2,
+    "RELATED_VIDEO": 92,
+    "YT_OTHER_PAGE": 4,
+    "EXT_URL": 2,
+    "PLAYLIST": 7
+   },
+   "shorts_probe": "OK"
+  },
+  "GLPKPl_MMR4": {
+   "title": "นิทานธรรมะก่อนนอน สะพานใบไม้ที่หายไป ข้อคิดชีวิต ฟังแล้วใจสง",
+   "pub": "2026-10-30",
+   "views": 10,
+   "likes": 0,
+   "comments": 0
+  },
+  "DHs1j6o0JE0": {
+   "title": "นิทานธรรมะก่อนนอน สะพานใบไม้เตือนใจ หลับสบาย #Shorts",
+   "pub": "2026-10-28",
+   "views": 10,
+   "likes": 0,
+   "comments": 0
+  },
+  "_qOSft3tzJ8": {
+   "title": "ธรรมะก่อนนอน ปล่อยวางเรื่องหนักใจ ให้จิตใจสงบสุข หลับสบาย",
+   "pub": "2026-10-27",
+   "views": 5,
+   "likes": 0,
+   "comments": 0
+  },
+  "oL_LdwFwsb4": {
+   "title": "ธรรมะก่อนนอน ปล่อยวางใจให้เบา หลับสบายตลอดคืน #Shorts",
+   "pub": "2026-10-25",
+   "views": 4,
+   "likes": 0,
+   "comments": 0
+  },
+  "rT5RiIHJct8": {
+   "title": "ธรรมะก่อนนอน ฟังแล้วใจสงบ ปล่อยวางความเหนื่อย หลับสบายทั้งคื",
+   "pub": "2026-10-25",
+   "views": 9,
+   "likes": 0,
+   "comments": 0
+  },
+  "V7E6OZZJ3xQ": {
+   "title": "ธรรมะก่อนนอน ปล่อยวางความกังวลเรื่องเงิน หลับลึกถึงเช้า ใจสบ",
+   "pub": "2026-11-06",
+   "views": 127,
+   "likes": 0,
+   "comments": 0
+  },
+  "S7-euXAqBPM": {
+   "title": "ธรรมะก่อนนอน 2 ชั่วโมง ปล่อยวางทุกความกังวล หลับลึกถึงเช้า",
+   "pub": "2026-11-07",
+   "views": 70,
+   "likes": 0,
+   "comments": 0
+  },
+  "QbVcMb8-DlI": {
+   "title": "ธรรมะก่อนนอน 30 นาที หลับลึกถึงเช้า ปล่อยวางความเครียดทั้งวั",
+   "pub": "2026-11-08",
+   "views": 81,
+   "likes": 0,
+   "comments": 0
+  },
+  "RJPCYx_DUqU": {
+   "title": "ธรรมะก่อนนอน ทางสายกลางและสติ ปล่อยวางความทุกข์",
+   "pub": "2026-11-08",
+   "views": 255,
+   "likes": 1,
+   "comments": 0,
+   "shorts_feed": {
+    "NO_LINK_OTHER": 1,
+    "SUBSCRIBER": 187,
+    "YT_CHANNEL": 2,
+    "RELATED_VIDEO": 60,
+    "EXT_URL": 4,
+    "PLAYLIST": 1
+   },
+   "shorts_probe": "OK"
+  },
+  "mlC98KMKxRc": {
+   "title": "ธรรมะก่อนนอน ปล่อยวางความเครียด หลับสบายถึงเช้า",
+   "pub": "2026-11-10",
+   "views": 85,
+   "likes": 0,
+   "comments": 0
+  },
+  "ZrjMi0pcDYo": {
+   "title": "ธรรมะก่อนนอน 2 ชั่วโมง นอนไม่หลับ ฟังบทนี้ หลับลึกถึงเช้า",
+   "pub": "2026-11-06",
+   "views": 3,
+   "likes": 0,
+   "comments": 0
+  },
+  "q6VXmPP57xY": {
+   "title": "ธรรมะก่อนนอน 110 นาที หลับลึกทั้งคืน ปล่อยวางใจให้เบาสบาย",
+   "pub": "2026-11-05",
+   "views": 7,
+   "likes": 0,
+   "comments": 0
+  },
+  "2PEjuEFpeY8": {
+   "title": "ธรรมะก่อนนอน ฟังให้จิตสงบ ปล่อยวาง หลับสบาย",
+   "pub": "2026-11-04",
+   "views": 29,
+   "likes": 1,
+   "comments": 0
+  },
+  "lKt_A63IUmg": {
+   "title": "ธรรมะก่อนนอน ปล่อยวางความเครียด จิตสงบ หลับสบาย",
+   "pub": "2026-11-14",
+   "views": 29,
+   "likes": 0,
+   "comments": 0
+  },
+  "4EzAMP7urS4": {
+   "title": "ธรรมะก่อนนอน วางมือบนท้อง หายใจลึก ปล่อยวางความเครียด หลับสบ",
+   "pub": "2026-11-16",
+   "views": 72,
+   "likes": 0,
+   "comments": 0
+  },
+  "6tTda1sruHg": {
+   "title": "ธรรมะก่อนนอน ปล่อยวางความเครียด หลับลึกถึงเช้า",
+   "pub": "2026-11-20",
+   "views": 24,
+   "likes": 0,
+   "comments": 0
+  },
+  "Quk0hvVLcBM": {
+   "title": "ธรรมะก่อนนอน — ปล่อยวางและหลับลึก 10 นาที ฟังแล้วใจเบา",
+   "pub": "2026-11-21",
+   "views": 4,
+   "likes": 0,
+   "comments": 0
+  },
+  "Is-VYMhhPvc": {
+   "title": "ธรรมะก่อนนอน 90 นาที ปล่อยวางความกังวล หลับลึกถึงเช้า จิตสงบ",
+   "pub": "2026-11-22",
+   "views": 35,
+   "likes": 0,
+   "comments": 0
+  },
+  "7zALsTXwueU": {
+   "title": "เพลงธรรมะบรรเลง 1 ชั่วโมง ฟังก่อนนอน ใจสงบ ผ่อนคลาย",
+   "pub": "2026-11-22",
+   "views": 237,
+   "likes": 4,
+   "comments": 0
+  },
+  "rkvLICChhaE": {
+   "title": "เพลงสมาธิบรรเลง 1 ชั่วโมง นั่งสมาธิ ผ่อนคลาย",
+   "pub": "2026-11-22",
+   "views": 134,
+   "likes": 2,
+   "comments": 0
+  },
+  "HkFULkG2sRk": {
+   "title": "เพลงกล่อมนอน 1 ชั่วโมง หลับลึก ตื่นมาใจเบา",
+   "pub": "2026-11-22",
+   "views": 84,
+   "likes": 1,
+   "comments": 0
+  },
+  "7Ev8NLgcIBM": {
+   "title": "ธรรมะก่อนนอน 15 นาที ใจคิดไม่หยุด ฟังแล้วหลับลึก ปล่อยวางทั้",
+   "pub": "2026-11-26",
+   "views": 4,
+   "likes": 0,
+   "comments": 0,
+   "shorts_feed": {},
+   "shorts_probe": "OK"
+  }
+ }
+}
