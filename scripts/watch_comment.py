@@ -48,25 +48,36 @@ def main() -> int:
         print("refusing: no comment id and no default for this channel", file=sys.stderr)
         return 2
 
-    import yt_auth
-    from googleapiclient.discovery import build
-    from googleapiclient.errors import HttpError
-    creds = yt_auth.load_credentials(CHANNEL_ID[args.slug])
-    yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
-
-    state, text, detail = "absent", "", ""
+    state, text, detail, yt = "blind", "", "", None
     try:
-        r = yt.comments().list(part="snippet", id=cid, textFormat="plainText").execute()
-        items = r.get("items", [])
-    except HttpError as exc:
-        state, detail = "blind", f"HTTP {exc.resp.status}"
-        items = []
-    if items:
-        text = items[0]["snippet"].get("textDisplay", "")
-        if expect and expect not in text:
-            state, detail = "edited", f"missing {expect!r}"
-        else:
-            state = "present"
+        import yt_auth
+        from googleapiclient.discovery import build
+        creds = yt_auth.load_credentials(CHANNEL_ID[args.slug])
+        yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
+    except (Exception, SystemExit) as exc:
+        # yt_auth reports a missing token with sys.exit("...") -- a SystemExit,
+        # not an Exception, so a bare `except Exception` still let the process
+        # die with exit 1 and no ledger record (measured 2026-11-27).
+        detail = f"auth failed: {type(exc).__name__}"
+        if isinstance(exc, SystemExit) and exc.code not in (None, 0):
+            msg = str(exc.code).replace(os.path.expanduser("~"), "~")[:120]
+            detail = f"{detail} -- {msg}"
+
+    if yt is not None:
+        state, detail = "absent", ""
+        try:
+            r = yt.comments().list(part="snippet", id=cid, textFormat="plainText").execute()
+            items = r.get("items", [])
+        except Exception as exc:  # a failed query is BLIND, never "absent"
+            status = getattr(getattr(exc, "resp", None), "status", "?")
+            state, detail = "blind", f"query failed (HTTP {status})"
+            items = []
+        if items:
+            text = items[0]["snippet"].get("textDisplay", "")
+            if expect and expect not in text:
+                state, detail = "edited", f"missing {expect!r}"
+            else:
+                state = "present"
 
     rec = {"checked_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
            "label": args.label, "comment_id": cid, "state": state, "detail": detail,
