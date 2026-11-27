@@ -75,7 +75,8 @@ LOOPBACK_REDIRECT = f"http://127.0.0.1:{LOOPBACK_PORT}/oauth2callback"
 # The PKCE verifier must survive between `--url-only` and the later run that
 # finishes the flow, or the exchange fails with "invalid_grant". It is a
 # short-lived secret, so it is written 0600 beside the token and removed on use.
-PENDING_PATH = os.path.expanduser("~/.config/content-lab/yt_pending.json")
+PENDING_PATH = os.environ.get(
+    "YT_PENDING_PATH", os.path.expanduser("~/.config/content-lab/yt_pending.json"))
 # The pod's public hostname changes every time the sandbox is recreated, and the
 # OAuth client must have the matching redirect URI registered. Reading the host
 # from the environment is what stops redirect_uri_mismatch after a recycle; the

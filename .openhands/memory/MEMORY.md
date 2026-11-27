@@ -64,7 +64,7 @@
   **SHORTS→long = 0** ใน 28 วัน — CTA ในคลิปสั้นยังเป็น "กดติดตาม" เท่านั้น. `playlist_fill.py` เติม
   long-form ให้ครบ playlist ที่ Short ลิงก์ (`link_shorts` ครอบ Short ใหม่เท่านั้น).
   `yt_auth.load_credentials(<channel_id>)` — ไม่ส่ง = หยิบผิดช่อง.
-- **Thumb:** ผิดแนว→`--gen-art`
+- **Thumb:** ผิดแนว→`--gen-art`; ยอดวิวเก่า = วัด CTR ไม่ได้
 
 - **release = tag push** → ทุก rail ที่มี `push:` รัน (`paths:` ไม่ถูกประเมินกับ tag) → ต้องมี
   `branches: [main]`; guard `test_workflow_tag_safe.py`. **pod reset ลบ pip ทั้งหมด** → static_ffmpeg.
