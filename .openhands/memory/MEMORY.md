@@ -29,7 +29,7 @@
 - **A gate whose floor came from the same demo it approved cannot detect drift**; a guard must be
   able to FAIL, never hardcode what it sweeps, `403 gate + || echo 0` = **false pass** (`topics/05`).
 - **Pod env:** reset (idle ~2 h เป็นหลัก, mid-session ก็มี) → `pip -r requirements.txt` + static-ffmpeg;
-  **secret injects only if its NAME is in the command**; git identity resets. **push:** `GH_PUSH_TOKEN=$GITHUB_TOKEN scripts/gh_auth.py push` (HEAD→main; vault token 401);
+  **secret injects only if its NAME is in the command**; git identity resets. **OAuth token:** `yt_vault.py put` ทุกครั้ง (home ไม่รอด reset, vault รอด). **push:** `GH_PUSH_TOKEN=$GITHUB_TOKEN scripts/gh_auth.py push` (HEAD→main);
   **งานต้องออกจาก pod** = `durability_guard.py` + `restore_verify.py` (`topics/05`).
 
 - **MV/เรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (ซ้ำ = FAIL); AI gen ล่ม → procedural
@@ -56,7 +56,7 @@
 - **"4K เท่านั้นถึงอัพ · ห้ามซ้ำ ทั้งภาพ ดนตรี บท"** → ONE gate `upload_gate.py` (md5 ภาพ, bed id,
   script n-gram ≥45% = refused); ไม่มี ffprobe = exit 2 BLIND; claim ตาม spec id.
 - **`alimiter` limits SAMPLE peak** → `TP_WAV` = gate − AAC overshoot, never `TP+0.3`.
-- **Vision grader NON-DETERMINISTIC** → judge metrics.
+- **Vision grader NON-DETERMINISTIC** → judge metrics
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); slug ยัง `kongkeat-story`;
   **title ตั้งใน Studio** (API ไม่ได้). **Angle de-dup floor = 8** (`test_angle_pool.py`).
   **One live title = one video.**

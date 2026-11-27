@@ -1,0 +1,135 @@
+{
+ "status": "draft",
+ "created_utc": "2026-11-27T05:05Z",
+ "channel": {
+  "slug": "dharma",
+  "id": "UCM3QO5L_pmj34n1JVlbhh-w"
+ },
+ "gate": "blocked by D6 -- runs only when measure_d10.py exits 0 (any of top-5 SHORTS > 0)",
+ "cadence": "4/3/3 per day, 3 days",
+ "cta_text": "กดติดตามไว้ ไม่พลาดธรรมะก่อนนอนทุกคืน 🔔\nฟังยาว ๆ ทั้งคืน (รวมทุกตอน) → https://www.youtube.com/playlist?list=PLBpZCGnd7Q5Y",
+ "cta_playlist": "PLBpZCGnd7Q5Y",
+ "clips": [
+  {
+   "video_id": "STfed3Kb4Z8",
+   "url": "https://youtu.be/STfed3Kb4Z8",
+   "title": "คืนนี้ลองวางมือบนท้องแล้วหายใจช้าๆ #Shorts",
+   "posted_at": "2026-11-23T09:18:25+00:00",
+   "thumbnail": "work/ch2_shorts/125/thumb_125.jpg",
+   "thumbnail_set": true,
+   "shape": "cue",
+   "planned_day": 1,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 1029
+  },
+  {
+   "video_id": "eppYJjezYaw",
+   "url": "https://youtu.be/eppYJjezYaw",
+   "title": "คืนนี้ลองวางมือถือแล้วหายใจลึกๆ สามครั้ง #Shorts",
+   "posted_at": "2026-11-25T10:14:22+00:00",
+   "thumbnail": "work/ch2_shorts/130/thumb_130.jpg",
+   "thumbnail_set": true,
+   "shape": "cue",
+   "privacy": "public",
+   "planned_day": 1,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 971
+  },
+  {
+   "video_id": "yKXgdoGZ-SY",
+   "url": "https://youtu.be/yKXgdoGZ-SY",
+   "title": "คืนนี้ลองปรับท่านอนตะแคงขวาแล้วพับมือวางรองใต้แก้ม #Shorts",
+   "posted_at": "2026-11-13T22:48:35+00:00",
+   "shape": "cue",
+   "planned_day": 1,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 969
+  },
+  {
+   "video_id": "ZgKI13H8nFY",
+   "url": "https://youtu.be/ZgKI13H8nFY",
+   "title": "คืนนี้ลองวางมือถือแล้วคว่ำฝ่ามือลงกับเตียง #Shorts",
+   "posted_at": "2026-11-25T01:31:31+00:00",
+   "thumbnail": "work/ch2_shorts/129/thumb_129.jpg",
+   "thumbnail_set": true,
+   "shape": "cue",
+   "privacy": "public",
+   "planned_day": 1,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 949
+  },
+  {
+   "video_id": "Dup3lDal2Fo",
+   "url": "https://youtu.be/Dup3lDal2Fo",
+   "title": "คืนนี้ลองนอนตะแคงขวาแล้วหลับตาลงช้าช้า #Shorts",
+   "posted_at": "2026-11-14T23:18:49+00:00",
+   "shape": "cue",
+   "planned_day": 2,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 920
+  },
+  {
+   "video_id": "TQry7Y718j0",
+   "url": "https://youtu.be/TQry7Y718j0",
+   "title": "คืนนี้ลองวางมือบนหน้าอกแล้วหายใจตามจังหวะนี้ดู #Shorts",
+   "posted_at": "2026-11-13T19:12:34+00:00",
+   "shape": "cue",
+   "planned_day": 2,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 719
+  },
+  {
+   "video_id": "zuO5s4BxTzI",
+   "url": "https://youtu.be/zuO5s4BxTzI",
+   "title": "คืนนี้ลองนึกถึงเรื่องดีๆ สักเรื่องก่อนนอน #Shorts",
+   "posted_at": "2026-11-23T15:51:27+00:00",
+   "thumbnail": "work/ch2_shorts/127/thumb_127.jpg",
+   "thumbnail_set": true,
+   "shape": "cue",
+   "planned_day": 2,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 684
+  },
+  {
+   "video_id": "GL3RJpQ1Hgs",
+   "url": "https://youtu.be/GL3RJpQ1Hgs",
+   "title": "ลองเปิดเสียงธรรมะนี้คลอเบาๆ ข้างหมอนเพื่อผ่อนคลาย #Shorts",
+   "posted_at": "2026-11-12T22:12:56+00:00",
+   "shape": "cue",
+   "planned_day": 3,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 562
+  },
+  {
+   "video_id": "s2-XVcNsDd0",
+   "url": "https://youtu.be/s2-XVcNsDd0",
+   "title": "คืนนี้ลองวางมือถือแล้วคว่ำหน้าลงช้าๆ #Shorts",
+   "posted_at": "2026-11-16T23:30:10+00:00",
+   "shape": "cue",
+   "planned_day": 3,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 504
+  },
+  {
+   "video_id": "3p1fdvIpZe8",
+   "url": "https://youtu.be/3p1fdvIpZe8",
+   "title": "คืนนี้ลองวางมือถือลงแล้วหายใจเข้าลึกๆ สามครั้ง #Shorts",
+   "posted_at": "2026-11-26T01:05:39+00:00",
+   "thumbnail": "work/ch2_shorts/131/thumb_131.jpg",
+   "thumbnail_set": true,
+   "shape": "cue",
+   "privacy": "public",
+   "planned_day": 3,
+   "matched_longform": "F4qFHoVpEyI",
+   "views_at_plan": 469
+  }
+ ],
+ "timeline_days": 3,
+ "per_day": {
+  "1": 4,
+  "2": 3,
+  "3": 3
+ },
+ "not_before": "after the 24h comment check (watch_comment.py) reports present",
+ "stop_rule": "if any comment disappears or SHORTS stays 0 across the 10, stop and diagnose"
+}
