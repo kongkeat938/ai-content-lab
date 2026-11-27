@@ -490,6 +490,22 @@ class _Catcher(http.server.BaseHTTPRequestHandler):
         pass
 
 
+def _code_and_state(pasted: str) -> tuple[str, str]:
+    """The code and state out of a pasted callback URL (or its query string)."""
+    query = urllib.parse.urlparse(pasted).query or pasted.lstrip("?")
+    pairs = urllib.parse.parse_qs(query)
+    return (pairs.get("code") or [""])[0], (pairs.get("state") or [""])[0]
+
+
+def _pending_state() -> str:
+    """The state minted for the flow waiting in PENDING_PATH, or ""."""
+    try:
+        with open(PENDING_PATH, encoding="utf-8") as fh:
+            return str(json.load(fh).get("state") or "")
+    except (OSError, ValueError):
+        return ""
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -650,10 +666,20 @@ def main() -> int:
 
     if args.manual_code:
         print("After approving, the browser lands on a page that may fail to load.")
-        print("That is expected: copy the whole address and take the value of the")
-        print("?code= parameter from it (it is the long string before any '&').\n")
-        code = input("Paste the value of the ?code= parameter: ").strip()
-        flow.fetch_token(code=urllib.parse.unquote(code))
+        print("That is expected: paste the WHOLE address from the address bar --")
+        print("the ?code= is the grant, the ?state= proves it is ours.\n")
+        pasted = input("Paste the address: ").strip()
+        code, got_state = _code_and_state(pasted)
+        if not code:
+            sys.exit("No ?code= in what was pasted; nothing was exchanged.")
+        if not got_state:
+            sys.exit("No ?state= in what was pasted. Copy the whole address from "
+                     "the address bar; a bare code cannot be verified.")
+        want = _pending_state()
+        if not want or got_state != want:
+            sys.exit("State mismatch: this code was not issued for this flow. "
+                     "Nothing was exchanged.")
+        flow.fetch_token(code=code)
     else:
         host = urllib.parse.urlparse(args.redirect_uri).hostname or ""
         here = {h for h, _ in sandbox_hosts()}
