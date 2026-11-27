@@ -547,11 +547,13 @@ def _deepen_if_shallow() -> None:
     """
     try:
         r = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
-                           cwd=ROOT, capture_output=True, text=True, timeout=60)
+                           cwd=ROOT, capture_output=True, text=True, timeout=60,
+                           stdin=subprocess.DEVNULL)
         if r.stdout.strip() != "true":
             return
         subprocess.run(["git", "fetch", "--unshallow", "origin", "main"],
-                       cwd=ROOT, capture_output=True, timeout=600)
+                       cwd=ROOT, capture_output=True, timeout=600,
+                       stdin=subprocess.DEVNULL)
     except Exception:                                  # noqa: BLE001 -- best effort
         pass
 
@@ -561,18 +563,20 @@ def _sync_and_push(gitc: list[str], message: str, tries: int = 3) -> bool:
     for attempt in range(1, tries + 1):
         _deepen_if_shallow()
         r = subprocess.run(gitc + ["pull", "--rebase", "origin", "main"],
-                           cwd=ROOT, capture_output=True, timeout=180)
+                           cwd=ROOT, capture_output=True, timeout=180,
+                           stdin=subprocess.DEVNULL)
         if r.returncode != 0:
-            subprocess.run(["git", "rebase", "--abort"], cwd=ROOT, capture_output=True)
+            subprocess.run(["git", "rebase", "--abort"], cwd=ROOT, capture_output=True,
+                           stdin=subprocess.DEVNULL)
             time.sleep(2 * attempt)
             continue
         if _union_resolve_upload_log():
             print("  resolved a conflict in the upload ledger (kept both sides)")
             subprocess.run(["git", "add", os.path.relpath(UPLOAD_LOG, ROOT)], cwd=ROOT)
             subprocess.run(gitc + ["commit", "-q", "-m", message], cwd=ROOT,
-                           capture_output=True)
+                           capture_output=True, stdin=subprocess.DEVNULL)
         if subprocess.run(["git", "push"], cwd=ROOT, capture_output=True,
-                          timeout=120).returncode == 0:
+                          timeout=120, stdin=subprocess.DEVNULL).returncode == 0:
             return True
         time.sleep(2 * attempt)
     return False
