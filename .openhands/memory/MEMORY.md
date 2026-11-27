@@ -76,7 +76,7 @@
   **Publishing:** `content/<ch>_{publish,shorts}.json`; `DAILY_CAP=3` over **all ledger keys**
   (`cap.py`)
 - **Delegation:** genx+dharma → `ch3@…`; ch4 = Coverr
-- **Comment writes need `force-ssl`**: 11-26 `commentThreads.insert` = **403 ทั้ง 4 ช่อง**; 68 Shorts ตั้งแต่ 11-12 `cta_note`=skipped → **SHORTS→long = 0**; commentCount หน่วง ~20s; `scopes` ในไฟล์ไม่ครบ → probe insert(ปลอม)=404 token อยู่ **GitHub repo
+- **Comment writes need `force-ssl`**: 11-26 insert = **403 ทั้ง 4 ช่อง**; `cta_note`=skipped → **SHORTS→long = 0**; commentCount หน่วง ~20s; `scopes` ในไฟล์ไม่ครบ → probe insert(ปลอม)=404
   secrets**; `GITHUB_TOKEN` แตะไม่ได้ → **secret = K เท่านั้น** (gh expiry=?; push=HEAD→main)
 - **Audit log ไม่มีคนอ่าน = ตาย:** `content/upload_audit.jsonl` ต้องมี summarize รายสัปดาห์ถ้าจะใช้จริง;
   gh token = fine-grained PAT 90 วัน + จดวันหมดอายุ (vault ว่าง = push ไม่ได้).
