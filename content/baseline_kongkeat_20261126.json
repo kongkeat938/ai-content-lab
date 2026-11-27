@@ -1,0 +1,110 @@
+{
+ "channel": {
+  "slug": "kongkeat-story",
+  "id": "UC7gCIu4G_7QCEJ8hJ-34zoQ",
+  "name": "PCSEV"
+ },
+ "captured_utc": "2026-11-27T04:35Z",
+ "note": "Baseline before any comment on kongkeat-story; comment CTA points at the playlist.",
+ "funnel": {
+  "playlist": "PLU4aztRNvt28",
+  "playlist_title": "PCSEV — เกร็ดรวมยาว",
+  "items": 11,
+  "totals": {
+   "views": 35,
+   "likes": 2,
+   "comments": 0
+  }
+ },
+ "candidate_short": {
+  "video_id": "5hOHnnQOcS4",
+  "views": 5,
+  "published": "2026-11-16",
+  "title": "ทำไมแมวถึงชอบนั่งกล่องกระดาษ รู้แล้วร้องอ๋อ #Shorts"
+ },
+ "linked_longform": {
+  "video_id": "8Xiq1ganmRs",
+  "title": "นิทานไทยสอนใจ เรื่องครอบครัวอบอุ่น ฟังเพลินก่อนนอน",
+  "pub": "2026-11-06",
+  "views": 9,
+  "likes": 1,
+  "comments": 0,
+  "shorts_feed_views": 0,
+  "traffic_sources_2026_11_01_to_26": {
+   "NO_LINK_OTHER": 1,
+   "SUBSCRIBER": 2,
+   "YT_SEARCH": 3,
+   "RELATED_VIDEO": 2,
+   "EXT_URL": 1
+  }
+ },
+ "stuck_shorts": {
+  "count": 22,
+  "total_views": 31
+ },
+ "all_longforms": {
+  "cZnCQ-p1nqE": {
+   "title": "มัทนะพาธา นิทานไทยตำนานดอกกุหลาบและความรัก",
+   "pub": "2026-10-30",
+   "views": 3,
+   "likes": 0,
+   "comments": 0
+  },
+  "nmNJwOh9Ymg": {
+   "title": "นิทานไทย: จดหมายจากสิบปีก่อน เรื่องเล่าสอนใจเด็กและครอบครัว",
+   "pub": "2026-10-30",
+   "views": 8,
+   "likes": 1,
+   "comments": 0
+  },
+  "n0k_tUNXFtw": {
+   "title": "นิทานไทย ไกรทอง ตอน จระเข้เจ้าเมือง เรื่องเล่าการ์ตูนสนุกๆ",
+   "pub": "2026-10-25",
+   "views": 5,
+   "likes": 0,
+   "comments": 0
+  },
+  "zjM1GFk7iak": {
+   "title": "เรื่องเล่า: เมล็ดที่หลับอยู่ใต้ดินทั้งฤด",
+   "pub": "2026-10-26",
+   "views": 2,
+   "likes": 0,
+   "comments": 0
+  },
+  "fHBGncx4AjY": {
+   "title": "ข้อคิดชีวิต: ทางที่ยาวที่สุด คือทางที่ข้",
+   "pub": "2026-10-25",
+   "views": 1,
+   "likes": 0,
+   "comments": 0
+  },
+  "8Xiq1ganmRs": {
+   "title": "นิทานไทยสอนใจ เรื่องครอบครัวอบอุ่น ฟังเพลินก่อนนอน",
+   "pub": "2026-11-06",
+   "views": 9,
+   "likes": 1,
+   "comments": 0
+  },
+  "6Vs7vTUTMN0": {
+   "title": "ทำไมของเล่นเก่าถึงซ่อมได้ เรื่องอบอุ่นใจของครอบครัว",
+   "pub": "2026-11-06",
+   "views": 2,
+   "likes": 0,
+   "comments": 0
+  },
+  "BnUOckow0-Q": {
+   "title": "รวมเรื่องเล่าอบอุ่นใจ ฟังก่อนนอนเพลินๆ",
+   "pub": "2026-11-06",
+   "views": 1,
+   "likes": 0,
+   "comments": 0
+  },
+  "X2UiFPUnKIc": {
+   "title": "มื้อเช้าครอบครัวอบอุ่นใจ นิทานฟังก่อนนอน",
+   "pub": "2026-11-13",
+   "views": 4,
+   "likes": 0,
+   "comments": 0
+  }
+ }
+}
