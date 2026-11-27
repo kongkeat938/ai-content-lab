@@ -20,7 +20,7 @@
 ## 🔑 Durable principles (K)
 - **PCSEV.** Verify **live**: live API > output file (ffprobe/ebur128) > a test that FAILs > a doc;
   best = **counter with an invariant** (`counter_ledger.py`).
-- **Times to K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
+- **เวลาให้ K = Thai `HH:MM`** (UTC+7); `PROGRESS.md` ← `watch_hours.json`.
 - **"แยกไม่ได้" ≠ "ผิด":** quota-dead check → **per-channel secret = identity**.
 - **An LLM is not a primary source** — read the vendor's rule or measure live. **PC1 = ak's
   hands** (`winremote`, `topics/03`).
@@ -37,7 +37,7 @@
 - **MV/เนื้อเรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (sha/บทซ้ำ = FAIL); gen ล่ม → procedural.
 
 ## 🧭 Traps still true (detail in `topics/` + daily logs)
-- **"Rogue" = OURS**: hide only on RSS-confirm/24 h (`keep_clips_live.py` restores).
+- **"Rogue" = OURS** (`ax-workspace` auto-shorts): hide only on RSS-confirm/24 h (`keep_clips_live.py`).
   **`videos.update` REPLACES the whole `snippet`/`status`** (`topics/05`).
 - **Repo is PUBLIC** (private halts the rails): never commit a credential/address.
 - **Quota:** `videos.insert`; reset 08:00 UTC; Shorts: **ชื่อซ้ำ = refuse** (live read).
