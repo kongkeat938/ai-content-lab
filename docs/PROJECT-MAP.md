@@ -197,6 +197,14 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 - **Shorts quality is gated before upload** (`scripts/publish_shorts.py`): aspect/colour/thumbnail
   (`short_standard.py`, `test_short_standard.py`) and loudness (measured, not a fixed gain —
   `test_short_loudness.py`). A build that misses the standard is HELD, not uploaded.
+- **The queue knows a clip's length before it is built** (`predicted_seconds` in
+  `publish_shorts.py`, fitted on 241 published Shorts: `content/duration_calibration.json`,
+  5.49 s + 0.0837 s/char, R²=0.956). Measured 2026-11-27 over 333 Shorts on both live channels,
+  controlled for theme: the **>48 s bucket has a median of 8 lifetime views** against 142–201 at
+  33–48 s, and the effect holds inside one theme (วิธี: 0.19 vs 7.17 views/day). So dharma and genx
+  set `"prefer_short": True` and publish the short end of the pool first — a sort, not a gate, so
+  a long clip still goes out when the short ones run out. Guard `test_prefer_short.py` (fails when
+  the order is reversed; 11 dharma / 18 genx unpublished clips are predicted over 48 s).
 - **The daily cap counts every ledger key that belongs to a channel** (`_ledger_keys`: channel id
   *and* slug). Measured 2026-11-24: `publish_motion.py`/`remake_shorts.py` recorded under the slug,
   so `uploads_in_last_24h()` read 0 with three dharma uploads inside 24 h — another rail could

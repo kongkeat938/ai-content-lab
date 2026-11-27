@@ -1,0 +1,13 @@
+{
+  "intercept_sec": 5.49,
+  "sec_per_char": 0.08369,
+  "n": 241,
+  "r2": 0.956,
+  "measured_at": "2026-11-27",
+  "channels": [
+    "dharma",
+    "genx"
+  ],
+  "method": "least squares over every published Short whose script is still in the pool; duration from the YouTube Data API, text length = hook+lines+cta",
+  "why": "the >48 s bucket measured a median of 8 lifetime views against 142-201 at 33-48 s, so the queue must spend its slots on the short end"
+}
