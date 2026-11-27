@@ -923,6 +923,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "134": {
+      "video_id": "WzWhrJrl7xk",
+      "url": "https://youtu.be/WzWhrJrl7xk",
+      "title": "คืนนี้ลองวางมือถือแล้วทำตามนี้เพื่อหลับลึกทันที #Shorts",
+      "posted_at": "2026-11-27T09:51:50+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/134/thumb_134.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
