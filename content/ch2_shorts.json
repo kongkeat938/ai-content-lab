@@ -912,6 +912,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "133": {
+      "video_id": "a7p9khOf-as",
+      "url": "https://youtu.be/a7p9khOf-as",
+      "title": "คืนนี้ลองเขียนความกังวลใส่กระดาษแล้วพับเก็บไว้ #Shorts",
+      "posted_at": "2026-11-27T01:06:07+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/133/thumb_133.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
