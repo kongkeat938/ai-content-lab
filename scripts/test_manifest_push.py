@@ -71,6 +71,87 @@ def run_commit(rec, monkey_git_env=True):
             os.environ["GITHUB_ACTIONS"] = orig_env
 
 
+def real_git_round_trip() -> list[tuple[str, bool, str]]:
+    """The same push against real git: a dirty tree must not block the rebase.
+
+    The recorder above proves the argv order; this proves the outcome. It builds
+    a bare origin, a racing commit from a second clone, then runs commit() with
+    the run's other ledger writes still unstaged -- the exact state that printed
+    "cannot pull with rebase: You have unstaged changes" on 2026-11-27.
+    """
+    import json
+    import subprocess
+    import tempfile
+
+    def git(*a, cwd=None):
+        return subprocess.run(["git", *a], cwd=cwd, capture_output=True, text=True,
+                              stdin=subprocess.DEVNULL)
+
+    out = []
+    tmp = tempfile.mkdtemp(prefix="manifest-")
+    try:
+        origin = os.path.join(tmp, "origin.git")
+        git("init", "--bare", "-q", "-b", "main", origin)
+        seed = os.path.join(tmp, "seed")
+        git("clone", "-q", origin, seed)
+        for rel, body in (("content/ch2_shorts.json", '{"shorts": {}}'),
+                          ("content/art_ledger_dharma.json", '{"items": {}}'),
+                          ("content/upload_log.json", '{"uploads": []}')):
+            path = os.path.join(seed, rel)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            open(path, "w", encoding="utf-8").write(body)
+        git("add", "-A", cwd=seed)
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "seed", cwd=seed)
+        git("push", "-q", "origin", "HEAD:main", cwd=seed)
+
+        work = os.path.join(tmp, "work")          # the rail's checkout, deep
+        git("clone", "-q", origin, work)
+
+        racer = os.path.join(tmp, "racer")        # the other channel's job
+        git("clone", "-q", origin, racer)
+        open(os.path.join(racer, "content", "other.json"), "w").write("{}")
+        git("add", "-A", cwd=racer)
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "racer", cwd=racer)
+        git("push", "-q", "origin", "HEAD:main", cwd=racer)
+
+        # this run: the id landed, and the art/bed/reception ledgers are dirty
+        open(os.path.join(work, "content", "ch2_shorts.json"), "w").write(
+            '{"shorts": {"135": {"video_id": "zlgdIGRvt6Y"}}}')
+        open(os.path.join(work, "content", "art_ledger_dharma.json"), "w").write(
+            '{"items": {"135": "abc"}}')
+
+        saved = (ps.ROOT, ps.UPLOAD_LOG, os.environ.get("GITHUB_ACTIONS"))
+        ps.ROOT = work
+        ps.UPLOAD_LOG = os.path.join(work, "content", "upload_log.json")
+        os.environ["GITHUB_ACTIONS"] = "true"
+        try:
+            ps.commit(os.path.join(work, "content", "ch2_shorts.json"),
+                      "publish(dharma): record Short 135")
+        finally:
+            ps.ROOT, ps.UPLOAD_LOG, env = saved[0], saved[1], saved[2]
+            if env is None:
+                os.environ.pop("GITHUB_ACTIONS", None)
+            else:
+                os.environ["GITHUB_ACTIONS"] = env
+
+        log = git("log", "--format=%s", "origin/main", cwd=work).stdout.split("\n")
+        files = git("ls-tree", "-r", "--name-only", "origin/main", cwd=work).stdout.split()
+        body = git("show", "origin/main:content/ch2_shorts.json", cwd=work).stdout
+        out.append(("the id reaches origin despite a dirty tree",
+                    "publish(dharma): record Short 135" in log, str(log[:4])))
+        out.append(("the racing job's commit is kept", "racer" in log, str(log[:4])))
+        out.append(("the run's other ledger writes go in the same commit",
+                    "content/art_ledger_dharma.json" in files, str(files[:5])))
+        out.append(("the manifest on origin carries the id", "zlgdIGRvt6Y" in body, body[:80]))
+        out.append(("the tree is left clean",
+                    git("status", "--porcelain", cwd=work).stdout.strip() == "",
+                    git("status", "--porcelain", cwd=work).stdout[:120]))
+    finally:
+        import shutil
+        shutil.rmtree(tmp, ignore_errors=True)
+    return out
+
+
 def main() -> int:
     # 1. a shallow checkout is deepened BEFORE the first rebase, or the rebase
     #    fails for a reason no retry can fix
@@ -116,6 +197,10 @@ def main() -> int:
     finally:
         ps.subprocess.run = orig_run
     check("no git work outside CI", not rec.calls, str(rec.flat()))
+
+    # 6. the real thing: a dirty tree, a racing job, one push
+    for name, ok, detail in real_git_round_trip():
+        check(name, ok, detail)
 
     bad = [n for n, ok, _ in CHECKS if not ok]
     print()
