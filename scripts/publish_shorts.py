@@ -588,6 +588,9 @@ def _sync_and_push(gitc: list[str], message: str, tries: int = 3) -> bool:
                            cwd=ROOT, capture_output=True, timeout=180,
                            stdin=subprocess.DEVNULL)
         if r.returncode != 0:
+            why = (r.stderr or r.stdout or b"").decode("utf-8", "replace").strip()
+            if why:
+                print(f"  rebase blocked: {why.splitlines()[-1][:160]}")
             subprocess.run(["git", "rebase", "--abort"], cwd=ROOT, capture_output=True,
                            stdin=subprocess.DEVNULL)
             time.sleep(2 * attempt)
@@ -617,6 +620,14 @@ def commit(path: str, message: str) -> None:
     gitc = ["git", "-c", "user.name=openhands", "-c", "user.email=openhands@all-hands.dev"]
     try:
         subprocess.run(["git", "add", os.path.relpath(path, ROOT)], cwd=ROOT, check=True)
+        # This run also wrote the art/bed/reception/upload ledgers. Leaving them
+        # dirty is what made the rebase below impossible ("cannot pull with
+        # rebase: You have unstaged changes", measured 2026-11-27: the in-run
+        # commit failed on every run and only the workflow step saved the id),
+        # and a cancelled run would lose them anyway. One clean commit avoids a
+        # stash, which is the thing that used to leave conflict markers.
+        subprocess.run(["git", "add", "-A", "content/"], cwd=ROOT, check=True,
+                       stdin=subprocess.DEVNULL)
         # Nothing staged is the normal case for a sweep-only run; do not report it
         # as a failure (the caller prints its own "nothing to record").
         if subprocess.run(["git", "diff", "--cached", "--quiet"],
@@ -630,13 +641,14 @@ def commit(path: str, message: str) -> None:
                        cwd=ROOT, capture_output=True)
         # Two channel jobs run at once and both commit; without the rebase the
         # second push is rejected and its id is lost (seen 2026-11-03). A plain
-        # rebase, not --autostash: a dirty tree must fail loudly rather than let a
-        # stash pop leave conflict markers in the ledger (612f185, 2026-11-09).
+        # rebase, never --autostash: the tree is clean by now, so a stash is not
+        # needed and a stash pop is what used to leave conflict markers (612f185).
         if _sync_and_push(gitc, message):
             print("  manifest committed")
         else:
             print("  manifest commit failed after 3 attempts -- the id exists only "
-                  "on this runner and the next run will re-upload it",
+                  "on this runner; the workflow commit step records it (a failure "
+                  "there turns the job red, so this cannot pass silently)",
                   file=sys.stderr)
     except subprocess.CalledProcessError as exc:
         print(f"  manifest commit failed (will retry at the workflow step): {exc}",
