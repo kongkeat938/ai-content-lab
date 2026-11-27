@@ -52,6 +52,11 @@ SCOPES = [
 SCOPE_SETS = {
     "default": SCOPES,
     "force-ssl": SCOPES + ["https://www.googleapis.com/auth/youtube.force-ssl"],
+    # Comment writes plus the Analytics API. Measured 2026-11-26: reports.query
+    # already answers with `youtube.readonly` alone, but the consent asks for the
+    # analytics scope anyway so the grant does not depend on that coincidence.
+    "analytics": SCOPES + ["https://www.googleapis.com/auth/youtube.force-ssl",
+                           "https://www.googleapis.com/auth/yt-analytics.readonly"],
 }
 TOKEN_PATH = os.environ.get(
     "YT_TOKEN_PATH", os.path.expanduser("~/.config/content-lab/yt_token.json"))
