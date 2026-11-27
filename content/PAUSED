@@ -8,3 +8,13 @@
 # open with a tension hook. The pause mechanism stays wired -- to pause a channel
 # again, add its name here and comment out the `schedule:` block (the WHOLE key) in
 # ch4-longform.yml / publish-ch4.yml.
+# kongkeat-story (ch4) PAUSED AGAIN 2026-11-27 on K's approval: 6 of the last 8
+# Shorts had 0 views and the channel sits at 11 subs / 6,046 lifetime views after
+# 118 uploads. Its rails are removed from the three matrices in the same commit
+# (test_rail_channels.py enforces matrix <=> not-paused). To resume: delete this
+# line, restore the matrices, and re-enable the ch4 schedules.
+# Both names are needed: "kongkeat" is publish_shorts' CHANNELS key (and the
+# publish-shorts / remake-shorts matrix value), "kongkeat-story" is the
+# grow-shorts-pool value. One without the other leaves a rail producing.
+kongkeat
+kongkeat-story

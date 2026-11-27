@@ -59,11 +59,9 @@ jobs:
           - slug: genx
             manifest: content/ch1_shorts.json
             token: YT_CH1_REFRESH_TOKEN
-          - slug: kongkeat
-            manifest: content/ch4_shorts.json
-            token: YT_CH4_REFRESH_TOKEN
-          # kongkeat RESTORED 2026-11-13 (UNPAUSED, K: "ลุย ch4"). The tripwire
-          # below fails the build if a paused slug is added back.
+          # kongkeat PAUSED 2026-11-27 (K approved): 6 of the last 8 Shorts had 0
+          # views, 11 subs after 118 uploads. Restore this entry together with the
+          # content/PAUSED line, or test_rail_channels.py fails the build.
     steps:
       - uses: actions/checkout@v4
 
