@@ -820,6 +820,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "119": {
+      "video_id": "V6X0iP0A4Js",
+      "url": "https://youtu.be/V6X0iP0A4Js",
+      "title": "คุณมีสิทธิ์วางภาระทั้งหมดลงแล้วนอน #Shorts",
+      "posted_at": "2026-11-27T23:26:46+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/119/thumb_119.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
