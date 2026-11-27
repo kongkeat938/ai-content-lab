@@ -956,6 +956,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "137": {
+      "video_id": "_APobqDNTbM",
+      "url": "https://youtu.be/_APobqDNTbM",
+      "title": "คืนนี้ลองทิ้งน้ำหนักตัวลงบนที่นอน #Shorts",
+      "posted_at": "2026-11-27T23:26:19+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/137/thumb_137.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
