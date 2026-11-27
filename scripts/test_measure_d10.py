@@ -114,6 +114,14 @@ def main() -> int:
     code, _ = run(p, FakeYta(error=http_error()))
     check("query failure -> exit 2 (BLIND)", code == 2, str(code))
 
+    p = baseline(os.path.join(tmp, "b4.json"))
+    code, _ = run(p, FakeYta(rows=[["SHORTS", 0]]))
+    check("no gain at all -> exit 3 (ALL ZERO)", code == 3, str(code))
+
+    p = baseline(os.path.join(tmp, "b5.json"))
+    code, _ = run(p, FakeYta(rows=[]))
+    check("empty report is a zero gain, not a crash -> exit 3", code == 3, str(code))
+
     p = baseline(os.path.join(tmp, "b3.json"), posted="2099-01-01")
     fake = FakeYta(rows=[["SHORTS", 0]])
     code, out = run(p, fake)
