@@ -228,5 +228,60 @@
    "shorts_feed": {},
    "shorts_probe": "OK"
   }
+ },
+ "d10_top5_longforms": [
+  {
+   "video_id": "F4qFHoVpEyI",
+   "views": 384,
+   "shorts_feed_views": {
+    "NO_LINK_OTHER": 3,
+    "SUBSCRIBER": 272,
+    "YT_CHANNEL": 2,
+    "RELATED_VIDEO": 92,
+    "YT_OTHER_PAGE": 4,
+    "EXT_URL": 2,
+    "PLAYLIST": 7
+   },
+   "title": "ธรรมะก่อนนอน 2 ชั่วโมง เปิดทิ้งไว้ทั้งคืน หลับลึกถึงเช้า ใจส"
+  },
+  {
+   "video_id": "RJPCYx_DUqU",
+   "views": 255,
+   "shorts_feed_views": {
+    "NO_LINK_OTHER": 1,
+    "SUBSCRIBER": 187,
+    "YT_CHANNEL": 2,
+    "RELATED_VIDEO": 60,
+    "EXT_URL": 4,
+    "PLAYLIST": 1
+   },
+   "title": "ธรรมะก่อนนอน ทางสายกลางและสติ ปล่อยวางความทุกข์"
+  },
+  {
+   "video_id": "7zALsTXwueU",
+   "views": 237,
+   "shorts_feed_views": 0,
+   "title": "เพลงธรรมะบรรเลง 1 ชั่วโมง ฟังก่อนนอน ใจสงบ ผ่อนคลาย"
+  },
+  {
+   "video_id": "rkvLICChhaE",
+   "views": 134,
+   "shorts_feed_views": 0,
+   "title": "เพลงสมาธิบรรเลง 1 ชั่วโมง นั่งสมาธิ ผ่อนคลาย"
+  },
+  {
+   "video_id": "V7E6OZZJ3xQ",
+   "views": 127,
+   "shorts_feed_views": 0,
+   "title": "ธรรมะก่อนนอน ปล่อยวางความกังวลเรื่องเงิน หลับลึกถึงเช้า ใจสบ"
+  }
+ ],
+ "test_comment": {
+  "video_id": "STfed3Kb4Z8",
+  "comment_id": "UgzRD13qTn8lhuI0IA54AaABAg",
+  "author": "@Farmmer-n9t",
+  "posted_utc": "2026-11-27T04:52Z",
+  "cta_playlist": "PLBpZCGnd7Q5Y",
+  "short_views_at_post": 1029
  }
 }
