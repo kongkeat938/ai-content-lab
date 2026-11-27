@@ -32,6 +32,20 @@ CHANNEL_ID = {"dharma": "UCM3QO5L_pmj34n1JVlbhh-w",
               "kongkeat-story": "UC7gCIu4G_7QCEJ8hJ-34zoQ"}
 
 
+def shorts_before(value) -> int:
+    """SHORTS views already on record, whichever shape the baseline stored.
+
+    The first baseline wrote an int for two videos and the whole
+    {source: views} dict for two others, so subtracting it raised TypeError on
+    exactly the clips that mattered.
+    """
+    if isinstance(value, dict):
+        return int(value.get("SHORTS") or 0)
+    if isinstance(value, (int, float)):
+        return int(value)
+    return 0
+
+
 def shorts_views(yta, video_id: str, start: str, end: str) -> int | None:
     """SHORTS views for one video, or None when the query itself failed."""
     from googleapiclient.errors import HttpError
@@ -69,6 +83,11 @@ def main() -> int:
     if args.days:
         start = (today - dt.timedelta(days=args.days)).isoformat()
 
+    if start > end:
+        print(f"BLIND: window {start}..{end} is empty (start is after end) -- "
+              "no data can exist yet, so this is not a verdict", file=sys.stderr)
+        return 2
+
     import yt_auth
     from googleapiclient.discovery import build
     creds = yt_auth.load_credentials(CHANNEL_ID[args.slug])
@@ -81,30 +100,32 @@ def main() -> int:
         if now is None:
             blind = True
             continue
-        before = item.get("shorts_feed_views") or 0
+        before = shorts_before(item.get("shorts_feed_views"))
         rows.append({"video_id": vid, "title": item.get("title", ""),
                      "views": item.get("views", 0), "shorts_before": before,
                      "shorts_now": now, "delta": now - before})
 
+    gained = [r for r in rows if r["delta"] > 0]
+    verdict = ("BLIND" if blind else
+               (f"PIPE WORKS: {len(gained)} of {len(rows)} long-forms gained SHORTS views"
+                if gained else
+                f"ALL ZERO: none of {len(rows)} long-forms gained SHORTS views -- do not backfill"))
+
     if args.json:
         print(json.dumps({"slug": args.slug, "window": [start, end], "rows": rows,
-                          "blind": blind}, ensure_ascii=False, indent=1))
-    else:
-        print(f"D10 {args.slug} · window {start}..{end}")
-        print(f"{'video':14} {'views':>6} {'SHORTS':>7} {'before':>7} {'delta':>6}  title")
-        for r in rows:
-            print(f"{r['video_id']:14} {r['views']:>6} {r['shorts_now']:>7} "
-                  f"{r['shorts_before']:>7} {r['delta']:>+6}  {r['title'][:44]}")
+                          "blind": blind, "verdict": verdict,
+                          "exit": 2 if blind else (0 if gained else 3)},
+                         ensure_ascii=False, indent=1))
+        return 2 if blind else (0 if gained else 3)
 
-    if blind:
-        return 2
-    gained = [r for r in rows if r["delta"] > 0]
-    if gained:
-        print(f"PIPE WORKS: {len(gained)} of {len(rows)} long-forms gained SHORTS views "
-              f"({', '.join(r['video_id'] for r in gained)})")
-        return 0
-    print(f"ALL ZERO: none of {len(rows)} long-forms gained SHORTS views -- do not backfill")
-    return 3
+    print(f"D10 {args.slug} · window {start}..{end}")
+    print(f"{'video':14} {'views':>6} {'SHORTS':>7} {'before':>7} {'delta':>6}  title")
+    for r in rows:
+        print(f"{r['video_id']:14} {r['views']:>6} {r['shorts_now']:>7} "
+              f"{r['shorts_before']:>7} {r['delta']:>+6}  {r['title'][:44]}")
+
+    print(verdict)
+    return 2 if blind else (0 if gained else 3)
 
 
 if __name__ == "__main__":
