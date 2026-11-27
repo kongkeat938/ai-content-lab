@@ -65,6 +65,10 @@
 - **Pausing drops a channel from a rail `matrix`; unpausing must PUT IT BACK** .
 - **ch4 = PCSEV = เกร็ดความรู้ "ทำไม"** (P/C/S/E/V, hook `_CURIOSITY`); slug ยัง `kongkeat-story`;
   **title ตั้งใน Studio** (API ไม่ได้); **paused 2026-11-27** (0 วิว/6 จาก 8 → `content/PAUSED`).
+- **Shorts >48 วิ ตาย**: n=333 (dharma+genx, คุมธีม) median 8 วิว vs 142–201 ที่ 33–48 วิ; เป้า 30–45 วิ
+  (gate ยัง ≤60) — `docs/DECISION-2026-11-27-money-math.md`.
+- **คอขวดเงิน = คนกดส่ง offer ไม่ใช่โค้ด**: asset ครบ (OFFER, portfolio, packages.json, demo releases,
+  126 prospect) แต่ไม่เคยถูกส่ง; ขั้นที่เหลือ = บัญชี Fastwork ของ K (`docs/FASTWORK-LISTING-2026-11-27.md`).
 - **Angle de-dup floor = 8** (`test_angle_pool.py`).
   **One live title = one video**.
 - **Thumb ผิดแนว → `--gen-art`.**
