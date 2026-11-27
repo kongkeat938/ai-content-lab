@@ -112,6 +112,8 @@ CHANNELS = {
         # 74-173 for the restating-the-problem shape (docs/HOOKS-MEASURED.md).
         # _winning_first() publishes these ahead of the others.
         "cues": ("ลอง", "คืนนี้", "เปิดทิ้งไว้"),
+        # >48 s measured a median of 8 views against 142-201 at 33-48 s (n=333).
+        "prefer_short": True,
         # The funnel points at the *playlist*, not only the single 120-min file:
         # the playlist is durable (it survives a deleted video) and it autoplays
         # into the next long file, so one tap earns more watch-hours than one video.
@@ -142,6 +144,7 @@ CHANNELS = {
         # ch1's winning shape is permission, not an instruction -- see the same
         # table. These hooks measured 310-373 views/day.
         "cues": ("มีสิทธิ์", "ไม่ต้อง", "อนุญาต"),
+        "prefer_short": True,
         "tail": ("\n\nรวมข้อคิดปรัชญาชีวิตไว้ให้แล้ว → "
                  "https://www.youtube.com/playlist?list=PLXEV3B3DcgsU\n"
                  "ทุกตอนอยู่ในช่องเดียว → https://www.youtube.com/@tatagenxgeny\n\n"
@@ -655,6 +658,39 @@ def commit(path: str, message: str) -> None:
               file=sys.stderr)
 
 
+DURATION_CAL = os.path.join(ROOT, "content", "duration_calibration.json")
+
+
+def predicted_seconds(script: dict) -> float:
+    """How long this clip will run, before it is built.
+
+    Fitted on 241 published Shorts (content/duration_calibration.json, R2=0.956):
+    the spoken text is hook + lines + cta, and the voice reads it at a near
+    constant rate. The fit is what lets the queue know a clip's length without
+    rendering it first.
+    """
+    try:
+        cal = json.load(open(DURATION_CAL, encoding="utf-8"))
+        a, b = float(cal["intercept_sec"]), float(cal["sec_per_char"])
+    except Exception:                                   # noqa: BLE001 -- never block a publish
+        a, b = 5.49, 0.08369
+    text = " ".join([script.get("hook", "")] + list(script.get("lines") or [])
+                    + [script.get("cta", "")])
+    return a + b * len(text)
+
+
+def prefer_short(todo: list) -> list:
+    """Spend the slots on the short end of the pool.
+
+    Measured 2026-11-27 over 333 Shorts on both live channels, controlled for
+    theme: the >48 s bucket has a median of 8 lifetime views against 142-201 at
+    33-48 s, and the effect holds inside a single theme (วิธี: 0.19 vs 7.17
+    views/day). A stable sort keeps the id order among equals, and the cue sort
+    that runs afterwards still wins inside each length group.
+    """
+    return sorted(todo, key=predicted_seconds)
+
+
 def winning_first(todo: list, cues) -> list:
     """Put the hooks that measured best at the front of the publish queue.
 
@@ -824,6 +860,16 @@ def main() -> int:
                   "spacing the posts out, that is what keeps the feed showing them")
             return 0
         print(f"  (pace unavailable: {exc}; using the static order)", file=sys.stderr)
+    if spec.get("prefer_short"):
+        before = todo
+        todo = prefer_short(todo)
+        long_ones = sum(1 for s in todo if predicted_seconds(s) > 48)
+        if long_ones:
+            print(f"  {long_ones} clip(s) predicted over 48 s are at the back of the queue "
+                  f"(that bucket measured a median of 8 views)")
+        if todo != before:
+            print(f"  shortest first: {predicted_seconds(todo[0]):.0f} s ahead of "
+                  f"{predicted_seconds(todo[-1]):.0f} s")
     todo = (pace.order(todo, spec.get("cues"), verdict, last_shape)
             if have_pace else winning_first(todo, spec.get("cues")))
     # A channel can require a hook marker (kongkeat's tension rule, 2026-11-10).
