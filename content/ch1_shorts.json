@@ -776,6 +776,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "108": {
+      "video_id": "GEoBfNdqTZQ",
+      "url": "https://youtu.be/GEoBfNdqTZQ",
+      "title": "คุณมีสิทธิ์ที่จะพักผ่อนจากความเหนื่อยล้า #Shorts",
+      "posted_at": "2026-11-27T01:06:25+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/108/thumb_108.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
