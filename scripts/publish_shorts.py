@@ -114,6 +114,10 @@ CHANNELS = {
         "cues": ("ลอง", "คืนนี้", "เปิดทิ้งไว้"),
         # >48 s measured a median of 8 views against 142-201 at 33-48 s (n=333).
         "prefer_short": True,
+        # 7-day experiment (2026-11-28): two posts a day, while genx keeps the
+        # shared ceiling of three as the control. Decision rule and baseline in
+        # docs/DECISION-2026-11-28-cap-experiment.md.
+        "daily_cap": 2,
         # The funnel points at the *playlist*, not only the single 120-min file:
         # the playlist is durable (it survives a deleted video) and it autoplays
         # into the next long file, so one tap earns more watch-hours than one video.
@@ -311,6 +315,18 @@ MIN_GAP_HOURS = 2.0
 # The upload ledger the cap counts. Kept separate from upload_limit.json, which
 # records a ceiling refusal, not a normal upload.
 UPLOAD_LOG = os.path.join(ROOT, "content", "upload_log.json")
+
+
+def daily_cap(spec: dict) -> int:
+    """This channel's posts per 24 h: its own `daily_cap`, else the shared ceiling.
+
+    Measured 2026-11-28 (era-controlled, clips posted in the same week): days with
+    three posts had a median of 9.6 views/day against 16.3 on days with one or two
+    (3 of 4 weeks, n=90 clips) -- i.e. the third post buys less than it costs.
+    A channel under test therefore states its own number; the control keeps the
+    shared ceiling, so the two arms differ by exactly this one setting.
+    """
+    return int(spec.get("daily_cap", DAILY_CAP))
 
 
 def _ledger_keys(channel_id: str) -> list[str]:
@@ -824,9 +840,10 @@ def main() -> int:
             and not s.get("retired")]
     # Hold the channel to a slow drip regardless of how often this was triggered.
     already = uploads_in_last_24h(args.channel, spec["manifest"])
-    room = max(DAILY_CAP - already, 0)
+    cap = daily_cap(spec)
+    room = max(cap - already, 0)
     if room == 0:
-        print(f"daily cap reached ({already}/{DAILY_CAP} in the last 24h) -- "
+        print(f"daily cap reached ({already}/{cap} in the last 24h) -- "
               "waiting, a steady drip beats a flood")
         return 0
     # K's rule (2026-11-09): wait 2-3 h between posts, and grade the last post
@@ -887,7 +904,7 @@ def main() -> int:
         todo = todo[:min(args.per_run, room)]
     done = [s["id"] for s in scripts if man["shorts"].get(s["id"], {}).get("video_id")]
     print(f"{len(todo)} to publish, {len(done)} already live, "
-          f"{already}/{DAILY_CAP} published in the last 24h")
+          f"{already}/{cap} published in the last 24h")
 
     if args.dry_run:
         for s in todo:
