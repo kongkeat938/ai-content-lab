@@ -123,6 +123,8 @@ def main() -> int:
     check_cap_counts_every_ledger_key()
     check_each_channel_reads_its_own_cap()
     check_dry_run_writes_no_state()
+    check_no_push_trigger()
+    check_remote_manifest_before_build()
     return 0
 
 
@@ -173,6 +175,47 @@ def check_dry_run_writes_no_state() -> None:
         fail("publish_shorts.py writes the reception ledger before the dry-run return; "
              "a --dry-run then edits tracked state")
     print("ok   a dry run does not write the reception ledger")
+
+
+def check_no_push_trigger() -> None:
+    """A code change must not publish a video by itself.
+
+    Measured 2026-11-28 04:46 UTC: a pool-grow push and a merge touching
+    publish_shorts.py both fired the rail while a manual run was in flight, and
+    script 163 went up twice, three seconds apart. The rail now runs on its schedule
+    and an explicit dispatch only."""
+    text = open(WORKFLOW, encoding="utf-8").read()
+    on_block = text.split("\non:", 1)[1].split("\npermissions:", 1)[0]
+    if re.search(r"^\s{2}push:\s*$", on_block, re.M):
+        fail("publish-shorts.yml still has a push trigger; a commit can publish a video "
+             "while another runner is building the same clip")
+    for need in ("schedule:", "workflow_dispatch:"):
+        if need not in on_block:
+            fail(f"publish-shorts.yml lost its {need} trigger; nothing would publish")
+    if not re.search(r"^\s{2}schedule:", on_block, re.M):
+        fail("publish-shorts.yml schedule trigger is not at the top level")
+    print("ok   publish-shorts runs on schedule + dispatch only (no push)")
+
+
+def check_remote_manifest_before_build() -> None:
+    """The pick must ask origin/main, not only the local manifest.
+
+    The local tree can be behind (measured 2026-11-28: 35 commits), which is how the
+    same script was published twice -- the manifest on disk still said "unpublished"."""
+    src = open(SCRIPT, encoding="utf-8").read()
+    if "def published_on_origin(" not in src:
+        fail("publish_shorts.py has no published_on_origin(); a stale tree can "
+             "re-publish a clip another runner already posted")
+    head, tail = src.split("def published_on_origin(", 1)
+    loop = tail.split("for s in todo:", 1)[-1]
+    if "published_on_origin(args.channel, sid)" not in loop:
+        fail("published_on_origin() is defined but never called in the publish loop")
+    i = loop.index("published_on_origin(args.channel, sid)")
+    j = loop.index("make_short.py")
+    if i > j:
+        fail("the remote check runs after the build starts; it must reject before "
+             "spending a render")
+    print("ok   the publish loop checks origin/main before building")
 
 
 if __name__ == "__main__":
