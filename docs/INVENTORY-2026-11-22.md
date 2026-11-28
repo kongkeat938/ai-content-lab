@@ -1,5 +1,9 @@
 # INVENTORY — what already exists (measured 2026-11-22 09:50 Thai)
 
+> **2026-11-28:** the advisor layer was deleted on K's order — `advise.py`, `council3.py`,
+> `team.py`, `consult*.py`, `panel_*.py`, `writers_room.py` (+ 4 guards). Script/test counts below
+> are the 2026-11-22 measurement; subtract those files.
+
 K: "ไปไล่ดูใน github openhand ให้หมด เราเคยทำทุกอย่างมาหมดแล้ว" — this is the measured
 answer. Read this **before** building anything: if a row exists, extend it, do not copy it.
 

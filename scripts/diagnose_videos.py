@@ -23,7 +23,7 @@ list of rules the generator can apply. Output: content/diagnosis/<channel>.json
 and docs/DIAGNOSIS-<channel>.md.
 
     python3 scripts/diagnose_videos.py --channel ch4
-    python3 scripts/diagnose_videos.py --channel ch4 --panel
+    python3 scripts/diagnose_videos.py --channel ch4
 """
 from __future__ import annotations
 
@@ -113,7 +113,7 @@ def classify(views: int, age_h: float | None) -> str:
     return "under-distributed"
 
 
-def diagnose(channel: str, use_panel: bool) -> dict:
+def diagnose(channel: str) -> dict:
     token_env, _scripts, manifest_rel = vr.CHANNELS[channel]
     tok = vr.access_token(token_env)
     man = json.load(open(os.path.join(ROOT, manifest_rel), encoding="utf-8"))["shorts"]
@@ -165,8 +165,6 @@ def diagnose(channel: str, use_panel: bool) -> dict:
         "burst_window_min": BURST_WINDOW_MIN, "burst_min": BURST_MIN,
         "counts": counts, "videos": rows,
     }
-    if use_panel:
-        diagnosis["panel"] = ask_panel(channel, rows, counts)
     return diagnosis
 
 
@@ -190,42 +188,6 @@ def detect_bursts(rows: list[dict]) -> dict[str, int]:
         if len(vids) >= BURST_MIN:
             for vid in vids:
                 out[vid] = len(vids)
-    return out
-
-
-def ask_panel(channel: str, rows: list[dict], counts: dict) -> dict:
-    """One question, grounded in the measured table: what do we do about each group."""
-    try:
-        import advise
-    except ImportError:
-        return {}
-    weak = [r for r in rows if r["state"] in ("dead", "under-distributed")][:12]
-    if not weak:
-        return {}
-    table = "\n".join(
-        f"- {r['short']} | {r['views']} views | {r['age_hours']}h old | burst={r.get('burst') or 0} | {r['title']}"
-        for r in weak)
-    burst_n = sum(1 for r in rows if r.get("burst"))
-    q = (
-        f"ช่อง {channel}: สรุปสถานะคลิป = {counts}\n"
-        f"พบว่า {burst_n} คลิปถูกอัปโหลดเป็น 'คลื่น' (≥5 คลิปใน 10 นาที) และคลิปในคลื่น\n"
-        "ส่วนใหญ่ได้ 0 วิว ขณะที่คลิปที่ปล่อยทีละ 1-2 ได้ 100-1,000 วิว\n"
-        "คลิปที่ยังไม่ perform (เลย 48 ชม.):\n" + table + "\n\n"
-        "คุณคือผู้จัดการช่อง YouTube. ตอบสั้น ๆ เป็นข้อ:\n"
-        "1) สาเหตุที่เป็นไปได้ที่สุดที่คลิปกลุ่มนี้ไม่ถูกแจกจ่าย (อ้างจากตัวเลข burst)\n"
-        "2) สิ่งที่ต้องทำกับ 'แต่ละกลุ่ม' (ปล่อยไว้/รอ/แก้ชื่อ-ปก-คำอธิบาย/หยุดทำต่อ) — ห้ามแนะนำให้ลบ\n"
-        "3) RULES: กฎ 3 ข้อสำหรับสคริปต์ใหม่ (สั้น กระชับ ใช้ได้จริง)\n"
-    )
-    # Only the fast, free advisors, each under a hard cap: a diagnosis that blocks a
-    # CI run for 20 minutes waiting on a slow poll is worse than no diagnosis. The
-    # numbers carry the finding; the panel only phrases it.
-    out: dict[str, str] = {}
-    for name in advise.LIGHT:
-        res = _with_timeout(advise.advisor(name), (q,), 90)
-        if res is None:
-            out[name] = "(timed out)"
-            continue
-        out[name] = str(res).strip()
     return out
 
 
@@ -333,11 +295,10 @@ def forward_rules(channel: str, rules: list[str]) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--channel", required=True, choices=list(vr.CHANNELS))
-    ap.add_argument("--panel", action="store_true")
     ap.add_argument("--out", help="write the markdown report here")
     args = ap.parse_args()
 
-    d = diagnose(args.channel, args.panel)
+    d = diagnose(args.channel)
     os.makedirs(os.path.join(ROOT, "content", "diagnosis"), exist_ok=True)
     jpath = os.path.join(ROOT, "content", "diagnosis", f"{args.channel}.json")
     with open(jpath, "w", encoding="utf-8") as fh:

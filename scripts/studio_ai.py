@@ -331,21 +331,6 @@ def brief(data: dict) -> str:
     return "\n".join(lines)
 
 
-def ask_panel(question: str, extra: str) -> dict[str, str]:
-    sys.path.insert(0, HERE)
-    import advise  # noqa: PLC0415 - local module, imported lazily
-    out: dict[str, str] = {}
-    for name in advise.LIGHT:
-        try:
-            out[name] = advise.advisor(name)(
-                f"{extra}\n\n{question}\n\n{advise.SYSTEM}").strip()
-        except KeyError:
-            raise  # an unregistered name is a wiring bug, not a dead vendor
-        except Exception as exc:  # noqa: BLE001 - a dead advisor must not stop the run
-            out[name] = f"(unavailable: {str(exc)[:160]})"
-    return out
-
-
 QUESTION = (
     "จากตัวเลขจริงของช่องข้างบน จงตอบ 3 ข้อสั้น ๆ เป็นภาษาไทย:\n"
     "1) คลิปแบบไหนทำผลงานดีที่สุด (ดูจากชื่อ+ตัวเลข) และเพราะอะไร\n"
@@ -538,7 +523,6 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--channel", default="ch4", choices=sorted(CHANNELS))
     ap.add_argument("--days", type=int, default=28)
-    ap.add_argument("--panel", action="store_true", help="also ask the advisor panel")
     ap.add_argument("--out", default="", help="write the report to this path")
     a = ap.parse_args()
 
@@ -547,15 +531,8 @@ def main() -> int:
     text = brief(data)
     print(text)
 
-    answers: dict[str, str] = {}
-    if a.panel:
-        print("\n== panel ==")
-        answers = ask_panel(question_for(a.channel), "ข้อมูลจริง:\n" + text)
-        for name, ans in answers.items():
-            print(f"\n### {name}\n{ans}")
-            text += f"\n\n### {name}\n{ans}"
-        ins = write_insights(a.channel, data["per_video"], answers, data.get("longform"))
-        print(f"\nwrote {ins}")
+    ins = write_insights(a.channel, data["per_video"], {}, data.get("longform"))
+    print(f"\nwrote {ins}")
 
     if a.out:
         path = a.out if os.path.isabs(a.out) else os.path.join(ROOT, a.out)

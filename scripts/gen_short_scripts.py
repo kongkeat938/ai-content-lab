@@ -349,10 +349,6 @@ def main() -> int:
     ap.add_argument("--channel", default="dharma", choices=list(CHANNELS))
     ap.add_argument("--count", type=int, default=6)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--vet", dest="vet", action="store_true", default=True,
-                    help="filter each draft through the multi-model panel (default on)")
-    ap.add_argument("--no-vet", dest="vet", action="store_false")
-    ap.add_argument("--vet-rounds", type=int, default=2)
     args = ap.parse_args()
 
     paused_path = os.path.join(ROOT, "content", "PAUSED")
@@ -450,27 +446,6 @@ def main() -> int:
         sid = f"{next_id:02d}"
         next_id += 1
         added.append({"id": sid, "hook": s["hook"], "lines": s["lines"], "cta": s["cta"]})
-
-    # Filter every draft through the multi-model panel before it joins the pool,
-    # so a weak hook is revised here rather than measured as a losing video later.
-    if args.vet and added:
-        sys.path.insert(0, HERE)
-        try:
-            from panel_script import panel as panel_vet
-        except Exception as e:  # noqa: BLE001
-            print(f"  panel unavailable ({e}); keeping raw drafts")
-        else:
-            for s in added:
-                print(f"  vetting {s['id']}: {s['hook'][:36]}")
-                try:
-                    res = panel_vet(args.channel, {"hook": s["hook"], "lines": s["lines"],
-                                                   "cta": s["cta"]}, args.vet_rounds, key)
-                    ch = res["chosen"]
-                    if valid(ch, cues, forbid, require):
-                        s.update(hook=ch["hook"], lines=ch["lines"], cta=ch["cta"])
-                        s["vetted"] = True
-                except Exception as e:  # noqa: BLE001
-                    print(f"    panel failed for {s['id']} ({type(e).__name__}); keeping draft")
 
     print(f"{args.channel}: {len(existing)} existing, {len(added)} new")
     for s in added:

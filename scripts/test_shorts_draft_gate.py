@@ -6,13 +6,13 @@ edge-tts reads wrong, or a hook that is a copy of one already published. Each
 case below is a defect measured in a real draft, plus the good shape that must
 pass, so a future loosening of `problems()` is caught here.
 
-    python3 scripts/test_writers_room.py
+    python3 scripts/test_shorts_draft_gate.py
 """
 from __future__ import annotations
 
 import sys
 
-import writers_room as wr
+import shorts_draft_gate as wr
 
 GOOD = {
     "hook": "คืนนี้ลองวางมือบนท้องแล้วขอบคุณร่างกายที่แบกเรามาทั้งวัน",
@@ -63,11 +63,6 @@ def main() -> int:
     check(wr.parse('```json\n{"hook":"ก","lines":["ข"],"cta":"ค"}\n```') is not None,
           "a fenced reply still parses")
     check(wr.parse("ขอโทษนะครับ ผมเขียนไม่ได้") is None, "chatty non-JSON is rejected")
-
-    brief = wr.build_brief("หัวข้อทดสอบ")
-    check("JSON เท่านั้น" in brief and "ห้ามมีตัวเลขโดด" in brief,
-          "the brief states the rules it is judged by")
-    check("Farmmer" in brief, "the brief names the channel")
 
     print(f"\n{'FAILED' if failures else 'PASS'} ({len(failures)} failures)")
     return 1 if failures else 0

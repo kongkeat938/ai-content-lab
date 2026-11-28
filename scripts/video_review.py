@@ -255,40 +255,6 @@ def match_script(title: str, scripts: list[dict]) -> dict | None:
     return scored[0][1]
 
 
-def ask_panel(items: list[dict]) -> dict[str, str]:
-    sys.path.insert(0, HERE)
-    import advise  # noqa: PLC0415
-    lines = ["คลิปที่ทำผลงานดีที่สุดของช่อง (ใช้เป็นมาตรฐาน):"]
-    for it in items:
-        lines.append(f"  - {it['title']} | ดูจบ {it['averageViewPercentage']:.0f}% | "
-                     f"engagement {it['eng']}/1k")
-    lines.append("\nสคริปต์ที่ควรปรับปรุง (รายคลิป):")
-    for it in items:
-        sc = it.get("script")
-        if not sc:
-            continue
-        lines.append(f"\n[{it['title']}] เกรด {it['grade']}")
-        lines.append(f"  hook: {sc['hook']}")
-        lines.append("  lines: " + " / ".join(sc["lines"][:9]))
-        lines.append(f"  cta: {sc.get('cta','')}")
-    q = ("จงวิจารณ์คุณภาพสคริปต์ Shorts ข้างบนแบบตรงไปตรงมา เป็นภาษาไทย:\n"
-         "1) แต่ละคลิปมีจุดอ่อนอะไร (hook/lines/cta) เทียบกับคลิปที่ได้ผลดีสุด\n"
-         "2) เขียน hook ใหม่ 1 บรรทัด + ปรับ lines ให้กระชับขึ้น สำหรับคลิปที่ควรแก้\n"
-         "3) บรรทัดสุดท้าย ขึ้นต้นด้วย 'RULES:' แล้วเขียนกฎสั้น ๆ 3 ข้อที่ควรใช้กับทุกคลิป\n"
-         "   ถัดไป คั่นแต่ละข้อด้วย ' | ' (กฎต้องเป็นคำสั่งที่ทำตามได้จริง)")
-    payload = "\n".join(lines)
-    out: dict[str, str] = {}
-    for name in advise.LIGHT:
-        try:
-            out[name] = advise.advisor(name)(
-                f"{payload}\n\n{q}\n\n{advise.SYSTEM}").strip()
-        except KeyError:
-            raise  # an unregistered name is a wiring bug, not a dead vendor
-        except Exception as exc:  # noqa: BLE001
-            out[name] = f"(unavailable: {str(exc)[:160]})"
-    return out
-
-
 def parse_rules(text: str) -> list[str]:
     """Pull the panel's forward-looking rules out of its answer."""
     for line in reversed(text.splitlines()):
@@ -371,12 +337,6 @@ def main() -> int:
         if r["script"]:
             text.append(f"  - hook: {r['script']['hook']}")
 
-    answers: dict[str, str] = {}
-    if a.panel:
-        answers = ask_panel(items)
-        for name, ans in answers.items():
-            text.append(f"\n## panel: {name}\n{ans}")
-
     body = "\n".join(text)
     print(body)
 
@@ -384,12 +344,6 @@ def main() -> int:
     # so the next scripts are written under the critique -- a closed loop from
     # "what was weak" to "what to write differently".
     rules: list[str] = []
-    for ans in answers.values():
-        for r in parse_rules(ans):
-            if r not in rules:
-                rules.append(r)
-        if rules:
-            break
 
     rev_path = os.path.join(ROOT, "content", "reviews", f"{a.channel}.json")
     os.makedirs(os.path.dirname(rev_path), exist_ok=True)

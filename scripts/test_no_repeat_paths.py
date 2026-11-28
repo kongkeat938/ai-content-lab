@@ -23,7 +23,7 @@ sys.path.insert(0, HERE)
 
 import publish_youtube  # noqa: E402
 import upload_gate  # noqa: E402
-import writers_room  # noqa: E402
+import shorts_draft_gate  # noqa: E402
 
 failures: list[str] = []
 SCRIPT_A = ("คืนนี้ลองนึกถึงเรื่องดีๆ สักเรื่องก่อนนอน ใจของคนเรามักจำเรื่องร้ายไว้แน่น "
@@ -95,11 +95,11 @@ def main() -> int:
 
     print("the writers' room refuses a half-copied draft")
     draft = {"hook": SCRIPT_A[:40], "lines": SCRIPT_A[40:].split(" ")[:6], "cta": "ฝากกดติดตาม"}
-    bad = writers_room.problems(draft, [], [SCRIPT_A])
+    bad = shorts_draft_gate.problems(draft, [], [SCRIPT_A])
     check(any("same as a published one" in b for b in bad), f"a copy is caught ({bad})")
     fresh = {"hook": "ยายบัวจุดตะเกียงรอคนหลงทาง", "lines": SCRIPT_B[20:].split(" ")[:6],
              "cta": "ฝากกดติดตาม"}
-    check(not any("same as a published one" in b for b in writers_room.problems(fresh, [], [SCRIPT_A])),
+    check(not any("same as a published one" in b for b in shorts_draft_gate.problems(fresh, [], [SCRIPT_A])),
           "a new draft is not flagged as a copy")
 
     print(f"\n{'FAILED' if failures else 'PASS'} ({len(failures)} failures)")
