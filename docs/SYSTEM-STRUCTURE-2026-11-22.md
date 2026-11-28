@@ -4,8 +4,7 @@ K: "ต่อจากนี้ให้ทำงานตามระบบโ�
 parts that already exist (see `INVENTORY-2026-11-22.md`); nothing here is a second copy.
 
 ## 0) One sentence
-ak (CEO) decides → the **3-layer council** checks the thinking → a **worker** makes the
-artifact → a **gate that can FAIL** decides ship-or-hold → the **publisher** ships and records
+ak (CEO) decides alone → **the builders** make the artifact → a **gate that can FAIL** decides ship-or-hold → the **publisher** ships and records
 it → a **counter** proves it moved.
 
 ## 1) The layers, and who owns each
@@ -13,8 +12,8 @@ it → a **counter** proves it moved.
 | layer | owner | job | must hold |
 |---|---|---|---|
 | **L0 CEO** | ak (this conversation, or a cron conversation) | order the facts, choose the move, execute, verify live | every claim carries a measurement |
-| **L1 THINK** | `scripts/council3.py` (5 camps) | L1 drafts in parallel → L2 cross-critique (critic ≠ author) → L3 decide in a fixed shape | quorum, every draft critiqued, no number outside FACTS |
-| **L2 BUILD** | `scripts/team.py` workers + the builders (`make_short.py`, `make_compilation.py`, `make_night_video.py`, `longform-standard.yml`) | produce one artifact per decision | a generator that drops a piece FAILS, never writes a partial set |
+| **L1 THINK** | ak (removed 2026-11-28) | the council and the worker team were deleted: one head decides | every claim carries a measurement |
+| **L2 BUILD** | the builders (`make_short.py`, `make_compilation.py`, `make_night_video.py`, `longform-standard.yml`) | produce one artifact per decision | a generator that drops a piece FAILS, never writes a partial set |
 | **L3 GATE** | `short_standard.py` · `clip_standard.py` · `verify_night.py` · `qa_gate.py` | pass / hold, one owner per format | the gate can FAIL and is never moved to let a build through |
 | **L4 PUBLISH** | `publish_shorts.py` · `publish_batch.py` · `publish_motion.py` | upload + thumbnail + record | receipt written before the next step; cap 3/day/channel |
 | **L5 MEASURE** | `counter_ledger.py` · `analytics.py` → `watch_hours.json` → `PROGRESS.md` | prove the number moved | counters must not fall and must not sit still |
@@ -25,8 +24,9 @@ it → a **counter** proves it moved.
 2. **One owner per gate.** No second opinion may drift (the Gemini panel was removed 2026-11-21).
 3. **A gate must be able to FAIL.** When a build fails a gate, change the **build**, never the gate
    (today: `--bed-headroom` fixed a 31.7 dB bed instead of raising the 30 dB ceiling).
-4. **Numbers are measured, not remembered.** The council's numbers are checked against FACTS;
-   a doc tells you *where* to measure, not *what* the answer is.
+4. **Numbers are measured, not remembered.** No outside camp confirms a figure any more (the
+   council was removed 2026-11-28), so every number in a decision must come from a live call or a
+   real output file; a doc tells you *where* to measure, not *what* the answer is.
 5. **Record before the next step.** A loop that cannot persist its manifest must not run
    (otherwise it re-posts the same video — measured failure `night_auto_202647_r23`).
 6. **Times to K are Thai `HH:MM`.**
@@ -39,10 +39,10 @@ it → a **counter** proves it moved.
 | 20:00-22:00 | publish window for sleep-format clips (dharma) | ak |
 | step up, don't jump | a new rail runs 1 day beside the old one before it replaces it | ak |
 
-## 4) What the council may and may not do
-- **May:** choose what to build/fix next, rank options, name the risk and the `NOT`.
-- **May not:** approve a build, override a gate, or publish. There is no panel verdict to wait for.
-  ak executes; the gate decides; the counter proves.
+## 4) What ak may and may not do
+- **May:** choose what to build/fix next, rank options, name the risk and the `NOT`, execute.
+- **May not:** override a gate. The gate decides; the counter proves. There is no panel verdict to
+  wait for — the advisor layer was deleted on K's order (2026-11-28).
 
 ## 5) From turn-based to a real loop
 | stage | what runs | precondition |

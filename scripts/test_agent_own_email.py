@@ -25,7 +25,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import ak_mail  # noqa: E402
-import team  # noqa: E402
 
 # K's channel addresses -- the business assets. They must NEVER be a tool/agent signup.
 K_ADDRESSES = ("ch1@example.invalid", "ch2@example.invalid",
@@ -40,7 +39,7 @@ def fail(msg: str) -> None:
 def main() -> int:
     # 1. Every identity resolves to its OWN vault key; none collides.
     keys: dict[str, str] = {}
-    for identity in ["ak"] + list(team.TEAM):
+    for identity in ak_mail.ROSTER:
         k = ak_mail._vault_key(identity)
         if not k:
             fail(f"identity {identity!r} has no vault key")
@@ -51,12 +50,8 @@ def main() -> int:
     if ak_mail._vault_key("ak") == ak_mail._vault_key("researcher"):
         fail("a worker still shares ak's own vault key; it must have its own")
 
-    # 2. The roster covers ak + every team role -- a new worker cannot be forgotten.
+    # 2. The roster covers ak (the team was retired 2026-11-28).
     roster = set(ak_mail.ROSTER)
-    missing = set(team.TEAM) - roster
-    if missing:
-        fail(f"the mailbox roster omits team role(s) {sorted(missing)}; a new worker "
-             f"would silently have no mailbox")
     if "ak" not in roster:
         fail("the mailbox roster does not include ak")
 
@@ -66,16 +61,7 @@ def main() -> int:
         fail("ak_mail.py has no `--as` selector or `roster` command; identities cannot "
              "be told apart")
 
-    # 4. team.py can mint/show a worker's mailbox and labels each worker with its own.
-    tsrc = open(os.path.join(HERE, "team.py"), encoding="utf-8").read()
-    if "def mailbox(" not in tsrc:
-        fail("team.py has no mailbox() helper; a worker has no way to learn its own address")
-    if "cmd_mail" not in tsrc or '"mail"' not in tsrc:
-        fail("team.py exposes no `mail` command; a worker's mailbox cannot be created")
-    if "ห้ามใช้เมลของเจ้าของช่อง" not in tsrc:
-        fail("team.dispatch does not tell the worker it must never use K's address")
-
-    # 5. A store that fails MUST fail loudly. Measured 2026-11-14: `new` created an
+    # 4. A store that fails MUST fail loudly. Measured 2026-11-14: `new` created an
     #    address at the provider but the vault write failed and it still exited 0 --
     #    the mailbox existed but was never recorded, so the next session read "no ak
     #    mailbox". Reintroducing that silent partial write must break this guard.

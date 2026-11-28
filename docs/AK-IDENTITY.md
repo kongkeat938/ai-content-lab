@@ -27,7 +27,9 @@ that is now dead**, so a fresh session never saw it. That is the root cause of t
 K: *"ต่อไปเครื่องมือทุกอย่างใช้เมล์ตัวเองล็อกอินเลย รวมถึง agent ในทีมด้วย ไม่ต้องใช้เมล์ K แล้ว"*.
 
 So a mailbox is now **per-identity**, not just for ak. The vault key is
-`ak.identity.mailbox` for ak and **`ak.identity.mail.<role>`** for every worker in `team.py`.
+`ak.identity.mailbox` for ak and **`ak.identity.mail.<role>`** for a worker. The worker team was
+retired on 2026-11-28 (K: ak decides alone), so today the roster is `["ak"]`; the per-role keys
+stay for any future identity that needs its own mailbox.
 Never K's address (`ch1` / `ch2` / `ch4` / `aerismusic8`) — those are
 the **business channel assets**, a different thing entirely (they stay, for the YouTube API).
 
@@ -35,12 +37,12 @@ the **business channel assets**, a different thing entirely (they stay, for the 
 python3 scripts/ak_mail.py new  --as researcher   # a worker's own mailbox
 python3 scripts/ak_mail.py show --as critic
 python3 scripts/ak_mail.py roster                 # every identity + its address (no passwords)
-python3 scripts/team.py mail researcher --new     # same, from the team CLI
 ```
 
 Measured live 2026-11-14: all **7 identities** (ak + researcher, scriptwriter, packager,
-critic, analyst, engineer) each created a distinct mailbox and stored it. The roster is read
-from `team.py`, so a new worker is never silently missing a mailbox.
+critic, analyst, engineer) each created a distinct mailbox and stored it. Since 2026-11-28 the
+roster is `["ak"]` (`ak_mail.ROSTER`), and `test_agent_own_email.py` fails if ak's mailbox is
+missing or shares a vault key.
 
 **Trap fixed (the real reason ak "forgot" its mailbox):** `cmd_new` created an address at the
 provider but a failed vault write still exited 0 → the mailbox existed but was never recorded,

@@ -73,16 +73,9 @@ def _domains() -> list[str]:
 
 
 def _roster() -> list[str]:
-    """Every identity that must own a mailbox: `ak` plus every worker in the team.
-    Read from team.py so a new worker is never silently missing a mailbox (the
-    `.get()+continue` trap that once emptied the panel)."""
-    try:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import team  # noqa: PLC0415
-        roles = list(team.TEAM)
-    except Exception:                                   # noqa: BLE001
-        roles = []
-    return ["ak"] + roles
+    """Every identity that must own a mailbox. The worker team was retired
+    (K, 2026-11-28: ak decides alone), so the roster is ak."""
+    return ["ak"]
 
 
 ROSTER = _roster()

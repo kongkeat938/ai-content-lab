@@ -52,11 +52,16 @@ The old one died with PC1 because the note lived only in the `ax-workspace` repo
 current. Rules: **ak never signs up as K**, and if a service demands a phone number ak cannot own,
 **stop and ask K** (guard `scripts/test_ak_identity.py`).
 
-## ak's team of workers (K, 2026-11-13)
-ak has a **team that does the work, not just advice** (`scripts/team.py`): `researcher`,
-`scriptwriter`, `packager`, `critic`, `analyst` (fast) + `engineer` (OpenHands Cloud).
-Hand a worker a task and use the artifact: `python3 scripts/team.py run packager "..."`.
-The decision panel stays separate (`advise.py`). Guard `scripts/test_team.py`.
+## ak decides alone (K, 2026-11-28)
+**"ตอนนี้ ak ตรวจสอบระบบเราทั้งหมด ... พวก chat gpt หรือระบบ advisor อื่นที่ทำงานในระบบเรา
+ตอนนี้ยกเลิกออกไปให้หมดเลย ak มีอิสระที่จะทำเองทั้งหมดแล้ว ทำอะไรทำเลย"** — the advisor layer is
+**gone**: `advise.py`, `council3.py`, `team.py`, `consult.py`, `consult_panel.py`,
+`panel_bench.py`, `panel_scorecard.py`, `panel_script.py`, `writers_room.py` and their guards
+were deleted; the `--panel`/`--vet` flags that asked them were removed from `studio_ai.py`,
+`video_review.py`, `diagnose_videos.py` and `gen_short_scripts.py`. ak orders the facts, decides,
+builds, gates, publishes and measures — one head, no second opinion. The mechanical draft gate
+survives as `scripts/shorts_draft_gate.py` (guard `test_shorts_draft_gate.py`), because that part
+was never an opinion.
 
 ## Gemini is out of the gate (K, 2026-11-21)
 **"Gemini ลบไปเลย ไม่ต้องใช้ระบบนี้มาตรวจแล้ว"** — the Gemini review ledger, the approval
@@ -65,33 +70,10 @@ panel verdict to wait for: a build that passes a gate that can FAIL (measured li
 
 ## ระบบโครงสร้างใหม่ — ทำงานตามนี้ทุกครั้ง (K, 2026-11-22)
 "ต่อจากนี้ให้ทำงานตามระบบโครงสร้างใหม่ด้วย" → `docs/SYSTEM-STRUCTURE-2026-11-22.md`
-(L0 CEO ak → L1 council3 คิด/ตรวจ/ตัดสิน → L2 worker สร้าง → L3 gate ที่ FAIL ได้ → L4 publish
-ที่บันทึก receipt → L5 counter พิสูจน์ว่าขยับ). **ก่อนสร้างอะไรใหม่ อ่าน
+(L0 CEO ak คิด/ตัดสินเอง → L2 build → L3 gate ที่ FAIL ได้ → L4 publish ที่บันทึก receipt →
+L5 counter พิสูจน์ว่าขยับ; the L1 council was removed 2026-11-28). **ก่อนสร้างอะไรใหม่ อ่าน
 `docs/INVENTORY-2026-11-22.md` ก่อนเสมอ** — ของส่วนใหญ่มีอยู่แล้ว (232 scripts, 112 tests,
 39 workflows, 127 OpenHands conversations); ถ้าอยู่ในตาราง ให้ต่อยอด ไม่ใช่ทำสำเนาใหม่.
-
-## ระบบผู้ช่วย 3 ชั้น (K, 2026-11-22)
-K's table measured five camps alive (pollinations, Gemini, KiloCode, G4FSpace, Yqcloud).
-A decision now goes through **three layers of thinking** (`scripts/council3.py`, guard
-`scripts/test_council3.py`):
-
-1. **L1 THINK** — every camp answers the same question + the same measured FACTS, in parallel.
-   A dead camp is named in `draft_errors`, never silently dropped.
-2. **L2 CHECK** — every draft is critiqued by a **different** camp (numbers vs FACTS, unsupported
-   claims, logic, risk). A draft nobody critiques **FAILS** the run.
-3. **L3 DECIDE** — one synthesizer must answer DECISION / REASONS / NOT / CONFIDENCE / NUMBERS.
-   A number ≥100 (or a decimal) in the decision that is **not in FACTS FAILS** — that is how an
-   invented channel figure is caught.
-
-Quorum and cross-check are gates: < `--min-vendors` answering, or a panel too small to critique
-every draft, exits **2** (deferral) instead of pretending the council decided.
-`advise.py` stays the quick one-camp ask (Gemini, 2026-11-18). The council is help, never an
-approval step — `test_upload_autonomy.py` still binds.
-
-**Use it for the work (K, 2026-11-22): "ต่อไปใช้ระบบนี้เข้ามาช่วยทำงานนะ"** — a technical
-decision (what to build/fix next) goes through `council3.py` with the measured facts in
-`--extra`, and the record is kept. ak still decides and executes; the council's numbers are
-checked against FACTS, not trusted.
 
 ## ak publishes on its own (K, 2026-11-21)
 **"ตอนนี้ระบบสร้างคลิปได้มาตรฐานแล้ว ยกเลิกกฏรอ K อนุมัติอัพออกเลย อัพได้ตลอดเวลาเลย แล้วแต่

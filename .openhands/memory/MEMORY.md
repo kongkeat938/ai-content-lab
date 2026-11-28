@@ -3,9 +3,9 @@
 **ak** · owner **K** (Thai) · measured, not claims · keep <6,000 (`test_memory_budget.py`).
 **Project `yt938-2`; read `docs/PROJECT-MAP.md` first**; detail in `topics/`.
 
-## 🪪 ak's identity & team
+## 🪪 ak's identity
 **Every tool uses its OWN mailbox, never K's** (`test_agent_own_email.py`); `ak_mail.py`.
-**Workers** (`team.py run <role>`) DO the work.
+**ak decides alone** (2026-11-28): council/advise/team/panel deleted; no second opinion.
 
 ## 🎯 What gates the business (`docs/DECISION-2026-11-09.md`)
 - **YPP = long-form ONLY** (Shorts don't count); steer by long-form watch-h/week + `retention@2min`.
@@ -31,7 +31,6 @@
   `403 gate + || echo 0` = **false pass**.
 - **Pod env:** reset → `pip -r requirements.txt` + static-ffmpeg; **secret injects เฉพาะเมื่อชื่ออยู่ใน
   คำสั่ง**; **push:** `gh_auth.py push` (plain = 403); งานต้องออกจาก pod = `durability_guard.py`.
-- **Advisors:** `council3.py`/`advise.py`/`team.py`.
 
 - **MV/เนื้อเรื่อง:** `art_ledger_mv.json`, `content_ledger.json` (sha/บทซ้ำ = FAIL); gen ล่ม → procedural.
 

@@ -43,7 +43,7 @@ is retired (its 4 long-forms are published and the queue is closed).
 | `publish-batch.yml` | `17 */3` | uploads ready long-form | the long-form pipeline |
 | `night-compilation.yml` | Mon 02:17 | builds 120-min dharma compilations | **watch-hours engine** |
 | `publish-shorts.yml` | 01/09/17:30 | uploads Shorts | reach + subs |
-| `studio-ai.yml` | 21:45 | Analytics → panel → insights | the learning loop |
+| `studio-ai.yml` | 21:45 | Analytics → insights from the measured winners | the learning loop |
 | `counter-ledger.yml` | 04:43 | invariant counter | **the proof meter** |
 | `account-watch.yml` | 08:42 | delegated-credential probe | guard (delegate publish) |
 | `rogue-guard.yml` | `*/30` | hides live rogue uploads | containment |
@@ -142,22 +142,24 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
     PC1 not drivable from the pod (tailnet NXDOMAIN, no `PC1_MCP_TOKEN`); `ART_LIBRARY_URL` unset.
     → to build clips now: install the renderer deps here, bring PC1 up, or supply `ART_LIBRARY_URL`.
     Stories ready: `content/motion/01-04.json` (dharma×2, genx, knowledge).
+- **The system audit (2026-11-28):** `docs/AUDIT-2026-11-28-system.md` — what exists, what the
+  advisor layer was and that it is deleted, and which files still call an outside model.
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
 - **What already exists:** `docs/INVENTORY-2026-11-22.md` (repo/workflows/releases/issues,
   OpenHands conversations, and the capability map that names the owner of every job). Read it
   before creating anything — K, 2026-11-22: "เราเคยทำทุกอย่างมาหมดแล้ว".
-- **How work runs now:** `docs/SYSTEM-STRUCTURE-2026-11-22.md` (L0 CEO → L1 council3 → L2 build
+- **How work runs now:** `docs/SYSTEM-STRUCTURE-2026-11-22.md` (L0 CEO ak decides → L2 build
   → L3 gate → L4 publish → L5 counter; the six rules; the loop stages and their preconditions).
+  The L1 council and the worker team were **deleted** (K, 2026-11-28).
 - **ak's own identity:** `docs/AK-IDENTITY.md` + `scripts/ak_mail.py` (ak's mailbox, KV vault).
-- **ak's team of workers:** `scripts/team.py` (`list|run|all`); roles = researcher, scriptwriter,
-  packager, critic, analyst (fast) + engineer (Cloud). Advisors registry: `scripts/advise.py`
-  (camps: gemini, pollinations, kilocode, g4fspace, yqcloud — the last three via g4f, keyless);
-  3-layer council `scripts/council3.py`.
+- **ak decides alone (K, 2026-11-28):** no advisor registry, no council, no worker team. What
+  survives from that layer is the mechanical part: `scripts/shorts_draft_gate.py` (shape, digits,
+  emoji, mixed script, hook/story repeats) with guard `test_shorts_draft_gate.py`.
 - **Quality = measured gates only** (K, 2026-11-21: Gemini ออกจากระบบตรวจแล้ว). No review
   ledger, no panel verdict, no auto-fix. A gate that can FAIL + a live measurement is the
   whole bar. **ak publishes on its own** (K, 2026-11-21: "ยกเลิกกฏรอ K อนุมัติอัพออกเลย
   อัพได้ตลอดเวลาเลย แล้วแต่ ak บริหาร") — guard `scripts/test_upload_autonomy.py`.
-  `scripts/advise.py`/`team.py` = optional drafting help, never an approval step.
+  There is no second opinion anywhere: ak decides, the gate decides, the counter proves.
 - **Long clip → Short with a link (K, 2026-11-21):** `scripts/shorts_from_long.py` cuts a
   45-46 s vertical from a finished long clip (16:9 floats on its own blurred copy; Thai text
   burned through **libass** — this ffmpeg has no `drawtext`), gates it with `short_standard`,
@@ -183,9 +185,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 ## 4) Conventions (K's rules, measured)
 
 - **PCSEV** every problem: Problem → Cause → Solution → Execute → Verify (verify LIVE).
-- Times to K: **Asia/Bangkok, 24h**. Reply in **Thai**. Decisions go to the **3-layer council**
-  (`scripts/council3.py`, K 2026-11-22): L1 ทุกค่ายคิดขนาน → L2 ค่ายอื่นวิจารณ์ร่าง →
-  L3 ตัดสิน (ห้ามอ้างตัวเลขที่ไม่มีใน FACTS). `advise.py` = ถามเร็วค่ายเดียว (Gemini, K 2026-11-18).
+- Times to K: **Asia/Bangkok, 24h**. Reply in **Thai**. **ak decides alone** (K, 2026-11-28: the
+  council/advisor layer is deleted) — a decision is ak's, and every number in it must come from a
+  live call or a real output file, never from an outside model's opinion.
 - A guard must be able to FAIL; never hardcode the set a guard sweeps; a generator that can
   drop a piece must FAIL.
 - **A rail that cannot do its job must not report success** (measured 2026-11-18: the shared
@@ -217,7 +219,7 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
 
 `scripts/legacy/pod_mail_login.py` (superseded by `pod_account_login.py`),
 `scripts/legacy/backfill_short_links.py`, `scripts/legacy/gen_branding_art.py`,
-`scripts/legacy/probe_advisors.py`, `scripts/legacy/studio_drive.py`.
+`scripts/legacy/studio_drive.py` (the advisor probe was deleted with the panel, 2026-11-28).
 
 ---
 _Last audited: 2026-11-18 (ak, whole-repo pass anchored to the yt938-2 goal)._
