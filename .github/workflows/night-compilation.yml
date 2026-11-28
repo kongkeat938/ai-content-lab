@@ -198,6 +198,13 @@ jobs:
           FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
           FISH_REFERENCE_ID: ${{ secrets.FISH_REFERENCE_ID }}
         run: |
+          # A long 4K render can fill or exhaust the runner and then die with the job
+          # aborted -- measured 2026-11-28: a 90-minute build failed 77 min in, the
+          # steps after it were reported "skipped" (not even `if: failure()` fired)
+          # and the run never finished, so the log was never available. Print the
+          # budget before and after so the next attempt has numbers, not a guess.
+          df -h / | tail -1
+          free -m | head -2
           python3 scripts/build_night.py \
             --content "${{ steps.pick.outputs.content }}" \
             --work work/night \
@@ -209,6 +216,9 @@ jobs:
             --bed-ledger content/bed_ledger_dharma.json \
             --chapters \
             --image-prompt "serene Thai Buddhist night, soft moonlight, mist, calm"
+          echo "== after build =="
+          df -h / | tail -1
+          du -sh work/night 2>/dev/null || true
 
       - name: Show the receipt
         if: always() && steps.fp.outputs.skip != 'true'
