@@ -831,6 +831,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "166": {
+      "video_id": "CfjQWUakzq4",
+      "url": "https://youtu.be/CfjQWUakzq4",
+      "title": "คุณมีสิทธิ์ที่จะวางภาระแล้วพักได้ทันที #Shorts",
+      "posted_at": "2026-11-28T04:46:01+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/166/thumb_166.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
