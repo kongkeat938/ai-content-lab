@@ -12,11 +12,15 @@ name: check-duplicates
 # the finding is visible without watching the log.
 on:
   schedule:
-    - cron: "23 5 * * 1"   # Monday 05:23 UTC
+    - cron: "23 5 * * 1"   # Monday 05:23 UTC (12:23 Thai)
   workflow_dispatch:
+    inputs:
+      apply:
+        description: "true to unlist the redundant copies now (keeps the copy with the most views; never deletes)"
+        default: "false"
 
 permissions:
-  contents: read
+  contents: write   # commit the privacy ledger when apply=true
   issues: write
 
 jobs:
@@ -39,7 +43,23 @@ jobs:
           YT_CH1_REFRESH_TOKEN: ${{ secrets.YT_CH1_REFRESH_TOKEN }}
           YT_CH2_REFRESH_TOKEN: ${{ secrets.YT_CH2_REFRESH_TOKEN }}
           YT_CH4_REFRESH_TOKEN: ${{ secrets.YT_CH4_REFRESH_TOKEN }}
-        run: python3 scripts/check_duplicates.py | tee /tmp/dups.txt
+        run: |
+          ARGS=""
+          if [ "${{ inputs.apply }}" = "true" ]; then ARGS="--apply"; fi
+          python3 scripts/check_duplicates.py $ARGS | tee /tmp/dups.txt
+
+      # The weekly run only reports. --apply is dispatch-only on purpose: it says which
+      # copy wins (most views) and parks (unlists) the rest, so a person can read the
+      # choice before it happens. Measured 2026-11-28: 8 groups were waiting to be cleaned.
+      - name: Commit the privacy ledger when something changed
+        if: inputs.apply == 'true'
+        run: |
+          git diff --quiet content/privacy_ledger.json && { echo "no change"; exit 0; }
+          git config user.name "ak"
+          git config user.email "ak@users.noreply.github.com"
+          git add content/privacy_ledger.json
+          git commit -m "dup(${{ github.run_id }}): park the redundant copies"
+          git push
 
       - name: Open one issue if a duplicate was found
         if: steps.scan.outcome == 'failure'
@@ -48,5 +68,5 @@ jobs:
         run: |
           gh issue create --repo "${{ github.repository }}" \
             --title "duplicate video found on a channel" \
-            --body "$(printf 'A video title appears twice on one channel.\n\n```\n%s\n```\n\nKeep the public copy; delete the redundant one, or run `publish_batch.py --forget <key>` if the manifest points at the deleted id.\n\nRun: %s/%s/actions/runs/%s\n' "$(cat /tmp/dups.txt)" "${{ github.server_url }}" "${{ github.repository }}" "${{ github.run_id }}")"
+            --body "$(printf 'A video title appears twice on one channel.\n\n```\n%s\n```\n\nDispatch this workflow with `apply=true` to keep the copy with the most views and unlist the rest (reversible, recorded in `content/privacy_ledger.json`).\n\nRun: %s/%s/actions/runs/%s\n' "$(cat /tmp/dups.txt)" "${{ github.server_url }}" "${{ github.repository }}" "${{ github.run_id }}")"
           exit 1
