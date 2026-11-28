@@ -978,6 +978,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "170": {
+      "video_id": "kQ4q7kPN0wk",
+      "url": "https://youtu.be/kQ4q7kPN0wk",
+      "title": "คืนนี้ลองนอนหงายแล้วคลายกล้ามเนื้อคอเบาๆ #Shorts",
+      "posted_at": "2026-11-28T09:04:07+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/170/thumb_170.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
