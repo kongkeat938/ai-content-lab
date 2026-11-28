@@ -121,7 +121,58 @@ def main() -> int:
     print(f"OK: per-run default {default}, min gap {gap}h, no self-triggering manifest, "
           f"foreman posts {m.group(1)}/dispatch, hook_shape defined locally")
     check_cap_counts_every_ledger_key()
+    check_each_channel_reads_its_own_cap()
+    check_dry_run_writes_no_state()
     return 0
+
+
+def check_each_channel_reads_its_own_cap() -> None:
+    """A channel that states `daily_cap` must be held to it; the others stay at the
+    shared ceiling. Swept from CHANNELS, never from a hardcoded list -- a new channel
+    with its own number is covered the day it lands, and one that forgets the key
+    silently inherits the ceiling (measured 2026-11-28: the third post of a day had
+    a median of 9.6 views/day against 16.3 for one or two)."""
+    sys.path.insert(0, HERE)
+    import publish_shorts as ps
+
+    for slug, spec in ps.CHANNELS.items():
+        cap = ps.daily_cap(spec)
+        want = spec.get("daily_cap", ps.DAILY_CAP)
+        if cap != want:
+            fail(f"{slug}: daily_cap() returned {cap}, the spec says {want}")
+        if not isinstance(cap, int) or cap < 1:
+            fail(f"{slug}: daily_cap() returned {cap!r}; a cap must be a positive int")
+        if cap > ps.DAILY_CAP:
+            fail(f"{slug}: daily_cap() {cap} is above the shared ceiling {ps.DAILY_CAP}; "
+                 "a channel may only go slower, never faster")
+    if ps.daily_cap({}) != ps.DAILY_CAP:
+        fail("a spec without daily_cap must inherit the shared ceiling")
+    if ps.daily_cap({"daily_cap": 1}) != 1:
+        fail("an explicit daily_cap is ignored")
+    # The gate must use the resolved value, not the module constant directly.
+    src = open(SCRIPT, encoding="utf-8").read()
+    if "room = max(DAILY_CAP - already" in src:
+        fail("publish_shorts.py still computes room from DAILY_CAP, so a per-channel "
+             "cap is never enforced")
+    arms = {slug: ps.daily_cap(spec) for slug, spec in ps.CHANNELS.items()}
+    print(f"OK: per-channel caps {arms} (ceiling {ps.DAILY_CAP})")
+
+
+def check_dry_run_writes_no_state() -> None:
+    """`--dry-run` must not append to the live reception ledger.
+
+    Measured 2026-11-28: a dry run did, so an uncommitted `content/reception/<ch>.json`
+    appeared and the next rebase hit a conflict on rail-written state. The write is
+    reached before the dry-run return, so the guard checks the write is gated."""
+    src = open(SCRIPT, encoding="utf-8").read()
+    if "_write_reception(" not in src:
+        return
+    i = src.index("pace._write_reception(")
+    window = src[max(0, i - 700):i]
+    if "not args.dry_run" not in window:
+        fail("publish_shorts.py writes the reception ledger before the dry-run return; "
+             "a --dry-run then edits tracked state")
+    print("ok   a dry run does not write the reception ledger")
 
 
 if __name__ == "__main__":

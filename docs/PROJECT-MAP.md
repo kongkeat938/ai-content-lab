@@ -142,6 +142,9 @@ All rails are GitHub Actions only (the pod is recycled when idle). Kill switch =
     PC1 not drivable from the pod (tailnet NXDOMAIN, no `PC1_MCP_TOKEN`); `ART_LIBRARY_URL` unset.
     → to build clips now: install the renderer deps here, bring PC1 up, or supply `ART_LIBRARY_URL`.
     Stories ready: `content/motion/01-04.json` (dharma×2, genx, knowledge).
+- **The cap experiment (2026-11-28):** `docs/DECISION-2026-11-28-cap-experiment.md` — dharma runs
+  2 posts/24 h while genx keeps 3 as the control; `daily_cap()` in `publish_shorts.py` reads the
+  channel's own number (guard `test_publish_shorts_cap.py`). Decision rule and baseline inside.
 - **The system audit (2026-11-28):** `docs/AUDIT-2026-11-28-system.md` — what exists, what the
   advisor layer was and that it is deleted, and which files still call an outside model.
 - The living index: `.openhands/memory/MEMORY.md` (<6,000 chars) → `topics/` → daily logs.
