@@ -15,8 +15,8 @@ on:
   workflow_dispatch:
     inputs:
       minutes:
-        description: "Target length in minutes"
-        default: "120"
+        description: "Target length in minutes (a 120-min 4K render needs ~150 min of runner time; 90 fits comfortably)"
+        default: "90"
       content:
         description: "Content directory (blank = pick/generate)"
         default: ""
@@ -62,7 +62,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # Measured 2026-11-28: a 120-minute build was still rendering when the old
+    # 120-minute job limit fired -- "Build and verify" started 07:48Z and the run was
+    # cancelled at 09:47Z, so the default length could never succeed. Give the job
+    # headroom over the longest build an input can ask for.
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
 
