@@ -100,6 +100,17 @@ def main() -> int:
         fail("--apply has no guard against unlisting the keeper")
     if "dict.fromkeys(ids)" not in src:
         fail("scan() does not de-duplicate the uploads playlist")
+
+    # 9. the weekly run reports; --apply is dispatch-only, so a schedule can never
+    #    unlist a video without someone reading the choice first
+    wf = open(os.path.join(ROOT, ".github", "workflows", "check-duplicates.yml"),
+              encoding="utf-8").read()
+    if "\n      apply:" not in wf:
+        fail("check-duplicates.yml has no apply input")
+    if 'if [ "${{ inputs.apply }}" = "true" ]; then ARGS="--apply"; fi' not in wf:
+        fail("the apply input is not wired to --apply")
+    if "contents: write" not in wf:
+        fail("apply=true commits the ledger, which needs contents: write")
     print("ok   keeper by views, unlisted twins ignored, park not delete, status preserved")
     return 0
 
