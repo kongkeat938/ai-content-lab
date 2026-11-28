@@ -842,6 +842,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "112": {
+      "video_id": "aico7aFt06k",
+      "url": "https://youtu.be/aico7aFt06k",
+      "title": "คุณมีสิทธิ์ปฏิเสธทุกคนที่ทำให้คุณเหนื่อยใจ #Shorts",
+      "posted_at": "2026-11-28T09:03:30+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch1_shorts/112/thumb_112.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
