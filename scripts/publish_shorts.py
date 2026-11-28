@@ -317,6 +317,30 @@ MIN_GAP_HOURS = 2.0
 UPLOAD_LOG = os.path.join(ROOT, "content", "upload_log.json")
 
 
+def published_on_origin(slug: str, clip_id: str) -> bool:
+    """True when origin/main already records a video id for this script.
+
+    Measured 2026-11-28 04:46 UTC: a pool-grow push and a script edit both triggered
+    this rail while a manual run was in flight, so script 163 went up twice, three
+    seconds apart (PLdOmK_MRG8 and K27RC5Tsehc). The local manifest said "not
+    published" because the tree was behind. Reading the remote manifest right before
+    building closes that window; the workflow no longer publishes on a push either.
+    """
+    rel = os.path.relpath(CHANNELS[slug]["manifest"], ROOT)
+    try:
+        subprocess.run(["git", "fetch", "-q", "origin", "main"], cwd=ROOT,
+                       timeout=25, stdin=subprocess.DEVNULL,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        out = subprocess.run(["git", "show", f"origin/main:{rel}"], cwd=ROOT,
+                             capture_output=True, text=True, timeout=25,
+                             stdin=subprocess.DEVNULL)
+        if out.returncode != 0:
+            return False
+        return bool(json.loads(out.stdout)["shorts"].get(clip_id, {}).get("video_id"))
+    except Exception:                              # noqa: BLE001 -- never block on the check
+        return False
+
+
 def daily_cap(spec: dict) -> int:
     """This channel's posts per 24 h: its own `daily_cap`, else the shared ceiling.
 
@@ -964,6 +988,9 @@ def main() -> int:
         if title_is_repeat(title, live):
             print(f"  {sid}: HELD -- this title is already live on the channel")
             rc = 1
+            continue
+        if published_on_origin(args.channel, sid):
+            print(f"  {sid}: SKIPPED -- another runner already published it (origin/main)")
             continue
         # Build if needed (CI has no prebuilt file). A stalled channel's clip is the
         # changed probe, so it is always rebuilt (new voice), never a cached file.
