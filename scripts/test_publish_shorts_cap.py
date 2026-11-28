@@ -122,6 +122,7 @@ def main() -> int:
           f"foreman posts {m.group(1)}/dispatch, hook_shape defined locally")
     check_cap_counts_every_ledger_key()
     check_each_channel_reads_its_own_cap()
+    check_dry_run_writes_no_state()
     return 0
 
 
@@ -155,6 +156,23 @@ def check_each_channel_reads_its_own_cap() -> None:
              "cap is never enforced")
     arms = {slug: ps.daily_cap(spec) for slug, spec in ps.CHANNELS.items()}
     print(f"OK: per-channel caps {arms} (ceiling {ps.DAILY_CAP})")
+
+
+def check_dry_run_writes_no_state() -> None:
+    """`--dry-run` must not append to the live reception ledger.
+
+    Measured 2026-11-28: a dry run did, so an uncommitted `content/reception/<ch>.json`
+    appeared and the next rebase hit a conflict on rail-written state. The write is
+    reached before the dry-run return, so the guard checks the write is gated."""
+    src = open(SCRIPT, encoding="utf-8").read()
+    if "_write_reception(" not in src:
+        return
+    i = src.index("pace._write_reception(")
+    window = src[max(0, i - 700):i]
+    if "not args.dry_run" not in window:
+        fail("publish_shorts.py writes the reception ledger before the dry-run return; "
+             "a --dry-run then edits tracked state")
+    print("ok   a dry run does not write the reception ledger")
 
 
 if __name__ == "__main__":

@@ -868,8 +868,12 @@ def main() -> int:
             # probe (a new voice), so the clip must not reuse the old build.
             print("  stalled channel: this is the changed probe -- building fresh, "
                   "new voice")
-        rec["at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        pace._write_reception(args.channel, rec)
+        if not args.dry_run:
+            # A dry run must not move the live reception history: it did (measured
+            # 2026-11-28, when a --dry-run left an uncommitted dharma.json behind and
+            # the next rebase hit a conflict on rail-written state).
+            rec["at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            pace._write_reception(args.channel, rec)
     except Exception as exc:                       # noqa: BLE001 -- never block on the gate
         since = hours_since_last_upload(args.channel, spec["manifest"])
         if since is not None and since < MIN_GAP_HOURS:
