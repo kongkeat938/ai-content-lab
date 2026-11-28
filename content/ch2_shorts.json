@@ -967,6 +967,17 @@
       "thumbnail_set": true,
       "shape": "cue",
       "privacy": "public"
+    },
+    "163": {
+      "video_id": "K27RC5Tsehc",
+      "url": "https://youtu.be/K27RC5Tsehc",
+      "title": "คืนนี้ลองอโหสิกรรมให้คำพูดที่พลั้งปากไป #Shorts",
+      "posted_at": "2026-11-28T04:45:45+00:00",
+      "cta_note": "comment skipped: needs the force-ssl scope (owner: python3 scripts/yt_auth.py --scopes force-ssl)",
+      "thumbnail": "work/ch2_shorts/163/thumb_163.jpg",
+      "thumbnail_set": true,
+      "shape": "cue",
+      "privacy": "public"
     }
   }
 }
